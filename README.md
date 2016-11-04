@@ -10,8 +10,10 @@ The main project documentation is on the [page for this project at the AgileVent
 _This is a project of [AgileVentures](http://www.agileventures.org), a non-profit organization dedicated to crowdsourced learning and project development._  
 
 
-[![Build Status](https://semaphoreci.com/api/v1/projects/6c49e6ca-8220-41c6-b04f-67ed15252723/1030083/shields_badge.svg)](https://semaphoreci.com/shf-project/shf-project)
+Sempahore status: [![Build Status](https://semaphoreci.com/api/v1/projects/6c49e6ca-8220-41c6-b04f-67ed15252723/1030083/shields_badge.svg)](https://semaphoreci.com/shf-project/shf-project) 
+
 Travis C. I. [![Build Status](https://travis-ci.org/AgileVentures/LocalSupport.png)](https://travis-ci.org/AgileVentures/LocalSupport)
+
 CodeClimate [![Code Climate](https://codeclimate.com/github/AgileVentures/LocalSupport.png)](https://codeclimate.com/github/AgileVentures/LocalSupport)
 
 
