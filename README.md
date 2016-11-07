@@ -12,10 +12,6 @@ _This is a project of [AgileVentures](http://www.agileventures.org), a non-profi
 
 Sempahore status: [![Build Status](https://semaphoreci.com/api/v1/lollypop27/shf-project/branches/develop/badge.svg)](https://semaphoreci.com/lollypop27/shf-project)
 
-Travis C. I. [![Build Status](https://travis-ci.org/AgileVentures/LocalSupport.png)]()
-
-CodeClimate [![Code Climate](https://codeclimate.com/github/AgileVentures/LocalSupport.png)]()
-
 
 ## Requirements and Dependencies
 
