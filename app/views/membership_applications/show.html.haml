@@ -10,7 +10,7 @@
   %p= mail_to @membership_application.company_email, @membership_application.company_email
   .wpcf7
     Application Status:
-    - if policy(@membership_application).permitted_attributes_for_edit.include? :status
+    - if edit_status?
       = render partial: 'application_status_form'
 
     %p Membership #{@membership_application.status.downcase} at #{@membership_application.updated_at.strftime('%F')}
