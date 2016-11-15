@@ -11,6 +11,6 @@
   .wpcf7
     Application Status:
     - if policy(@membership_application).permitted_attributes_for_edit.include? :status
-      = render :partial => 'application_status_form'
+      = render partial: 'application_status_form'
 
     %p Membership #{@membership_application.status.downcase} at #{@membership_application.updated_at.strftime('%F')}
