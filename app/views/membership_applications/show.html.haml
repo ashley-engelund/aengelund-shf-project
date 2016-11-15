@@ -8,9 +8,9 @@
   - if @membership_application.phone_number
     %p= @membership_application.phone_number
   %p= mail_to @membership_application.company_email, @membership_application.company_email
-  .wpcf7
-    Application Status:
-    - if edit_status?
-      = render partial: 'application_status_form'
 
-    %p Membership #{@membership_application.status.downcase} at #{@membership_application.updated_at.strftime('%F')}
+  Application Status:
+  - if edit_status?
+    = render partial: 'application_status_form'
+
+  %p Membership #{@membership_application.status.downcase} at #{@membership_application.updated_at.strftime('%F')}
