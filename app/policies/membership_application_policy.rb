@@ -16,7 +16,7 @@ class MembershipApplicationPolicy < ApplicationPolicy
 
   # by default, only an admin can change the status attribute
   def permitted_attributes
-    if user&.admin?
+    if user && user.admin?
       attributes_and_status
     else
       user_owner_attributes
@@ -37,7 +37,7 @@ class MembershipApplicationPolicy < ApplicationPolicy
 
   # only an admin can edit the status
   def permitted_attributes_for_edit
-    if user&.admin?
+    if user && user.admin?
       attributes_and_status
     else
       user_owner_attributes
