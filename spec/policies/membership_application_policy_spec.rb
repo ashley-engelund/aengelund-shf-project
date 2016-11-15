@@ -9,7 +9,7 @@ describe MembershipApplicationPolicy do
   let(:application) { create(:membership_application,
                              user: application_owner) }
 
-  subject { MembershipApplicationPolicy.new(application_owner, application) }
+  subject { described_class.new(application_owner, application) }
 
 
   describe 'For the MembershipApplication creator' do
