@@ -35,12 +35,9 @@ before_action :authorize_membership_application, only: [:show, :edit]
 
   private
   def membership_application_params
-    params.require(:membership_application).permit(:company_name,
-                                                   :company_number,
-                                                   :contact_person,
-                                                   :company_email,
-                                                   :phone_number)
+    params.require(:membership_application).permit(policy(@membership_application).permitted_attributes)
   end
+
 
   def get_membership_application
     @membership_application = MembershipApplication.find(params[:id])
