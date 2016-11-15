@@ -14,7 +14,6 @@ class MembershipApplicationPolicy < ApplicationPolicy
   end
 
 
-  # by default, only an admin can change the status attribute
   def permitted_attributes
     if user && user.admin?
       attributes_and_status
@@ -24,18 +23,15 @@ class MembershipApplicationPolicy < ApplicationPolicy
   end
 
 
-  # When a user creates a MembershipApplication, the status is initialized (so can create it)
   def permitted_attributes_for_create
     attributes_and_status
   end
 
-  # the membership_application owner can always see (show) the status
   def permitted_attributes_for_show
     attributes_and_status
   end
 
 
-  # only an admin can edit the status
   def permitted_attributes_for_edit
     if user && user.admin?
       attributes_and_status
