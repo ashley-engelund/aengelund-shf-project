@@ -6,7 +6,10 @@ before_action :authorize_membership_application, only: [:show, :edit]
   end
 
   def create
-    @membership_application = current_user.membership_applications.new(membership_application_params)
+    # must create the membership_application before using the policy to check the parameters. @see https://www.sitepoint.com/straightforward-rails-authorization-with-pundit/
+    @membership_application = current_user.membership_applications.new
+    @membership_application.update(permitted_attributes(@membership_application))
+
     if @membership_application.save
       flash[:notice] = 'Thank you, Your application has been submitted'
       redirect_to root_path
