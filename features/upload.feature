@@ -24,18 +24,27 @@ Feature: As an applicant
   #   (must be able to submit the application in order have documents uploaded)
 
 
+  Background:
+    Given the following users exists
+      | email                  |
+      | applicant_1@random.com |
+
+
+    And the following applications exist:
+      | company_name       | user_email             |
+      | My Dog Business    | applicant_1@random.com |
+
+
+
   Scenario: Upload a file
     Given I am on the "submit new membership application" page
     When I choose a file named "diploma.pdf" to upload
     And I click on "Upload File"
     Then I should be on "submit new membership application" page
     And I should see "Your file was successfully uploaded"
-    And I should see "Files uploaded for this application"
+    And I should see "Files uploaded for this application:"
     And I should see "diploma.pdf" uploaded for this membership application
 
-    # submitting is a separate action: a separate button and submits everything.
-
-    # might we have already submitted the application? might we be editing or adding to it?
 
   Scenario: Upload a second file
     Given I am on the "submit new membership application" page
@@ -44,21 +53,36 @@ Feature: As an applicant
     And I click on "Upload File"
     Then I should be on "submit new membership application" page
     And I should see "Your file was successfully uploaded"
-    And I should see "Files uploaded for this application"
+    And I should see "Files uploaded for this application:"
     And I should see "diploma.pdf" uploaded for this membership application
     And I should see "picture.jpg" uploaded for this membership application
     And I should see 2 uploaded files listed
 
 
+    Scenario: Try to upload a file with unacceptable content type
+      Given I am on the "submit new membership application" page
+      When I choose a file named "not-accepted.exe" to upload
+      And I click on "Upload File"
+      Then I should be on "submit new membership application" page
+      And I should see "Sorry, this is not a file type you can upload."
+      And I should not see "not-accepted.exe" uploaded for this membership application
 
   # as an admin, I should see the files uploaded for an application
+
 
   # delete files that I've uploaded?
   Scenario: User deletes a file that was uploaded
 
 
-  # when I edit: see the files I've uploaded...
   Scenario: User uploads a file to an existing membership application
+    Given I am logged in as "applicant_1@random.com"
+    And I am on the "edit my application" page
+    When I choose a file named "diploma.pdf" to upload
+    And I click on "Upload File"
+    Then I should be on "edit my application" page
+    And I should see "Your file was successfully uploaded"
+    And I should see "Files uploaded for this application:"
+    And I should see "diploma.pdf" uploaded for this membership application
 
 
 
