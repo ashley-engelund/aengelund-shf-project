@@ -6,6 +6,8 @@ Given(/^I am on the "([^"]*)" page$/) do |page|
       path = new_user_session_path
     when 'edit my application'
       path = edit_membership_application_path(@user.membership_applications.last)
+    when 'submit new membership application'
+      path = new_membership_application_path
     else
       path = 'no path set'
   end
