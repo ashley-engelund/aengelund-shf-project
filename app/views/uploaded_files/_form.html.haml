@@ -1,4 +1,4 @@
-= form_for @uploaded_file do |f|
+= form_for @uploaded_file,  html: { multipart: true } do |f|
   - if @uploaded_file.errors.any?
     #error_explanation
       %h2= "#{pluralize(@uploaded_file.errors.count, "error")} prohibited this uploaded_file from being saved:"
@@ -12,5 +12,10 @@
   .field
     = f.label :description
     = f.text_field :description
+
+  .field
+    = f.label :actual_file
+    =f.file_field :actual_file
+
   .actions
     = f.submit 'Save'
