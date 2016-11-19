@@ -3,19 +3,32 @@ FactoryGirl.define do
     title "some title"
     description "some description"
 
+    FIXTURE_DIR = File.join("#{Rails.root}",'spec','fixtures','uploaded_files')
     trait :png do
-      actual_file { File.new("#{Rails.root}/spec/support/fixtures/image.png") }
+      actual_file { File.new(File.join(FIXTURE_DIR, 'image.png')) }
     end
     trait :gif do
-      actual_file { File.new("#{Rails.root}/spec/support/fixtures/image.gif") }
+      actual_file { File.new(File.join(FIXTURE_DIR, 'image.gif')) }
     end
     trait :jpg do
-      actual_file { File.new("#{Rails.root}/spec/support/fixtures/image.jpg") }
+      actual_file { File.new(File.join(FIXTURE_DIR, 'image.jpg')) }
     end
 
-    factory :png_attachment,    traits: [:png]
-    factory :jpg_attachment,    traits: [:jpg]
-    factory :gif_attachment,    traits: [:gif]
+    trait :pdf do
+      actual_file { File.new(File.join(FIXTURE_DIR, 'diploma.pdf')) }
+    end
+
+    trait :txt do
+      actual_file { File.new(File.join(FIXTURE_DIR, 'specifications.txt')) }
+    end
+
+    trait :exe do
+      actual_file { File.new(File.join(FIXTURE_DIR, 'tred.exe')) }
+    end
+    trait :bin do
+      actual_file { File.new(File.join(FIXTURE_DIR, 'tred.bin')) }
+    end
+
   end
 
 end
