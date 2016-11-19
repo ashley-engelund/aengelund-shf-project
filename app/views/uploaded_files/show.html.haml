@@ -1,0 +1,12 @@
+%p#notice= notice
+
+%p
+  %b Title:
+  = @uploaded_file.title
+%p
+  %b Description:
+  = @uploaded_file.description
+
+= link_to 'Edit', edit_uploaded_file_path(@uploaded_file)
+\|
+= link_to 'Back', uploaded_files_path
