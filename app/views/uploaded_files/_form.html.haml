@@ -1,21 +1,12 @@
-= form_for @uploaded_file,  html: { multipart: true } do |f|
-  - if @uploaded_file.errors.any?
+= form_for uploaded_file,  html: { multipart: true } do |f|
+  - if uploaded_file.errors.any?
     #error_explanation
-      %h2= "#{pluralize(@uploaded_file.errors.count, "error")} prohibited this uploaded_file from being saved:"
+      %h2= "#{pluralize(uploaded_file.errors.count, "error")} prohibited this uploaded_file from being saved:"
       %ul
-        - @uploaded_file.errors.full_messages.each do |msg|
+        - uploaded_file.errors.full_messages.each do |msg|
           %li= msg
 
-  .field
-    = f.label :title
-    = f.text_field :title
-  .field
-    = f.label :description
-    = f.text_field :description
-
-  .field
-    = f.label :actual_file
-    =f.file_field :actual_file
+  - render partial: 'uploaded_files/uploaded_file_fields', locals: {f: f}
 
   .actions
     = f.submit 'Save'
