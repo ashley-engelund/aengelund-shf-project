@@ -5,7 +5,18 @@ class MembershipApplicationPolicy < ApplicationPolicy
      :company_number,
      :contact_person,
      :company_email,
-     :phone_number]
+     :phone_number,
+     :uploaded_files,
+     uploaded_files_attributes: [:id,
+                                 :title,
+                                 :description,
+                                 :actual_file,
+                                 :actual_file_file_name,
+                                 :actual_file_file_size,
+                                 :actual_file_content_type,
+                                 :actual_file_updated_at,
+                                 :_destroy]
+    ]
   end
 
 
