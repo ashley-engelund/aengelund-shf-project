@@ -1,5 +1,10 @@
 class MembershipApplication < ApplicationRecord
   belongs_to :user
+
+  has_many :uploaded_files
+  accepts_nested_attributes_for :uploaded_files, allow_destroy: true,
+                                reject_if: lambda {|attributes| attributes['actual_file_file_name'].blank?}
+
   validates_presence_of :company_name,
                         :company_number,
                         :company_email,
