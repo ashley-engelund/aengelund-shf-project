@@ -68,14 +68,19 @@ class MembershipApplicationsController < ApplicationController
     authorize @membership_application
   end
 
+
   def new_upload_file(upload_file_param)
-    if upload_file_param['actual_file']
-      @uploaded_file = @membership_application.uploaded_files.create(actual_file: upload_file_param['actual_file'])
-      if @uploaded_file.valid?
-        flash[:notice] = "The file was uploaded: #{@uploaded_file.actual_file_file_name}"
-      else
-        flash[:error] = @uploaded_file.errors.messages
+    if upload_file_param['actual_files']
+      upload_file_param['actual_files'].each do |upload_file|
+
+        @uploaded_file = @membership_application.uploaded_files.create(actual_file: upload_file)
+        if @uploaded_file.valid?
+          flash[:notice] = "The file was uploaded: #{@uploaded_file.actual_file_file_name}"
+        else
+          flash[:error] = @uploaded_file.errors.messages
+        end
       end
+
     end
   end
 end

@@ -18,6 +18,6 @@
 
 
 %p Upload a file for this membership application:
-= f.file_field :actual_file, :multiple => true, name: "uploaded_file[actual_file]"
+= f.file_field "actual_files[]", multiple: true, name: "uploaded_file[actual_files][]"
 
 = f.submit 'Submit'
