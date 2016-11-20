@@ -1,0 +1,8 @@
+- if membership_application.uploaded_files.count < 1
+  %p No files have been uploaded for this membership application.
+- else
+  %ul
+    %p
+      %strong Files uploaded for this application:
+      - membership_application.uploaded_files.each do |uploaded_file|
+        %li.uploaded-file #{uploaded_file_inline uploaded_file}
