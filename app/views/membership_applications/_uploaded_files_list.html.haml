@@ -4,5 +4,21 @@
   %ul
     %p
       %strong Files uploaded for this application:
-      - membership_application.uploaded_files.each do |uploaded_file|
-        %li.uploaded-file #{uploaded_file_inline uploaded_file}
+
+      %table
+        %thead
+          %tr
+            %th File Name
+            %th Title
+            %th Description
+            %th delete?
+
+
+        %tbody
+          - membership_application.uploaded_files.each do |uploaded_file|
+            %tr.uploaded-file
+              %td= uploaded_file.actual_file_file_name
+              %td= uploaded_file.title
+              %td= uploaded_file.description
+
+              %td= link_to "Delete #{uploaded_file.actual_file_file_name}", uploaded_file, method: :delete_uploaded_file, :data => { confirm: "Are you sure you want to delete #{uploaded_file.actual_file_file_name}?" }
