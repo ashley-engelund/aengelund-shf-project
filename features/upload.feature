@@ -34,38 +34,67 @@ Feature: As an applicant
       | company_name       | user_email             |
       | My Dog Business    | applicant_1@random.com |
 
+    And I am logged in as "applicant_1@random.com"
 
 
-  Scenario: Upload a file
+  Scenario: Upload a file during a new application
     Given I am on the "submit new membership application" page
     When I choose a file named "diploma.pdf" to upload
-    And I click on "Upload File"
-    Then I should be on "submit new membership application" page
-    And I should see "Your file was successfully uploaded"
-    And I should see "Files uploaded for this application:"
+    And I fill in "Company Name" with "Craft Academy"
+    And I fill in "Company Number" with "1234561234"
+    And I fill in "Contact Person" with "Thomas"
+    And I fill in "Company Email" with "info@craft.se"
+    And I fill in "Phone Number" with "031-1234567"
+    And I click on "Submit"
+    And I am on the "edit my application" page
+    #Then I should see "Your file was successfully uploaded"
+    Then I should see "Files uploaded for this application:"
+    And I should see "diploma.pdf" uploaded for this membership application
+
+  Scenario: Upload a file for an existing application
+    Given I am on the "edit my application" page
+    When I choose a file named "diploma.pdf" to upload
+    And I fill in "Company Name" with "Craft Academy"
+    And I fill in "Company Number" with "1234561234"
+    And I fill in "Contact Person" with "Thomas"
+    And I fill in "Company Email" with "info@craft.se"
+    And I fill in "Phone Number" with "031-1234567"
+    And I click on "Submit"
+    #Then I should see "Your file was successfully uploaded"
+    Then I should see "Files uploaded for this application:"
     And I should see "diploma.pdf" uploaded for this membership application
 
 
   Scenario: Upload a second file
-    Given I am on the "submit new membership application" page
-    And there is a file named "diploma.pdf" uploaded for this membership application
+    Given I am on the "edit my application" page
+    And I should see "diploma.pdf" uploaded for this membership application
+    #And there is a file named "diploma.pdf" uploaded for this membership application
     When I choose a file named "picture.jpg" to upload
-    And I click on "Upload File"
-    Then I should be on "submit new membership application" page
-    And I should see "Your file was successfully uploaded"
-    And I should see "Files uploaded for this application:"
+    And I click on "Submit"
+    #Then I should see "Your file was successfully uploaded"
+    Then I should see "Files uploaded for this application:"
     And I should see "diploma.pdf" uploaded for this membership application
     And I should see "picture.jpg" uploaded for this membership application
     And I should see 2 uploaded files listed
 
+  Scenario: Upload multiple files at one time (multiple select)
+    Given I am on the "submit new membership application" page
+    When I choose the files named ["picture.jpg", "picture.png", "diploma.pdf"] to upload
+    And I click on "Submit"
+    #Then I should see "Your file was successfully uploaded"
+    Then I should see "Files uploaded for this application:"
+    And I should see "diploma.pdf" uploaded for this membership application
+    And I should see "picture.jpg" uploaded for this membership application
+    And I should see "picture.png" uploaded for this membership application
+    And I should see 3 uploaded files listed
 
-    Scenario: Try to upload a file with unacceptable content type
-      Given I am on the "submit new membership application" page
-      When I choose a file named "not-accepted.exe" to upload
-      And I click on "Upload File"
-      Then I should be on "submit new membership application" page
-      And I should see "Sorry, this is not a file type you can upload."
-      And I should not see "not-accepted.exe" uploaded for this membership application
+
+  Scenario: Try to upload a file with unacceptable content type
+    Given I am on the "edit my application" page
+    When I choose a file named "tred.exe" to upload
+    And I click on "Submit"
+    Then I should see "Sorry, this is not a file type you can upload."
+    And I should not see "not-accepted.exe" uploaded for this membership application
 
   # as an admin, I should see the files uploaded for an application
 
@@ -78,10 +107,9 @@ Feature: As an applicant
     Given I am logged in as "applicant_1@random.com"
     And I am on the "edit my application" page
     When I choose a file named "diploma.pdf" to upload
-    And I click on "Upload File"
-    Then I should be on "edit my application" page
-    And I should see "Your file was successfully uploaded"
-    And I should see "Files uploaded for this application:"
+    And I click on "Submit"
+    #Then I should see "Your file was successfully uploaded"
+    Then I should see "Files uploaded for this application:"
     And I should see "diploma.pdf" uploaded for this membership application
 
 
