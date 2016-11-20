@@ -13,4 +13,11 @@
 = f.label :phone_number, 'Phone Number'
 = f.telephone_field :phone_number, class: 'wpcf7-form-control'
 
+#uploaded_files
+  = render 'uploaded_files_list', membership_application: @membership_application
+
+
+%p Upload a file for this membership application:
+= f.file_field :actual_file, :multiple => true, name: "uploaded_file[actual_file]"
+
 = f.submit 'Submit'
