@@ -11,14 +11,12 @@
             %th File Name
             %th Title
             %th Description
-            %th delete?
-
+            %th.action delete
 
         %tbody
           - membership_application.uploaded_files.each do |uploaded_file|
-            %tr.uploaded-file
-              %td= uploaded_file.actual_file_file_name
+            %tr.uploaded-files
+              %td.uploaded-file= uploaded_file.actual_file_file_name
               %td= uploaded_file.title
               %td= uploaded_file.description
-
-              %td= link_to "Delete #{uploaded_file.actual_file_file_name}", uploaded_file, method: :delete_uploaded_file, :data => { confirm: "Are you sure you want to delete #{uploaded_file.actual_file_file_name}?" }
+              %td{class: "delete-uploaded-file-#{uploaded_file.id}"}= link_to icon('trash'), membership_application_path(membership_application.id, membership_application: { uploaded_files_attributes: { id: uploaded_file.id, "_destroy" => true }}), method: :put, id: "uploaded-file-#{uploaded_file.id}", class: "action-delete", data: { confirm: "Are you sure you want to delete #{uploaded_file.actual_file_file_name}" }
