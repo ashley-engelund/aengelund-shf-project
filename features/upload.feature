@@ -96,8 +96,13 @@ Feature: As an applicant
   # as an admin, I should see the files uploaded for an application
 
 
-  # delete files that I've uploaded?
   Scenario: User deletes a file that was uploaded
+    Given I am on the "edit my application" page
+    When I choose a file named "diploma.pdf" to upload
+    And I click on "Submit"
+    And I am on the "edit my application" page
+    And I click on trash icon for "diploma.pdf"
+    Then I should not see "diploma.pdf" uploaded for this membership application
 
 
   Scenario: User uploads a file to an existing membership application

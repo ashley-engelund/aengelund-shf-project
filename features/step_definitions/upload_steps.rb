@@ -20,3 +20,7 @@ When(/^I choose the files named \["([^"]*)", "([^"]*)", "([^"]*)"\] to upload$/)
            File.join(Rails.root, 'spec', 'fixtures','uploaded_files', file3)]
   page.attach_file "uploaded_file[actual_files][]", files
 end
+
+And(/^I click on trash icon for "([^"]*)"$/) do |filename|
+  find(:xpath, "//tr[contains(.,'#{filename}')]/td/a[@class='action-delete']").click
+end
