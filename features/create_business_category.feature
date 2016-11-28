@@ -14,7 +14,7 @@ Feature: As an admin
     And I am logged in as "admin@shf.com"
 
   Scenario Outline: Admin creates a new Business Category
-    Given I am on the "admin business categories" page
+    Given I am on the "business categories" page
     And I click on "Create a new business category"
     When I fill in the form with data :
       | Category Name    | Category Description    |
@@ -32,7 +32,7 @@ Feature: As an admin
       | carting/drafting |                                                                                                     |
 
   Scenario Outline: Create a new business category - when things go wrong
-    Given I am on the "admin business categories" page
+    Given I am on the "business categories" page
     And I click on "Create a new business category"
     When I fill in the form with data :
       | Category Name    | Category Description    |
@@ -48,11 +48,11 @@ Feature: As an admin
 
   Scenario: Listing Business Categories restricted for Non-admins
     Given I am logged in as "applicant@random.com"
-    And I am on the "admin business categories" page
+    And I am on the "business categories" page
     Then I should see "You are not authorized to perform this action."
 
 
   Scenario: Listing Business Categories restricted for visitors
     Given I am Logged out
-    And I am on the "admin business categories" page
+    And I am on the "business categories" page
     Then I should see "You are not authorized to perform this action."
