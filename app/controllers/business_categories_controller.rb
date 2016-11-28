@@ -1,8 +1,10 @@
 class BusinessCategoriesController < ApplicationController
   before_action :set_business_category, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_business_category, only: [:update, :show, :edit, :destroy]
 
 
   def index
+    authorize BusinessCategory
     @business_categories = BusinessCategory.all
   end
 
@@ -24,18 +26,18 @@ class BusinessCategoriesController < ApplicationController
     @business_category = BusinessCategory.new(business_category_params)
 
     if @business_category.save
-      format.html { redirect_to @business_category, notice: 'Business category was successfully created.' }
+      redirect_to @business_category, notice: 'The business category was successfully created.'
     else
-      format.html { render :new }
+      render :new
     end
   end
 
 
   def update
     if @business_category.update(business_category_params)
-      format.html { redirect_to @business_category, notice: 'Business category was successfully updated.' }
+      redirect_to @business_category, notice: 'The business category was successfully updated.'
     else
-      format.html { render :edit }
+      render :edit
     end
 
   end
@@ -44,7 +46,7 @@ class BusinessCategoriesController < ApplicationController
   def destroy
     @business_category.destroy
 
-    format.html { redirect_to business_categories_url, notice: 'Business category was successfully destroyed.' }
+    redirect_to business_categories_url, notice: 'The business category was successfully destroyed.'
 
   end
 
@@ -59,5 +61,9 @@ class BusinessCategoriesController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def business_category_params
     params.require(:business_category).permit(:name, :description)
+  end
+
+  def authorize_business_category
+    authorize @business_category
   end
 end
