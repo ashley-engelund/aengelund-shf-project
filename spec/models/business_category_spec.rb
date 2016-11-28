@@ -1,5 +1,20 @@
 require 'rails_helper'
 
 RSpec.describe BusinessCategory, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+
+  describe 'Factory' do
+    it 'has a valid factory' do
+      expect(create(:business_category)).to be_valid
+    end
+  end
+
+  describe 'DB Table' do
+    it { is_expected.to have_db_column :id }
+    it { is_expected.to have_db_column :name }
+    it { is_expected.to have_db_column :description }
+  end
+
+  describe 'Validations' do
+    it { is_expected.to validate_presence_of :name }
+  end
 end
