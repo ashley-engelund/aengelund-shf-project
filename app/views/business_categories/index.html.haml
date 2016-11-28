@@ -1,23 +1,24 @@
-%h1 Business Categories
-
-%table
-  %thead
-    %tr
-      %th Name
-      %th Description
-      %th
-      %th
-      %th
-
-  %tbody
-    - @business_categories.each do |business_category|
+%header.entry-header
+  %h1.entry-title Business Categories
+.post-title-divider
+  %span
+.entry-content
+  %table
+    %thead
       %tr
-        %td= business_category.name
-        %td= business_category.description
-        %td= link_to 'Show', business_category
-        %td= link_to 'Edit', edit_business_category_path(business_category)
-        %td= link_to 'Delete', business_category, :method => :delete, :data => { :confirm => 'Are you sure?' }
-
-%br
-
-= link_to 'Create a new business category', new_business_category_path
+        %th Name
+        %th Description
+        %th
+        %th
+        %th
+    %tbody
+      - @business_categories.each do |business_category|
+        %tr
+          %td= business_category.name
+          %td= business_category.description
+          %td= link_to 'Show', business_category
+          %td= link_to 'Edit', edit_business_category_path(business_category)
+          %td= link_to 'Delete', business_category, method: :delete, data: { :confirm => 'Are you sure?' }
+  %br
+  .center
+    = link_to 'Create a new business category', new_business_category_path
