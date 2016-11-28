@@ -1,6 +1,10 @@
-%h1 Editing business_category
+%header.entry-header
+  %h1.entry-title= "Editing Business Category: #{@business_category.name}"
+.post-title-divider
+  %span
 
-= render 'form'
+.entry-content.wpcf7
+  = render 'form'
 
 = link_to 'Show', @business_category
 \|

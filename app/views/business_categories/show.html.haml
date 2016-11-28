@@ -1,11 +1,14 @@
-%p#notice= notice
-
-%p
-  %b Name:
-  = @business_category.name
-%p
-  %b Description:
-  = @business_category.description
+%header.entry-header
+  %h1.entry-title= "Business Category: #{@business_category.name}"
+.post-title-divider
+  %span
+.entry-content
+  %p
+    %b Name:
+    = @business_category.name
+  %p
+    %b Description:
+    = @business_category.description
 
 = link_to 'Edit', edit_business_category_path(@business_category)
 \|
