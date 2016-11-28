@@ -1,16 +1,13 @@
 = form_for @business_category do |f|
   - if @business_category.errors.any?
-    #error_explanation
-      %h2= "#{pluralize(@business_category.errors.count, "error")} prohibited this business_category from being saved:"
-      %ul
-        - @business_category.errors.full_messages.each do |msg|
-          %li= msg
+    .wpcf7-response-output
+      - @business_category.errors.full_messages.each do |msg|
+        = msg
 
-  .field
-    = f.label :name, 'Category Name'
-    = f.text_field :name
-  .field
-    = f.label :description, 'Category Description'
-    = f.text_field :description
-  .actions
-    = f.submit 'Save'
+  = f.label :name, 'Category Name'
+  = f.text_field :name, class: 'wpcf7-form-control'
+
+  = f.label :description, 'Category Description'
+  = f.text_field :description, class: 'wpcf7-form-control'
+
+  = f.submit 'Save'
