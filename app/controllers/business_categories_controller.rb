@@ -46,7 +46,7 @@ class BusinessCategoriesController < ApplicationController
   def destroy
     @business_category.destroy
 
-    redirect_to business_categories_url, notice: 'The business category was successfully destroyed.'
+    redirect_to business_categories_url, notice: 'The business category was successfully deleted.'
 
   end
 
