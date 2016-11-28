@@ -1,5 +1,5 @@
 %header.entry-header
-  %h1.entry-title= "Business Category: #{@business_category.name}"
+  %h1.entry-title= 'Business Category: ' "#{@business_category.name}"
 .post-title-divider
   %span
 .entry-content
@@ -9,7 +9,7 @@
   %p
     %b Description:
     = @business_category.description
-
-= link_to 'Edit', edit_business_category_path(@business_category)
-\|
-= link_to 'Back', business_categories_path
+.center
+  = link_to 'Edit', edit_business_category_path(@business_category)
+  \|
+  = link_to 'All Business Categories', business_categories_path
