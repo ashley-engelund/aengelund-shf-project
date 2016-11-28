@@ -20,7 +20,6 @@ Feature: As an admin
       | Category Name    | Category Description    |
       | <category_name> | <category_description> |
     And I click on "Save"
- #   And I should be on "a business category" page
     And I should see "The business category was successfully created."
     And I should see "<category_name>"
 
