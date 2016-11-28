@@ -37,7 +37,7 @@ Feature: As an admin
     Then I should see "Editing Business Category: dog crooning"
     And I fill in "Category Name" with ""
     And I click on "Save"
-    Then I should see "error prohibited this business_category from being saved"
+    Then I should see "Name can't be blank"
 
 
   Scenario: A non-admin user cannot edit business categories
