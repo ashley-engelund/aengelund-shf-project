@@ -17,11 +17,11 @@ Feature: As an admin
     Given I am on the "admin business categories" page
     And I click on "Create a new business category"
     When I fill in the form with data :
-      | Company Name    | Company Description    |
+      | Category Name    | Category Description    |
       | <category_name> | <category_description> |
-    And I click on "Submit"
-    And I should be on "admin business categories" page
-    And I should see "The business category has been created."
+    And I click on "Save"
+ #   And I should be on "a business category" page
+    And I should see "The business category was successfully created."
     And I should see "<category_name>"
 
     Scenarios:
@@ -35,15 +35,15 @@ Feature: As an admin
     Given I am on the "admin business categories" page
     And I click on "Create a new business category"
     When I fill in the form with data :
-      | Company Name    | Company Description    |
+      | Category Name    | Category Description    |
       | <category_name> | <category_description> |
-    When I click on "Submit"
+    When I click on "Save"
     Then I should see <error>
 
     Scenarios:
       | category_name | category_description | error                         |
-      |               |                      | "Company name can't be blank" |
-      |               | some description     | "Company name can't be blank" |
+      |               |                      | "Name can't be blank" |
+      |               | some description     | "Name can't be blank" |
 
 
   Scenario: Listing Business Categories restricted for Non-admins
