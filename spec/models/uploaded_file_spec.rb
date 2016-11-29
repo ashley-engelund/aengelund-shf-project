@@ -2,6 +2,38 @@ require 'rails_helper'
 
 RSpec.describe UploadedFile, type: :model do
 
+  describe 'Factory' do
+    it 'has a valid factory' do
+      expect(create(:uploaded_file)).to be_valid
+    end
+  end
+
+  describe 'DB Table' do
+    it { is_expected.to have_db_column :id }
+    it { is_expected.to have_db_column :title }
+    it { is_expected.to have_db_column :description }
+    it { is_expected.to have_db_column :actual_file_file_name }
+    it { is_expected.to have_db_column :actual_file_content_type }
+    it { is_expected.to have_db_column :actual_file_file_size }
+    it { is_expected.to have_db_column :actual_file_updated_at }
+  end
+
+  describe 'Validations' do
+
+    it { should validate_attachment_content_type(:actual_file)
+                    .allowing('image/jpeg', 'image/gif', 'image/png',
+                              'text/plain',
+                              'text/rtf',
+                              'application/pdf',
+                              'application/msword')
+                    .rejecting('bin', 'exe') }
+  end
+
+  describe 'Associations' do
+    it { is_expected.to belong_to :membership_application }
+    it { should have_attached_file :actual_file }
+  end
+
   describe "accepted content types" do
     it "png" do
       expect(build(:uploaded_file, :png)).to be_valid
