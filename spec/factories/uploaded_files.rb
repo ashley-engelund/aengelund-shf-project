@@ -24,6 +24,17 @@ FactoryGirl.define do
       actual_file { File.new(File.join(FIXTURE_DIR, 'specifications.txt')) }
     end
 
+    trait :doc do
+      actual_file { File.new(File.join(FIXTURE_DIR, 'microsoft-word.doc')) }
+    end
+    trait :docx do
+      actual_file { File.new(File.join(FIXTURE_DIR, 'microsoft-word.docx')) }
+    end
+    trait :docm do
+      actual_file { File.new(File.join(FIXTURE_DIR, 'microsoft-word.docm')) }
+    end
+
+
     trait :exe do
       actual_file { File.new(File.join(FIXTURE_DIR, 'tred.exe')) }
     end
