@@ -10,7 +10,6 @@ class MembershipApplication < ApplicationRecord
                         :status
   validates_length_of :company_number, is: 10
   validates_format_of :contact_email, with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, on: [:create, :update]
-  accepts_nested_attributes_for :uploaded_files, allow_destroy: true,
-                                reject_if: lambda {|attributes| attributes['actual_file_file_name'].blank?}
+  accepts_nested_attributes_for :uploaded_files, allow_destroy: true
 
 end
