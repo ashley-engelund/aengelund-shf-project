@@ -1,13 +1,12 @@
 class MembershipApplicationsController < ApplicationController
-  before_action :get_membership_application, only: [:show, :edit, :update]
-  before_action :authorize_membership_application, only: [:update, :show, :edit]
-
+before_action :get_membership_application, only: [:show, :edit, :update]
+before_action :authorize_membership_application, only: [ :update, :show, :edit]
 
   def new
     @membership_application = MembershipApplication.new
+    @business_categories = BusinessCategory.all
     @uploaded_file = @membership_application.uploaded_files.build
   end
-
 
   def create
     @membership_application = current_user.membership_applications.new(membership_application_params)
@@ -21,22 +20,18 @@ class MembershipApplicationsController < ApplicationController
     end
   end
 
-
   def index
     authorize MembershipApplication
     @membership_applications = MembershipApplication.all
   end
 
-
   def show
-
+    @categories = @membership_application.business_categories
   end
-
 
   def edit
-
+    @business_categories = BusinessCategory.all
   end
-
 
   def update
     if @membership_application.update(membership_application_params)
@@ -58,15 +53,14 @@ class MembershipApplicationsController < ApplicationController
     params.require(:membership_application).permit(*policy(@membership_application || MembershipApplication).permitted_attributes)
   end
 
-
   def get_membership_application
     @membership_application = MembershipApplication.find(params[:id])
   end
 
-
   def authorize_membership_application
     authorize @membership_application
   end
+
 
 
   def new_upload_file(upload_file_param)

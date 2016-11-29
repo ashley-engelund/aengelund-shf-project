@@ -1,21 +1,22 @@
 class MembershipApplicationPolicy < ApplicationPolicy
 
   def user_owner_attributes
-    [:company_name,
+    [:first_name,
+     :last_name,
      :company_number,
-     :contact_person,
-     :company_email,
+     :contact_email,
      :phone_number,
+     {business_category_ids: []},
      :uploaded_files,
      uploaded_files_attributes: [:id,
-                                 :title,
-                                 :description,
-                                 :actual_file,
-                                 :actual_file_file_name,
-                                 :actual_file_file_size,
-                                 :actual_file_content_type,
-                                 :actual_file_updated_at,
-                                 :_destroy]
+                                :title,
+                                :description,
+                                :actual_file,
+                                :actual_file_file_name,
+                                :actual_file_file_size,
+                                :actual_file_content_type,
+                                :actual_file_updated_at,
+                                :_destroy]
     ]
   end
 
