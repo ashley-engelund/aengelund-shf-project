@@ -25,7 +25,9 @@ RSpec.describe UploadedFile, type: :model do
                               'text/plain',
                               'text/rtf',
                               'application/pdf',
-                              'application/msword')
+                              'application/msword',
+                              'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                              'application/vnd.ms-word.document.macroEnabled.12')
                     .rejecting('bin', 'exe') }
   end
 
@@ -50,6 +52,15 @@ RSpec.describe UploadedFile, type: :model do
     end
     it "txt" do
       expect(build(:uploaded_file, :txt)).to be_valid
+    end
+    it "Microsoft Word doc" do
+      expect(build(:uploaded_file, :doc)).to be_valid
+    end
+    it "Microsoft Word .docx" do
+      expect(build(:uploaded_file, :docx)).to be_valid
+    end
+    it "Microsoft Word macro enabled doc (.docm)" do
+      expect(build(:uploaded_file, :docm)).to be_valid
     end
 
   end
