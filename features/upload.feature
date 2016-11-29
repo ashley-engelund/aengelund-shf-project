@@ -28,43 +28,41 @@ Feature: As an applicant
     Given the following users exists
       | email                  |
       | applicant_1@random.com |
+      | applicant_2@random.com |
 
 
     And the following applications exist:
-      | company_name       | user_email             |
-      | My Dog Business    | applicant_1@random.com |
+      | first_name | user_email             | company_number |
+      | Emma       | applicant_1@random.com | 1234561234     |
 
-    And I am logged in as "applicant_1@random.com"
 
 
   Scenario: Upload a file during a new application
-    Given I am on the "submit new membership application" page
-    When I choose a file named "diploma.pdf" to upload
-    And I fill in "Company Name" with "Craft Academy"
-    And I fill in "Company Number" with "1234561234"
-    And I fill in "Contact Person" with "Thomas"
-    And I fill in "Company Email" with "info@craft.se"
+    Given I am logged in as "applicant_2@random.com"
+    And I am on the "submit new membership application" page
+    And I fill in "First Name" with "Hans"
+    And I fill in "Last Name" with "Newfoundland"
+    And I fill in "Company Number" with "2234561234"
+    And I fill in "Contact Email" with "applicant_2@random.com"
     And I fill in "Phone Number" with "031-1234567"
+    And I choose a file named "diploma.pdf" to upload
     And I click on "Submit"
     And I am on the "edit my application" page
     Then I should see "Files uploaded for this application:"
     And I should see "diploma.pdf" uploaded for this membership application
 
   Scenario: Upload a file for an existing application
-    Given I am on the "edit my application" page
+    Given I am logged in as "applicant_1@random.com"
+    And I am on the "edit my application" page
     When I choose a file named "diploma.pdf" to upload
-    And I fill in "Company Name" with "Craft Academy"
-    And I fill in "Company Number" with "1234561234"
-    And I fill in "Contact Person" with "Thomas"
-    And I fill in "Company Email" with "info@craft.se"
-    And I fill in "Phone Number" with "031-1234567"
     And I click on "Submit"
     Then I should see "Files uploaded for this application:"
     And I should see "diploma.pdf" uploaded for this membership application
 
 
   Scenario: Upload a second file
-    Given I am on the "edit my application" page
+    Given I am logged in as "applicant_1@random.com"
+    And I am on the "edit my application" page
     When I choose a file named "diploma.pdf" to upload
     And I click on "Submit"
     And I am on the "edit my application" page
@@ -76,7 +74,8 @@ Feature: As an applicant
     And I should see 2 uploaded files listed
 
   Scenario: Upload multiple files at one time (multiple select)
-    Given I am on the "edit my application" page
+    Given I am logged in as "applicant_1@random.com"
+    And I am on the "edit my application" page
     When I choose the files named ["picture.jpg", "picture.png", "diploma.pdf"] to upload
     And I click on "Submit"
     Then I should see "Files uploaded for this application:"
@@ -87,7 +86,8 @@ Feature: As an applicant
 
 
   Scenario: Try to upload a file with unacceptable content type
-    Given I am on the "edit my application" page
+    Given I am logged in as "applicant_1@random.com"
+    And I am on the "edit my application" page
     When I choose a file named "tred.exe" to upload
     And I click on "Submit"
     Then I should see "Sorry, this is not a file type you can upload."
@@ -97,7 +97,8 @@ Feature: As an applicant
 
 
   Scenario: User deletes a file that was uploaded
-    Given I am on the "edit my application" page
+    Given I am logged in as "applicant_1@random.com"
+    And I am on the "edit my application" page
     When I choose a file named "diploma.pdf" to upload
     And I click on "Submit"
     And I am on the "edit my application" page
