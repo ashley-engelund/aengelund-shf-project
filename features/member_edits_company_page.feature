@@ -6,29 +6,30 @@ Feature: As a member
 
   Background:
     Given the following users exists
-      | email                  | admin | is_member |
-      | applicant_1@random.com |       | true      |
-      | applicant_2@random.com |       |           |
-      | admin@shf.se           | true  |           |
-
+      | email                  | admin |
+      | applicant_1@random.com |       |
+      | admin@shf.se           | true  |
 
     And the following applications exist:
-      | first_name | user_email             | status   |
-      | Emma       | applicant_1@random.com | approved |
-
+      | first_name | user_email             | status   | business_category |
+      | Emma       | applicant_1@random.com | approved | Awesome           |
 
   Scenario: Member goes to company page after membership approval
     Given I am logged in as "applicant_1@random.com"
-    And I click on "my company page"
+    And I am on the "landing" page
+    When I click on "My Company"
+    And I fill in the form with data :
+      | Company Name | Street          | Post Code | City   | Region    | Company Email        | Company Website           | Social media                        |
+      | Glada Jyckar | Ålstensgatan 4  | 123 45    | Bromma | Stockholm | kicki@gladajyckar.se | http://www.gladajyckar.se | http://www.facebook.com/gladajyckar |
     And I click on "Submit"
     Then I should see "The company information was saved successfully."
-    And I should be on "" page
-    And I should see ""
+    And I should be on "View Company" page
+    And I should see "123 45, Bromma"
+    #needs to show the category from the application
+    And I should see "Awesome"
 
-
-
-  Scenario: User tries to go do company page (sad path)
-    Given I am logged in as "applicant_2@random.com"
-    And I am on the "my company page" page
-    Then I should see "You are not authorized to do that action"
+#  Scenario: User tries to go do company page (sad path)
+#    Given I am logged in as "applicant_2@random.com"
+#    And I am on the "my company page" page
+#    Then I should see "You are not authorized to do that action"
 
