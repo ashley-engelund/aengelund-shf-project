@@ -33,7 +33,7 @@ Feature: As an applicant
 
     And the following applications exist:
       | first_name | user_email             | company_number |
-      | Emma       | applicant_1@random.com | 1234561234     |
+      | Emma       | applicant_1@random.com | 5562252998     |
 
 
 
