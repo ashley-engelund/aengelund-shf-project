@@ -1,0 +1,3 @@
+.flashes
+  - flash.each do |key, value|
+    %div{class: "alert alert-#{flash_class(key)} center"}= safe_join(value, '<br/>'.html_safe)
