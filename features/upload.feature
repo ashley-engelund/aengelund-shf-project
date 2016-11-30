@@ -3,27 +3,6 @@ Feature: As an applicant
   I need to be able to upload files
   PT: https://www.pivotaltracker.com/story/show/133109591
 
-
-  ##--
-  # Here's another way to state the feature:
-  #
-  # As a potential member
-  # So that I can provide proof of my professional education
-  # And qualify for membership
-  # I need to upload a file with the education information
-  # And attach it to my membership application
-
-  ##
-  #As an admin
-  #So that I can accept or reject a membership application
-  #I need to view any files attached to a membership application
-
-
-  # given I'm applying for a members  I'm on on a membership page...
-  # I should be able to click a button to attach/ upload a document
-  #   (must be able to submit the application in order have documents uploaded)
-
-
   Background:
     Given the following users exists
       | email                  |
@@ -34,8 +13,6 @@ Feature: As an applicant
     And the following applications exist:
       | first_name | user_email             | company_number |
       | Emma       | applicant_1@random.com | 1234561234     |
-
-
 
   Scenario: Upload a file during a new application
     Given I am logged in as "applicant_2@random.com"
@@ -58,7 +35,6 @@ Feature: As an applicant
     And I click on "Submit"
     Then I should see "Files uploaded for this application:"
     And I should see "diploma.pdf" uploaded for this membership application
-
 
   Scenario: Upload a second file
     Given I am logged in as "applicant_1@random.com"
@@ -84,7 +60,6 @@ Feature: As an applicant
     And I should see "picture.png" uploaded for this membership application
     And I should see 3 uploaded files listed
 
-
   Scenario: Try to upload a file with unacceptable content type
     Given I am logged in as "applicant_1@random.com"
     And I am on the "edit my application" page
@@ -92,9 +67,6 @@ Feature: As an applicant
     And I click on "Submit"
     Then I should see "Sorry, this is not a file type you can upload."
     And I should not see "not-accepted.exe" uploaded for this membership application
-
-  # as an admin, I should see the files uploaded for an application
-
 
   Scenario: User deletes a file that was uploaded
     Given I am logged in as "applicant_1@random.com"
@@ -105,7 +77,6 @@ Feature: As an applicant
     And I click on trash icon for "diploma.pdf"
     Then I should not see "diploma.pdf" uploaded for this membership application
 
-
   Scenario: User uploads a file to an existing membership application
     Given I am logged in as "applicant_1@random.com"
     And I am on the "edit my application" page
@@ -113,8 +84,3 @@ Feature: As an applicant
     And I click on "Submit"
     Then I should see "Files uploaded for this application:"
     And I should see "diploma.pdf" uploaded for this membership application
-
-
-  # Future scenario? (put in PT?) Admin needs to attach an emailed file to a user's membership application
-
-  # Future scenario? (put in PT?) Admin needs to delete a file attached to a user's membership information
