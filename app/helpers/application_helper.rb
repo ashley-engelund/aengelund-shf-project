@@ -5,4 +5,9 @@ module ApplicationHelper
       when :alert then 'danger'
     end
   end
+
+  def flash_message(type, text)
+    flash[type] ||= []
+    flash[type] << text
+  end
 end
