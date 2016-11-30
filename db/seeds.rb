@@ -8,5 +8,5 @@
 User.create(email: 'admin@sverigeshundforetagare.se', password: 'hundapor', admin: true)
 
 
-business_categories = ['Träning', 'Psykologi', 'Rehab', 'Butik', 'Trim', 'Friskvård', 'Dagis', 'Pensionat', 'Rastare', 'Sociala tjänstehundar (vårdhund mm)', 'Civila tjänstehundar (med en förare)', 'Skola']
+business_categories = ['Träning', 'Psykologi', 'Rehab', 'Butik', 'Trim', 'Friskvård', 'Dagis', 'Pensionat', 'Sociala tjänstehundar (vårdhund mm)', 'Civila tjänstehundar (med en förare)', 'Skola']
 business_categories.each { |b_category| BusinessCategory.create(name: b_category)}
