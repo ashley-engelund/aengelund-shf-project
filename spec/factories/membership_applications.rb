@@ -10,7 +10,7 @@ FactoryGirl.define do
     phone_number "MyString"
     contact_email "MyString@email.com"
     association :user
-
+    association :company
 
     transient do
       num_categories 1
