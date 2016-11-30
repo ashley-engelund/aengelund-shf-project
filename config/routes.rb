@@ -4,9 +4,6 @@ Rails.application.routes.draw do
   root to: 'application#index.html'
 
   resources :business_categories
-  resources :membership_applications, only: [:new, :create, :edit, :update, :index, :show]do
-    resources :uploaded_files
-  end
-
-
+  resources :membership_applications, only: [:new, :create, :edit, :update, :index, :show]
+  
 end
