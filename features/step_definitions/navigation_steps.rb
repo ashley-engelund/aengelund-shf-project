@@ -12,6 +12,10 @@ Given(/^I am on the "([^"]*)" page$/) do |page|
       path = companies_path
     when 'create a new company'
       path = new_company_path
+    when 'edit my company'
+      if @user
+        path = edit_company_path(@user.membership_applications.last.company) if @user.membership_applications.last && @user.membership_applications.last.company
+      end
     else
       path = 'no path set'
   end
