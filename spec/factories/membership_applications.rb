@@ -1,20 +1,19 @@
 FactoryGirl.define do
 
-  sequence(:cat_name_seq, "Business Category", 1) { |name, num| "#{name} #{num}" }
+  sequence(:cat_name_seq, 'Business Category', 1) { |name, num| "#{name} #{num}" }
 
   factory :membership_application do
-
-    first_name "Firstname"
-    last_name "Lastname"
-    company_number '1111111111'
-    phone_number "MyString"
-    contact_email "MyString@email.com"
+    first_name 'Firstname'
+    last_name 'Lastname'
+    company_number '5562252998'
+    phone_number 'MyString'
+    contact_email 'MyString@email.com'
     association :user
     association :company
 
     transient do
       num_categories 1
-      category_name "Business Category"
+      category_name 'Business Category'
     end
 
     after(:build) do |membership_app, evaluator|
