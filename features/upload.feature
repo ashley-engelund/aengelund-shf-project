@@ -12,14 +12,14 @@ Feature: As an applicant
 
     And the following applications exist:
       | first_name | user_email             | company_number |
-      | Emma       | applicant_1@random.com | 1234561234     |
+      | Emma       | applicant_1@random.com | 5562252998     |
 
   Scenario: Upload a file during a new application
     Given I am logged in as "applicant_2@random.com"
     And I am on the "submit new membership application" page
     And I fill in "First Name" with "Hans"
     And I fill in "Last Name" with "Newfoundland"
-    And I fill in "Company Number" with "2234561234"
+    And I fill in "Company Number" with "5560360793"
     And I fill in "Contact Email" with "applicant_2@random.com"
     And I fill in "Phone Number" with "031-1234567"
     And I choose a file named "diploma.pdf" to upload
