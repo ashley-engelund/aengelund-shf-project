@@ -15,5 +15,5 @@ Feature: As an Admin
     When the system is seeded with initial data
     And I am on the "business categories" page
     Then I should see "Business Categories"
-    And I should see 12 business_category rows
+    And I should see 11 business_category rows
 
