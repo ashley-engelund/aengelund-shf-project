@@ -1,23 +1,10 @@
 class MembershipApplicationsController < ApplicationController
-before_action :get_membership_application, only: [:show, :edit, :update]
-before_action :authorize_membership_application, only: [ :update, :show, :edit]
-
+  before_action :get_membership_application, only: [:show, :edit, :update]
+  before_action :authorize_membership_application, only: [ :update, :show, :edit]
   def new
     @membership_application = MembershipApplication.new
     @business_categories = BusinessCategory.all
     @uploaded_file = @membership_application.uploaded_files.build
-  end
-
-  def create
-    @membership_application = current_user.membership_applications.new(membership_application_params)
-    if @membership_application.save
-      new_upload_file params['uploaded_file'] if params['uploaded_file']
-
-      flash[:notice] = 'Thank you, Your application has been submitted'
-      redirect_to root_path
-    else
-      render :new
-    end
   end
 
   def index
@@ -33,6 +20,19 @@ before_action :authorize_membership_application, only: [ :update, :show, :edit]
     @business_categories = BusinessCategory.all
   end
 
+  def create
+    @membership_application = current_user.membership_applications.new(membership_application_params)
+    if @membership_application.save
+      new_upload_file params['uploaded_file'] if params['uploaded_file']
+
+      flash[:notice] = 'Thank you, Your application has been submitted'
+      redirect_to root_path
+    else
+      flash[:alert] = 'A problem prevented the membership application to be created'
+      render :new
+    end
+  end
+
   def update
     if @membership_application.update(membership_application_params)
       new_upload_file params['uploaded_file'] if params['uploaded_file']
@@ -42,11 +42,10 @@ before_action :authorize_membership_application, only: [ :update, :show, :edit]
       render :show
     else
       flash[:alert] = 'A problem prevented the membership
-                       application to be saved'
+                      application to be saved'
       redirect_to edit_membership_application_path(@membership_application)
     end
   end
-
 
   private
   def membership_application_params
