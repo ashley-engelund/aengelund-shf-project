@@ -20,6 +20,7 @@
         %th Mail
         %th Län
         %th Hemsida
+        %th Org nr
         -if current_user.try(:admin)
           %th
           %th
@@ -32,6 +33,7 @@
           %td= company.email
           %td= company.region
           %td= company.website
+          %td= company.company_number
           -if current_user.try(:admin)
             %td= link_to 'Show', company
             %td= link_to 'Edit', edit_company_path(company)
@@ -39,4 +41,4 @@
   %br
   .center
     -if current_user.try(:admin)
-      = link_to 'Create a Company', new_company_path
+      = link_to 'Skapa nytt företag', new_company_path

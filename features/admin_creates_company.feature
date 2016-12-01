@@ -37,8 +37,8 @@ Feature: As an admin
     Given I am logged in as "admin@shf.se"
     When I am on the "create a new company" page
     And I fill in the form with data :
-      | Name        | Organization Number | Street         | Post Code | City   | Region    | Email                | Website                   |
-      | Happy Mutts | 5562252998          | Ålstensgatan 4 | 123 45    | Bromma | Stockholm | kicki@gladajyckar.se | http://www.gladajyckar.se |
+      | Företagsnamn | Org nr     | Gata           | Post nr | Ort   | Verksamhetslän | Email                | Webbsida                  |
+      | Happy Mutts  | 5562252998 | Ålstensgatan 4 | 123 45  | Bromma | Stockholm      | kicki@gladajyckar.se | http://www.gladajyckar.se |
     And I select "Groomer" Category
     And I select "Trainer" Category
     And I click on "Submit"
@@ -54,8 +54,8 @@ Feature: As an admin
     Given I am logged in as "admin@shf.se"
     When I am on the "create a new company" page
     And I fill in the form with data :
-      | Name   | Organization Number | Email   | Phone Number | Street   | Post Code   | City   | Region   | Website   |
-      | <name> | <org_number>        | <email> | <phone>      | <street> | <post_code> | <city> | <region> | <website> |
+      | Företagsnamn | Org nr       | Email   | Telefon | Gata     | Post nr     | Ort   | Verksamhetslän | Webbsida  |
+      | <name>       | <org_number> | <email> | <phone> | <street> | <post_code> | <city> | <region>       | <website> |
     When I click on "Submit"
     Then I should see <error>
     And I should see "A problem prevented the company from being created."
@@ -73,7 +73,7 @@ Feature: As an admin
     When I am on the "all companies" page
     And I click the "Edit" action for the row with "5560360793"
     And I fill in the form with data :
-      | Email                | Website                      |
+      | Email                | Webbsida                     |
       | kicki@gladajyckar.se | http://www.snarkybarkbark.se |
     And I select "Groomer" Category
     And I select "Trainer" Category
@@ -87,8 +87,8 @@ Feature: As an admin
     When I am on the "all companies" page
     And I click the "Edit" action for the row with "5560360793"
     And I fill in the form with data :
-      | Name   | Organization Number | Email   | Phone Number | Street   | Post Code   | City   | Region   | Website   |
-      | <name> | <org_number>        | <email> | <phone>      | <street> | <post_code> | <city> | <region> | <website> |
+      | Företagsnamn | Org nr       | Email   | Telefon | Gata     | Post nr     | Ort   | Verksamhetslän | Webbsida  |
+      | <name>       | <org_number> | <email> | <phone> | <street> | <post_code> | <city> | <region>       | <website> |
     When I click on "Submit"
     Then I should see <error>
     And I should see "A problem prevented the company from being updated."
@@ -108,16 +108,6 @@ Feature: As an admin
   Scenario: User tries to create a company
     Given I am logged in as "applicant_1@happymutts.com"
     And I am on the "create a new company" page
-    Then I should see "You are not authorized to perform this action"
-
-  Scenario: User tries to view all companies
-    Given I am logged in as "applicant_1@happymutts.com"
-    And I am on the "all companies" page
-    Then I should see "You are not authorized to perform this action"
-
-  Scenario: Visitor tries to view all companies
-    Given I am Logged out
-    And I am on the "all companies" page
     Then I should see "You are not authorized to perform this action"
 
   Scenario: Visitor tries to create a company
