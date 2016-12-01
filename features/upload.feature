@@ -75,14 +75,14 @@ Feature: As an applicant
     Then I should see "Sorry, this is not a file type you can upload."
     And I should not see "not-accepted.exe" uploaded for this membership application
 
- # Scenario: User deletes a file that was uploaded
- #   Given I am logged in as "applicant_1@random.com"
- #   And I am on the "edit my application" page
- #   When I choose a file named "diploma.pdf" to upload
- #   And I click on "Submit"
- #   And I am on the "edit my application" page
- #   And I click on trash icon for "diploma.pdf"
- #   Then I should not see "diploma.pdf" uploaded for this membership application
+  Scenario: User deletes a file that was uploaded
+    Given I am logged in as "applicant_1@random.com"
+    And I am on the "edit my application" page
+    When I choose a file named "diploma.pdf" to upload
+    And I click on "Submit"
+    And I am on the "edit my application" page
+    And I click on trash icon for "diploma.pdf"
+    Then I should not see "diploma.pdf" uploaded for this membership application
 
   Scenario: User uploads a file to an existing membership application
     Given I am logged in as "applicant_1@random.com"
