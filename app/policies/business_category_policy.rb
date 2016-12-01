@@ -8,6 +8,14 @@ class BusinessCategoryPolicy < ApplicationPolicy
     new?
   end
 
+  def new?
+    is_admin?
+  end
+
+  def create?
+    new?
+  end
+
   def show?
     true
   end
