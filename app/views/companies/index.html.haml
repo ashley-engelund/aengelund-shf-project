@@ -1,38 +1,42 @@
 %header.entry-header
-  %h1.entry-title Companies
+  -unless current_user.try(:admin)
+    %h1.entry-title Hitta SHF-medlem
+  -if current_user.try(:admin)
+    %h1.entry-title Redigera medlemsföretag
 .post-title-divider
   %span
 .entry-content
+  -unless current_user.try(:admin)
+    %p
+      Nedan listas anslutna H-märkta företag
+      Vi arbetar febrilt på att få denna sida mycket bättre, till dess kan du
+      söka i listan på datorn med ctrl+F(PC) eller cmd+F(mac)
+
   %table
     %thead
       %tr
-        %th Name
-        %th Organization Number
-        %th Phone Number
-        %th Email
-        %th Street
-        %th Post Code
-        %th City
-        %th Region
-        %th Website
-        %th
-        %th
-        %th
+        %th Namn
+        %th Tel
+        %th Mail
+        %th Län
+        %th Hemsida
+        -if current_user.try(:admin)
+          %th
+          %th
+          %th
     %tbody
       - @companies.each do |company|
         %tr.company
           %td= company.name
-          %td= company.company_number
           %td= company.phone_number
           %td= company.email
-          %td= company.street
-          %td= company.post_code
-          %td= company.city
           %td= company.region
           %td= company.website
-          %td= link_to 'Show', company
-          %td= link_to 'Edit', edit_company_path(company)
-          %td= link_to 'Delete', company, method: :delete, data: { :confirm => 'Are you sure?' }
+          -if current_user.try(:admin)
+            %td= link_to 'Show', company
+            %td= link_to 'Edit', edit_company_path(company)
+            %td= link_to 'Delete', company, method: :delete, data: { :confirm => 'Are you sure?' }
   %br
   .center
-    = link_to 'Create a Company', new_company_path
+    -if current_user.try(:admin)
+      = link_to 'Create a Company', new_company_path

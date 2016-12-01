@@ -7,7 +7,7 @@ class CompanyPolicy < ApplicationPolicy
 
 
   def index?
-    is_admin?
+    true
   end
 
 
