@@ -1,6 +1,6 @@
 FactoryGirl.define do
 
-  sequence(:cat_name_seq, "Business Category", 1) { |name, num| "#{name} #{num}" }
+  sequence(:cat_name_seq, 'Business Category', 1) { |name, num| "#{name} #{num}" }
 
   factory :membership_application do
     first_name 'Firstname'
@@ -13,7 +13,7 @@ FactoryGirl.define do
 
     transient do
       num_categories 1
-      category_name "Business Category"
+      category_name 'Business Category'
     end
 
     after(:build) do |membership_app, evaluator|
