@@ -25,10 +25,12 @@ class MembershipApplicationsController < ApplicationController
     if @membership_application.save
       new_upload_file params['uploaded_file'] if params['uploaded_file']
 
-      flash[:notice] = 'Thank you, Your application has been submitted'
+      helpers.flash_message(:notice,
+                            'Thank you, Your application has been submitted')
       redirect_to root_path
     else
-      flash[:alert] = 'A problem prevented the membership application to be created'
+      helpers.flash_message(:alert,
+        'A problem prevented the membership application to be created')
       render :new
     end
   end
@@ -37,12 +39,12 @@ class MembershipApplicationsController < ApplicationController
     if @membership_application.update(membership_application_params)
       new_upload_file params['uploaded_file'] if params['uploaded_file']
 
-      flash[:notice] = 'Membership Application
-                        successfully updated'
+      helpers.flash_message(:notice,
+                            'Membership Application successfully updated')
       render :show
     else
-      flash[:alert] = 'A problem prevented the membership
-                      application to be saved'
+      helpers.flash_message(:alert,
+        'A problem prevented the membership application to be saved')
       redirect_to edit_membership_application_path(@membership_application)
     end
   end
@@ -68,9 +70,10 @@ class MembershipApplicationsController < ApplicationController
 
         @uploaded_file = @membership_application.uploaded_files.create(actual_file: upload_file)
         if @uploaded_file.valid?
-          flash[:notice] = "The file was uploaded: #{@uploaded_file.actual_file_file_name}"
+          helpers.flash_message(:notice,
+               "The file was uploaded: #{@uploaded_file.actual_file_file_name}")
         else
-          flash[:error] = @uploaded_file.errors.messages
+          helpers.flash_message :alert, @uploaded_file.errors.messages
         end
       end
 
