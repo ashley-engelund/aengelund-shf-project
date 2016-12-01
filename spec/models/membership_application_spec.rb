@@ -50,6 +50,20 @@ RSpec.describe MembershipApplication, type: :model do
     it { is_expected.to belong_to :company }
   end
 
+  describe "Uploaded Files" do
+
+    let(:application_owner) { create(:user, email: 'user_1@random.com') }
+    let(:application_owner2) { create(:user, email: 'user_2@random.com') }
+
+    it 'uploading a file increases the number of uploaded files by 1' do
+      expect { create(:membership_application, user: application_owner, uploaded_files: [ create(:uploaded_file, actual_file: (File.new(File.join(FIXTURE_DIR, 'image.jpg'))) ) ]) }.to change(UploadedFile, :count).by(1)
+    end
+
+  end
+
+
+
+
   describe 'test factories' do
 
     it 'default: 1 category with default category name' do

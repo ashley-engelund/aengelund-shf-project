@@ -11,11 +11,12 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'haml-rails'
 gem 'bootstrap-sass', '~> 3.3.6'
 gem 'font-awesome-sass'
+gem 'high_voltage', '~> 3.0.0'
 gem 'orgnummer'
-
 
 gem 'devise'
 gem 'pundit'
+gem 'paperclip', '~> 5.0.0'
 
 group :development, :test do
   gem 'rspec-rails'

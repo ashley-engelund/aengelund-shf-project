@@ -13,7 +13,6 @@
 !/log/.keep
 !/tmp/.keep
 
-
 # Ignore Byebug command history file.
 .byebug_history
 
@@ -26,6 +25,6 @@ coverage/
 /log
 .DS_Store
 
-# uploaded files
-/spec/test_paperclip_files/
-/public/system/uploaded_files/
+
+#ignore dev test files
+public/system/
