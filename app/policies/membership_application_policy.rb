@@ -9,8 +9,6 @@ class MembershipApplicationPolicy < ApplicationPolicy
      {business_category_ids: []},
      :uploaded_files,
      uploaded_files_attributes: [:id,
-                                :title,
-                                :description,
                                 :actual_file,
                                 :actual_file_file_name,
                                 :actual_file_file_size,
