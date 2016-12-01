@@ -12,7 +12,7 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
-  describe '#flash_message' do
+  describe '#flash_message and #render_flash_message' do
 
     before(:each) do
       @flash_type = :blorf
@@ -24,20 +24,22 @@ RSpec.describe ApplicationHelper, type: :helper do
 
     describe 'adds message to nil flash[type]' do
       it { expect(flash[@flash_type].count).to eq 1 }
-      it {  expect(flash[@flash_type].first).to eq @first_message }
+      it { expect(flash[@flash_type].first).to eq @first_message }
+      it { expect(helper.render_flash_message(flash[@flash_type])).to eq @first_message }
     end
 
 
     describe 'adds message to a flash[type] that already has messages' do
 
-     before (:each) do
-      helper.flash_message @flash_type, @second_message
-     end
+      before (:each) do
+        helper.flash_message @flash_type, @second_message
+      end
 
-     it {expect(flash[@flash_type].count).to eq 2}
-     it {expect(flash[@flash_type].first).to eq @first_message}
-     it {expect(flash[@flash_type].last).to eq @second_message}
-     it {expect(flash[@flash_type]).to eq [@first_message, @second_message]}
+      it { expect(flash[@flash_type].count).to eq 2 }
+      it { expect(flash[@flash_type].first).to eq @first_message }
+      it { expect(flash[@flash_type].last).to eq @second_message }
+      it { expect(flash[@flash_type]).to eq [@first_message, @second_message] }
+      it { expect(helper.render_flash_message(flash[@flash_type])).to eq(safe_join([@first_message, @second_message], '<br/>'.html_safe)) }
     end
 
 
@@ -50,10 +52,11 @@ RSpec.describe ApplicationHelper, type: :helper do
         helper.flash_message @f2_type, @second_message
       end
 
-      it {expect(flash[@f2_type].count).to eq 2}
-      it {expect(flash[@f2_type].first).to eq @first_message}
-      it {expect(flash[@f2_type].last).to eq @second_message}
-      it {expect(flash[@f2_type]).to eq [@first_message, @second_message]}
+      it { expect(flash[@f2_type].count).to eq 2 }
+      it { expect(flash[@f2_type].first).to eq @first_message }
+      it { expect(flash[@f2_type].last).to eq @second_message }
+      it { expect(flash[@f2_type]).to eq [@first_message, @second_message] }
+      it { expect(helper.render_flash_message(flash[@f2_type])).to eq(safe_join([@first_message, @second_message], '<br/>'.html_safe)) }
     end
 
   end
