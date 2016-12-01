@@ -8,6 +8,9 @@ module ApplicationHelper
 
   def flash_message(type, text)
     flash[type] ||= []
+    if flash[type].instance_of? String
+      flash[type] = [flash[type]]
+    end
     flash[type] << text
   end
 
