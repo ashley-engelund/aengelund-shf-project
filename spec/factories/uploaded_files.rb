@@ -1,7 +1,5 @@
 FactoryGirl.define do
   factory :uploaded_file do
-    title "some title"
-    description "some description"
 
     membership_application
 

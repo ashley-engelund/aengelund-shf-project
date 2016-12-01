@@ -10,8 +10,6 @@ RSpec.describe UploadedFile, type: :model do
 
   describe 'DB Table' do
     it { is_expected.to have_db_column :id }
-    it { is_expected.to have_db_column :title }
-    it { is_expected.to have_db_column :description }
     it { is_expected.to have_db_column :actual_file_file_name }
     it { is_expected.to have_db_column :actual_file_content_type }
     it { is_expected.to have_db_column :actual_file_file_size }
