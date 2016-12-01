@@ -6,7 +6,7 @@
 .post-title-divider
   %span
 .entry-content
-  -unless current_user.try(:admin)
+  - unless current_user.try(:admin)
     %p
       Nedan listas anslutna H-märkta företag
       Vi arbetar febrilt på att få denna sida mycket bättre, till dess kan du
@@ -34,11 +34,11 @@
           %td= company.region
           %td= company.website
           %td= company.company_number
-          -if current_user.try(:admin)
+          - if current_user.try(:admin)
             %td= link_to 'Show', company
             %td= link_to 'Edit', edit_company_path(company)
             %td= link_to 'Delete', company, method: :delete, data: { :confirm => 'Are you sure?' }
   %br
   .center
-    -if current_user.try(:admin)
+    - if current_user.try(:admin)
       = link_to 'Skapa nytt företag', new_company_path
