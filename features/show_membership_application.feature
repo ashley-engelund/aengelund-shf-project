@@ -20,7 +20,7 @@ Feature: As an Admin
 
     And the following applications exist:
       | first_name | user_email             | company_number | status   |
-      | Emma       | applicant_1@random.com | 5562252998     | approved |
+      | Emma       | applicant_1@random.com | 5562252998     | Accepted |
       | Hans       | applicant_2@random.com | 5560360793     | pending  |
       | Anna       | applicant_3@random.com | 2120000142     | pending  |
 
