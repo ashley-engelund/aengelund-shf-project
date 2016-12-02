@@ -52,7 +52,6 @@ Feature: As an Admin
     And I click on "Hans Lastname"
     Then I should be on the application page for "Hans"
     And I should see "Hans Lastname"
-    And I should see "5560360793"
     And I should see "Groomer"
     And I should not see "Trainer"
     And I should not see "Psychologist"
@@ -77,7 +76,7 @@ Feature: As an Admin
     And I should not see "Groomer"
 
   Scenario: Approved member should see membership number
-    Given I am logged in as "applicant_1@random.com"
+    Given I am logged in as "emma@random.com"
     And I am on the "landing" page
     And I click on "Min ansökan"
     Then I should see "Membership number"
