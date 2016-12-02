@@ -43,9 +43,9 @@ RSpec.describe Company, type: :model do
       employee2 = create(:user, email: 'emp2@happymutts.com')
       employee3 = create(:user, email: 'emp3@happymutts.com')
 
-      app1 = create(:membership_application, user: employee1, num_categories: 1, category_name: "cat1", company_number: '5562252998')
-      app2 = create(:membership_application, user: employee2, num_categories: 1, category_name: 'cat2', company_number: '5562252998')
-      app3 = create(:membership_application, user: employee3, num_categories: 1, category_name: 'cat3', company_number: '5562252998')
+      create(:membership_application, user: employee1, num_categories: 1, category_name: 'cat1', company_number: '5562252998')
+      create(:membership_application, user: employee2, num_categories: 1, category_name: 'cat2', company_number: '5562252998')
+      create(:membership_application, user: employee3, num_categories: 1, category_name: 'cat3', company_number: '5562252998')
 
       company = create(:company, company_number: '5562252998')
 
@@ -75,9 +75,9 @@ RSpec.describe Company, type: :model do
       app2 = create(:membership_application, user: employee2, company_number: '5562252998')
       app3 = create(:membership_application, user: employee3, company_number: '5562252998')
 
-      app1 = has_single_category(app1, category)
-      app2 = has_single_category(app2, category)
-      app3 = has_single_category(app3, category)
+      has_single_category(app1, category)
+      has_single_category(app2, category)
+      has_single_category(app3, category)
 
       expect(company.categories.count).to eq 1
       expect(company.categories.map { |c| c[:name] }).to contain_exactly('BusinessCategoryName')
