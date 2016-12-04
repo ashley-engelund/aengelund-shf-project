@@ -70,16 +70,18 @@ class MembershipApplicationsController < ApplicationController
   end
 
   def accept_application
-    # FIXME prompt for the membership number? generating it right now
-    @membership_application.membership_number = Time.now.year - 2000 + MembershipApplication.last.id + 1
-    @membership_application.user.is_member = true
 
+    @membership_application.user.is_member = true
     unless (company = Company.find_by_company_number(@membership_application.company_number ))
       company = Company.create!(company_number: @membership_application.company_number)
     end
 
     @membership_application.company = company
     @membership_application.save!
+
+    # now have them enter the membership number.  Do it after we've created
+    # the company, in case we fail doing that.  (They only enter the memberhship
+    # number if it was all successfully created)
 
   end
 
