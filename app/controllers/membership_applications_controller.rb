@@ -5,7 +5,7 @@ class MembershipApplicationsController < ApplicationController
 
   def new
     @membership_application = MembershipApplication.new
-    @business_categories = BusinessCategory.all
+    @all_business_categories = BusinessCategory.all
     @uploaded_file = @membership_application.uploaded_files.build
   end
 
@@ -22,7 +22,7 @@ class MembershipApplicationsController < ApplicationController
 
 
   def edit
-    @business_categories = BusinessCategory.all
+    @all_business_categories = BusinessCategory.all
   end
 
 
