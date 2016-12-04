@@ -39,18 +39,16 @@ Feature: As an admin
     Given I am on "Emma" application page
     When I set "membership_application_status" to "Accepted"
     And I click on "Update"
-    Then I should see "Membership Application successfully updated"
-    And "Accepted" should be set in "membership_application_status"
     And I should be on the edit application page for "Emma"
-    And I should see "Please enter a membership number and save"
+    And I should see "Now please enter the new membership number and submit."
     And I should see "Membership number"
     And I fill in "Membership number" with "901"
-    And I click on "Update"
+    And I click on "Submit"
     Then I should see "Membership Application successfully updated"
-    And "Accepted" should be set in "membership_application_status"
+    And I should see "Accepted"
     And I should see "901"
     And I am on the "all companies" page
-    And I should see "Happy Mutts"
+    And I should see "5562252998"
 
 
   Scenario: Admin approves, member is added to existing company
