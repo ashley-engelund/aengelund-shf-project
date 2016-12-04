@@ -37,7 +37,10 @@ class MembershipApplicationsController < ApplicationController
 
   def update
     if @membership_application.update(membership_application_params)
+
       new_upload_file params['uploaded_file'] if params['uploaded_file']
+
+      accept_application if changed_to_accepted?(params)
 
       helpers.flash_message(:notice,
                             'Membership Application successfully updated')
@@ -62,7 +65,23 @@ class MembershipApplicationsController < ApplicationController
     authorize @membership_application
   end
 
+  def changed_to_accepted?(param)
+    params.include? 'status' && params['status'] == 'Accepted'
+  end
 
+  def accept_application
+    # FIXME prompt for the membership number? generating it right now
+    @membership_application.membership_number = Time.now.year - 2000 + MembershipApplication.last.id + 1
+    @membership_application.user.is_member = true
+
+    unless (company = Company.find_by_company_number(@membership_application.company_number ))
+      company = Company.create!(company_number: @membership_application.company_number)
+    end
+
+    @membership_application.company = company
+    @membership_application.save!
+
+  end
 
   def new_upload_file(upload_file_param)
     if upload_file_param['actual_files']
