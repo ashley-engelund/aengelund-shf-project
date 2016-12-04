@@ -65,8 +65,8 @@ Feature: As an admin
     And I should see "902"
     And I am on the "all companies" page
     And I should see "No More Snarky Barky"
-    And I am the page for company number "5560360793"
-    And I should see "Rehab"
+   # And I am the page for company number "5560360793"
+   # And I should see "Rehab"
 
   Scenario: Admin approves, but then changes it to Rejected
     Given I am on "Emma" application page
