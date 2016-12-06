@@ -12,7 +12,6 @@ FactoryGirl.define do
 
     association :user
 
-
     transient do
       num_categories 1
       category_name "Business Category"
@@ -27,8 +26,14 @@ FactoryGirl.define do
           membership_app.business_categories << build(:business_category, name: "#{evaluator.category_name} #{cat_num + 1}")
         end
       end
+
     end
 
-
+    factory(:membership_app_approved) do
+      status 'Accepted'
+      after(:build) do |company_number, evaluator|
+        evaluator.company = build(:company, company_number: evaluator.company_number)
+      end
+    end
   end
 end
