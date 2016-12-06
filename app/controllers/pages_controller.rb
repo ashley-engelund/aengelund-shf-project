@@ -7,7 +7,6 @@ class PagesController < ApplicationController
 
   def authorize_page
     authorize :page
-
   end
 
 end
