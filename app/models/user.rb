@@ -6,11 +6,11 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable
 
   def has_membership_application?
-    membership_applications.size > 0
+    membership_applications.size > 0 && (membership_applications.select { |app| app.persisted?}).count > 0
   end
 
   def has_company?
-    has_membership_application? && !membership_applications.last.company.nil?
+    has_membership_application? && (membership_applications.select {| app | app.company && app.company.persisted?}).count > 0
   end
 
 end

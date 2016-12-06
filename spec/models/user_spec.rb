@@ -38,9 +38,14 @@ RSpec.describe User, type: :model do
       it { expect(subject.has_membership_application?).to be_falsey }
     end
 
-    describe 'user: 1 application' do
+    describe 'user: 1 saved application' do
       let(:user_with_app) { create(:user_with_membership_app) }
       it { expect(user_with_app.has_membership_application?).to be_truthy }
+    end
+
+    describe 'user: 1 not yet saved application' do
+      let(:user_with_app) { build(:user_with_membership_app) }
+      it { expect(subject.has_company?).to be_falsey }
     end
 
     describe 'member with 1 app' do
@@ -74,7 +79,7 @@ RSpec.describe User, type: :model do
       it { expect(subject.has_company?).to be_falsey }
     end
 
-    describe 'user: 1 application' do
+    describe 'user: 1 saved application' do
       let(:user_with_app) { create(:user_with_membership_app) }
       it { expect(subject.has_company?).to be_falsey }
     end
