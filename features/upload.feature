@@ -17,18 +17,20 @@ Feature: As an applicant
 
   Scenario: Upload a file during a new application
     Given I am logged in as "applicant_2@random.com"
-    And I am on the "submit new membership application" page
+    And I am on the "landing" page
+    And I click on "Ansök om medlemsskap"
     And I fill in "First Name" with "Hans"
     And I fill in "Last Name" with "Newfoundland"
     And I fill in "Company Number" with "5560360793"
     And I fill in "Contact Email" with "applicant_2@random.com"
     And I fill in "Phone Number" with "031-1234567"
     And I choose a file named "diploma.pdf" to upload
-    And I click on "Submit"
-    And I should see "Tack, din ansökan har skickats."
+    When I click on "Submit"
+    Then I should see "Tack, din ansökan har skickats."
     And I should see "Filen laddades upp: diploma.pdf"
-    And I am on the "edit my application" page
-    Then I should see "Files uploaded for this application:"
+    And I am on the "landing" page
+    And I click on "Min ansökan"
+    And I should see "Files uploaded for this application:"
     And I should see "diploma.pdf" uploaded for this membership application
 
   Scenario: Upload a file for an existing application
