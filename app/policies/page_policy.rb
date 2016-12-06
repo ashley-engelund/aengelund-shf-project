@@ -1,7 +1,7 @@
 class PagePolicy < Struct.new(:user, :page)
 
 
-def show?
+  def show?
     user_logged_in?
   end
 
@@ -15,9 +15,11 @@ def show?
     is_admin?
   end
 
+
   def create?
     new?
   end
+
 
   def update?
     is_admin?
@@ -28,10 +30,13 @@ def show?
     update?
   end
 
+
   private
   def user_logged_in?
     !user.nil?
   end
+
+
   def is_admin?
     user.admin? if @user
   end
