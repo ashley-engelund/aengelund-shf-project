@@ -1,12 +1,15 @@
-class PagePolicy < Struct.new(:user)
+class PagePolicy
+  def initialize(user, _page)
+    @user = user
+  end
 
   def show?
-    user?
+    user_logged_in?
   end
 
 
   def index?
-    user?
+    user_logged_in?
   end
 
 
@@ -28,7 +31,10 @@ class PagePolicy < Struct.new(:user)
   end
 
   private
+  def user_logged_in?
+    !@user.nil?
+  end
   def is_admin?
-    user.admin? if user
+    @user.admin? if @user
   end
 end
