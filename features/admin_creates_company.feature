@@ -58,10 +58,11 @@ Feature: As an admin
     And I should see "A problem prevented the company from being created."
 
     Scenarios:
-      | name        | org_number | phone      | street         | post_code | city   | region    | email                | website                   | error                                                          |
-      | Happy Mutts | 00         | 0706898525 | Ålstensgatan 4 | 123 45    | Bromma | Stockholm | kicki@gladajyckar.se | http://www.gladajyckar.se | "Company number is the wrong length (should be 10 characters)" |
-      | Happy Mutts | 5562252998 |            | Ålstensgatan 4 | 123 45    | Bromma | Stockholm | kickiimmi.nu         | http://www.gladajyckar.se | "Email is invalid"                                             |
-      | Happy Mutts | 5562252998 |            | Ålstensgatan 4 | 123 45    | Bromma | Stockholm | kicki@imminu         | http://www.gladajyckar.se | "Email is invalid"                                             |
+      | name        | org_number | phone      | street         | post_code | city   | region    | email                | website                   | error                                                                 |
+      | Happy Mutts | 00         | 0706898525 | Ålstensgatan 4 | 123 45    | Bromma | Stockholm | kicki@gladajyckar.se | http://www.gladajyckar.se | "Company number is the wrong length (should be 10 characters)"        |
+      | Happy Mutts | 5562252998 |            | Ålstensgatan 4 | 123 45    | Bromma | Stockholm | kickiimmi.nu         | http://www.gladajyckar.se | "Email is invalid"                                                    |
+      | Happy Mutts | 5562252998 |            | Ålstensgatan 4 | 123 45    | Bromma | Stockholm | kicki@imminu         | http://www.gladajyckar.se | "Email is invalid"                                                    |
+      | Happy Mutts | 5560360793 | 0706898525 | Ålstensgatan 4 | 123 45    | Bromma | Stockholm | kicki@imminu.se      | http://www.gladajyckar.se | "The organization number has already been taken." |
 
 
   Scenario: Admin edits a company
