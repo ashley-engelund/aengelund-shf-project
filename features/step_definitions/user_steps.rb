@@ -1,7 +1,14 @@
 Given(/^the following users exists$/) do |table|
   table.hashes.each do |user|
+
     if user.has_key?('is_member') && user['is_member'] == 'true'
-      FactoryGirl.create(:user_with_membership_app, user)
+
+      if user.has_key?('company_number') && !(user['company_number'].nil?)
+        FactoryGirl.create(:user_with_membership_app, user, company_number: user['company_number'])
+      else
+        FactoryGirl.create(:user_with_membership_app, user)
+      end
+
     else
       FactoryGirl.create(:user, user)
     end
