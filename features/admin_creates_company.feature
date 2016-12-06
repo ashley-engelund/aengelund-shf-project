@@ -38,7 +38,7 @@ Feature: As an admin
     When I am on the "create a new company" page
     And I fill in the form with data :
       | Företagsnamn | Org nr     | Gata           | Post nr | Ort    | Verksamhetslän | Email                | Webbsida                  |
-      | Happy Mutts  | 5562252998 | Ålstensgatan 4 | 123 45  | Bromma | Stockholm      | kicki@gladajyckar.se | http://www.gladajyckar.se |
+      | Happy Mutts  | 5569467466 | Ålstensgatan 4 | 123 45  | Bromma | Stockholm      | kicki@gladajyckar.se | http://www.gladajyckar.se |
     And I click on "Submit"
     Then I should see "The company was successfully created."
     And I should see "Happy Mutts"
