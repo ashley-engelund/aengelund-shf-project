@@ -2,12 +2,12 @@ class PagePolicy < Struct.new(:user, :page)
 
 
   def show?
-    user_logged_in?
+    user_is_member?
   end
 
 
   def index?
-    user_logged_in?
+    user_is_member?
   end
 
 
@@ -39,6 +39,9 @@ class PagePolicy < Struct.new(:user, :page)
     !user.nil?
   end
 
+  def user_is_member?
+    user.is_member if user
+  end
 
   def is_admin?
     user.admin? if user

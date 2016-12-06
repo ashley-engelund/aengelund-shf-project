@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe PagePolicy do
 
   let(:user_1) { create(:user, email: 'user_1@random.com') }
+  let(:member) {create(:user, email: 'member@happymutss.com', is_member: true)}
   let(:admin) { create(:user, email: 'admin@sfh.com', admin: true) }
   let (:page) {}
 
@@ -18,11 +19,24 @@ RSpec.describe PagePolicy do
     it { is_expected.to permit_action :create }
   end
 
-  describe 'For a user (logged in)' do
-    subject { described_class.new(user_1, page) }
+  describe 'For a member' do
+    subject { described_class.new(member, page) }
 
     it { is_expected.to permit_action :index }
     it { is_expected.to permit_action :show }
+    it { is_expected.to forbid_action :edit }
+    it { is_expected.to forbid_action :update }
+    it { is_expected.to forbid_action :destroy }
+    it { is_expected.to forbid_action :new }
+    it { is_expected.to forbid_action :create }
+  end
+
+
+  describe 'For a user logged in but not a member' do
+    subject { described_class.new(nil, page) }
+
+    it { is_expected.to forbid_action :index }
+    it { is_expected.to forbid_action :show }
     it { is_expected.to forbid_action :edit }
     it { is_expected.to forbid_action :update }
     it { is_expected.to forbid_action :destroy }
