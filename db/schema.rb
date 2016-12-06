@@ -61,10 +61,9 @@ ActiveRecord::Schema.define(version: 20161206020021) do
     t.string   "first_name"
     t.string   "last_name"
     t.string   "contact_email"
-    t.string   "membership_number"
     t.integer  "company_id"
+    t.string   "membership_number"
     t.index ["company_id"], name: "index_membership_applications_on_company_id", using: :btree
-    t.index ["company_number"], name: "index_membership_applications_on_company_number", unique: true, using: :btree
     t.index ["user_id"], name: "index_membership_applications_on_user_id", using: :btree
   end
 
