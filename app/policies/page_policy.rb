@@ -30,6 +30,9 @@ class PagePolicy < Struct.new(:user, :page)
     update?
   end
 
+  def destroy?
+    is_admin?
+  end
 
   private
   def user_logged_in?
@@ -38,6 +41,6 @@ class PagePolicy < Struct.new(:user, :page)
 
 
   def is_admin?
-    user.admin? if @user
+    user.admin? if user
   end
 end
