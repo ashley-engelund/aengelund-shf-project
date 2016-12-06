@@ -21,8 +21,8 @@ Given(/^I am on the "([^"]*)" page$/) do |page|
           path = edit_company_path(@user.membership_applications.last.company)
         end
       end
-    when 'static charter'
-      path = page_path('medlemsbeviset')
+    when 'static workgroups'
+      path = page_path('arbetsgrupper')
     else
       path = 'no path set'
   end

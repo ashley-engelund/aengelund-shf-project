@@ -9,19 +9,20 @@ Feature: Only members and admins can see members only (hidden) pages
     
     
   Scenario: Visitor cannot see members only pages
-    Given I am on the "static charter" page
+    Given I am on the "static workgroups" page
     Then I should see "You are not permitted to see this page."
+    And I should not see "Arbetsgrupper"
 
   Scenario: Member can see members only pages
     Given I am logged in as "emma@happymutts.com"
-    And  I am on the "static charter" page
-    Then I should see "Medlemsbeviset"
+    And  I am on the "static workgroups" page
+    Then I should see "Arbetsgrupper"
     Then I should not see "You are not permitted to see this page."
 
   Scenario: Admin can see members only pages
     Given I am logged in as "emma@happymutts.com"
-    And  I am on the "static charter" page
-    Then I should see "Medlemsbeviset"
+    And  I am on the "static workgroups" page
+    Then I should see "Arbetsgrupper"
     Then I should not see "You are not permitted to see this page."
 
       
