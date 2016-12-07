@@ -1,14 +1,22 @@
 And(/^the following applications exist:$/) do |table|
   table.hashes.each do |hash|
-    application_attributes = hash.except('user_email', 'company_number')
-    user = User.find_by(email: hash['user_email'])
-    if hash.has_key?('status') && hash['status'] == 'Accepted'
-      company = Company.find_by(company_number: hash[:company_number])
-      unless company
-        company = FactoryGirl.create(:company, company_number: hash[:company_number])
+
+    if (user = User.find_by_email(hash['user_email']))
+      FactoryGirl.create(:membership_application, hash.except('user_email').merge(user: user, contact_email: hash['user_email']))
+    else
+
+      if hash.has_key?('status') && hash['[status'] == 'Accepted'
+        user = FactoryGirl.create(:user_with_membership_app, app_attributes)
+        #    company = Company.find_by(company_number: hash[:company_number])
+        #    unless company
+        #      company = FactoryGirl.create(:company, company_number: hash[:company_number])
+        #    end
+      else
+        app_attributes = hash.except('user_email').merge(email: hash['user_email'])
+        user = FactoryGirl.create(:user_with_membership_app, app_attributes.merge(status: 'Accepted'))
       end
     end
-    FactoryGirl.create(:membership_application, application_attributes.merge(user: user, company: company))
+
   end
 end
 

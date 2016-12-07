@@ -31,7 +31,7 @@ end
 
 
 And(/^I am on the "([^"]*)" page for "([^"]*)"$/) do |page, user_email|
-  user_from_email = User.find_by_email user_email
+  user_from_email = ( (@user && @user.email == user_email) ? @user : User.find_by_email(user_email))
 
   case page.downcase
     when 'landing'
@@ -52,10 +52,7 @@ And(/^I am on the "([^"]*)" page for "([^"]*)"$/) do |page, user_email|
       path = new_membership_application_path
     when 'edit my company'
       if user_from_email && user_from_email.has_company?
-        puts "user_from_email.membership_applications.last.company: #{user_from_email.membership_applications.last.company}"
         path = edit_company_path(user_from_email.membership_applications.last.company)
-      else
-        puts "NO company for this user! #{user_from_email.inspect}"
       end
     else
       path = 'no path set'
