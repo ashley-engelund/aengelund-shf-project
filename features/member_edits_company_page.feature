@@ -10,16 +10,12 @@ Feature: As a member
       | admin@shf.se       | true  | true      |
       | emma@happymutts.se |       | true      |
 
-    And the following companies exist:
-      | name                 | company_number | email                  |
-      | Happy Mutts          | 5562252998     | emma@happymutts.se    |
-
     And the following business categories exist
       | name  |
       | Rehab |
 
     And the following applications exist:
-      | first_name | user_email         | company_number | status   | category_name |
+      | first_name | user_email         | company_number | status  | category_name |
       | Emma       | emma@happymutts.se | 5562252998     | Godkänd | Rehab         |
 
 
@@ -28,8 +24,8 @@ Feature: As a member
     # we need to do user find by email and visit their particular company application
     And I am on the "edit my company" page for "emma@happymutts.se"
     And I fill in the form with data :
-      | Företagsnamn  | Gata           | Post nr | Ort    | Verksamhetslän | Email                | Webbsida                  |
-      | Happy Mutts   | Ålstensgatan 4 | 123 45  | Bromma | Stockholm      | kicki@gladajyckar.se | http://www.gladajyckar.se |
+      | Företagsnamn | Gata           | Post nr | Ort    | Verksamhetslän | Email                | Webbsida                  |
+      | Happy Mutts  | Ålstensgatan 4 | 123 45  | Bromma | Stockholm      | kicki@gladajyckar.se | http://www.gladajyckar.se |
     And I click on "Submit"
     Then I should see "Företaget har uppdaterats."
     And I should see "Happy Mutts"
