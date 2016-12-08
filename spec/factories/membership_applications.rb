@@ -31,7 +31,12 @@ FactoryGirl.define do
       if evaluator.status == 'Godkänd'
         membership_app.status = 'Godkänd'
         membership_app.user.is_member = true
-        membership_app.company = create(:company, company_number: evaluator.company_number)
+
+        company = Company.find_by(company_number: evaluator.company_number)
+        unless company
+          company = FactoryGirl.create(:company, company_number: evaluator.company_number)
+        end
+        membership_app.company = company
       end
     end
 
