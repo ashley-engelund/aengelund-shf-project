@@ -15,7 +15,7 @@
         -# Visitor navigation
         - unless current_user
           .menu#menu-menu-1-container
-            =render 'navigation_visitor'
+            = render 'navigation_visitor'
 
         - if current_user && !current_user.try(:admin)
           .menu#menu-menu-2-container
@@ -64,6 +64,6 @@
                       %li.menu-item
                         = link_to page.capitalize, page_path(page)
 
-              =render 'navigation_admin'
+              = render 'navigation_admin'
 
         = render 'social_nav'
