@@ -40,7 +40,7 @@ class PagePolicy < Struct.new(:user, :record)
   end
 
   def user_is_member?
-    (user.is_member || user.admin?) if user
+    (user.is_member? || user.admin?) if user
   end
 
   def is_admin?
