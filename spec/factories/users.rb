@@ -14,6 +14,13 @@ FactoryGirl.define do
       end
     end
 
+    factory :user_with_2_membership_apps do
+      after(:create) do |user, evaluator|
+        create_list(:membership_application, 2, user: user, company_number: 5712213304)
+      end
+
+    end
+
     factory :member_with_membership_app do
       is_member true
       after(:create) do |user, evaluator|

@@ -81,12 +81,12 @@ RSpec.describe User, type: :model do
     end
 
     describe 'user: 1 saved application' do
-      let(:user_with_app) { create(:user_with_membership_app) }
+      subject{ create(:user_with_membership_app) }
       it { expect(subject.has_company?).to be_falsey }
     end
 
     describe 'user: 2 application' do
-      let(:user_with_app) { create(:user_with_2_membership_apps) }
+      subject { create(:user_with_2_membership_apps) }
       it { expect(subject.has_company?).to be_falsey }
     end
 
@@ -101,10 +101,103 @@ RSpec.describe User, type: :model do
     end
 
     describe 'admin' do
-      subject { create(:user, is_member: true) }
+      subject { create(:user, admin: true) }
       it { expect(subject.has_company?).to be_falsey }
     end
+  end
 
+  describe '#membership_application' do
+  
+    describe 'user: no application' do
+      subject { create(:user, is_member: false) }
+      it { expect(subject.membership_application).to be_nil }
+    end
 
+    describe 'user: 1 saved application' do
+      subject { create(:user_with_membership_app) }
+      it { expect(subject.membership_application).not_to be_nil }
+    end
+    describe 'user: 2 application' do
+      subject { create(:user_with_2_membership_apps) }
+      it { expect(subject.membership_application).not_to be_nil }
+      it { expect(subject.membership_applications.size).to eq(2)}
+    end
+
+    describe 'member with 1 app' do
+      let(:member) { create(:member_with_membership_app) }
+      it { expect(member.membership_application).to be_truthy }
+    end
+
+    describe 'member with 0 apps (should not happen)' do
+      let(:member) { create(:user, is_member: true) }
+      it { expect(member.membership_application).to be_falsey }
+    end
+
+    describe 'admin' do
+      subject { create(:user, admin: true) }
+      it { expect(subject.membership_application).to be_falsey }
+    end
+  end
+
+  describe '#company' do
+    describe 'user: no application' do
+      subject { create(:user, is_member: false) }
+      it { expect(subject.company).to be_nil }
+    end
+
+    describe 'user: 1 saved application' do
+      subject { create(:user_with_membership_app) }
+      it { expect(subject.company).to be_nil }
+    end
+    describe 'user: 2 application' do
+      subject { create(:user_with_2_membership_apps) }
+      it { expect(subject.company).to be_nil }
+    end
+
+    describe 'member with 1 app' do
+      let(:member) { create(:member_with_membership_app) }
+      it { expect(member.company).not_to be_nil }
+    end
+
+    describe 'member with 0 apps (should not happen)' do
+      let(:member) { create(:user, is_member: true) }
+      it { expect(member.company).to be_nil }
+    end
+
+    describe 'admin' do
+      subject { create(:user, admin: true) }
+      it { expect(subject.company).to be_nil }
+    end
+  end
+
+  describe '#is_member?' do
+    describe 'user: no application' do
+      subject { create(:user, is_member: false) }
+      it { expect(subject.is_member?).to be_falsey }
+    end
+
+    describe 'user: 1 saved application' do
+      subject { create(:user_with_membership_app) }
+      it { expect(subject.is_member?).to be_falsey }
+    end
+    describe 'user: 2 application' do
+      subject { create(:user_with_2_membership_apps) }
+      it { expect(subject.is_member?).to be_falsey }
+    end
+
+    describe 'member with 1 app' do
+      let(:member) { create(:member_with_membership_app) }
+      it { expect(member.is_member?).to be_truthy }
+    end
+
+    describe 'member with 0 apps (should not happen)' do
+      let(:member) { create(:user, is_member: true) }
+      it { expect(member.is_member?).to be_falsey }
+    end
+
+    describe 'admin' do
+      subject { create(:user, admin: true) }
+      it { expect(subject.is_member?).to be_truthy }
+    end
   end
 end

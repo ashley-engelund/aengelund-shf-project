@@ -5,12 +5,29 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
+
   def has_membership_application?
-    membership_applications.size > 0 && (membership_applications.select { |app| app.persisted?}).count > 0
+    membership_applications.size > 0 && (membership_applications.select { |app| app.persisted? }).count > 0
   end
 
+
   def has_company?
-    has_membership_application? && (membership_applications.select {| app | app.company && app.company.persisted?}).count > 0
+    has_membership_application? && (membership_applications.select { |app| app.company && app.company.persisted? }).count > 0
+  end
+
+
+  def membership_application
+    has_membership_application? ? membership_applications.last : nil
+  end
+
+
+  def company
+    has_company? ? membership_application.company : nil
+  end
+
+
+  def is_member?
+    admin? || ( has_membership_application? ? membership_application.status == 'Godkänd' : false)
   end
 
 end
