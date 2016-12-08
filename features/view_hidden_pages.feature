@@ -16,17 +16,19 @@ Feature: Only members and admins can see members only (hidden) pages
     And I should not see "Arbetsgrupper"
 
   Scenario: Visitor cannot see members only menu
-    Given I am on the "landing" page
+    Given I am Logged out
+    And I am on the "landing" page
     Then I should not see "Medlemssidor"
       
   Scenario: User cannot see members only pages
-    Given I am logged in as "hans@bowsers.se"
+    Given I am logged in as "not_a_member@bowsers.com"
     And I am on the "static workgroups" page
     Then I should see "Du har inte behörighet att göra detta."
     And I should not see "Arbetsgrupper"
 
   Scenario: User cannot see members only menu
-    Given I am on the "landing" page
+    Given I am logged in as "not_a_member@bowsers.com"
+    And I am on the "landing" page
     Then I should not see "Medlemssidor"
 
   Scenario: Member can see members only pages
