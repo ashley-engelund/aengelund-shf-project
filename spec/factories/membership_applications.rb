@@ -12,6 +12,7 @@ FactoryGirl.define do
 
     association :user
 
+
     transient do
       num_categories 1
       category_name "Business Category"
@@ -31,8 +32,8 @@ FactoryGirl.define do
         membership_app.status = 'Godkänd'
         membership_app.user.is_member = true
         membership_app.company = create(:company, company_number: evaluator.company_number)
-        end
       end
+    end
 
 
   end

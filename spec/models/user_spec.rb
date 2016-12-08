@@ -28,8 +28,9 @@ RSpec.describe User, type: :model do
     subject { create(:user, admin: false) }
 
     it { is_expected.not_to be_admin }
-    it { expect(subject.is_member).to be_falsey }
+    it { expect(subject.is_member).to be_falsey}
   end
+
 
   describe '#has_membership_application?' do
 

@@ -4,7 +4,7 @@ RSpec.describe PagePolicy do
 
   let(:user_1) { create(:user, email: 'user_1@random.com') }
   let(:member) { create(:member_with_membership_app, email: 'member@random.com')}
-  let(:admin) { create(:user, email: 'admin@sfh.com', admin: true) }
+  let(:admin)  { create(:user, email: 'admin@sfh.com', admin: true) }
   let (:page) {}
 
   describe 'For admin' do
