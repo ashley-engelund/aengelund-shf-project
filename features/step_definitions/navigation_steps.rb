@@ -56,8 +56,8 @@ And(/^I am on the "([^"]*)" page for "([^"]*)"$/) do |page, user_email|
       if user_from_email
         if user_from_email.membership_applications.last &&
             user_from_email.membership_applications.last.company
-        path = edit_company_path(user_from_email.membership_applications.last.company)
-      end
+          path = edit_company_path(user_from_email.membership_applications.last.company)
+        end
       end
     else
       path = 'no path set'
@@ -76,4 +76,3 @@ When(/^I fail to visit the "([^"]*)" page$/) do |page|
   visit path
   expect(current_path).not_to be path
 end
-
