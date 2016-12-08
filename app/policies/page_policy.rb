@@ -35,10 +35,6 @@ class PagePolicy < Struct.new(:user, :record)
   end
 
   private
-  def user_logged_in?
-    !user.nil?
-  end
-
   def user_is_member?
     (user.is_member? || user.admin?) if user
   end
