@@ -39,8 +39,8 @@ RSpec.describe User, type: :model do
     end
 
     describe 'user: 1 saved application' do
-      let(:user_with_app) { create(:user_with_membership_app) }
-      it { expect(user_with_app.has_membership_application?).to be_truthy }
+      subject  { create(:user_with_membership_app) }
+      it { expect(subject.has_membership_application?).to be_truthy }
     end
 
     describe 'user: 1 not yet saved application' do
