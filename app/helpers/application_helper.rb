@@ -22,12 +22,8 @@ module ApplicationHelper
     end
   end
 
-  def user_has_membership_application?
-    current_user && current_user.has_membership_application?
-  end
-
   def member_has_company?
-    current_user && current_user.has_company?
+    current_user.is_member && !current_user.membership_applications.last.company.nil?
   end
 
   # ActiveRecord::Assocations::CollectionAssociation is a proxy and won't
