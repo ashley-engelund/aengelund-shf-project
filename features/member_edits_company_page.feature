@@ -6,9 +6,9 @@ Feature: As a member
 
   Background:
     Given the following users exists
-      | email               | admin |
-      | admin@shf.se        | true  |
-      | emma@happymutts.se |       |
+      | email              | admin | is_member |
+      | admin@shf.se       | true  | true      |
+      | emma@happymutts.se |       | true      |
 
     And the following companies exist:
       | name                 | company_number | email                  |
@@ -20,7 +20,7 @@ Feature: As a member
 
     And the following applications exist:
       | first_name | user_email         | company_number | status   | category_name |
-      | Emma       | emma@happymutts.se | 5562252998     | Accepted | Rehab         |
+      | Emma       | emma@happymutts.se | 5562252998     | Godkänd | Rehab         |
 
 
   Scenario: Member goes to company page after membership approval
