@@ -17,25 +17,23 @@ FactoryGirl.define do
       category_name "Business Category"
     end
 
-    after(:create) do |membership_app, evaluator|
-      membership_app.user.membership_applications << membership_app  if membership_app.user
+    after(:build) do |membership_app, evaluator|
 
       if evaluator.num_categories == 1
-        membership_app.business_categories << create(:business_category, name: evaluator.category_name)
+        membership_app.business_categories << build(:business_category, name: evaluator.category_name)
       else
         evaluator.num_categories.times do |cat_num|
-          membership_app.business_categories << create(:business_category, name: "#{evaluator.category_name} #{cat_num + 1}")
+          membership_app.business_categories << build(:business_category, name: "#{evaluator.category_name} #{cat_num + 1}")
         end
       end
 
-      if evaluator.status == 'Accepted'
-        unless (co = Company.find_by_company_number(evaluator.company_number))
-          co = create(:company, company_number: evaluator.company_number)
+      if evaluator.status == 'Godkänd'
+        membership_app.status = 'Godkänd'
+        membership_app.user.is_member = true
+        membership_app.company = create(:company, company_number: evaluator.company_number)
         end
-        membership_app.company = co
       end
 
-    end
 
   end
 end
