@@ -46,7 +46,7 @@
                 = render 'navigation_edit_my_application', membership_app: current_user.membership_applications.last
 
               - else
-                - if user_has_membership_application?
+                - if current_user.has_membership_application?
                   = render 'navigation_edit_my_application', membership_app: current_user.membership_applications.last
                 - else
                   %li.menu-item
