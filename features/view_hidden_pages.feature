@@ -8,6 +8,14 @@ Feature: Only members and admins can see members only (hidden) pages
       | emma@happymutts.com      |       | true      |
       | admin@shf.se             | true  | true      |
 
+    And the following business categories exist
+      | name  |
+      | Rehab |
+
+    And the following applications exist:
+      | first_name | user_email          | company_number | status  | category_name |
+      | Emma       | emma@happymutts.com | 5562252998     | Godkänd | Rehab         |
+
 
   Scenario: Visitor cannot see members only pages
     Given I am Logged out
@@ -19,7 +27,7 @@ Feature: Only members and admins can see members only (hidden) pages
     Given I am Logged out
     And I am on the "landing" page
     Then I should not see "Medlemssidor"
-      
+
   Scenario: User cannot see members only pages
     Given I am logged in as "not_a_member@bowsers.com"
     And I am on the "static workgroups" page
