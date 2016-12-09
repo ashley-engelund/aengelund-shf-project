@@ -27,7 +27,12 @@ class User < ApplicationRecord
 
 
   def is_member?
-    admin? || ( has_membership_application? ? membership_application.status == 'Godkänd' : false)
+    is_member
+  end
+
+
+  def is_member_or_admin?
+    admin? || is_member?
   end
 
 end
