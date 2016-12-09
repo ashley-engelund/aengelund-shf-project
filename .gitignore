@@ -34,6 +34,3 @@ public/system/
 public/storage
 
 /lib/seeds/imported-data
-
-# do not put config/secrets.yml into repository
-config/secrets.yml
