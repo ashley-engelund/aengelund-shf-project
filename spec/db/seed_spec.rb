@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'seeds' do
+RSpec.describe 'load admin.email and admin.password from ENV in production' do
 
   env_shf_email = 'SHF_ADMIN_EMAIL'
   env_shf_pwd = 'SHF_ADMIN_PWD'
@@ -13,6 +13,7 @@ RSpec.describe 'seeds' do
   describe 'happy path - all is valid' do
 
     before(:each) do
+      allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
       stub_const('ENV', {env_shf_email => admin_email, env_shf_pwd => admin_pwd})
       Rails.application.load_seed # loading seeds
     end
@@ -40,6 +41,10 @@ RSpec.describe 'seeds' do
 
 
   describe 'sad path - things go wrong' do
+
+    before(:each) do
+      allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
+    end
 
     it "ENV[#{env_shf_email}] not found" do
       stub_const('ENV', { env_shf_pwd => admin_pwd})

@@ -17,14 +17,21 @@ private def env_invalid_blank(env_key)
 end
 
 
-begin
-  email = env_invalid_blank('SHF_ADMIN_EMAIL')
-  pwd = env_invalid_blank('SHF_ADMIN_PWD')
+if Rails.env.production?
+  begin
+    email = env_invalid_blank('SHF_ADMIN_EMAIL')
+    pwd = env_invalid_blank('SHF_ADMIN_PWD')
 
+    User.create(email: email, password: pwd, admin: true)
+  rescue
+    raise SeedAdminENVError, SEED_ERROR_MSG
+  end
+else
+  email = 'admin@sverigeshundforetagare.se'
+  pwd = 'hundapor'
   User.create(email: email, password: pwd, admin: true)
-rescue
-  raise SeedAdminENVError, SEED_ERROR_MSG
 end
+
 
 require 'csv'
 
