@@ -47,28 +47,28 @@ RSpec.describe 'load admin.email and admin.password from ENV in production' do
     end
 
     it "ENV[#{env_shf_email}] not found" do
-      stub_const('ENV', { env_shf_pwd => admin_pwd})
+      stub_const('ENV', {env_shf_pwd => admin_pwd})
 
-      expect{Rails.application.load_seed}.to raise_exception SEED_ERROR
+      expect { Rails.application.load_seed }.to raise_exception SEED_ERROR
     end
 
     it "ENV[#{env_shf_email}] is an empty string" do
       stub_const('ENV', {env_shf_email => '', env_shf_pwd => admin_pwd})
 
-      expect{Rails.application.load_seed}.to raise_exception SEED_ERROR
+      expect { Rails.application.load_seed }.to raise_exception SEED_ERROR
     end
 
     it "ENV[#{env_shf_pwd}] not found" do
       stub_const('ENV', {env_shf_email => admin_email})
 
-      expect{Rails.application.load_seed}.to raise_exception SEED_ERROR
+      expect { Rails.application.load_seed }.to raise_exception SEED_ERROR
     end
 
     it "ENV[#{env_shf_pwd}] is an empty string" do
       stub_const('ENV', {env_shf_email => admin_email, env_shf_pwd => ''})
 
-      expect{Rails.application.load_seed}.to raise_exception SEED_ERROR
+      expect { Rails.application.load_seed }.to raise_exception SEED_ERROR
     end
   end
 
- end
+end
