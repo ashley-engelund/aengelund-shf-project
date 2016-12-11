@@ -12,7 +12,7 @@ class User < ApplicationRecord
 
 
   def has_company?
-    has_membership_application? && (membership_applications.select { |app| app.company && app.company.persisted? }).count > 0
+    has_membership_application? && (membership_applications.select { |app| app.company }).count > 0
   end
 
 
