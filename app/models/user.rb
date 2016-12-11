@@ -7,7 +7,7 @@ class User < ApplicationRecord
 
 
   def has_membership_application?
-    membership_applications.size > 0 && (membership_applications.select { |app| app.persisted? }).count > 0
+    membership_applications.size > 0
   end
 
 
