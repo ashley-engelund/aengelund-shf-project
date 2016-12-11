@@ -1,0 +1,19 @@
+%header.entry-header
+  %h1.entry-title Admin: Alla inkomna ansökningar
+.post-title-divider
+  %span
+.entry-content
+  %table
+    %thead
+      %tr
+        %th Namn
+        %th Org nr
+        %th Status
+        %th
+    %tbody
+      - @membership_applications.each do | membership_application |
+        %tr.applicant
+          %td= link_to "#{membership_application.first_name + ' ' + membership_application.last_name}", membership_application_path(membership_application.id)
+          %td= membership_application.company_number
+          %td= membership_application.status
+          %td= link_to 'Manage', membership_application_path(membership_application.id)
