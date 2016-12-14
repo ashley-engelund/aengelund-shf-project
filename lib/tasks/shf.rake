@@ -11,6 +11,33 @@ namespace :shf do
     tasks.each { |t| Rake::Task["#{t}"].invoke }
   end
 
+
+  desc 'connect membership to company'
+  task :connect_membership_to_company => [:environment] do |t|
+
+    usage = "rake shf:connect_membership_to_company\n  This will associate ALL membership_applications where status == '#{ACCEPTED_STATUS}' in the DB with their companies.\n It will set the membership_application.company_id ."
+
+    logfile = 'log/import.log'
+    start_time = Time.now
+    log = start_logging(start_time, logfile)
+
+    num_connected = 0
+
+    MembershipApplication.where(status:ACCEPTED_STATUS).find_each do |mem_app|
+      if (connected_co = Company.find_by_company_number(mem_app.company_number))
+        mem_app.company = connected_co
+        mem_app.save
+        log_and_show log, Logger::INFO, "membership_app.id #{mem_app.id} now connected to company_id #{mem_app.company_id} (company number: #{connected_co.company_number})"
+        num_connected += 1
+      end
+    end
+
+    log_and_show log, Logger::INFO, "\nFinished connecting #{num_connected} membership applications to companies, where membership_application.status == #{ACCEPTED_STATUS}."
+    log_and_show log, Logger::INFO, "Information was logged to: #{logfile}"
+    finish_and_close_log(log, start_time, Time.now)
+  end
+
+
   desc "import membership apps from csv file. Provide the full filename (with path)"
   task :import_membership_apps, [:csv_filename] => [:environment] do |t, args|
 
