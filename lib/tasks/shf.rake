@@ -12,10 +12,14 @@ namespace :shf do
   end
 
 
+  # This will associate ALL membership_applications
+  #   where status == '#{ACCEPTED_STATUS}' in the DB with their companies.
+  # It will set the membership_application.company_id
+  # It will OVERWRITE the existing membership_application.company_id
+  # Use this in case you don't want to import again and you need to
+  # fix the imported data.
   desc 'connect membership to company'
-  task :connect_membership_to_company => [:environment] do |t|
-
-    usage = "rake shf:connect_membership_to_company\n  This will associate ALL membership_applications where status == '#{ACCEPTED_STATUS}' in the DB with their companies.\n It will set the membership_application.company_id ."
+  task :connect_membership_to_company => [:environment] do
 
     logfile = 'log/import.log'
     start_time = Time.now
