@@ -3,6 +3,8 @@ require 'active_support/logger'
 
 namespace :shf do
 
+  ACCEPTED_STATUS = 'Godkänd'
+
   desc 'recreate db (current env): drop, setup, migrate, seed the db.'
   task :db_recreate => [:environment] do
     tasks = ['db:drop', 'db:setup', 'db:migrate', 'db:seed']
@@ -18,7 +20,6 @@ namespace :shf do
     usage = 'rake shf:import_membership_apps["./spec/fixtures/test-import-files/member-companies-sanitized-small.csv"]'
 
     DEFAULT_PASSWORD = 'whatever'
-    ACCEPTED_STATUS = 'Godkänd'
 
     headers_to_columns_mapping = {
         membership_number: :membership_number,
@@ -116,7 +117,8 @@ namespace :shf do
                                                  contact_email: user.email,
                                                  status: ACCEPTED_STATUS,
                                                  membership_number: row[:membership_number],
-                                                 user: user
+                                                 user: user,
+                                                 company: company
       )
 
       puts_created('Membership application', " org number: #{row[:company_number]}, status: #{row[:status]}")
@@ -135,8 +137,6 @@ namespace :shf do
     end
 
   end
-
-
 
 
   def find_or_create_category(category_name, membership)
