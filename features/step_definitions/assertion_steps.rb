@@ -12,12 +12,28 @@ And(/^I should not see "([^"]*)"$/) do |content|
   expect(page).not_to have_content content
 end
 
+And(/^I should see t\("([^"]*)"\)$/) do |content|
+  expect(page).to have_content i18n_content(content)
+end
+
 And(/^I should see t\("([^"]*)", locale: :(.*)\)$/) do |content, l|
-  expect(page).to have_content I18n.t("#{content}", locale: l.to_sym)
+  expect(page).to have_content i18n_content(content, l)
 end
 
 And(/^I should not see t\("([^"]*)", locale: :(.*)\)$/) do |content, l|
-  expect(page).not_to have_content I18n.t("#{content}", locale: l.to_sym)
+  expect(page).not_to have_content i18n_content(content, l)
+end
+
+And(/^I should see t\("([^"]*)"\), locale: :sv$/) do |content|
+  expect(page).to have_content i18n_content(content)
+end
+
+And(/^I should see t\("([^"]*)", ([^:]*): ([^)]*)\), locale: :(.*)\)$/) do |content, key, value, l|
+  expect(page).to have_content I18n.t("#{content}", key.to_sym => value, locale: l.to_sym)
+end
+
+And(/^I should see t\("([^"]*)", ([^:]*): (\d+)\), locale: :(.*)$/) do |content, key, value, locale|
+  expect(page).to have_content I18n.t("#{content}", key.to_sym => value, locale: locale.to_sym)
 end
 
 And(/^I should not see button "([^"]*)"$/) do |button|
@@ -88,3 +104,12 @@ end
 And(/^I should be on the applications page$/) do
   expect(current_path).to eq membership_applications_path
 end
+
+Then(/^I should see translated error (.*) (.*)$/) do |model_attribute, error|
+  expect(page).to have_content("#{i18n_content(model_attribute)} #{i18n_content(error)}")
+end
+
+def i18n_content(content, locale='sv')
+  I18n.t(content, locale: locale.to_sym)
+end
+
