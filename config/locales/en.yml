@@ -32,6 +32,30 @@ en:
         one: Membership
         other: Memberships
 
+      attributes:
+        membership_application:
+          company_number: Company number
+          first_name: First name
+          last_name: Last name
+          contact_email: Email
+          status: Status
+          phone_number: Phone Number
+
+        company:
+          company_number: Company number
+          name: Name
+          phone_number: Phone Number
+          email: Email
+          street: Street
+          post_code: Post code
+          city: City
+          region: Region
+          website: Website
+
+        business_category:
+          name: Name
+          description: Description
+
     errors:
        messages:
          record_invalid: "Validation failed: %{errors}"
@@ -171,7 +195,7 @@ en:
     template:
       body: 'There were problems with the following fields:'
       header:
-        one: 1 error prohibited this %{model} from being saved
+        one: 1 error kept this %{model} from being saved
         other: "%{count} errors prohibited this %{model} from being saved"
   helpers:
     select:

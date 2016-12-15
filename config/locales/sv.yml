@@ -32,6 +32,30 @@ sv:
         one: Medlemskap
         other: Medlemskap
 
+      attributes:
+        membership_application:
+          company_number: Company number
+          first_name: First name
+          last_name: Last name
+          contact_email: Contact email
+          status: Status
+          phone_number: Phone Number
+
+        company:
+          company_number: Company number
+          name: Name
+          phone_number: Phone Number
+          email: Email
+          street: Street
+          post_code: Post code
+          city: City
+          region: Region
+          website: Website
+
+        business_category:
+          name: Name
+          description: Description
+
     errors:
       messages:
         record_invalid: 'Ett fel uppstod: %{errors}'
