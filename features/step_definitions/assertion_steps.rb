@@ -12,6 +12,14 @@ And(/^I should not see "([^"]*)"$/) do |content|
   expect(page).not_to have_content content
 end
 
+And(/^I should see t\("([^"]*)", locale: :(.*)\)$/) do |content, l|
+  expect(page).to have_content I18n.t("#{content}", locale: l.to_sym)
+end
+
+And(/^I should not see t\("([^"]*)", locale: :(.*)\)$/) do |content, l|
+  expect(page).not_to have_content I18n.t("#{content}", locale: l.to_sym)
+end
+
 And(/^I should not see button "([^"]*)"$/) do |button|
   expect(page).not_to have_button button
 end
