@@ -11,9 +11,6 @@ Feature: As a visitor
   Scenario: Default language is Swedish
     Given I am on the "all companies" page
     Then I should see "Hitta H-märkt företag"
-    And I should see "Kategori"
-    And I should see "Namn"
-    And I should see "Län"
     And I should not see "Swedish flag"
     And I should see "English flag"
     And I should see t("theme_copyright", locale: :sv)
@@ -24,9 +21,6 @@ Feature: As a visitor
     When I click on "change-lang-to-english"
     When I click on "change-lang-to-svenska"
     Then I should see "Hitta H-märkt företag"
-    And I should see "Kategori"
-    And I should see "Namn"
-    And I should see "Län"
     And I should not see "Swedish flag"
     And I should see "English flag"
     And I should see t("theme_copyright", locale: :sv)
@@ -35,11 +29,7 @@ Feature: As a visitor
   Scenario: Visitor switches the site language from Swedish to English
     Given I am on the "all companies" page
     When I click on "change-lang-to-english"
-    Then I should see "Find H-labeled companies"
-    And I should see "Category"
-    And I should see "Name"
-    And I should see "County"
-    And I should see "Swedish flag"
+    Then I should see "Swedish flag"
     And I should not see "English flag"
     And I should see t("theme_copyright", locale: :en)
 
