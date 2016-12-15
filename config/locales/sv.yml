@@ -1,14 +1,14 @@
 ---
 sv:
 
-  title: 'OM SVERIGES HUNDFÖRETAGARE'
+  title: 'Medlemmar i Sveriges Hundföretagare'
 
   home: 'Hem'
   about: 'Om'
   more: 'Mer'
 
   show_in_english: "In English"
-  show_in_swedish: "I Svenska"
+  show_in_swedish: "På Svenska"
 
   apply_for_membership: 'Ansök om medlemskap'
 
@@ -20,11 +20,11 @@ sv:
       company_name: 'Företagsnamn'
       company_number: 'Organisationsnummer'
       contact_person: 'Kontaktperson'
-      company_email: 'Företagets e'
+      company_email: 'Företagets e-postadress'
       phone_number: 'Telefonnummer'
       submit: 'Skicka'
     create:
-      submit_acknowledgement: 'Tack, Din ansökan har lämnats in'
+      submit_acknowledgement: 'Tack, Din ansökan har skickats.'
 
   activerecord:
     models:
@@ -144,25 +144,25 @@ sv:
         one: en minut
         other: "%{count} minuter"
       x_months:
-        one: 1 month
-        other: "%{count} months"
+        one: en månad
+        other: "%{count} månader"
       x_years:
-        one: 1 År
-        other: "%{count} År"
+        one: ett år
+        other: "%{count} år"
       x_seconds:
         one: en sekund
         other: "%{count} sekunder"
     prompts:
-      day: Dag
-      hour: Timme
-      minute: Minut
-      month: Månad
-      second: Sekund
-      year: År
+      day: dag
+      hour: timme
+      minute: minut
+      month: månad
+      second: sekund
+      year: år
   errors:
     format: "%{attribute} %{message}"
     messages:
-      accepted: måste vara accepterad
+      accepted: måste accepteras
       blank: måste anges
       present: får inte anges
       confirmation: stämmer inte överens
@@ -176,7 +176,7 @@ sv:
       invalid: har fel format
       less_than: måste vara mindre än %{count}
       less_than_or_equal_to: måste vara mindre än eller lika med %{count}
-      model_invalid: "Validation failed: %{errors}"
+      model_invalid: "Validering lyckades inte: %{errors}"
       not_a_number: är inte ett nummer
       not_an_integer: måste vara ett heltal
       odd: måste vara udda
@@ -195,8 +195,8 @@ sv:
     template:
       body: 'Det var problem med följande fält:'
       header:
-        one: Ett fel förhindrade denna %{model} från att sparas
-        other: "%{count} fel förhindrade denna %{model} från att sparas"
+        one: Ett fel förhindrade %{model} från att sparas
+        other: "%{count} fel förhindrade %{model} från att sparas"
   helpers:
     select:
       prompt: Välj
