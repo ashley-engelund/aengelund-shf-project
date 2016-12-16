@@ -7,54 +7,91 @@ en:
   about: 'About'
   more: 'More'
 
-  show_in_english: "In English"
-  show_in_swedish: "På Svenska"
+  show_in_english: Show the site in English
+  show_in_swedish: Visar webbplatsen på svenska
+
+  sign_up: Sign up
+  log_in: Log in
+  log_out: Log out
+  log_in_with: Log in with
+  create_account: Create account
+  forgot_password: Forgot your password
+  do_you_need_instructions: Do you need instructions?
+  remember_me: Remember me
+  password: Password
+  current_password: Current password
+  confirm_password: Confirm the password
+  send_reset_instructions: Send reset instructions
+  unconfirmed_email_for: Unconfirmed email address for
+  leave_blank_if_no_change: leave blank if you don't want to change it
+  delete_my_account: Delete my account
+  unregister: Remove your account (unregister)
+
+
+  at_least_chars: '(at least %{minimum_length} characters)'
+  is_required_explanation: Indicates a required field
+
+  user: user
+
+  edit: Edit
+  manage: Manage
+  update: Update
+  submit: Submit
+  delete: Delete
+  send: Send
+  new: New
+  change: Change
+  save: Save
+
+  back: Back
+
+  confirm_are_you_sure: Are you sure
+  required_to_save_changes: required to save changes
+
+  info:
+    logged_in_as_admin: You are logged in as an admin.
+    under_construction: This page is under construction.  More information and features are coming.
 
   apply_for_membership: 'Apply for membership'
 
   theme_copyright: "© 2017 Theme by Theme Feeder. All Rights Reserved."
 
-  memberships:
-    new:
-      title: 'Apply for a Membership'
-      company_name: 'Company Name'
-      company_number: 'Company Number'
-      contact_person: 'Contact Person'
-      company_email: 'Company Email'
-      phone_number: 'Phone Number'
-      submit: 'Submit'
-    create:
-      submit_acknowledgement: 'Thank You. Your membership application has been submitted.'
+  name: Name
+  org_nr: Org no.
 
+
+ # Automatic and manual lookup for ActiveRecords:
   activerecord:
     models:
-      membership:
+      membership_application:
         one: Membership
         other: Memberships
 
-      attributes:
-        membership_application:
-          company_number: Company number
-          first_name: First name
-          last_name: Last name
-          contact_email: Email
-          status: Status
-          phone_number: Phone Number
+    attributes:
+      membership_application:
+        company_number: Company number
+        first_name: First name
+        last_name: Last name
+        contact_email: Email
+        status: Status
+        phone_number: Phone number
+        membership_number: Membership number
 
-        company:
-          company_number: Company number
-          name: Name
-          phone_number: Phone Number
-          email: Email
-          street: Street
-          post_code: Post code
-          city: City
-          region: Region
-          website: Website
+      company:
+        company_number: Company number
+        name: Name
+        phone_number: Phone Number
+        email: Email
+        street: Street
+        post_code: Post code
+        city: City
+        region: Region
+        website: Website
+        org_nr: Org no.
 
-        business_category:
-          name: Name
-          description: Description
+      business_category:
+        name: Name
+        description: Description
 
     errors:
        messages:
@@ -62,6 +99,95 @@ en:
          restrict_dependent_destroy:
            has_one: "Cannot delete record because a dependent %{record} exists"
            has_many: "Cannot delete record because dependent %{record} exist"
+
+ # Automatic and manual lookup for views:
+  membership_applications:
+    new:
+      title: Apply for a Membership
+      submit: Submit
+      first_name: First name
+      last_name: Last name
+      phone_number: Phone number
+      company_number: Company number
+      contact_email: Email
+    create:
+      success: Thank You. Your membership application has been submitted.
+      error: The was a problem creating and submitting your application.
+    show:
+      title: Application from %{member_full_name}
+      first_name: First name
+      last_name: Last name
+      phone_number: Phone number
+      company_number: Company number
+      contact_email: Email
+      status: Status
+      membership_number: Membership number
+      with_categories: Categories
+    update:
+      success: The application was updated.
+      error: One or more problems prevented your application from being updated.
+      enter_member_number: Please enter the member number and save.
+
+    all_membership_applications: All applications
+    edit_membership_application: Edit application
+    view_membership_application: View application
+    list_all_membership_applications: List all applications
+
+    uploads:
+      no_files: No files uploaded for this application.
+      files_uploaded: 'Files uploaded for this application:'
+      filename: Filename
+      file_was_uploaded: 'This file was uploaded: %{filename}'
+      confirm_delete: 'Are you sure you want to delete %{filename}'
+      invalid_upload_type: Sorry, this is not a file type you can upload.
+
+    update_the_status: Update the status
+
+  companies:
+    new:
+      title: New company
+    create:
+      error: One or more problems prevented the company from being created.
+      success: The company was created successfully.
+    update:
+      error: There was a problem updating the company.
+      success: The company was updated.
+    show:
+      company_number: Company number
+      name: Name
+      phone_number: Phone Number
+      email: Company email
+      address: Address
+      street: Street
+      post_code: Post code
+      city: City
+      region: Region
+      website: Company website
+      org_nr: Org no.
+    index:
+      title: Find H-labeled companies
+      admin_title: Edit member companies
+      category: Category
+      region_land: Region
+      h_companies_listed_below: H-labeled companies are listed below.
+      how_to_search: To search the list, use Ctrl + F (PC) or Command + F (Mac)
+    company_name: Company name
+    telephone_number: Phone number
+    operations_region: County of operations
+    op_region_multiple_use_sweden: Enter Sweden if the company operates in several regions
+    website_include_http: Company website (please include http://)
+    org_nr_no_hyphens: Numbers only (no hyphens)
+
+    all_companies: All companies
+    edit_company: Edit company
+    view_company: View company
+    list_all_companies: List all companies
+
+  admin:
+    index:
+      title: 'Admin: All incoming applications'
+    all_applications_received: All applications received
+
   date:
     abbr_day_names:
     - Sun
@@ -159,7 +285,9 @@ en:
       month: Month
       second: Seconds
       year: Year
+
   errors:
+    not_permitted: You do not have permission to do this.
     format: "%{attribute} %{message}"
     messages:
       accepted: must be accepted
@@ -197,6 +325,7 @@ en:
       header:
         one: 1 error kept this %{model} from being saved
         other: "%{count} errors prohibited this %{model} from being saved"
+
   helpers:
     select:
       prompt: Please select
