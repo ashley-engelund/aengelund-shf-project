@@ -3,33 +3,16 @@ en:
 
   title: "SWEDEN'S ETHICAL DOG COMPANIES"
 
-  home: 'Home'
-  about: 'About'
-  more: 'More'
+  home: Home
+  about: About
+  more: More
 
   show_in_english: Show the site in English
   show_in_swedish: Visar webbplatsen på svenska
 
-  sign_up: Sign up
-  log_in: Log in
-  log_out: Log out
-  log_in_with: Log in with
-  create_account: Create account
-  forgot_password: Forgot your password
-  do_you_need_instructions: Do you need instructions?
-  remember_me: Remember me
   password: Password
-  current_password: Current password
-  confirm_password: Confirm the password
-  send_reset_instructions: Send reset instructions
-  unconfirmed_email_for: Unconfirmed email address for
-  leave_blank_if_no_change: leave blank if you don't want to change it
-  delete_my_account: Delete my account
-  unregister: Remove your account (unregister)
 
-
-  at_least_chars: '(at least %{minimum_length} characters)'
-  is_required_explanation: Indicates a required field
+  is_required_field: Indicates a required field
 
   user: user
 
@@ -43,10 +26,9 @@ en:
   change: Change
   save: Save
 
-  back: Back
+  back: &back Back
 
-  confirm_are_you_sure: Are you sure
-  required_to_save_changes: required to save changes
+  confirm_are_you_sure: &are_you_sure_confirm Are you sure
 
   info:
     logged_in_as_admin: You are logged in as an admin.
@@ -56,8 +38,8 @@ en:
 
   theme_copyright: "© 2017 Theme by Theme Feeder. All Rights Reserved."
 
-  name: Name
-  org_nr: Org no.
+  name: &name Name
+  org_nr: &org_nr Org no.
 
 
  # Automatic and manual lookup for ActiveRecords:
@@ -70,13 +52,13 @@ en:
     attributes:
 
       user:
-        email: Email
+        email: &email Email
         password: Password
 
       membership_application:
         company_number: Company number
-        first_name: First name
-        last_name: Last name
+        first_name: &first_name First name
+        last_name: &last_name Last name
         contact_email: Email
         status: Status
         phone_number: Phone number
@@ -84,18 +66,18 @@ en:
 
       company:
         company_number: Company number
-        name: Name
+        name: *name
         phone_number: Phone Number
-        email: Email
+        email: *email
         street: Street
         post_code: Post code
         city: City
         region: Region
         website: Website
-        org_nr: Org no.
+        org_nr: *org_nr
 
       business_category:
-        name: Name
+        name: *name
         description: Description
 
     errors:
@@ -110,21 +92,21 @@ en:
     new:
       title: Apply for a Membership
       submit: Submit
-      first_name: First name
-      last_name: Last name
+      first_name: *first_name
+      last_name: *last_name
       phone_number: Phone number
       company_number: Company number
-      contact_email: Email
+      contact_email: *email
     create:
       success: Thank You. Your membership application has been submitted.
       error: The was a problem creating and submitting your application.
     show:
       title: Application from %{member_full_name}
-      first_name: First name
-      last_name: Last name
+      first_name: *first_name
+      last_name: *last_name
       phone_number: Phone number
       company_number: Company number
-      contact_email: Email
+      contact_email: *email
       status: Status
       membership_number: Membership number
       with_categories: Categories
@@ -159,7 +141,7 @@ en:
       success: The company was updated.
     show:
       company_number: Company number
-      name: Name
+      name: *name
       phone_number: Phone Number
       email: Company email
       address: Address
@@ -168,7 +150,7 @@ en:
       city: City
       region: Region
       website: Company website
-      org_nr: Org no.
+      org_nr: *org_nr
     index:
       title: Find H-labeled companies
       admin_title: Edit member companies
@@ -194,9 +176,54 @@ en:
     all_applications_received: All applications received
 
   devise:
+    min_length: '(at least %{minimum_length} characters)'
+
+    registrations:
+      new:
+        title: Create your login information
+        create_account: Create account
+        confirm_password: &confirm_password Confirm password
+        forgot_password: Forgot password
+        submit_button_label: Sign up
+      edit:
+        title: Edit your login information
+        unconfirmed_email_for: 'Unconfirmed email address for: %{unconfirmed_email}'
+        confirm_password: *confirm_password
+        current_password: Current password
+        required_to_save_changes: (required to save changes)
+        leave_blank_if_no_change: "leave blank if there's no change"
+        submit_button_label: Update
+        delete_my_account: Delete my account
+        unregister: Unregister
+        confirm_are_you_sure: *are_you_sure_confirm
+        back: *back
+    sessions:
+      new:
+        log_in: &log_in Log In
+        title: *log_in
+        remember_me: Remember me
+        submit_button_label: *log_in
+      destroy:
+        log_out: Log out
     passwords:
+      new:
+        title: Forgot your password
+        submit_button_label: Send the reset instructions
       edit:
         title: Change your password
+        new_password: New password
+        confirm_password: Confirm your password
+        submit_button_label: Change Your Password
+    confirmations:
+      new:
+        do_you_need_instructions: &need_instructions Do you need instructions?
+    unlocks:
+      new:
+        do_you_need_instructions: *need_instructions
+    omniauths:
+      new:
+        log_in_with: Log in with
+
 
   errors:
     not_permitted: You do not have permission to do this.

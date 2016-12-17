@@ -3,33 +3,16 @@ sv:
 
   title: 'Medlemmar i Sveriges Hundföretagare'
 
-  home: 'Hem'
-  about: 'Om'
-  more: 'Mer'
+  home: Hem
+  about: Om
+  more: Mer
 
   show_in_english: Show the site in English
   show_in_swedish: Visar webbplatsen på svenska
 
-  sign_up: Sign up
-  log_in: Logga in
-  log_out: Logga ut
-  log_in_with: Logga in med
-  create_account: Skapa konto
-  forgot_password: Glömt lösenord
-  do_you_need_instructions: Fick du inga instruktioner?
-  remember_me: Kom ihåg mig
   password: Lösenord
-  current_password: Nuvarande lösenord
-  confirm_password: Bekräfta lösenord
-  send_reset_instructions: Skicka återställningsinstruktioner
-  unconfirmed_email_for: Obekräftad mailadress för
-  leave_blank_if_no_change: lämna tomt om du inte vill byta
-  delete_my_account: Ta bort mitt konto
-  unregister: Avregistrera dig
 
-
-  at_least_chars: '(minst %{minimum_length} tecken)'
-  is_required_explanation: Indikerar ett obligatoriskt fält
+  is_required_field: Indikerar ett obligatoriskt fält
 
   user: användare
 
@@ -43,24 +26,21 @@ sv:
   change: Byt
   save: Save
 
-  back: Tillbaks
+  back: &back Tillbaks
 
-  confirm_are_you_sure: Är du säker
-
-  required_to_save_changes: behövs för att spara ändringar
+  confirm_are_you_sure: &are_you_sure_confirm Är du säker
 
   info:
     logged_in_as_admin: Du är inloggad som admin
     under_construction: Sidan är under uppbyggnad, mer information och funktioner kommer att komma efterhand.
 
 
-
   apply_for_membership: Ansök om medlemskap
 
   theme_copyright: "© 2017 Tema av Theme Feeder. Alla rättigheter förbehållna."
 
-  name: Namn
-  org_nr: Org no.
+  name: &name Namn
+  org_nr: &org_nr Org no.
 
   # Automatisk och manuell sökning för Active Records
   activerecord:
@@ -72,32 +52,32 @@ sv:
     attributes:
 
       user:
-        email: E-post
+        email: &email E-post
         password: Lösenord
 
       membership_application:
         company_number: Organisationsnummer
-        first_name: Förnamn
-        last_name: Efternamn
+        first_name: &first_name Förnamn
+        last_name: &last_name Efternamn
         contact_email: Kontakt e-post
-        status: Status
+        status: &status Status
         phone_number: Telefonnummer
-        membership_number: Medlemsnummer
+        membership_number: &membership_number Medlemsnummer
 
       company:
-        company_number: Org nr
-        name: Namn
+        company_number: *org_nr
+        name: *name
         phone_number: Telefon
-        email: Email
+        email: *email
         street: Gata
         post_code: Post nr
         city: Ort
         region: Verksamhetslän
         website: Webbplats
-        org_nr: Org nr
+        org_nr: *org_nr
 
       business_category:
-        name: Namn
+        name: *name
         description: Beskrivning
 
     errors:
@@ -113,23 +93,23 @@ sv:
     new:
       title: Ansök om medlemskap
       submit: Skicka
-      company_number: Organisationsnummer
-      phone_number: Telefonnummer
-      first_name: Förnamn
-      last_name: Efternamn
-      contact_email: Kontakt e-post
+      company_number: &company_number Organisationsnummer
+      phone_number: &phone_number Telefonnummer
+      first_name: *first_name
+      last_name: *last_name
+      contact_email: &contact_email Kontakt e-post
     create:
       success: Tack, din ansökan har skickats.
       error: Ett eller flera problem hindrade din ansökan från att skickas.
     show:
       title: Ansökan från %{member_full_name}
-      first_name: Förnamn
-      last_name: Efternamn
-      phone_number: Telefonnummer
-      company_number: Organisationsnummer
-      contact_email: Kontakt e-post
-      status: Status
-      membership_number: Medlemsnummer
+      first_name: *first_name
+      last_name: *last_name
+      phone_number: *phone_number
+      company_number: *company_number
+      contact_email: *contact_email
+      status: *status
+      membership_number: *membership_number
       with_categories: Ansöker inom
     update:
       success: Ansökan har uppdaterats.
@@ -152,7 +132,6 @@ sv:
 
     update_the_status: Uppdatera status
 
-
   companies:
     new:
       title: Nytt företag
@@ -163,8 +142,8 @@ sv:
       error: Ett problem förhindrade uppdatering av företaget.
       success: Företaget har uppdaterats.
     show:
-      company_number: Org nr
-      name: Namn
+      company_number: *org_nr
+      name: *name
       phone_number: Telefon
       email: Företagets e-postadress
       address: Adress
@@ -173,7 +152,7 @@ sv:
       city: Ort
       region: Verksamhetslän
       website: Företagets webbplats
-      org_nr: Org nr
+      org_nr: *org_nr
     index:
       title:  Hitta H-märkt företag
       admin_title: Redigera medlemsföretag
@@ -199,9 +178,54 @@ sv:
     all_applications_received: Alla inkomna ansökningar
 
   devise:
-    passwords:
+    min_length: '(minst %{minimum_length} tecken)'
+
+    registrations:
+      new:
+        title: Skapa dina inloggningsuppgifter
+        create_account: Skapa konto
+        forgot_password: Glömt lösenord
+        confirm_password: &confirm_password Bekräfta lösenord
+        submit_button_label: Sign up
       edit:
-        title: Ändra ditt lösenord
+        title: Redigera användare
+        unconfirmed_email_for: 'Obekräftad mailadress för: %{unconfirmed_email}'
+        leave_blank_if_no_change: lämna tomt om du inte vill byta
+        confirm_password: *confirm_password
+        current_password: Nuvarande lösenord
+        required_to_save_changes: (behövs för att spara ändringar)
+        submit_button_label: Uppdatera
+        delete_my_account: Ta bort mitt konto
+        unregister: Avregistrera dig
+        confirm_are_you_sure: *are_you_sure_confirm
+        back: *back
+    sessions:
+      new:
+        log_in: &log_in Logga In
+        title: *log_in
+        remember_me: Kom ihåg mig
+        submit_button_label: *log_in
+      destroy:
+        log_out: Logga ut
+    passwords:
+      new:
+        title: Glömt lösenordet
+        submit_button_label: Skicka återställningsinstruktioner
+      edit:
+        title: &change_password Byt lösenord
+        new_password: Nytt lösenord
+        confirm_password: *confirm_password
+        submit_button_label: *change_password
+    confirmations:
+      new:
+        do_you_need_instructions: &need_instructions Fick du inga instruktioner?
+    unlocks:
+      new:
+        do_you_need_instructions: *need_instructions
+    omniauths:
+      new:
+        log_in_with: Logga in med
+
 
   errors:
     not_permitted: Du har inte behörighet att göra detta.
