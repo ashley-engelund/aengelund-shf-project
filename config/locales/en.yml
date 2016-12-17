@@ -193,6 +193,11 @@ en:
       title: 'Admin: All incoming applications'
     all_applications_received: All applications received
 
+  devise:
+    passwords:
+      edit:
+        title: Change your password
+
   errors:
     not_permitted: You do not have permission to do this.
     format: "%{attribute} %{message}"
