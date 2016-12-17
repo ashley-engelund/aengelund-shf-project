@@ -70,6 +70,11 @@ sv:
         other: Medlemskap
 
     attributes:
+
+      user:
+        email: E-post
+        password: Lösenord
+
       membership_application:
         company_number: Organisationsnummer
         first_name: Förnamn
@@ -330,6 +335,7 @@ sv:
       header:
         one: Ett fel förhindrade %{model} från att sparas
         other: "%{count} fel förhindrade %{model} från att sparas"
+
   helpers:
     select:
       prompt: Välj
