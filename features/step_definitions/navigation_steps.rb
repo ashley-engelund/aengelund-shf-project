@@ -31,7 +31,7 @@ Given(/^I am on the "([^"]*)" page$/) do |page|
       path = information_path
     when 'new password'
       path = new_user_password_path
-    when 'register a new user'
+    when 'register as a new user'
       path = new_user_registration_path
     when 'edit registration for a user'
       path = edit_user_registration_path
