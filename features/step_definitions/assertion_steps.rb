@@ -55,6 +55,10 @@ And(/^I should see t\("([^"]*)", ([^:]*): (\d+)\), locale: :(.*)$/) do |content,
   expect(page).to have_content I18n.t("#{content}", key.to_sym => value, locale: locale.to_sym)
 end
 
+Then(/^I should see t\("([^"]*)", ([^:]*): "([^"]*)"\), locale: :(.*)$/) do |content, key, value, l|
+  expect(page).to have_content I18n.t("#{content}", key.to_sym => value, locale: l.to_sym)
+end
+
 And(/^I should not see t\("([^"]*)", ([^:]*): (\d+)\), locale: :(.*)$/) do |content, key, value, locale|
   expect(page).not_to have_content I18n.t("#{content}", key.to_sym => value, locale: locale.to_sym)
 end
