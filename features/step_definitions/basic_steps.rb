@@ -26,14 +26,12 @@ end
 When(/^I fill in the translated form with data:$/) do |table|
   data = table.hashes.first
   data.each do |label, value|
-    data = table.hashes.first
-    data.each do |label, value|
-      unless value.empty?
-        fill_in i18n_content("#{label}"), with: value
-      end
+    unless value.empty?
+      fill_in i18n_content("#{label}"), with: value
     end
   end
 end
+
 
 When(/^I set "([^"]*)" to "([^"]*)"$/) do |list, option|
   select option, from: list
