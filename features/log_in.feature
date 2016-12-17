@@ -18,45 +18,45 @@ Feature: As a registered user
 
   Scenario: Logging in
     Given I am on the "landing" page
-    Then I should see t("log_in")
-    When I click on t("log_in") link
+    Then I should see t("devise.sessions.new.log_in")
+    When I click on t("devise.sessions.new.log_in") link
     Then I should be on "login" page
     When I fill in t("activerecord.attributes.user.email") with "emma@random.com"
     And I fill in t("activerecord.attributes.user.password") with "password"
-    And I click on t("log_in") button
+    And I click on t("devise.sessions.new.log_in") button
     Then I should see t("devise.sessions.signed_in")
 
   Scenario: Not proper e-mail
     Given I am on the "login" page
     When I fill in t("activerecord.attributes.user.email") with "emma@random"
     And I fill in t("activerecord.attributes.user.password") with "password"
-    And I click on t("log_in") button
+    And I click on t("devise.sessions.new.log_in") button
     Then I should see t("devise.failure.invalid")
 
   Scenario: No input of email
     Given I am on the "login" page
     When I leave the t("activerecord.attributes.user.password") field empty
-    And I click on t("log_in") button
+    And I click on t("devise.sessions.new.log_in") button
     Then I should see t("devise.failure.invalid")
 
   Scenario: No input of password
     Given I am on the "login" page
     When I leave the t("activerecord.attributes.user.password") field empty
-    And I click on t("log_in") button
+    And I click on t("devise.sessions.new.log_in") button
     Then I should see t("devise.failure.invalid")
 
   Scenario: Not registered user
     Given I am on the "login" page
     When I fill in t("activerecord.attributes.user.email") with "anna@random.com"
     And I fill in t("activerecord.attributes.user.password") with "password"
-    And I click on t("log_in") button
+    And I click on t("devise.sessions.new.log_in") button
     Then I should see t("devise.failure.invalid")
 
   Scenario: Not accessing protected page
     Given I am on the "login" page
     When I fill in t("activerecord.attributes.user.email") with "anna@random.com"
     And I fill in t("activerecord.attributes.user.password") with "password"
-    And I click on t("log_in") button
+    And I click on t("devise.sessions.new.log_in") button
     Then I should see t("devise.failure.invalid")
     When I fail to visit the "applications index" page
     Then I should see t("errors.not_permitted")
@@ -64,35 +64,35 @@ Feature: As a registered user
 
   Scenario: Logging in as admin
     Given I am on the "landing" page
-    Then I should see t("log_in")
-    When I click on t("log_in") link
+    Then I should see t("devise.sessions.new.log_in")
+    When I click on t("devise.sessions.new.log_in") link
     Then I should be on "login" page
     When I fill in t("activerecord.attributes.user.email") with "arne@random.com"
     And I fill in t("activerecord.attributes.user.password") with "password"
-    And I click on t("log_in") button
+    And I click on t("devise.sessions.new.log_in") button
     Then I should see t("devise.sessions.signed_in")
     And I should see t("info.logged_in_as_admin")
 
 
   Scenario: Logging in as a member
     Given I am on the "landing" page
-    Then I should see t("log_in")
-    When I click on t("log_in") link
+    Then I should see t("devise.sessions.new.log_in")
+    When I click on t("devise.sessions.new.log_in") link
     Then I should be on "login" page
     When I fill in t("activerecord.attributes.user.email") with "emma@random.com"
     And I fill in t("activerecord.attributes.user.password") with "password"
-    And I click on t("log_in") button
+    And I click on t("devise.sessions.new.log_in") button
     And I should be on "member instructions" page
     And I should not see t("info.logged_in_as_admin")
 
 
   Scenario: Logging in as a user
     Given I am on the "landing" page
-    Then I should see t("log_in")
-    When I click on t("log_in") link
+    Then I should see t("devise.sessions.new.log_in")
+    When I click on t("devise.sessions.new.log_in") link
     Then I should be on "login" page
     When I fill in t("activerecord.attributes.user.email") with "lars-user@random.com"
     And I fill in t("activerecord.attributes.user.password") with "password"
-    And I click on t("log_in") button
+    And I click on t("devise.sessions.new.log_in") button
     And I should be on "user instructions" page
     And I should not see t("info.logged_in_as_admin")

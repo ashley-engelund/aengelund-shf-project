@@ -1,5 +1,5 @@
 %header.entry-header
-  %h1.entry-title #{t('edit')} #{resource_name.to_s.humanize}
+  %h1.entry-title #{t('.title')}
 .post-title-divider
   %span
 .entry-content.wpcf7
@@ -15,10 +15,10 @@
       %br/
       = f.password_field :password, autocomplete: 'off', class: 'wpcf7-form-control'
     .field
-      = f.label :password_confirmation, "#{t('confirm_password')}", class: 'required'
+      = f.label :password_confirmation, "#{t('.confirm_password')}", class: 'required'
       %br/
       = f.password_field :password_confirmation, autocomplete: 'off', class: 'wpcf7-form-control'
     .actions
-      = f.submit "#{t('sign_up')}"
+      = f.submit "#{t('.submit_button_label')}"
   = render 'application/required_fields'
   = render 'devise/shared/links'

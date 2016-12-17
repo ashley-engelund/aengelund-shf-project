@@ -14,31 +14,38 @@ Feature: As a non-swedish speaking potential member
       | emma@random.com      | password | false | false     |
 
 
-  Scenario: Devise New password view is translated
+  Scenario: Devise new session view is translated
+    Given I am on the "login" page
+    Then I should see t("devise.sessions.new.title")
+    And I should see t("activerecord.attributes.user.email")
+    And I should see t("activerecord.attributes.user.password")
+    And I should see t("devise.sessions.new.remember_me")
+    And I should see button t("devise.sessions.new.submit_button_label")
+
+  Scenario: Devise new password view is translated
     Given I am on the "new password" page
-    Then I should see t("activerecord.attributes.user.email")
-    And I should see t("forgot_password")
-    And I should see button t("send_reset_instructions")
+    Then I should see t("devise.passwords.new.title")
+    And I should see t("activerecord.attributes.user.email")
+    And I should see button t("devise.passwords.new.submit_button_label")
 
-  Scenario: Devise New registration view is translated
-    Given I am on the "register a new user" page
-    Then I should see t("activerecord.attributes.user.password")
+  Scenario: Devise new registration view is translated
+    Given I am on the "register as a new user" page
+    Then I should see t("devise.registrations.new.title")
+    And I should see t("activerecord.attributes.user.email")
     And I should see t("activerecord.attributes.user.password")
-    And I should see t("activerecord.attributes.user.password")
-    And I should see t("confirm_password")
+    And I should see t("devise.registrations.new.confirm_password")
+    And I should see button t("devise.registrations.new.submit_button_label")
 
-  Scenario: Devise Edit registration view is translated
+  Scenario: Devise edit registration view is translated
     Given I am logged in as "emma@random.com"
     And I am on the "edit registration for a user" page
-    Then I should see t("activerecord.attributes.user.password")
+    Then I should see t("devise.registrations.edit.title")
     And I should see t("activerecord.attributes.user.password")
-    And I should see t("confirm_password")
-    And I should see t("current_password")
-    And I should see t("leave_blank_if_no_change")
-    And I should see t("required_to_save_changes")
-    And I should see t("unregister")
-    And I should see button t("delete_my_account")
-
-
-
-
+    And I should see t("activerecord.attributes.user.password")
+    And I should see t("devise.registrations.edit.confirm_password")
+    And I should see t("devise.registrations.edit.current_password")
+    And I should see t("devise.registrations.edit.leave_blank_if_no_change")
+    And I should see t("devise.registrations.edit.required_to_save_changes")
+    And I should see t("devise.registrations.edit.unregister")
+    And I should see button t("devise.registrations.edit.delete_my_account")
+    And I should see button t("devise.registrations.edit.submit_button_label")
