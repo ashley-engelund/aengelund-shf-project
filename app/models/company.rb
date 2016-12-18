@@ -8,7 +8,9 @@ class Company < ApplicationRecord
   validates_format_of :email, with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, on: [:create, :update]
   validate :swedish_organisationsnummer
 
-  has_and_belongs_to_many :business_categories
+  has_many :business_categories, through: :membership_applications
+
+  has_many :membership_applications
 
 
   def categories

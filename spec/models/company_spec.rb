@@ -32,7 +32,8 @@ RSpec.describe Company, type: :model do
   end
 
   describe 'Associations' do
-    it { is_expected.to have_and_belong_to_many :business_categories }
+    it { is_expected.to have_many(:business_categories).through(:membership_applications) }
+    it { is_expected.to have_many(:membership_applications) }
   end
 
   describe 'categories = all employee categories' do
