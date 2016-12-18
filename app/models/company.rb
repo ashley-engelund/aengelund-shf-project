@@ -12,15 +12,4 @@ class Company < ApplicationRecord
 
   has_many :membership_applications
 
-
-  def categories
-    cats = []
-
-    MembershipApplication.where(company_number: company_number).find_each do | employee |
-      cats << employee.business_categories.to_ary
-    end
-
-    cats.flatten.uniq{ |c1| c1.id }
-  end
-
 end
