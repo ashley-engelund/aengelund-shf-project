@@ -9,7 +9,7 @@
 
   = f.label :company_number, "#{t('companies.show.company_number')}", class: 'required'
   = f.text_field :company_number, class: 'wpcf7-form-control'
-  %em #{t('companies.org_nr_no_hyphens')}
+  %em= t('companies.org_nr_no_hyphens')
   %br
 
   = f.label :phone_number, "#{t('companies.telephone_number')}"
@@ -30,7 +30,7 @@
 
   = f.label :region, "#{t('companies.operations_region')}", class: 'required'
   = f.text_field :region, class: 'wpcf7-form-control'
-  %em #{t('companies.op_region_multiple_use_sweden')}
+  %em= t('companies.op_region_multiple_use_sweden')
   %br
 
   = f.label :website, "#{t('companies.website_include_http')})", class: 'required'
