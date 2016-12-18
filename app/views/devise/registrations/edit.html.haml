@@ -1,5 +1,5 @@
 %header.entry-header
-  %h1.entry-title #{t('.title')}
+  %h1.entry-title= t('.title')
 .post-title-divider
   %span
 .entry-content.wpcf7
@@ -14,7 +14,7 @@
         "#{t('.unconfirmed_email_for', unconfirmed_email: resource.unconfirmed_email )}"
     .field
       = f.label :password
-      %i #{t('.leave_blank_if_no_change')}
+      %i= t('.leave_blank_if_no_change')
       %br/
       = f.password_field :password, autocomplete: 'off', class: 'wpcf7-form-control'
       = render 'devise/shared/min_password_length_info'
@@ -24,7 +24,7 @@
       = f.password_field :password_confirmation, autocomplete: 'off', class: 'wpcf7-form-control'
     .field
       = f.label :current_password, "#{t('.current_password')}", class: 'required'
-      %i #{t('.required_to_save_changes')}
+      %i= t('.required_to_save_changes')
       %br/
       = f.password_field :current_password, autocomplete: 'off', class: 'wpcf7-form-control'
     .actions

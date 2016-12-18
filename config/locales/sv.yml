@@ -182,11 +182,11 @@ sv:
 
     registrations:
       new:
-        title: Skapa dina inloggningsuppgifter
-        create_account: Skapa konto
+        title: Skapa användare
+        create_account: Skicka
         forgot_password: Glömt lösenord
         confirm_password: &confirm_password Bekräfta lösenord
-        submit_button_label: Sign up
+        submit_button_label: Skapa användare
       edit:
         title: Redigera användare
         unconfirmed_email_for: 'Obekräftad mailadress för: %{unconfirmed_email}'
