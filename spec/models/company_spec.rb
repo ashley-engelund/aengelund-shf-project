@@ -36,55 +36,47 @@ RSpec.describe Company, type: :model do
     it { is_expected.to have_many(:membership_applications) }
   end
 
+
   describe 'categories = all employee categories' do
 
-    it '3 employees, each with 1 unique category' do
+    before(:all) do
+      Company.delete_all
+      MembershipApplication.delete_all
+      User.delete_all
+
+      company = create(:company, company_number: '5562252998')
 
       employee1 = create(:user, email: 'emp1@happymutts.com')
       employee2 = create(:user, email: 'emp2@happymutts.com')
       employee3 = create(:user, email: 'emp3@happymutts.com')
 
-      create(:membership_application, user: employee1, num_categories: 1, category_name: 'cat1', company_number: '5562252998')
-      create(:membership_application, user: employee2, num_categories: 1, category_name: 'cat2', company_number: '5562252998')
-      create(:membership_application, user: employee3, num_categories: 1, category_name: 'cat3', company_number: '5562252998')
-
-      company = create(:company, company_number: '5562252998')
-
-      expect(company.categories.count).to eq 3
-      expect(company.categories.map { |c| c[:name] }).to contain_exactly('cat1', 'cat2', 'cat3')
-
     end
 
+    it '3 employees, each with 1 unique category' do
+      create(:membership_application, user: User.find_by_email('emp1@happymutts.com'), status: 'Godkänd', num_categories: 1, category_name: 'cat1', company_number: '5562252998')
+      create(:membership_application, user: User.find_by_email('emp2@happymutts.com'), status: 'Godkänd', num_categories: 1, category_name: 'cat2', company_number: '5562252998')
+      create(:membership_application, user: User.find_by_email('emp3@happymutts.com'), status: 'Godkänd', num_categories: 1, category_name: 'cat3', company_number: '5562252998')
 
-    def has_single_category(category_holder, category)
-      category_holder.business_categories.delete_all
-      category_holder.business_categories << category
-      category_holder
+      expect(Company.find_by_company_number('5562252998').business_categories.count).to eq 3
+      expect(Company.find_by_company_number('5562252998').business_categories.map { |c| c[:name] }).to contain_exactly('cat1', 'cat2', 'cat3')
     end
-
 
     it '3 employees, each with the same category' do
 
-      company = create(:company, company_number: '5562252998')
+      category = create(:business_category, name: 'cat1')
 
-      employee1 = create(:user, email: 'emp1@happymutts.com')
-      employee2 = create(:user, email: 'emp2@happymutts.com')
-      employee3 = create(:user, email: 'emp3@happymutts.com')
+      m1 =create(:membership_application, user: User.find_by_email('emp1@happymutts.com'), num_categories: 0, status: 'Godkänd', company_number: '5562252998')
+      m1.business_categories << category
 
-      category = create(:business_category)
-      app1 = create(:membership_application, user: employee1, company_number: '5562252998')
-      app2 = create(:membership_application, user: employee2, company_number: '5562252998')
-      app3 = create(:membership_application, user: employee3, company_number: '5562252998')
+      m2 = create(:membership_application, user: User.find_by_email('emp2@happymutts.com'), num_categories: 0, status: 'Godkänd', company_number: '5562252998')
+      m2.business_categories << category
 
-      has_single_category(app1, category)
-      has_single_category(app2, category)
-      has_single_category(app3, category)
+      m3 = create(:membership_application, user: User.find_by_email('emp3@happymutts.com'), num_categories: 0, status: 'Godkänd', company_number: '5562252998')
+      m3.business_categories << category
 
-      expect(company.categories.count).to eq 1
-      expect(company.categories.map { |c| c[:name] }).to contain_exactly('BusinessCategoryName')
-
+      expect(Company.find_by_company_number('5562252998').business_categories.distinct.count).to eq 1
+      expect(Company.find_by_company_number('5562252998').business_categories.distinct.map { |c| c[:name] }).to contain_exactly('cat1')
     end
-
 
   end
 end

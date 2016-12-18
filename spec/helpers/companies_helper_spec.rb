@@ -32,11 +32,11 @@ RSpec.describe CompaniesHelper, type: :helper do
 
   describe 'companies' do
 
-    it '#last_category_name' do
+    before(:all) do
       Company.delete_all
       MembershipApplication.delete_all
       User.delete_all
-      company = FactoryGirl.create(:company, company_number: 5562252998)
+      company = FactoryGirl.create(:company, company_number: '5562252998')
 
       employee1 = create(:user, email: 'emp1@happymutts.com')
       employee2 = create(:user, email: 'emp2@happymutts.com')
@@ -45,27 +45,15 @@ RSpec.describe CompaniesHelper, type: :helper do
       create(:membership_application, user: employee1, status: 'Godkänd', num_categories: 1, category_name: 'cat1', company_number: '5562252998')
       create(:membership_application, user: employee2, status: 'Godkänd', num_categories: 1, category_name: 'cat2', company_number: '5562252998')
       create(:membership_application, user: employee3, status: 'Godkänd', num_categories: 1, category_name: 'cat3', company_number: '5562252998')
+    end
 
-      expect(helper.last_category_name(company)).to eq 'cat3'
-
+    it '#last_category_name' do
+      expect(helper.last_category_name(Company.find_by_company_number('5562252998'))).to eq 'cat3'
     end
 
     it '#list_categories' do
-      Company.delete_all
-      MembershipApplication.delete_all
-      User.delete_all
-      company = FactoryGirl.create(:company, company_number: 5562252998)
-
-      employee1 = create(:user, email: 'emp1@happymutts.com')
-      employee2 = create(:user, email: 'emp2@happymutts.com')
-      employee3 = create(:user, email: 'emp3@happymutts.com')
-
-      create(:membership_application, user: employee1, status: 'Godkänd', num_categories: 1, category_name: 'cat1', company_number: '5562252998')
-      create(:membership_application, user: employee2, status: 'Godkänd', num_categories: 1, category_name: 'cat2', company_number: '5562252998')
-      create(:membership_application, user: employee3, status: 'Godkänd', num_categories: 1, category_name: 'cat3', company_number: '5562252998')
-
-      expect(helper.list_categories(company)).to eq 'cat1 cat2 cat3'
-      expect(helper.list_categories(company)).not_to include 'Träning'
+      expect(helper.list_categories(Company.find_by_company_number('5562252998'))).to eq 'cat1 cat2 cat3'
+      expect(helper.list_categories(Company.find_by_company_number('5562252998'))).not_to include 'Träning'
     end
   end
 end
