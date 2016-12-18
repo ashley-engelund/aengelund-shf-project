@@ -39,44 +39,58 @@ RSpec.describe Company, type: :model do
 
   describe 'categories = all employee categories' do
 
+    let(:company) { create(:company, company_number: '5562252998') }
+
+    let(:employee1) { create(:user) }
+    let(:employee2) { create(:user) }
+    let(:employee3) { create(:user) }
+
+    let(:cat1) { create(:business_category, name: 'cat1') }
+    let(:cat2) { create(:business_category, name: 'cat2') }
+    let(:cat3) { create(:business_category, name: 'cat3') }
+
+    let(:m1) do
+      create(:membership_application, user: employee1,
+             num_categories: 0, status: 'Godkänd',
+             company_number: company.company_number)
+    end
+    let(:m2) do
+      create(:membership_application, user: employee2,
+             num_categories: 0, status: 'Godkänd',
+             company_number: company.company_number)
+    end
+    let(:m3) do
+      create(:membership_application, user: employee3,
+             num_categories: 0, status: 'Godkänd',
+             company_number: company.company_number)
+    end
+
     before(:all) do
       Company.delete_all
       MembershipApplication.delete_all
       User.delete_all
-
-      company = create(:company, company_number: '5562252998')
-
-      employee1 = create(:user, email: 'emp1@happymutts.com')
-      employee2 = create(:user, email: 'emp2@happymutts.com')
-      employee3 = create(:user, email: 'emp3@happymutts.com')
-
     end
 
     it '3 employees, each with 1 unique category' do
-      create(:membership_application, user: User.find_by_email('emp1@happymutts.com'), status: 'Godkänd', num_categories: 1, category_name: 'cat1', company_number: '5562252998')
-      create(:membership_application, user: User.find_by_email('emp2@happymutts.com'), status: 'Godkänd', num_categories: 1, category_name: 'cat2', company_number: '5562252998')
-      create(:membership_application, user: User.find_by_email('emp3@happymutts.com'), status: 'Godkänd', num_categories: 1, category_name: 'cat3', company_number: '5562252998')
+      m1.business_categories << cat1
+      m2.business_categories << cat2
+      m3.business_categories << cat3
 
-      expect(Company.find_by_company_number('5562252998').business_categories.count).to eq 3
-      expect(Company.find_by_company_number('5562252998').business_categories.map { |c| c[:name] }).to contain_exactly('cat1', 'cat2', 'cat3')
+      expect(company.business_categories.count).to eq 3
+      expect(company.business_categories.map(&:name))
+          .to contain_exactly('cat1', 'cat2', 'cat3')
     end
 
     it '3 employees, each with the same category' do
+      m1.business_categories << cat1
+      m2.business_categories << cat1
+      m3.business_categories << cat1
 
-      category = create(:business_category, name: 'cat1')
-
-      m1 =create(:membership_application, user: User.find_by_email('emp1@happymutts.com'), num_categories: 0, status: 'Godkänd', company_number: '5562252998')
-      m1.business_categories << category
-
-      m2 = create(:membership_application, user: User.find_by_email('emp2@happymutts.com'), num_categories: 0, status: 'Godkänd', company_number: '5562252998')
-      m2.business_categories << category
-
-      m3 = create(:membership_application, user: User.find_by_email('emp3@happymutts.com'), num_categories: 0, status: 'Godkänd', company_number: '5562252998')
-      m3.business_categories << category
-
-      expect(Company.find_by_company_number('5562252998').business_categories.distinct.count).to eq 1
-      expect(Company.find_by_company_number('5562252998').business_categories.distinct.map { |c| c[:name] }).to contain_exactly('cat1')
+      expect(company.business_categories.distinct.count).to eq 1
+      expect(company.business_categories.count).to eq 3
+      expect(company.business_categories.distinct.map(&:name))
+          .to contain_exactly('cat1')
     end
-
   end
+
 end
