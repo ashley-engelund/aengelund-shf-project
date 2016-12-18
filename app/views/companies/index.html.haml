@@ -1,8 +1,8 @@
 %header.entry-header
   - unless current_user.try(:admin)
-    %h1.entry-title #{t('.title')}
+    %h1.entry-title= t('.title')
   - if current_user.try(:admin)
-    %h1.entry-title #{t('.admin_title')}
+    %h1.entry-title= t('.admin_title')
 .post-title-divider
   %span
 .entry-content
@@ -17,11 +17,11 @@
   %table
     %thead
       %tr
-        %th #{t('.category')}
-        %th #{t('.name')}
-        %th #{t('.region_land')}
+        %th= t('.category')
+        %th= t('.name')
+        %th= t('.region_land')
         - if current_user.try(:admin)
-          %th #{t('.company_number')}
+          %th= t('.company_number')
           %th
           %th
 

@@ -1,5 +1,5 @@
 %header.entry-header
-  %h1.entry-title= "#{t('.title', company_name: @company.name)}"
+  %h1.entry-title= t('.title', company_name: @company.name)
   .post-title-divider
     %span
   - unless assocation_empty?(@all_business_categories)
