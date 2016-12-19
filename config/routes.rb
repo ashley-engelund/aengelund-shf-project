@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :temp_things
   filter :locale
 
   devise_for :users
@@ -13,7 +14,7 @@ Rails.application.routes.draw do
   get "/pages/*id" => 'pages#show', as: :page, format: false
 
   resources :business_categories
-  resources :membership_applications, only: [:new, :create, :edit, :update, :index, :show]
+  resources :membership_applications, only: [:new, :create, :edit, :update, :index, :show, :destroy]
   resources :companies, only: [:new, :create, :edit, :update, :index, :show]
 
   get 'information', to: 'membership_applications#information'
