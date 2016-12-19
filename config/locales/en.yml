@@ -20,7 +20,7 @@ en:
   manage: Manage
   update: Update
   submit: Submit
-  delete: Delete
+  delete: &delete Delete
   send: Send
   new: New
   change: Change
@@ -119,6 +119,9 @@ en:
       success: The application was updated.
       error: One or more problems prevented your application from being updated.
       enter_member_number: Please enter the member number and save.
+    edit:
+      delete: *delete
+      confirm_are_you_sure: *are_you_sure_confirm
 
     all_membership_applications: All applications
     edit_membership_application: Edit application
