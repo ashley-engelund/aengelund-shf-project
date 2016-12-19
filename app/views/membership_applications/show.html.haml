@@ -33,3 +33,5 @@
 
   - if current_user && current_user.admin?
     = link_to 'Redigera ansökan', edit_membership_application_path(@membership_application)
+    = link_to "#{t('.delete')}", @membership_application, method: :delete, data: { :confirm => "#{t('.confirm_are_you_sure')}" }
+

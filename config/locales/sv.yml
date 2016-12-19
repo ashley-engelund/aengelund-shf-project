@@ -117,13 +117,12 @@ sv:
       status: *status
       membership_number: *membership_number
       with_categories: Ansöker inom
+      delete: *delete
+      confirm_are_you_sure: *are_you_sure_confirm
     update:
       success: Ansökan har uppdaterats.
       error: Ett eller flera problem hindrade din ansökan från att sparas.
       enter_member_number: Var god ange medlemsnummer och spara.
-    edit:
-      delete: *delete
-      confirm_are_you_sure: *are_you_sure_confirm
 
     all_membership_applications: Alla ansökningar
     edit_membership_application: Redigera ansökan

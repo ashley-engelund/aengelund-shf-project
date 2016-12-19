@@ -12,7 +12,4 @@
         .wpcf7-response-output
           = msg
     = render partial: 'membership_application_fields', locals: {f: f}
-    = render 'required_fields'
-
-    - if current_user.admin?
-      = link_to "#{t('.delete')}", @membership_application, method: :delete, data: { :confirm => "#{t('.confirm_are_you_sure')}" }
+    = render 'application/required_fields'
