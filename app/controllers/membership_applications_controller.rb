@@ -68,6 +68,13 @@ class MembershipApplicationsController < ApplicationController
 
   end
 
+  def destroy
+    @membership_application.destroy
+
+    redirect_to membership_applications_url, notice: 'Ansökan raderad.'
+
+  end
+
   private
   def membership_application_params
     params.require(:membership_application).permit(*policy(@membership_application || MembershipApplication).permitted_attributes)
