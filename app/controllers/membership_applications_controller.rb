@@ -1,6 +1,6 @@
 class MembershipApplicationsController < ApplicationController
-  before_action :get_membership_application, only: [:show, :edit, :update]
-  before_action :authorize_membership_application, only: [:update, :show, :edit]
+  before_action :get_membership_application, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_membership_application, only: [:update, :show, :edit, :destroy]
 
 
   def new
