@@ -46,7 +46,7 @@ Feature: As an admin
     And I click on t("membership_applications.show.delete")
     Then I should see "Ansökan raderad."
     And I should not see "Emma"
-    And I should see "2" applications
+
 
 
   Scenario: Admin delete a membership application; company should still exist
@@ -55,6 +55,5 @@ Feature: As an admin
     And I click on t("membership_applications.show.delete")
     Then I should see "Ansökan raderad."
     And I should not see "Hans"
-    #And I should see "2" applications
     And I am on the "all companies" page
     And I should see "2120000142"
