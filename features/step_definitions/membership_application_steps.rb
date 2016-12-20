@@ -17,7 +17,7 @@ And(/^I navigate to the edit page for "([^"]*)"$/) do |first_name|
   visit edit_membership_application_path(membership_application)
 end
 
-Given(/^I am on (the show )+"([^"]*)" application page$/) do |optional, first_name|
+Given(/^I am on "([^"]*)" application page$/) do |first_name|
   membership = MembershipApplication.find_by(first_name: first_name)
   visit membership_application_path(membership)
 end
