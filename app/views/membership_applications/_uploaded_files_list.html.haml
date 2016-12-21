@@ -1,14 +1,14 @@
 - if membership_application.uploaded_files.count < 1
-  %p #{t('membership_applications.uploads.no_files')}
+  %p= t('membership_applications.uploads.no_files')
 - else
   %p
-    %strong #{t('membership_applications.uploads.files_uploaded')}
+    %strong= t('membership_applications.uploads.files_uploaded')
 
   %table
     %thead
       %tr
-        %th #{t('membership_applications.uploads.filename')}
-        %th.action #{t('delete').downcase}
+        %th= t('membership_applications.uploads.filename')
+        %th.action= t('delete').downcase
 
     %tbody
       - membership_application.uploaded_files.each do |uploaded_file|

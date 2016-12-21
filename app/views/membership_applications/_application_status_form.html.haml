@@ -1,5 +1,5 @@
 = form_for @membership_application, url: membership_application_path do |f|
-  %h3 "#{t('membership_applications.update_the_status')}"
+  %h3= t('membership_applications.update_the_status')
   = f.select(:status, [["#{t('membership_applications.pending')}", 'Pending'],
                        ["#{t('membership_applications.treated')}", 'Behandlas'],
                        ["#{t('membership_applications.awaiting_payment')}", 'Inväntar betalning'],
