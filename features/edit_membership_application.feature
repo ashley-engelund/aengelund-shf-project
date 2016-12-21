@@ -24,9 +24,9 @@ Feature: As an applicant
     And I am on the "landing" page
     And I click on "Min ansökan"
     Then I should be on "Edit My Application" page
-    And I fill in "Förnamn" with "Anna"
-    And I click on "Submit"
-    Then I should see "Ansökan har uppdaterats."
+    And I fill in t("membership_applications.show.first_name") with "Anna"
+    And I click on t("membership_applications.edit.submit_button_label")
+    Then I should see t("membership_applications.update.success")
     And I should be on the application page for "Anna"
     And I should see "Anna Lastname"
 
@@ -35,15 +35,15 @@ Feature: As an applicant
     And I am on the "landing" page
     And I click on "Min ansökan"
     Then I should be on "Edit My Application" page
-    And I fill in "E-post" with "sussimmi.nu"
-    And I click on "Submit"
-    Then I should see "Ett eller flera problem hindrade din ansökan från att sparas."
+    And I fill in t("membership_applications.show.contact_email") with "sussimmi.nu"
+    And I click on t("membership_applications.edit.submit_button_label")
+    Then I should see t("membership_applications.update.error")
     And I should be on "Edit My Application" page
 
   Scenario: Applicant can not edit applications not created by him
     Given I am logged in as "applicant_1@random.com"
     And I navigate to the edit page for "Hans"
-    Then I should see "Du har inte behörighet att göra detta."
+    Then I should see t("errors.not_permitted")
 
   Scenario: Applicant wants to view their own application
     Given I am logged in as "applicant_3@random.com"
