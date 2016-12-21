@@ -1,5 +1,5 @@
 %header.entry-header
-  %h1.entry-title Redigera ansökan om medlemskap
+  %h1.entry-title  #{t('.title')}
 .post-title-divider
   %span
 .entry-content.wpcf7
@@ -12,4 +12,6 @@
         .wpcf7-response-output
           = msg
     = render partial: 'membership_application_fields', locals: {f: f}
-    = render 'required_fields'
+    = render 'application/required_fields'
+
+    = f.submit t('.submit_button_label')
