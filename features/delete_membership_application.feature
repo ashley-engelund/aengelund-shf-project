@@ -44,7 +44,7 @@ Feature: As an admin
     Given I am logged in as "admin@shf.se"
     And I am on the application page for "Emma"
     And I click on t("membership_applications.show.delete")
-    Then I should see t("membership_applications.destroy.success")
+    Then I should see "Ansökan raderad."
     And I should not see "Emma"
 
 
@@ -53,7 +53,7 @@ Feature: As an admin
     Given I am logged in as "admin@shf.se"
     And I am on the application page for "Hans"
     And I click on t("membership_applications.show.delete")
-    Then I should see t("membership_applications.destroy.success")
+    Then I should see "Ansökan raderad."
     And I should not see "Hans"
     And I am on the "all companies" page
     And I should see "2120000142"
