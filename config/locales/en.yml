@@ -15,6 +15,8 @@ en:
   is_required_field: Indicates a required field
 
   user: &user user
+
+  view: &view View
   edit: &edit Edit
   manage: &manage Manage
   update: &update Update
@@ -49,8 +51,8 @@ en:
         other: Memberships
 
       business_category:
-        one: &business_category Kategori
-        other: &business_categories Kategorier
+        one: &business_category Category
+        other: &business_categories Categories
 
 
     attributes:
@@ -254,7 +256,7 @@ en:
   business_categories:
 
     index:
-      title: '*business_category / Företagstyp'
+      title: '*business_category / Company categories'
       name: *business_category_name
       description: *description
       view: *view
@@ -263,38 +265,40 @@ en:
       delete_confirm: *are_you_sure_confirm
 
     show:
-      title: Hundföretag av typen
+      title: Business category (type of dog-related service)
       description: *description
-      no_one_applied_category: &category_no_one_applied Ingen har ansökt om medlemsskap i denna kategori ännu.
+      no_one_applied_category: &category_no_one_applied No one has applied for membership in this category yet.
 
     new:
-      title: Ny företagstyp (kategori)
+      title: New business category
       description: *description
       no_one_applied_category: *category_no_one_applied
 
-
     create:
-      success: Kategori skapad.
+      success: Category created.
 
     edit:
-      title: 'Redigerar: %{category_name}'
+      title: 'Edit: %{category_name}'
+      submit_button_label: *save
+      name: *name
 
     update:
-      success: Kategori uppdaterad.
+      success: Category updated.
 
     destroy:
-      success: Kategori raderad.
+      success: Category deleted.
 
     form:
       category_name: '*business_category *name'
-      category_descirption: '*business_category *description'
+      category_description: '*business_category *description'
+      save: *save
 
     form_collection_checkboxes:
       title: *application_dog_category
-      clue_selected_categories: &clue_selected_categories Blå fält = valda kategorier
+      clue_selected_categories: &clue_selected_categories Blue box = selected categories
 
-    new_business_category: Skapa ny företagstyp (kategori)
-    all_business_categories: Alla kategorier
+    new_business_category: New business category
+    all_business_categories: All categories
 
 
   admin:

@@ -277,7 +277,7 @@ sv:
     edit:
       title: 'Redigerar: %{category_name}'
       submit_button_label: *save
-      name:
+      name: *name
 
     update:
       success: Kategori uppdaterad.
