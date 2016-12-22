@@ -1,4 +1,4 @@
-- if current_user.admin? && @membership_application.status == t('membership_applications.accepted')
+- if current_user.admin? && @membership_application.is_accepted?
   = f.label :membership_number, t('membership_applications.show.membership_number'), class: 'required'
   = f.text_field :membership_number, class: 'wpcf7-form-control'
 
