@@ -235,10 +235,17 @@ en:
     view_company: View company
     list_all_companies: List all companies
 
+
   admin:
     index:
       title: 'Admin: All incoming applications'
+      name: *name
+      org_nr: *org_nr
+      status: *status
+      manage: *manage
+
     all_applications_received: All applications received
+
 
   devise:
     min_length: '(at least %{minimum_length} characters)'
