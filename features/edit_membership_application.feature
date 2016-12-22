@@ -7,11 +7,10 @@ Feature: As an applicant
 
   Background:
     Given the following users exists
-      | email                  | is_member | admin |
-      | applicant_1@random.com | false     |       |
-      | applicant_2@random.com | false     |       |
-      | applicant_3@random.com | true      |       |
-      | admin@shf.se           | true      | true  |
+      | email                  | is_member |
+      | applicant_1@random.com | false     |
+      | applicant_2@random.com | false     |
+      | applicant_3@random.com | true      |
 
     And the following applications exist:
       | first_name | user_email             | company_number | status  |
@@ -51,10 +50,3 @@ Feature: As an applicant
     And I am on the "landing" page
     And I click on "Min ansökan"
     Then I should be on "Show My Application" page
-
-  Scenario: Admin should be able to edit membership number
-    Given I am logged in as "admin@shf.se"
-    And I navigate to the edit page for "Hans"
-    Then I should see ""
-
-  Scenario: Admin can't edit membership number for rejected application
