@@ -70,7 +70,7 @@ class MembershipApplicationsController < ApplicationController
 
   def destroy
     @membership_application.destroy
-    redirect_to membership_applications_url, notice: t('membership_applications.application_deleted')
+    redirect_to membership_applications_url, notice: t('.success')
   end
 
   private
