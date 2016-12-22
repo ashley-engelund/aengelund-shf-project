@@ -121,6 +121,8 @@ en:
       success: The application was updated.
       error: One or more problems prevented your application from being updated.
       enter_member_number: Please enter the member number and save.
+    destroy:
+      success: The application was deleted.
 
     all_membership_applications: All applications
     edit_membership_application: Edit application
@@ -136,7 +138,7 @@ en:
       invalid_upload_type: Sorry, this is not a file type you can upload.
 
     update_the_status: Update the status
-    application_deleted: Application deleted.
+
 
   companies:
     new:
