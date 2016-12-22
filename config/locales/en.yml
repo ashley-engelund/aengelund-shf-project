@@ -15,7 +15,6 @@ en:
   is_required_field: Indicates a required field
 
   user: &user user
-
   edit: &edit Edit
   manage: &manage Manage
   update: &update Update
@@ -25,7 +24,6 @@ en:
   new: &new New
   change: &change Change
   save: &save Save
-
   back: &back Back
 
   confirm_are_you_sure: &are_you_sure_confirm Are you sure
@@ -41,8 +39,7 @@ en:
   name: &name Name
   org_nr: &org_nr Org no.
 
-
- # Automatic and manual lookup for ActiveRecords:
+  # Automatic and manual lookup for ActiveRecords:
   activerecord:
     models:
       membership_application:
@@ -111,7 +108,6 @@ en:
 
       submit_button_label: *submit
 
-
     create:
       success: Thank You. Your membership application has been submitted.
       error: The was a problem creating and submitting your application.
@@ -124,7 +120,7 @@ en:
       success: The application was updated.
       error: One or more problems prevented your application from being updated.
       enter_member_number: Please enter the member number and save.
-
+      
     show:
       title: Application from %{member_full_name}
       first_name: *first_name
@@ -135,7 +131,9 @@ en:
       app_status: Application status
       membership_number: Membership number
       with_categories: Categories
-
+      delete: *delete
+      confirm_are_you_sure: *are_you_sure_confirm
+      
     index:
       title: All incoming applications
       name: Name
@@ -144,6 +142,7 @@ en:
       manage: *manage
 
     information:
+      title: About membership
       member:
         title: Välkommen
         using_the_logo: "It is important that we all follow our graphic identity,
@@ -169,16 +168,12 @@ en:
                         If your application is approved, we'll give you a link
                         so you can describe and list your business here."
 
-
-
-
     accepted: &status_accepted Accepted
     rejected: &status_rejected Rejected
     pending: &status_pending Pending
     pending_completion: &pending_completion Pending completion
     treated: Reviewed
     awaiting_payment: Awaiting payment
-
     all_membership_applications: All applications
     edit_membership_application: Edit application
     view_membership_application: View application
@@ -193,6 +188,7 @@ en:
       invalid_upload_type: Sorry, this is not a file type you can upload.
 
     update_the_status: Update the status
+    application_deleted: Application deleted.
 
   companies:
     new:

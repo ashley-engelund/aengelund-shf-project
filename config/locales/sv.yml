@@ -15,7 +15,6 @@ sv:
   is_required_field: Indikerar ett obligatoriskt fält
 
   user: användare
-
   edit: &edit Redigera
   manage: &manage Hantera
   update: &update Uppdatera
@@ -25,7 +24,6 @@ sv:
   new: &new Nytt
   change: &change Byt
   save: &save Save
-
   back: &back Tillbaks
 
   confirm_are_you_sure: &are_you_sure_confirm Är du säker
@@ -33,7 +31,6 @@ sv:
   info:
     logged_in_as_admin: Du är inloggad som admin
     under_construction: Sidan är under uppbyggnad, mer information och funktioner kommer att komma efterhand.
-
 
   apply_for_membership: Ansök om medlemskap
 
@@ -81,7 +78,6 @@ sv:
         description: Beskrivning
 
     errors:
-
       models:
         company:
           company_number:
@@ -93,16 +89,15 @@ sv:
           has_one: Kan inte ta bort post då beroende %{record} finns
           has_many: Kan inte ta bort poster då beroende %{record} finns
 
-
-  # Automatisk och manuell sökning för views:
+ # Automatisk och manuell sökning för views:
   membership_applications:
     new:
       title: Ansök om medlemskap
       submit: *submit
-      company_number: *company_number
-      phone_number: &phone_number Telefonnummer
       first_name: *first_name
       last_name: *last_name
+      phone_number: &phone_number Telefonnummer
+      company_number: *company_number
       contact_email: *contact_email
 
       can_be_same_email: Kan vara samma som du loggar in med, men behöver inte vara det.
@@ -136,6 +131,8 @@ sv:
       app_status: Ansökans status
       membership_number: *membership_number
       with_categories: Ansöker inom
+      delete: *delete
+      confirm_are_you_sure: *are_you_sure_confirm
 
     index:
       title: Alla inkomna ansökningar
@@ -176,7 +173,6 @@ sv:
     pending_completion: &status_pending_completion Väntar på sökande
     treated: Behandlas
     awaiting_payment: Inväntar betalning
-
     all_membership_applications: Alla ansökningar
     edit_membership_application: Redigera ansökan
     view_membership_application: Visa ansökan
@@ -191,6 +187,7 @@ sv:
       invalid_upload_type: Tyvärr kan du inte ladda upp denna filtypen.
 
     update_the_status: Uppdatera status
+    application_deleted: Ansökan raderat.
 
   companies:
     new:
