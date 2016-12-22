@@ -48,7 +48,7 @@ Feature: As any type of visitor
     And I should see "Sad Sad Snarky Barky"
 
   Scenario: Categories list no businesses
-    Given I am logged out
+    Given I am Logged out
     And I am on the business category "Goodies"
     Then I should see "Ingen har ansökt om medlemsskap i denna kategori ännu."
     And I should not see "No More Snarky Barky"
