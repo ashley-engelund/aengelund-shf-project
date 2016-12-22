@@ -120,7 +120,7 @@ en:
       success: The application was updated.
       error: One or more problems prevented your application from being updated.
       enter_member_number: Please enter the member number and save.
-      
+
     show:
       title: Application from %{member_full_name}
       first_name: *first_name
@@ -133,7 +133,7 @@ en:
       with_categories: Categories
       delete: *delete
       confirm_are_you_sure: *are_you_sure_confirm
-      
+
     index:
       title: All incoming applications
       name: Name
