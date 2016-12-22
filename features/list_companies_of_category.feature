@@ -31,13 +31,15 @@ Feature: As any type of visitor
       | Extra   |
 
   Scenario: Categories list multiple businesses
-    Given I am on the business category "Awesome"
+    Given I am Logged out
+    And I am on the business category "Awesome"
     Then I should see "No More Snarky Barky"
     And I should see "WOOF"
     And I should not see "Sad Sad Snarky Barky"
 
   Scenario: Categories list businesses
-    Given I am on the business category "Sadness"
+    Given I am Logged out
+    And I am on the business category "Sadness"
     Then I should not see "No More Snarky Barky"
     And I should see "Sad Sad Snarky Barky"
     When I am logged in as "anna@sadmutts.com "
@@ -46,7 +48,8 @@ Feature: As any type of visitor
     And I should see "Sad Sad Snarky Barky"
 
   Scenario: Categories list no businesses
-    Given I am on the business category "Goodies"
+    Given I am logged out
+    And I am on the business category "Goodies"
     Then I should see "Ingen har ansökt om medlemsskap i denna kategori ännu."
     And I should not see "No More Snarky Barky"
     And I should not see "Sad Sad Snarky Barky"
