@@ -17,18 +17,18 @@ Feature: As any type of visitor
       | WOOF                 | 5569467466     | ernt@mutts.com      |
       | Sad Sad Snarky Barky | 2120000142     | anna@sadmutts.com   |
 
-    And the following applications exist:
-      | first_name | user_email          | company_number | status  | category_name |
-      | Emma       | emma@happymutts.com | 5562252998     | Godkänd | Awesome       |
-      | Ernt       | ernt@mutts.com      | 5569467466     | Godkänd | Awesome       |
-      | Anna       | anna@sadmutts.com   | 2120000142     | Godkänd | Sadness       |
-
     And the following business categories exist
       | name    |
       | Awesome |
       | Sadness |
       | Goodies |
       | Extra   |
+
+    And the following applications exist:
+      | first_name | user_email          | company_number | status  | category_name |
+      | Emma       | emma@happymutts.com | 5562252998     | Godkänd | Awesome       |
+      | Ernt       | ernt@mutts.com      | 5569467466     | Godkänd | Awesome       |
+      | Anna       | anna@sadmutts.com   | 2120000142     | Godkänd | Sadness       |
 
   Scenario: Categories list multiple businesses
     Given I am Logged out
@@ -50,7 +50,7 @@ Feature: As any type of visitor
   Scenario: Categories list no businesses
     Given I am Logged out
     And I am on the business category "Goodies"
-    Then I should see "Ingen har ansökt om medlemsskap i denna kategori ännu."
+    Then I should see t("business_categories.show.no_one_applied_category")
     And I should not see "No More Snarky Barky"
     And I should not see "Sad Sad Snarky Barky"
 

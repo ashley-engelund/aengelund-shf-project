@@ -14,15 +14,15 @@ Feature: As a visitor,
       | a@happymutts.com    |       |
       | admin@shf.se        | true  |
 
-    And the following applications exist:
-      | first_name | user_email          | company_number | status   | category_name |
-      | Emma       | emma@happymutts.com | 5560360793     | Godkänd | Groomer       |
-      | Anna       | a@happymutts.com    | 2120000142     | Godkänd | Groomer       |
-
     And the following business categories exist
       | name         |
       | Groomer      |
       | Psychologist |
+
+    And the following applications exist:
+      | first_name | user_email          | company_number | status  | category_name |
+      | Emma       | emma@happymutts.com | 5560360793     | Godkänd | Groomer       |
+      | Anna       | a@happymutts.com    | 2120000142     | Godkänd | Groomer       |
 
   Scenario: Visitor sees all companies
     Given I am Logged out
@@ -32,7 +32,7 @@ Feature: As a visitor,
     And I should see "No More Snarky Barky"
     And I should see "Groomer"
     And I should not see "Psychologist"
-    And I should not see "Skapa nytt företag"
+    And I should not see t("companies.new_company")
 
   Scenario: User sees all the companies
     Given I am logged in as "emma@happymutts.com"
@@ -40,4 +40,4 @@ Feature: As a visitor,
     Then I should see t("companies.index.title")
     And I should see "Bowsers"
     And I should see "No More Snarky Barky"
-    And I should not see "Skapa nytt företag"
+    And I should not see t("companies.new_company")
