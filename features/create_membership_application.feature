@@ -108,4 +108,4 @@ Feature: As a user
 
     Scenarios:
       | f_name | c_number | l_name    | c_email       | phone      | error                                                     |
-      | Kicki  | 00       | Andersson | kicki@immi.nu | 0706898525 | t("errors.messages.wrong_length", count: 10), locale: :sv |
+      | Kicki  | 00       | Andersson | kicki@immi.nu | 0706898525 | t("errors.messages.wrong_length", count: 10)|
