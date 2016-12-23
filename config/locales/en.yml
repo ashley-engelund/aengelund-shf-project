@@ -391,7 +391,7 @@ en:
           become_supporter: Become a Supporter
           being_dog_owners: Being Dog Owners
         entrepreneurs:
-          submenu_title: Dog Company Entrepreneurs
+          submenu_title: Dog Company owners
           about_us: *about_us
           sign_up: Become a Member
           be_h_labeled: Become H-labeled
@@ -408,7 +408,7 @@ en:
           popular_science: Popular Science
           video: Video
         contact: Contact
-        find_dog_businesses: Find Dog Businesses
+        find_dog_businesses: Find Dog Company
 
       users:
         my_application: &my_application My Application
