@@ -40,7 +40,7 @@ Feature: As an applicant
     Then I should see t("membership_applications.uploads.files_uploaded")
     And I should see "diploma.pdf" uploaded for this membership application
     And I should see t("membership_applications.update.success")
-    And I should see t("membership_applications.upload.file_was_uploaded", filename: 'diploma.pdf')
+    And I should see t("membership_applications.uploads.file_was_uploaded", filename: 'diploma.pdf')
     And I should see t("membership_applications.update.success")
 
 
