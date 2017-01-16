@@ -156,6 +156,48 @@ namespace :shf do
     finish_and_close_log(log, start_time, Time.now)
   end
 
+  desc "load regions data (counties plus 'Sweden' and 'Online')"
+  task :load_regions => [:environment] do
+
+    logfile = 'log/shf-rake.log'
+    start_time = Time.now
+    log = start_logging(start_time, logfile, "Regions create")
+
+    # Populate the 'regions' table for Swedish regions (aka counties),
+    # as well as 'Sweden' and 'Online'.  This is used to specify the primary
+    # region in which a company operates.
+    #
+    # This uses the 'city-state' gem for a list of regions (name and ISO code).
+
+    if Region.exists?
+      log_and_show log, Logger::WARN, "Regions table not empty"
+    else
+      CS.states(:se).each_pair { |k,v| Region.create(name: v, code: k.to_s) }
+      Region.create(name: 'Sweden', code: nil)
+      Region.create(name: 'Online', code: nil)
+
+      log_and_show log, Logger::INFO, "Regions created"
+    end
+
+    # Create company reference to region using 'old_region'
+    num_companies = 0
+    Company.all.each do |cmpy|
+      next if cmpy.region
+      region = Region.where(name: cmpy.old_region)[0]
+      if region
+        cmpy.region = region
+        cmpy.save
+        num_companies += 1
+      else
+        log_and_show log, Logger::INFO, "No region match for company : #{cmpy.name}"
+      end
+    end
+    log_and_show log, Logger::INFO, "#{num_companies} companies " \
+                                    "converted to region reference"
+
+    log_and_show log, Logger::INFO, "Information was logged to: #{logfile}"
+    finish_and_close_log(log, start_time, Time.now, "Regions create")
+  end
 
   def import_a_member_app_csv(row, log)
 
@@ -251,9 +293,11 @@ namespace :shf do
   end
 
 
-  def start_logging(start_time = Time.now, log_fn = 'log/import.log')
+  def start_logging(start_time = Time.now,
+                    log_fn = 'log/import.log',
+                    action = "Import")
     log = ActiveSupport::Logger.new(log_fn)
-    log_and_show log, Logger::INFO, "Import started at #{start_time}"
+    log_and_show log, Logger::INFO, "#{action} started at #{start_time}"
     log
   end
 
@@ -285,9 +329,9 @@ namespace :shf do
   end
 
 
-  def finish_and_close_log(log, start_time, end_time)
+  def finish_and_close_log(log, start_time, end_time, action = "Import")
     duration = (start_time - end_time) / 1.minute
-    log_and_show log, Logger::INFO, "Import finished at #{start_time}."
+    log_and_show log, Logger::INFO, "#{action} finished at #{start_time}."
     log.close
     log
   end
@@ -309,4 +353,3 @@ namespace :shf do
 
 
 end
-
