@@ -24,6 +24,12 @@ gem 'routing-filter'   # for handling locale filters around routes
 gem 'ransack'
 gem 'city-state'
 
+
+gem 'aasm', '~> 4.11.1'  # state machine ()acts as state machine)
+
+gem 'ffaker'  # Fake data for DB seeding
+
+
 group :development, :test do
   gem 'rspec-rails'
   gem 'shoulda-matchers'
@@ -52,4 +58,9 @@ group :development do
   gem 'capistrano-rbenv', '~> 2.0'
   gem 'capistrano-ssh-doctor', '~> 1.0'
   gem 'capistrano-env-config'
+  gem 'railroady'
+end
+
+group :test do
+  gem 'poltergeist'
 end

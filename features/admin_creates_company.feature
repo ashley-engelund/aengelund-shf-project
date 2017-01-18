@@ -25,14 +25,14 @@ Feature: As an admin
       | Norrbotten   |
 
     And the following companies exist:
-      | name                 | company_number | email                  |
-      | No More Snarky Barky | 5560360793     | snarky@snarkybarky.com |
-      | Bowsers              | 2120000142     | bowwow@bowsersy.com    |
+      | name                 | company_number | email                  | region     |
+      | No More Snarky Barky | 5560360793     | snarky@snarkybarky.com | Stockholm  |
+      | Bowsers              | 2120000142     | bowwow@bowsersy.com    | Norrbotten |
 
     And the following applications exist:
-      | first_name | user_email                 | company_number | status   |
-      | Emma       | applicant_1@happymutts.com | 5560360793     | Accepted |
-      | Anna       | applicant_3@happymutts.com | 2120000142     | Accepted |
+      | first_name | user_email                 | company_number | state    |
+      | Emma       | applicant_1@happymutts.com | 5560360793     | accepted |
+      | Anna       | applicant_3@happymutts.com | 2120000142     | accepted |
 
 
     And the following business categories exist

@@ -27,6 +27,20 @@ RSpec.describe CompaniesHelper, type: :helper do
       company.name = 'test'
       company.old_region = ''
       expect(helper.company_complete?(company)).to eq false
+      company.name = 'test'
+      company.old_region = ''
+      expect(helper.company_complete?(company)).to eq false
+    end
+
+    it 'returns true if company name and old_region are non-empty string' do
+      company.region = nil
+      company.old_region = 'test'
+      expect(helper.company_complete?(company)).to eq true
+    end
+
+    it 'returns true if company name not empty and region not nil' do
+      company.old_region = ''
+      expect(helper.company_complete?(company)).to eq true
     end
 
     it 'returns true if company name and old_region are non-empty string' do
@@ -53,20 +67,23 @@ RSpec.describe CompaniesHelper, type: :helper do
     let(:employee3) { create(:user) }
 
     let!(:ma1) do
-      ma = create(:membership_application, user: employee1,
-                  status: 'Godkänd', company_number: company.company_number)
+      ma = create(:membership_application, :accepted,
+                  user: employee1,
+                  company_number: company.company_number)
       ma.business_categories << create(:business_category, name: 'cat1')
       ma
     end
     let!(:ma2) do
-      ma = create(:membership_application, user: employee2,
-                  status: 'Godkänd', company_number: company.company_number)
+      ma = create(:membership_application, :accepted,
+                  user: employee2,
+                  company_number: company.company_number)
       ma.business_categories << create(:business_category, name: 'cat2')
       ma
     end
     let!(:ma3) do
-      ma = create(:membership_application, user: employee3,
-                  status: 'Godkänd', company_number: company.company_number)
+      ma = create(:membership_application, :accepted,
+                  user: employee3,
+                  company_number: company.company_number)
       ma.business_categories << create(:business_category, name: 'cat3')
       ma
     end

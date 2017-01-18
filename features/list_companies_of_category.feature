@@ -11,11 +11,17 @@ Feature: As any type of visitor
       | ernt@mutts.com      |       | true      |
       | admin@shf.se        | true  | true      |
 
+    Given the following regions exist:
+      | name         |
+      | Stockholm    |
+      | Västerbotten |
+      | Norrbotten   |
+
     And the following companies exist:
-      | name                 | company_number | email               |
-      | No More Snarky Barky | 5562252998     | emma@happymutts.com |
-      | WOOF                 | 5569467466     | ernt@mutts.com      |
-      | Sad Sad Snarky Barky | 2120000142     | anna@sadmutts.com   |
+      | name                 | company_number | email               | region       |
+      | No More Snarky Barky | 5562252998     | emma@happymutts.com | Stockholm    |
+      | WOOF                 | 5569467466     | ernt@mutts.com      | Västerbotten |
+      | Sad Sad Snarky Barky | 2120000142     | anna@sadmutts.com   | Norrbotten   |
 
     And the following business categories exist
       | name    |
@@ -25,10 +31,10 @@ Feature: As any type of visitor
       | Extra   |
 
     And the following applications exist:
-      | first_name | user_email          | company_number | status  | category_name |
-      | Emma       | emma@happymutts.com | 5562252998     | Godkänd | Awesome       |
-      | Ernt       | ernt@mutts.com      | 5569467466     | Godkänd | Awesome       |
-      | Anna       | anna@sadmutts.com   | 2120000142     | Godkänd | Sadness       |
+      | first_name | user_email          | company_number | category_name | state    |
+      | Emma       | emma@happymutts.com | 5562252998     | Awesome       | accepted |
+      | Ernt       | ernt@mutts.com      | 5569467466     | Awesome       | accepted |
+      | Anna       | anna@sadmutts.com   | 2120000142     | Sadness       | accepted |
 
   Scenario: Categories list multiple businesses
     Given I am Logged out
