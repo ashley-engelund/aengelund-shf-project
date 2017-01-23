@@ -282,6 +282,10 @@ en:
       how_to_search: Search by specifying one or more of the search parameters below.
       confirm_are_you_sure: *are_you_sure_confirm
       no_search_results: No records matched your search criteria.
+
+    destroy:
+      success: Company deleted.
+
     company_name: Company name
     telephone_number: Phone number
     operations_region: County of operations

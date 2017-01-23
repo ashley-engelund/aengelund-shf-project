@@ -279,6 +279,10 @@ sv:
       how_to_search: Sök genom att ange en eller flera av sökparametrarna nedan.
       confirm_are_you_sure: *are_you_sure_confirm
       no_search_results: Din sökning gav inget resultat, prova att ta bort något av dina val.
+
+    destroy:
+      success: Företag raderad.
+
     company_name: Företagsnamn
     telephone_number: Telefonnummer
     operations_region: *region
