@@ -163,6 +163,7 @@ sv:
       org_nr: *org_nr
       manage: *manage
       state: *state
+      export: Export all applications to a CSV file
 
     information:
       title: Om medlemsskap
@@ -189,6 +190,9 @@ sv:
         when_we_decide: "När din ansökan sedan är godkänd får du ett mail, med en länk till
                          att skapa din företagssida här."
 
+    export:
+      success: Export successful. Check your browser downloads for the file.
+      error: There was a problem with the export.
 
     start_review:
       success: Granskningen har påbörjats.

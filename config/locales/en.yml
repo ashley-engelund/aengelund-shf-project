@@ -163,6 +163,7 @@ en:
       org_nr: *org_nr
       state: *state
       manage: *manage
+      export: Export all applications to a CSV file
 
     information:
       title: About Membership
@@ -191,6 +192,9 @@ en:
                         If your application is approved, we'll give you a link
                         so you can describe and list your business here."
 
+    export:
+      success: Export successful. Check your browser downloads for the file.
+      error: There was a problem with the export.
 
     start_review:
       success: The review has been started.
