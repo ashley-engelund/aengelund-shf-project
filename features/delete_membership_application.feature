@@ -9,15 +9,13 @@ Feature: As an admin
 
   Background:
     Given the following users exists
-      | email                | admin |
-      | emma@random.com      |       |
-      | hans@bowsers.com     |       |
-      | nils@bowsers.com     |       |
-      | admin@shf.se         | true  |
-      | wils@woof.com        |       |
-      | sam@snarkybarky.com  |       |
-      | lars@snarkybarky.com |       |
-      | bob@bowsers.com      |       |
+      | email            | admin |
+      | emma@random.com  |       |
+      | hans@bowsers.com |       |
+      | nils@bowsers.com |       |
+      | admin@shf.se     | true  |
+      | wils@woof.com    |       |
+      | bob@bowsers.com  |       |
 
 
 
@@ -29,10 +27,10 @@ Feature: As an admin
 
     # old_region is currently required so that company_complete? is true
     And the following companies exist:
-      | name                 | company_number | email                 | region       | old_region |
-      | Happy Mutts          | 2120000142     | woof@happymutts.com   | Stockholm    | Sweden     |
-      | Bowsers              | 5560360793     | bark@bowsers.com      | Stockholm    | Sweden     |
-      | WOOF                 | 5569467466     | woof@woof.com         | Västerbotten | Sweden     |
+      | name        | company_number | email               | region       | old_region |
+      | Happy Mutts | 2120000142     | woof@happymutts.com | Stockholm    | Sweden     |
+      | Bowsers     | 5560360793     | bark@bowsers.com    | Stockholm    | Sweden     |
+      | WOOF        | 5569467466     | woof@woof.com       | Västerbotten | Sweden     |
 
 
     And the following applications exist:
@@ -80,17 +78,18 @@ Feature: As an admin
     And I am on the "all companies" page
     And I should see "2120000142"
 
+  @focus
   Scenario: Admin deletes the only membership application associated with a company. Company is deleted
     Given I am logged in as "admin@shf.se"
     And I am on the "all companies" page
-    Then I should see "4" companies
+    Then I should see "3" companies
     And I should see "WOOF"
     And I am on the application page for "Wils"
     And I click on t("membership_applications.show.delete")
     Then I should see t("membership_applications.application_deleted")
     And I should not see "Wils"
     When I am on the "all companies" page
-    Then I should see "3" companies
+    Then I should see "2" companies
     And I should not see "WOOF"
     
     
