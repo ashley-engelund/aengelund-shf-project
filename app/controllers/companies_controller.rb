@@ -52,20 +52,17 @@ class CompaniesController < ApplicationController
 
 
   def destroy
-    begin
-      if @company.destroy
-        redirect_to companies_url, notice: t('companies.destroy.success')
-      else
-        translated_errors = helpers.translate_and_join(@company.errors.full_messages)
-        helpers.flash_message(:alert, "#{t('companies.destroy.error')}: #{translated_errors}" )
-        redirect_to @company
-      end
 
-      return
-    rescue => e
-      helpers.flash_message(:alert, t('.error') + e.message)
+    if @company.destroy
+      redirect_to companies_url, notice: t('companies.destroy.success')
+    else
+      translated_errors = helpers.translate_and_join(@company.errors.full_messages)
+      helpers.flash_message(:alert, "#{t('companies.destroy.error')}: #{translated_errors}")
       redirect_to @company
     end
+
+    return
+
   end
 
 
