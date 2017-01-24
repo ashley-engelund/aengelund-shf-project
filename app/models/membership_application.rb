@@ -101,7 +101,7 @@ class MembershipApplication < ApplicationRecord
 
 
   def is_member?
-    user && user.is_member?
+    is_accepted?
   end
 
 
