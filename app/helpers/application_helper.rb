@@ -23,7 +23,6 @@ module ApplicationHelper
   end
 
   def translate_and_join(error_list)
-    #{@company.errors.full_messages.join(', ')}
     error_list.map{|e| I18n.t(e)}.join(', ')
   end
 
