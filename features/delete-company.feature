@@ -65,11 +65,11 @@ Feature: As an admin
       | first_name       | user_email                     | company_number | state                 | category_name |
       | Emma             | emma@happymutts.com            | 2120000142     | accepted              | grooming      |
       | Hans             | hans@happymutts.com            | 2120000142     | accepted              | training      |
-      | Sam              | sam@snarkybarky.com            | 5560360793     | rejected              | crooning      |
+      | Sam              | sam@snarkybarky.com            | 5560360793     | rejected              | senior-play   |
       | Lars             | lars@snarkybarky.com           | 5560360793     | rejected              | rehab         |
-      | Wils             | wils@woof.com                  | 5569467466     | accepted              | walking       |
-      | Kitty            | kitty@kitties.com              | 5906055081     | rejected              | play-group    |
-      | Meow             | meow@kitties.com               | 5906055081     | rejected              | senior-play   |
+      | Wils             | wils@woof.com                  | 5569467466     | rejected              | walking       |
+      | Kitty            | kitty@kitties.com              | 5906055081     | rejected              | training      |
+      | Meow             | meow@kitties.com               | 5906055081     | rejected              | training      |
       | Under_Review     | under_review@kats.com          | 9697222900     | under_review          | psychology    |
       | Ready for Review | ready_for_review@kats.com      | 9697222900     | ready_for_review      | psychology    |
       | Waiting for A    | waiting_for_applicant@kats.com | 9697222900     | waiting_for_applicant | psychology    |
@@ -83,102 +83,151 @@ Feature: As an admin
     Given I am logged in as "bob@bowsers.com"
     When I am on the "all companies" page
     Then I should not see button t("delete")
+    When I am the page for company number "5569467466"
+    Then I should not see button t("delete")
+
 
   Scenario: A Member cannot delete a company
     Given I am logged in as "emma@happymutts.com"
     When I am on the "all companies" page
     Then I should not see t("delete")
+    When I am the page for company number "5569467466"
+    Then I should not see button t("delete")
 
   Scenario: A Member cannot delete their company
     Given I am logged in as "emma@happymutts.com"
     When I am the page for company number "5569467466"
     Then I should not see t("delete")
+    When I am the page for company number "5569467466"
+    Then I should not see button t("delete")
 
   Scenario: An Admin has the delete button on the companies list page
     Given I am logged in as "admin@shf.se"
     When I am on the "all companies" page
     Then I should see t("delete")
 
-
-  # ----  Categories --------
-
-  Scenario: Admin deletes a company with no membership applications and no categories
+  Scenario: An Admin has the delete button on the companies page
     Given I am logged in as "admin@shf.se"
-    When I am on the "all companies" page
-    Then I should see "5" companies
-    When I click the t("delete") action for the row with "Unassociated Company"
-    Then I should see t("companies.destroy.success")
-    And I should not see "Unassociated Company"
-    And I should see "4" companies
+    When I am the page for company number "5569467466"
+    Then I should see t("delete")
 
 
   # ---- MembershipApplications -----
 
+  @poltergeist
+  Scenario: Admin deletes a company with no membership applications and no categories
+    Given I am logged in as "admin@shf.se"
+    When I am on the "all companies" page
+    Then I should see "7" companies
+    When I click the t("delete") action for the row with "Unassociated Company"
+    And I confirm popup
+    Then I should see t("companies.destroy.success")
+    And I should not see "Unassociated Company"
+    And I should see "6" companies
+
+
+  @poltergeist
   Scenario: Admin deletes a company that has applications with that company number, but are not accepted or rejected
     Given I am logged in as "admin@shf.se"
     When I am on the "business categories" page
-    Then I should see "5" business categories
+    Then I should see "8" business categories
     When I am on the "landing" page
     Then I should see "11" applications
     When I am on the "all companies" page
-    Then I should see "5" companies
+    Then I should see "7" companies
     When I click the t("delete") action for the row with "Kats"
-    Then I should see "warning: associated with 2 rejected applications. Are you sure you want to delete the company?"
-    And I click on "YES"
+    And I confirm popup
     Then I should see t("companies.destroy.success")
     And I should not see "Kats"
-    And I should see "4" companies
+    And I should see "6" companies
     When I am on the "business categories" page
-    Then I should see "5" business categories
+    Then I should see "8" business categories
+    When I am on the "landing" page
+    Then I should see "11" applications
+
+  @poltergeist
+  Scenario: Admin cannot delete a company with 2 (accepted) membership applications
+    Given I am logged in as "admin@shf.se"
+    When I am on the "business categories" page
+    Then I should see "8" business categories
+    When I am on the "landing" page
+    Then I should see "11" applications
+    When I am on the "all companies" page
+    Then I should see "7" companies
+    When I am on the page for company number "2120000142"
+    And I click on t("companies.index.delete")
+    And I confirm popup
+    Then I should not see t("companies.destroy.success")
+    And I should see t("companies.destroy.error")
+    And I should see t("activerecord.errors.models.company.company_has_active_memberships")
+    When I am on the "all companies" page
+    And I should see "Happy Mutts"
+    And I should see "7" companies
+    When I am on the "business categories" page
+    Then I should see "8" business categories
     When I am on the "landing" page
     Then I should see "11" applications
 
 
-  Scenario: Admin cannot delete a company with 2 (accepted) membership applications
-
+  @poltergeist
   Scenario: Admin cannot delete a company with 1 accepted and 1 rejected membership application
 
 
+  @poltergeist
   Scenario: Admin deletes a company with 2 rejected membership applications associated with it
     Given I am logged in as "admin@shf.se"
     When I am on the "business categories" page
-    Then I should see "5" business categories
+    Then I should see "8" business categories
     When I am on the "landing" page
     Then I should see "11" applications
     When I am on the "all companies" page
-    Then I should see "5" companies
+    Then I should see "7" companies
     When I click the t("delete") action for the row with "Kitties"
-    Then I should see "warning: associated with 2 rejected applications. Are you sure you want to delete the company?"
-    And I click on "YES"
+    And I confirm popup
     Then I should see t("companies.destroy.success")
     And I should not see "Kitties"
-    And I should see "4" companies
+    And I should see "6" companies
     When I am on the "business categories" page
-    Then I should see "5" business categories
+    Then I should see "8" business categories
     When I am on the "landing" page
-    Then I should see "11" applications
+    Then I should see "9" applications
 
 
-  Scenario: Admin deletes a company with 1 rejected membership application and 2 categories (only with it)
+  @poltergeist
+  Scenario: Admin deletes a company with 2 rejected membership applications and 2 categories (only co. with them)
     Given I am logged in as "admin@shf.se"
     When I am on the "business categories" page
-    Then I should see "5" business categories
+    Then I should see "8" business categories
     When I am on the "landing" page
     Then I should see "11" applications
     When I am on the "all companies" page
-    Then I should see "5" companies
+    Then I should see "7" companies
     When I click the t("delete") action for the row with "No More Snarky Barky"
-    Then I should see "warning: associated with 2 categories. Are you sure you want to delete the company?"
-    And I click on "YES"
+    And I confirm popup
     Then I should see t("companies.destroy.success")
     And I should not see "No More Snarky Barky"
-    And I should see "4" companies
+    And I should see "6" companies
     When I am on the "business categories" page
-    Then I should see "5" business categories
+    Then I should see "8" business categories
+    When I am on the "landing" page
+    Then I should see "9" applications
+
+
+  @poltergeist @focus
+  Scenario: Admin deletes a company with 1 rejected membership app, 1 categories (only co. associated with it)
+    Given I am logged in as "admin@shf.se"
+    When I am on the "business categories" page
+    Then I should see "8" business categories
+    When I am on the "landing" page
+    Then I should see "11" applications
+    When I am on the "all companies" page
+    Then I should see "7" companies
+    When I click the t("delete") action for the row with "WOOF"
+    And I confirm popup
+    Then I should see t("companies.destroy.success")
+    And I should not see "WOOF"
+    And I should see "6" companies
+    When I am on the "business categories" page
+    Then I should see "8" business categories
     When I am on the "landing" page
     Then I should see "10" applications
-
-
-  Scenario: Admin deletes a company with 1 rejected membership app, 2 categories (only 1 associated with it)
-
-
