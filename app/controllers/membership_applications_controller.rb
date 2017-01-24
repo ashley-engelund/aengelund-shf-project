@@ -1,5 +1,5 @@
 class MembershipApplicationsController < ApplicationController
-  before_action :get_membership_application, except: [:information, :index, :new, :create]
+  before_action :get_membership_application, except: [:information, :index, :new, :create, :export]
   before_action :authorize_membership_application, only: [:update, :show, :edit, :destroy]
 
 
@@ -33,7 +33,7 @@ class MembershipApplicationsController < ApplicationController
       helpers.flash_message(:notice, t('.success'))
       redirect_to root_path
     else
-      helpers.flash_message(:alert, t('.error') )
+      helpers.flash_message(:alert, t('.error'))
       current_user.membership_applications.reload
       render :new
     end
@@ -65,9 +65,31 @@ class MembershipApplicationsController < ApplicationController
   end
 
 
+  def export
+
+    download_dir = File.join(Rails.root, 'tmp', 'downloads')
+    Dir.mkdir download_dir unless Dir.exist? download_dir
+
+    export_name = File.join(download_dir, "#{Time.new.strftime('%s%3N')}.csv")
+
+    export_to_file(export_name)
+
+    begin
+      send_file export_name, type: 'text/csv', disposition: 'download'
+      helpers.flash_message(:notice, t('.success'))
+    rescue
+      helpers.flash_message(:notice, t('.error'))
+    end
+
+    redirect_to membership_applications_path
+
+  end
+
+
   def information
 
   end
+
 
   def destroy
     @membership_application.destroy
@@ -133,7 +155,7 @@ class MembershipApplicationsController < ApplicationController
         @uploaded_file = @membership_application.uploaded_files.create(actual_file: upload_file)
         if @uploaded_file.valid?
           helpers.flash_message(:notice, t('membership_applications.uploads.file_was_uploaded',
-                                           filename: @uploaded_file.actual_file_file_name ))
+                                           filename: @uploaded_file.actual_file_file_name))
         else
           helpers.flash_message :alert, @uploaded_file.errors.messages
         end
@@ -151,6 +173,20 @@ class MembershipApplicationsController < ApplicationController
     rescue => e
       helpers.flash_message(:error, error_msg + e.message)
       render :show
+    end
+  end
+
+
+  def export_to_file(fname)
+    out = File.open(fname, 'w') do |out_stream|
+      out_stream << "'#{t('activerecord.attributes.membership_application.first_name').strip}',"
+      out_stream <<                 "'#{t('activerecord.attributes.membership_application.last_name').strip}',"
+          out_stream <<                 "'#{t('activerecord.attributes.membership_application.contact_email').strip}',"
+          out_stream.puts                "'#{t('activerecord.attributes.membership_application.state').strip}'"
+
+      MembershipApplication.all.each do |m_app|
+        out_stream.puts "#{m_app.first_name},#{m_app.last_name},#{m_app.contact_email},#{m_app.state},"
+      end
     end
   end
 
