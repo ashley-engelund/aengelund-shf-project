@@ -18,6 +18,7 @@ Rails.application.routes.draw do
 
     resources :membership_applications, path: 'ansokan' do
       member do
+        post 'export', to: 'membership_applications#export'
         get 'start-review', to: 'membership_applications#show'
         post 'start-review', to: 'membership_applications#start_review'
 
@@ -29,7 +30,6 @@ Rails.application.routes.draw do
         post 'need-info', to: 'membership_applications#need_info'
         get 'cancel-need-info', to: 'membership_applications#show'
         post 'cancel-need-info', to: 'membership_applications#cancel_need_info'
-
       end
 
     end
