@@ -4,7 +4,7 @@ Feature: As an admin
 
   PT:
 
-  When a memebership application is deleted, if it is the only application
+  When a membership application is deleted, if it is the only application
   associated with a company, then delete the company too.
 
   Background:
