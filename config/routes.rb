@@ -6,6 +6,10 @@ Rails.application.routes.draw do
 
   as :user do
     authenticated :user, lambda {|u| u.admin? }  do
+      post 'admin/export-ansokan-csv'
+
+      get 'admin', to: 'admin#index'
+
       root to: 'admin#index', as: :admin_root
     end
   end
@@ -18,7 +22,6 @@ Rails.application.routes.draw do
 
     resources :membership_applications, path: 'ansokan' do
       member do
-        post 'export', to: 'membership_applications#export'
         get 'start-review', to: 'membership_applications#show'
         post 'start-review', to: 'membership_applications#start_review'
 
