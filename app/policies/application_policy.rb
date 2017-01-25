@@ -27,9 +27,6 @@ class ApplicationPolicy
     is_admin?
   end
 
-  def export_ankosan?
-    is_admin?
-  end
 
   private
 
