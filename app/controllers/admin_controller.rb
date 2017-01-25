@@ -1,4 +1,5 @@
 class AdminController < ApplicationController
+  before_action :authorize_admin
 
   def index
     @membership_applications = MembershipApplication.all
@@ -23,6 +24,11 @@ class AdminController < ApplicationController
 
 
   private
+
+  def authorize_admin
+    AdminPolicy.new(current_user).authorized?
+  end
+
 
   def export_str(membership_apps)
     out_str = ''
