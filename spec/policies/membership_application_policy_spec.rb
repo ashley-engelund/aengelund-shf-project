@@ -172,10 +172,6 @@ describe MembershipApplicationPolicy do
         is_expected.to forbid_action :cancel_need_info
       end
 
-      it 'forbids export' do
-        is_expected.to forbid_action :export
-      end
-
     end
 
     describe 'For other users of MembershipApplication' do
@@ -217,10 +213,6 @@ describe MembershipApplicationPolicy do
       end
       it 'forbids cancel_need_info' do
         is_expected.to forbid_action :cancel_need_info
-      end
-
-      it 'forbids export' do
-        is_expected.to forbid_action :export
       end
 
     end
@@ -266,10 +258,6 @@ describe MembershipApplicationPolicy do
         is_expected.to forbid_action :cancel_need_info
       end
 
-      it 'forbids export' do
-        is_expected.to forbid_action :export
-      end
-
     end
 
 
@@ -313,11 +301,6 @@ describe MembershipApplicationPolicy do
       it 'permits cancel_need_info' do
         is_expected.to permit_action :cancel_need_info
       end
-
-      it 'permits export' do
-        is_expected.to permit_action :export
-      end
-
     end
   end
 
