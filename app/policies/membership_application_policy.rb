@@ -72,10 +72,6 @@ class MembershipApplicationPolicy < ApplicationPolicy
   end
 
 
-  def export?
-    is_admin?
-  end
-
   #------
   private
 
