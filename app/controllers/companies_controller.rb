@@ -61,8 +61,6 @@ class CompaniesController < ApplicationController
       redirect_to @company
     end
 
-    return
-
   end
 
 
