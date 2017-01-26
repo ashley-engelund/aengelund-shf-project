@@ -28,7 +28,6 @@ class Company < ApplicationRecord
   def error_if_has_accepted_applications?
 
     membership_applications.reload
-    business_categories.reload
 
     if membership_applications.select(&:is_accepted?).count != 0
       errors.add(:base, 'activerecord.errors.models.company.company_has_active_memberships')
