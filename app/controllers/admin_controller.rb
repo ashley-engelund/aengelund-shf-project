@@ -1,6 +1,7 @@
 class AdminController < ApplicationController
   before_action :authorize_admin
 
+
   def index
     @membership_applications = MembershipApplication.all
   end
@@ -9,16 +10,21 @@ class AdminController < ApplicationController
   # export membership_appplications
   def export_ansokan_csv
 
-    @membership_applications = MembershipApplication.all
+    begin
+      @membership_applications = MembershipApplication.all
 
-    download_dir = File.join(Rails.root, 'tmp', 'downloads')
-    Dir.mkdir download_dir unless Dir.exist? download_dir
+      export_name = "shf-ankosan-#{Time.now.strftime('%Y-%m-%d--%H-%M-%S')}.csv"
 
-    export_name = "shf-ankosan-#{Time.now.strftime('%Y-%m-%d--%H-%M-%S')}.csv"
+      send_data(export_str(@membership_applications), filename: export_name, type: "text/plain" )
 
-    send_data( export_str(@membership_applications), filename: export_name, type: "text/plain")
+      helpers.flash_message(:notice, t('.success'))
 
-    helpers.flash_message(:notice, t('.success'))
+    rescue RuntimeError => e
+
+      helpers.flash_message(:alert, "#{t('.error')} [#{e.message}]")
+      redirect_to (request.referer.present? ? :back : root_path)
+
+    end
 
   end
 
@@ -37,10 +43,10 @@ class AdminController < ApplicationController
     out_str << "'#{t('activerecord.attributes.membership_application.contact_email').strip}',"
     out_str << "'#{t('activerecord.attributes.membership_application.state').strip}'\n"
 
-    membership_apps.each do | m_app |
-           out_str << "#{m_app.first_name},#{m_app.last_name},#{m_app.contact_email},"
-           out_str << t("membership_applications.state.#{m_app.state}")
-           out_str << "\n"
+    membership_apps.each do |m_app|
+      out_str << "#{m_app.first_name},#{m_app.last_name},#{m_app.contact_email},"
+      out_str << t("membership_applications.state.#{m_app.state}")
+      out_str << "\n"
     end
 
     out_str
