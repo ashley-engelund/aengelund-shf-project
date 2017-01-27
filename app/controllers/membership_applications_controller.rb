@@ -1,5 +1,5 @@
 class MembershipApplicationsController < ApplicationController
-  before_action :get_membership_application, except: [:information, :index, :new, :create, :export]
+  before_action :get_membership_application, except: [:information, :index, :new, :create]
   before_action :authorize_membership_application, only: [:update, :show, :edit, :destroy]
 
 
