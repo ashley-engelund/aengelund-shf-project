@@ -1,5 +1,5 @@
 Feature: As an Admin
-  So that I can use the exsiting Mailchimp system to share information with members
+  So that I can use the exisiting Mailchimp system to share information with members
   I need to be able to export member names and emails to a csv file
 
 
