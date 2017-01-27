@@ -12,12 +12,12 @@ RSpec.describe AdminController, type: :controller do
 
   include Devise::Test::ControllerHelpers
 
+  # this will bypass Pundit policy access checks so logging in is not necessary
   before(:each) { Warden.test_mode! }
 
   after(:each) { Warden.test_reset! }
 
   let(:user) { create(:user) }
-  let(:shf_admin) { create(:user, email: 'admin@sgf.com', admin: true) }
 
   let(:csv_header) { out_str = ''
   out_str << "'#{I18n.t('activerecord.attributes.membership_application.first_name').strip}',"
@@ -30,9 +30,6 @@ RSpec.describe AdminController, type: :controller do
   describe '#export_ankosan_csv' do
 
     describe 'logged in as admin' do
-
-      # before(:each) { login_as(shf_admin, scope: :admin) }
-
 
       it 'content type is text/csv' do
 
@@ -47,20 +44,15 @@ RSpec.describe AdminController, type: :controller do
 
         it 'no membership applications has just the header' do
 
-          login_as(shf_admin, scope: :admin)
-
           post :export_ansokan_csv
 
           expect(response.body).to eq csv_header
-
-          logout(:admin)
 
         end
 
       end
 
       describe 'with 1 app for each state' do
-
 
         it 'includes all applications' do
 
@@ -80,20 +72,12 @@ RSpec.describe AdminController, type: :controller do
             result_str << "#{m.first_name},#{m.last_name},#{m.contact_email},"+ I18n.t("membership_applications.state.#{app_state.name}") +"\n"
           end
 
-          login_as(shf_admin, scope: :admin)
-
           post :export_ansokan_csv
 
           expect(response.body).to match result_str
 
-          logout(:admin)
-
         end
 
-
-      end
-
-      it 'errors' do
 
       end
 
