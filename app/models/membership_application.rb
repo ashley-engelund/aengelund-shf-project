@@ -1,6 +1,21 @@
 class MembershipApplication < ApplicationRecord
+
+  before_destroy :before_destroy_checks
+
   belongs_to :user
-  belongs_to :company, optional: true
+
+  #  A Company for a membership application (an instantiated one)
+  #  is created (instantiated) only when a membership is *accepted* --
+  #  unless the company already exists, in which case that existing instance
+  #  is associated with a membership application.
+  #  See the 'accept_membership' method below; note the .find_or_create method
+  #
+  #  Until a membership application is accepted, we just keep the
+  #  company_number.  That's what we'll later use to create (instantiate)
+  #  a company if/when needed.
+  #
+  belongs_to :company, optional: true, inverse_of: :membership_applications
+
 
   has_and_belongs_to_many :business_categories
   has_many :uploaded_files
@@ -62,9 +77,11 @@ class MembershipApplication < ApplicationRecord
     @marked_ready_for_review ||= (ready_for_review? ? 1 : 0)
   end
 
+
   def marked_ready_for_review=(value)
     @marked_ready_for_review = value
   end
+
 
   def swedish_organisationsnummer
     errors.add(:company_number, "#{self.company_number} är inte ett svenskt organisationsnummer") unless Orgnummer.new(self.company_number).valid?
@@ -80,7 +97,6 @@ class MembershipApplication < ApplicationRecord
     true
     #(total_outstanding_charges <= 0)
   end
-
 
 
   def not_a_member?
@@ -115,6 +131,16 @@ class MembershipApplication < ApplicationRecord
 
   def reject_membership
     delete_uploaded_files
+  end
+
+
+  # if this is the only application associated with a company, delete the company
+  def before_destroy_checks
+
+    unless company.nil?
+      company.membership_applications.reload
+      company.delete if (company.membership_applications.count == 1)
+    end
   end
 
 
