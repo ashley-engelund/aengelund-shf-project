@@ -19,7 +19,7 @@ class AdminController < ApplicationController
 
       helpers.flash_message(:notice, t('.success'))
 
-    rescue RuntimeError => e
+    rescue  => e
 
       helpers.flash_message(:alert, "#{t('.error')} [#{e.message}]")
       redirect_to (request.referer.present? ? :back : root_path)
