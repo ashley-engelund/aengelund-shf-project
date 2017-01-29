@@ -81,6 +81,36 @@ RSpec.describe AdminController, type: :controller do
 
       end
 
+      describe 'error from send_data is rescued' do
+
+        # status, location, response_body
+
+        let(:error_message) {'Error. Error. Warning Will Robinson' }
+
+        subject { allow(@controller).to receive(:send_data) { raise StandardError.new(error_message) }
+
+                  post :export_ansokan_csv
+                }
+
+
+        it 'redirects to back or the root path' do
+
+          expect(subject).to redirect_to root_path
+
+        end
+
+
+        it "flashes an error :alert message" do
+
+          error_flash_message = ["#{I18n.t('admin.export_ansokan_csv.error')} [#{error_message}]"]
+
+          expect(subject.request.flash[:alert]).to_not be_nil
+          expect(subject.request.flash[:alert]).to eq error_flash_message
+
+        end
+
+      end
+
     end
 
   end
