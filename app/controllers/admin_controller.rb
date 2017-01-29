@@ -22,7 +22,7 @@ class AdminController < ApplicationController
     rescue  => e
 
       helpers.flash_message(:alert, "#{t('.error')} [#{e.message}]")
-      redirect_to (request.referer.present? ? :back : root_path)
+      redirect_to(request.referer.present? ? :back : root_path)
 
     end
 
