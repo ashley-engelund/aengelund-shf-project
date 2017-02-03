@@ -215,10 +215,10 @@ sv:
       error: Det uppstod ett fel när du försöker att skicka in din ansökan för en annan granskning.
 
     state:
-      new: &status_new Nytt
+      new: &status_new Ny
       under_review: &status_under_review Behandlas
       waiting_for_applicant: &status_waiting_for_applicant  Väntar på sökande
-      ready_for_review: &status_ready_for_review Redo för granskning
+      ready_for_review: &status_ready_for_review Påbörja granskning
       accepted: &status_accepted Godkänd
       rejected: &status_rejected Avböjd
 
@@ -369,13 +369,13 @@ sv:
       org_nr: *org_nr
       manage: *manage
       state: *state
-      export: Export all applications to a CSV file
+      export: Exportera ansökningar som CSV
 
     all_applications_received: Alla inkomna ansökningar
 
     export_ansokan_csv:
-      success: Export successful. Check your browser downloads for the file.
-      error: There was a problem with the export.
+      success: Exporten lyckades. Du hittar filen bland din webbläsares nedladdade filer.
+      error: Ett problem uppstod med exporten.
 
   devise:
     min_length: '(minst %{minimum_length} tecken)'
