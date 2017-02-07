@@ -1,6 +1,6 @@
 #Deploying to the Deployment and Production Servers
 
-This is how SHF-Project gets deployed to the **development server** on [Heroku](https://heroku.com) (a place where recently merged changeds to the `develop` branch can be seen)
+This is how SHF-Project gets deployed to the **development server** on [Heroku](https://heroku.com) (a place where recently merged changes to the `develop` branch can be seen)
  and the **production server** on [DigitalOcean](https://digitalocean.com) (the real system in use).
 
 Note that there is no staging server.  This is a relatively small scale project with a small team.  Right now there's not enough value in keeping a separate staging server up and running and coordinated.
@@ -41,7 +41,7 @@ To manage the development server:
 * install `herokuCLI` on your local machine to be able to automatically connect and run heroku commands
      
 * Automatic deploys from GitHub are set up.  When there is a push to the `develop` branch on GitHub, 
-  Heroku will automatically grab it (fetch it ?), build it, and deploy it to the development server.
+  Heroku will automatically fetch it, build it, and deploy it to the development server.
    (Note that we have the `develop` branch set up on GitHub with Continuous Integration (CI) such that there are conditions that have to be met, such as: building successfully with Semaphore, HoundCI checks, and reviews.)
      
      See [the Heroku article on GitHub Integration (Heroku GitHub Deploys)](https://devcenter.heroku.com/articles/github-integration)  for more information
