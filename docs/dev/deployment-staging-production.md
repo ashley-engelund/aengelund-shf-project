@@ -11,7 +11,7 @@ Because Heroku does not allow for files on a file system, we cannot fully test f
 - uploading files:  when applying for membership, users upload files that are proof of their certifications and education
 
 
-*TODO: Capistrano... (how it's used)*
+*Capistrano... (Need to explain how it's used)*
 
 ### Development server on Heroku
 
