@@ -106,6 +106,14 @@ en:
 
     errors:
       models:
+
+        uploaded_file:
+          attributes:
+            actual_file_file_size:
+              file_too_large: 'The uploaded file is too big.'
+            actual_file:
+              file_too_large: 'The uploaded file size must be smaller than %{max}. (Your file is %{value} bytes.)'
+
         company:
           company_number:
             taken: This company (organization number) already exists in the system.
