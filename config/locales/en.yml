@@ -45,9 +45,13 @@ en:
 
   toggle:
     company_search_form:
-      hide: Hide the search form
-      show: Show the search form
+      hide: Hide Form
+      show: Show Form
 
+  will_paginate:
+      previous_label: "<< Previous"
+      next_label: "Next >>"
+      page_gap: "&hellip;"
 
  # Automatic and manual lookup for ActiveRecords:
   activerecord:
@@ -241,7 +245,7 @@ en:
     waiting_for_applicant: *status_waiting_for_applicant
     applicant_updated_info: &event_applicant_updated_info Applicant Updated Info
     ready_for_review: *status_ready_for_review
-    start_review: &start_review Start Review
+    start_review: &start_review Start Reviewing
 
     awaiting_payment: Awaiting payment
 
