@@ -142,9 +142,9 @@ class MembershipApplicationsController < ApplicationController
 
     successful = true
 
-    if params.fetch('uploaded_file', false) && params['uploaded_file'].fetch('actual_files', false)
+    if (uploaded_files = params['uploaded_file'])
 
-      params['uploaded_file']['actual_files'].each do |uploaded_file|
+      uploaded_files['actual_files']&.each do |uploaded_file|
 
         @uploaded_file = @membership_application.uploaded_files.create(actual_file: uploaded_file)
 
