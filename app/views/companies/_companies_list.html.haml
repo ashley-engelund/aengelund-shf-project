@@ -18,17 +18,16 @@
           %th
 
     %tbody
-      - @companies.each do |company|
-        - if company_complete? company
-          %tr.company
-            %td= last_category_name company
-            %td= link_to company.name, company
-            %td= company.region&.name
-            %td= company.city
-            - if current_user.try(:admin)
-              %td= company.company_number
-              %td= link_to "#{t('edit')}", edit_company_path(company)
-              %td= link_to "#{t('delete')}", company, method: :delete, data: { :confirm => "#{t('.confirm_are_you_sure')}" }
+      -@companies.each do |company|
+        %tr.company
+          %td= last_category_name company
+          %td= link_to company.name, company
+          %td= company.region&.name
+          %td= company.city
+          - if current_user.try(:admin)
+            %td= company.company_number
+            %td= link_to "#{t('edit')}", edit_company_path(company)
+            %td= link_to "#{t('delete')}", company, method: :delete, data: { :confirm => "#{t('.confirm_are_you_sure')}" }
   .center
     = will_paginate @companies,
                     renderer: BootstrapPagination::Rails,
