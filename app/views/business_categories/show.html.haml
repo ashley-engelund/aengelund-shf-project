@@ -21,7 +21,8 @@
             %th= t('companies.index.company_number')
             %th
       %tbody
-        - @business_category.companies.distinct.sort {|cp1, cp2| cp1.name <=> cp2.name}.each do |company|
+        - complete_cos = @business_category.companies.distinct.select{|c| c.complete? }
+        - complete_cos.sort {|cp1, cp2| cp1.name <=> cp2.name}.each do |company|
           - if company_complete? company
             %tr.company
               %td= link_to company.name, company
