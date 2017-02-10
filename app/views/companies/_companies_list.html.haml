@@ -22,7 +22,7 @@
           %th
 
     %tbody
-      -@companies.each do |company|
+      - @companies.each do |company|
         %tr.company
           %td= last_category_name company
           %td= link_to company.name, company
