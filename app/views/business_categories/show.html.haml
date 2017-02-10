@@ -23,10 +23,9 @@
       %tbody
         - complete_cos = @business_category.companies.distinct.select{|c| c.complete? }
         - complete_cos.sort {|cp1, cp2| cp1.name <=> cp2.name}.each do |company|
-          - if company_complete? company
-            %tr.company
-              %td= link_to company.name, company
-              %td= company.region.name
-              - if current_user.try(:admin)
-                %td= company.company_number
-                %td= link_to t('edit'), edit_company_path(company)
+          %tr.company
+            %td= link_to company.name, company
+            %td= company.region ?  company.region.name  : ''
+            - if current_user.try(:admin)
+              %td= company.company_number
+              %td= link_to t('edit'), edit_company_path(company)
