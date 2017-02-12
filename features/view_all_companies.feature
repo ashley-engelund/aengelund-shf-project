@@ -66,18 +66,25 @@ Feature: As a visitor,
     And I am on the "landing" page
     Then I should see t("companies.index.h_companies_listed_below")
     And I should see "Bowsers"
+    And I should not see "2120000142"
     And I should see "No More Snarky Barky"
+    And I should not see "5560360793"
     And I should see "Groomer"
     And I should not see "Walker"
     And I should not see t("companies.new_company")
+
 
   Scenario: User sees all the companies
     Given I am logged in as "emma@happymutts.com"
     And I am on the "landing" page
     Then I should see t("companies.index.title")
     And I should see "Bowsers"
+    And I should not see "2120000142"
     And I should see "No More Snarky Barky"
+    And I should not see "5560360793"
     And I should not see t("companies.new_company")
+
+
 
   @javascript
   Scenario: Pagination
@@ -85,8 +92,11 @@ Feature: As a visitor,
     And I am on the "landing" page
     Then I should see t("companies.index.h_companies_listed_below")
     And I should see "Bowsers"
+    And I should not see "2120000142"
     And I should see "No More Snarky Barky"
+    And I should not see "5560360793"
     And I should see "Company10"
+    And I should not see "3609340140"
     And I should not see "Company11"
     Then I click on t("will_paginate.next_label") link
     And I should see "Company11"
