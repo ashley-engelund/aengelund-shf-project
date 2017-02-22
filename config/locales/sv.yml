@@ -411,7 +411,7 @@ sv:
       created: *created
       reset_password_sent_at: *user_reset_password_sent_at
       user_has_never_signed_in: har aldrig loggat in.
-      is_an_admin: Är en admin?
+      is_an_admin: Är en admin
       'yes': *yes
       'no': *no
 
