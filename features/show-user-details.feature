@@ -39,8 +39,6 @@ Feature: As an admin
     When I am on the "user details" page for "lazy_admin@shf.se"
     Then I should see t("users.show.is_an_admin")
     And I should see t("users.show.user_has_never_signed_in")
-    And I should not see t("users.show.current_sign_in_at")
-    And I should not see t("users.show.current_sign_in_ip")
     And I should not see t("users.show.last_login")
     And I should not see t("users.show.last_login_ip")
 
@@ -50,16 +48,17 @@ Feature: As an admin
     When I am on the "user details" page for "admin@shf.se"
     Then I should see t("users.show.is_an_admin")
     And I should not see t("users.show.user_has_never_signed_in")
-    And I should see t("users.show.current_sign_in_at")
-    And I should see t("users.show.current_sign_in_ip")
+    And I should see t("users.show.last_login")
+    And I should see t("users.show.last_login_ip")
+
   @admin
   Scenario: Show an admin that logged in 1 day ago
     Given The user "yesterday_admin@shf.se" last logged in 1 day ago
     When I am on the "user details" page for "yesterday_admin@shf.se"
     Then I should see t("users.show.is_an_admin")
     And I should not see t("users.show.user_has_never_signed_in")
-    And I should not see t("users.show.current_sign_in_at")
-    And I should not see t("users.show.current_sign_in_ip")
+    And I should see t("users.show.last_login")
+    And I should see t("users.show.last_login_ip")
 
 
   @member
@@ -76,10 +75,8 @@ Feature: As an admin
     When I am on the "user details" page for "emma@happymutts.com"
     Then I should not see t("users.show.is_an_admin")
     And I should not see t("users.show.user_has_never_signed_in")
-    And I should see t("users.show.current_sign_in_at")
-    And I should see t("users.show.current_sign_in_ip")
-    And I should not see t("users.show.last_login")
-    And I should not see t("users.show.last_login_ip")
+    And I should see t("users.show.last_login")
+    And I should see t("users.show.last_login_ip")
 
   @member
   Scenario: Show a member that logged 3 days ago
@@ -87,9 +84,8 @@ Feature: As an admin
     When I am on the "user details" page for "lars@happymutts.com"
     Then I should not see t("users.show.is_an_admin")
     And I should not see t("users.show.user_has_never_signed_in")
-    And I should not see t("users.show.current_sign_in_at")
-    And I should not see t("users.show.current_sign_in_ip")
-
+    And I should see t("users.show.last_login")
+    And I should see t("users.show.last_login_ip")
 
   @member
   Scenario: Show a member that has logged in 42 times
@@ -97,7 +93,8 @@ Feature: As an admin
     When I am on the "user details" page for "lars@happymutts.com"
     Then I should see t("users.show.logged_in_count")
     And I should see "42"
-
+    And I should see t("users.show.last_login")
+    And I should see t("users.show.last_login_ip")
 
 
   @user
@@ -105,8 +102,6 @@ Feature: As an admin
     When I am on the "user details" page for "nils@bowsers.se"
     Then I should not see t("users.show.is_an_admin")
     And I should see t("users.show.user_has_never_signed_in")
-    And I should not see t("users.show.current_sign_in_at")
-    And I should not see t("users.show.current_sign_in_ip")
     And I should not see t("users.show.last_login")
     And I should not see t("users.show.last_login_ip")
 
@@ -116,8 +111,8 @@ Feature: As an admin
     When I am on the "user details" page for "anna@bowsers.se"
     Then I should not see t("users.show.is_an_admin")
     And I should not see t("users.show.user_has_never_signed_in")
-    And I should see t("users.show.current_sign_in_at")
-    And I should see t("users.show.current_sign_in_ip")
+    And I should see t("users.show.last_login")
+    And I should see t("users.show.last_login_ip")
 
   @user
   Scenario: Show an user that logged in 100 days ago
@@ -125,8 +120,6 @@ Feature: As an admin
     When I am on the "user details" page for "sam@bowsers.se"
     Then I should not see t("users.show.is_an_admin")
     And I should not see t("users.show.user_has_never_signed_in")
-    And I should not see t("users.show.current_sign_in_at")
-    And I should not see t("users.show.current_sign_in_ip")
     And I should see t("users.show.last_login")
     And I should see t("users.show.last_login_ip")
 
