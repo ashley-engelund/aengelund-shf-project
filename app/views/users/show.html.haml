@@ -1,5 +1,9 @@
 %header.entry-header
-  %h1.entry-title=  @user.email
+  - if @user.admin?
+    %h1.entry-title.is-admin=  @user.email
+  - else
+    %h1.entry-title=  @user.email
+
 
 .entry-content
   %p
@@ -34,7 +38,7 @@
       = @user.sign_in_count
 
   - if @user.admin?
-    %p #{t('.is_an_admin')}
+    %p.is-admin #{t('.is_an_admin')}
 
   %p
     %b #{t('.reset_password_sent_at')}:
