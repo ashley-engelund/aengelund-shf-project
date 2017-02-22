@@ -1,0 +1,49 @@
+%header.entry-header
+  %h1.entry-title=  @user.email
+
+.entry-content
+  %p
+    %b #{t('.email')}:
+    = @user.email
+
+  - if @user.current_sign_in_at.blank? && @user.last_sign_in_at.blank?
+    %p  #{@user.email} #{t('.user_has_never_signed_in')}
+
+  - else
+    -if @user.current_sign_in_at.blank?
+      %p
+        %b #{t('.last_login')}:
+        = @user.last_sign_in_at
+        (#{time_ago_in_words(@user.last_sign_in_at)} ago)
+      %p
+        %b #{t('.last_login_ip')}:
+        = @user.last_sign_in_ip
+
+    -else
+      %p
+        %b #{t('.current_sign_in_at')}:
+        = @user.current_sign_in_at
+        (#{time_ago_in_words(@user.current_sign_in_at)} ago)
+
+      %p
+        %b #{t('.current_sign_in_ip')}:
+        = @user.current_sign_in_ip
+
+    %p
+      %b #{t('.logged_in_count')}:
+      = @user.sign_in_count
+
+  - if @user.admin?
+    %p #{t('.is_an_admin')}
+
+  %p
+    %b #{t('.reset_password_sent_at')}:
+    = @user.reset_password_sent_at
+
+  %p
+    %b #{t('.created')}:
+    = @user.created_at
+    (#{time_ago_in_words(@user.created_at)} ago)
+
+
+      
