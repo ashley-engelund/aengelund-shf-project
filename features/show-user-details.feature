@@ -122,8 +122,3 @@ Feature: As an admin
     And I should not see t("users.show.user_has_never_signed_in")
     And I should see t("users.show.last_login")
     And I should see t("users.show.last_login_ip")
-
-
-
-
-
