@@ -12,8 +12,8 @@ Feature: As an admin
       | lars@happymutts.com    |       |
       | hannah@happymutts.com  |       |
       | nils@bowsers.se        |       |
-      | anna@bowsers.se       |       |
-      | sam@bowsers.se        |       |
+      | anna@bowsers.se        |       |
+      | sam@bowsers.se         |       |
       | admin@shf.se           | true  |
       | yesterday_admin@shf.se | true  |
       | lazy_admin@shf.se      | true  |
@@ -40,7 +40,6 @@ Feature: As an admin
     Then I should see t("users.show.is_an_admin")
     And I should see t("users.show.user_has_never_signed_in")
     And I should not see t("users.show.last_login")
-    And I should not see t("users.show.last_login_ip")
 
 
   @admin
@@ -49,7 +48,6 @@ Feature: As an admin
     Then I should see t("users.show.is_an_admin")
     And I should not see t("users.show.user_has_never_signed_in")
     And I should see t("users.show.last_login")
-    And I should see t("users.show.last_login_ip")
 
   @admin
   Scenario: Show an admin that logged in 1 day ago
@@ -58,7 +56,6 @@ Feature: As an admin
     Then I should see t("users.show.is_an_admin")
     And I should not see t("users.show.user_has_never_signed_in")
     And I should see t("users.show.last_login")
-    And I should see t("users.show.last_login_ip")
 
 
   @member
@@ -67,7 +64,6 @@ Feature: As an admin
     Then I should not see t("users.show.is_an_admin")
     And I should see t("users.show.user_has_never_signed_in")
     And I should not see t("users.show.last_login")
-    And I should not see t("users.show.last_login_ip")
 
   @member
   Scenario: Show a member that is currently logged in
@@ -76,7 +72,6 @@ Feature: As an admin
     Then I should not see t("users.show.is_an_admin")
     And I should not see t("users.show.user_has_never_signed_in")
     And I should see t("users.show.last_login")
-    And I should see t("users.show.last_login_ip")
 
   @member
   Scenario: Show a member that logged 3 days ago
@@ -85,7 +80,6 @@ Feature: As an admin
     Then I should not see t("users.show.is_an_admin")
     And I should not see t("users.show.user_has_never_signed_in")
     And I should see t("users.show.last_login")
-    And I should see t("users.show.last_login_ip")
 
   @member
   Scenario: Show a member that has logged in 42 times
@@ -94,7 +88,18 @@ Feature: As an admin
     Then I should see t("users.show.logged_in_count")
     And I should see "42"
     And I should see t("users.show.last_login")
-    And I should see t("users.show.last_login_ip")
+
+
+  @member
+  Scenario: Show a member that has had her password reset
+    Given The user "emma@happymutts.com" has had her password reset now
+    When I am on the "user details" page for "emma@happymutts.com"
+    Then I should see t("users.show.reset_password_sent_at")
+
+  @member
+  Scenario: Show a member that has never had her password reset
+    When I am on the "user details" page for "emma@happymutts.com"
+    Then I should see t("users.show.password_never_reset")
 
 
   @user
@@ -103,7 +108,6 @@ Feature: As an admin
     Then I should not see t("users.show.is_an_admin")
     And I should see t("users.show.user_has_never_signed_in")
     And I should not see t("users.show.last_login")
-    And I should not see t("users.show.last_login_ip")
 
   @user
   Scenario: Show an user that is currently logged in
@@ -112,7 +116,6 @@ Feature: As an admin
     Then I should not see t("users.show.is_an_admin")
     And I should not see t("users.show.user_has_never_signed_in")
     And I should see t("users.show.last_login")
-    And I should see t("users.show.last_login_ip")
 
   @user
   Scenario: Show an user that logged in 100 days ago
@@ -121,4 +124,3 @@ Feature: As an admin
     Then I should not see t("users.show.is_an_admin")
     And I should not see t("users.show.user_has_never_signed_in")
     And I should see t("users.show.last_login")
-    And I should see t("users.show.last_login_ip")

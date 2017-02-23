@@ -43,3 +43,8 @@ Given(/^The user "([^"]*)" has logged in (\d+) times?$/) do |email, num_logins|
   @user = User.find_by(email: email)
   @user.update(last_sign_in_at: Time.now, sign_in_count: num_logins)
 end
+
+Given(/^The user "([^"]*)" has had her password reset now$/) do |email|
+  @user = User.find_by(email: email)
+  @user.update(reset_password_sent_at: Time.now)
+end
