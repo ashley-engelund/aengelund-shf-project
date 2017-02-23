@@ -395,7 +395,7 @@ sv:
       title: Alla Användare
       email: *email
       created: *created
-      last_login: *user_last_login_ip
+      last_login: *user_last_login
       logged_in_count: *sign_in_count
       member: Medlem
       applications: Ansökningar
