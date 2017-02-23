@@ -373,6 +373,7 @@ DEPENDENCIES
   cucumber-timecop
   database_cleaner
   devise
+  dotenv
   erb2haml
   factory_girl_rails
   ffaker
