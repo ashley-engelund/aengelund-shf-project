@@ -36,7 +36,7 @@ end
 
 Given(/^The user "([^"]*)" last logged in (\d+) days? ago$/) do |email, num_days|
   @user = User.find_by(email: email)
-  @user.update(last_sign_in_at: (Time.now - 60*60*24 * num_days.to_i))
+  @user.update(last_sign_in_at: (Time.now - 1.day * num_days.to_i))
 end
 
 Given(/^The user "([^"]*)" has logged in (\d+) times?$/) do |email, num_logins|

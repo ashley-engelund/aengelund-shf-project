@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe UsersHelper, type: :helper do
   let!(:user) { create(:user) }
   let(:right_now) { Time.now }
-  let(:yesterday) { Time.now - 60*60*24 - 120}
+  let(:yesterday) { Time.now - 1.day - 2.minutes }
 
   describe '#most_recent_login_time' do
 
