@@ -32,6 +32,8 @@ gem 'aasm', '~> 4.11.1'  # state machine ()acts as state machine)
 
 gem 'ffaker'  # Fake data for DB seeding
 
+gem 'backup'
+gem 'whenever'
 
 group :development, :test do
   gem 'rspec-rails'
