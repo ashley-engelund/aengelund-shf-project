@@ -32,6 +32,9 @@ sv:
   'yes': &yes Ja
   'no': &no Nej
 
+  time_ago: sedan
+
+
   confirm_are_you_sure: &are_you_sure_confirm Är du säker
 
   info:
@@ -408,6 +411,7 @@ sv:
       logged_in_count: *sign_in_count
       created: *created
       reset_password_sent_at: *user_reset_password_sent_at
+      password_never_reset: Lösenord har aldrig återställts.
       user_has_never_signed_in: har aldrig loggat in.
       is_an_admin: Är en admin
       'yes': *yes
