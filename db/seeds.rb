@@ -39,7 +39,6 @@ private def get_company_number(r)
 end
 
 
-
 if Rails.env.production?
   begin
     email = env_invalid_blank('SHF_ADMIN_EMAIL')
@@ -116,8 +115,7 @@ if Rails.env.development? || Rails.env.staging? || ENV['HEROKU_STAGING']
         idx2 = r.rand(0..num_cats-1)
         ma.business_categories << business_categories[idx2] if idx2 != idx1
         idx3 = r.rand(0..num_cats-1)
-        ma.business_categories << business_categories[idx3] if
-          (idx3 != idx1 && idx3 != idx2)
+        ma.business_categories << business_categories[idx3] if (idx3 != idx1 && idx3 != idx2)
 
         ma.save
 
@@ -138,20 +136,25 @@ if Rails.env.development? || Rails.env.staging? || ENV['HEROKU_STAGING']
       ma.user.save
 
       company = Company.new(company_number: ma.company_number,
-                         email: FFaker::InternetSE.free_email,
-                         name: FFaker::CompanySE.name,
-                         phone_number: FFaker::PhoneNumberSE.phone_number,
-                         city: FFaker::AddressSE.city,
-                         street: FFaker::AddressSE.street_address,
-                         post_code: FFaker::AddressSE.zip_code,
-                         website: FFaker::InternetSE.http_url,
-                         region: regions[r.rand(0..num_regions-1)])
+                            email: FFaker::InternetSE.free_email,
+                            name: FFaker::CompanySE.name,
+                            phone_number: FFaker::PhoneNumberSE.phone_number,
+                            website: FFaker::InternetSE.http_url)
       company.save
+
+      address = Address.new(addressable: company,
+                            city: FFaker::AddressSE.city,
+                            street_address: FFaker::AddressSE.street_address,
+                            post_code: FFaker::AddressSE.zip_code,
+                            region: regions[r.rand(0..num_regions-1)]
+      )
+      address.save
+
       ma.company = company
       ma.save
     end
 
     puts "Applications accepted: #{MembershipApplication
-      .where(state: MA_ACCEPTED_STATE).count}"
+                                       .where(state: MA_ACCEPTED_STATE).count}"
   end
 end
