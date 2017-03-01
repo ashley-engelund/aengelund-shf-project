@@ -1,4 +1,5 @@
 FactoryGirl.define do
+
   factory :address do
 
     street_address 'Hundvägen 101'
@@ -7,6 +8,12 @@ FactoryGirl.define do
     city 'Harplinge'
     country 'Sverige'
 
-    association :region, strategy: :build
+    association :region, factory: :region, strategy: :build
+
+    factory :company_address do
+      association :addressable, factory: :company
+    end
+
+
   end
 end
