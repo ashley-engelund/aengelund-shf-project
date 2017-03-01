@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170220223441) do
+ActiveRecord::Schema.define(version: 20170222090742) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,8 +20,11 @@ ActiveRecord::Schema.define(version: 20170220223441) do
     t.string  "post_code"
     t.string  "kommun"
     t.string  "city"
-    t.string  "country",        default: "Sveriges", null: false
+    t.string  "country",          default: "Sveriges", null: false
     t.integer "region_id"
+    t.string  "addressable_type"
+    t.integer "addressable_id"
+    t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable_type_and_addressable_id", using: :btree
     t.index ["region_id"], name: "index_addresses_on_region_id", using: :btree
   end
 
@@ -66,7 +69,7 @@ ActiveRecord::Schema.define(version: 20170220223441) do
     t.string   "contact_email"
     t.integer  "company_id"
     t.string   "membership_number"
-    t.string   "state",             default: "under_review"
+    t.string   "state",             default: "new"
     t.index ["company_id"], name: "index_membership_applications_on_company_id", using: :btree
     t.index ["user_id"], name: "index_membership_applications_on_user_id", using: :btree
   end
