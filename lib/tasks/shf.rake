@@ -103,7 +103,7 @@ namespace :shf do
     if Region.exists?
       log_and_show log, Logger::WARN, "Regions table not empty"
     else
-      CS.states(:se).each_pair { |k,v| Region.create(name: v, code: k.to_s) }
+      CS.states(:se).each_pair { |k, v| Region.create(name: v, code: k.to_s) }
       Region.create(name: 'Sverige', code: nil)
       Region.create(name: 'Online', code: nil)
 
@@ -113,6 +113,41 @@ namespace :shf do
     log_and_show log, Logger::INFO, "Information was logged to: #{logfile}"
     finish_and_close_log(log, start_time, Time.now, "Regions create")
   end
+
+
+  desc 'move addresses out of Companies into Addresses'
+  task :move_company_addresses_to_addresses => [:environment] do
+
+    logfile = 'log/shf-rake.log'
+    start_time = Time.now
+    log = start_logging(start_time, logfile, "Move Company addresses into Address")
+
+
+    Company.find_each do |company|
+
+      co_address = Address.new(street_address: company.street,
+                               post_code: company.post_code,
+                               city: company.city,
+                               region: company.region
+      )
+      co_address.addressable = company
+
+      co_address.save
+
+      # delete address information in Company
+      company.street = ''
+      company.city = ''
+      company.post_code = ''
+      company.save
+
+      log_and_show(log, Logger::INFO, "Company #{company.name} (id: #{company.id}) address moved")
+
+    end
+
+    log_and_show log, Logger::INFO, "Information was logged to: #{logfile}"
+    finish_and_close_log(log, start_time, Time.now, "Move Company addresses into Address")
+  end
+
 
   def import_a_member_app_csv(row, log)
 
@@ -151,8 +186,8 @@ namespace :shf do
 
     end
 
-    membership = find_or_create_category( row[:category1], membership) unless row[:category1].nil?
-    membership = find_or_create_category( row[:category2], membership) unless row[:category2].nil?
+    membership = find_or_create_category(row[:category1], membership) unless row[:category1].nil?
+    membership = find_or_create_category(row[:category2], membership) unless row[:category2].nil?
     membership.save!
 
     if membership.accepted?
