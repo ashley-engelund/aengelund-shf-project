@@ -52,7 +52,7 @@ class AdminController < ApplicationController
       out_str << "\n"
     end
 
-    out_str
+    out_str.encode('UTF-8')
   end
 
 end
