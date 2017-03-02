@@ -134,7 +134,7 @@ if Rails.env.development? || Rails.env.staging? || ENV['HEROKU_STAGING']
 
     #  We're most interested in accepted applications, so first make <some random number> of those
 
-    r.rand(1..applications.size).times do | i |
+    r.rand(1..applications.size).times do
 
       ma = applications[r.rand(0..(applications.size-1))]
 
@@ -173,7 +173,7 @@ if Rails.env.development? || Rails.env.staging? || ENV['HEROKU_STAGING']
     puts "Membership Applications by state:"
     states = remaining_states +  [MA_ACCEPTED_STATE]
     states.sort.each do | state |
-      puts "  #{state.to_s}: #{MembershipApplication.where(state: state).count }"
+      puts "  #{state}: #{MembershipApplication.where(state: state).count }"
     end
 
   end
