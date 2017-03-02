@@ -22,19 +22,62 @@ Feature: As an admin
 
     And I am logged in as "admin@shf.se"
 
-
+  @member @poltergeist
   Scenario: A member needs their password reset
-    Given I am on the user page for "emma@happymutts.com"
-    When I click on the t("reset_password") button
-    Then I should see t("new_password_is")
-       # ex English: 'The new password is:'
-    And I should see t("please_note_new_password")
-      # ex English: 'Please record this in a safe and secure place.  Once you leave this screen you will not be able to see it again.'
+    Given I am on the "user details" page for "emma@happymutts.com"
+    Then I should not see t("users.show.new_password")
+    And I should not see t("users.show.re_enter_new_password")
+    And I should not see t("users.show.submit_new_password")
+    And I should not see t("users.show.submit_new_password")
+    When I click on t("toggle.set_new_password_form.show") button
+    Then I should see t("users.show.new_password")
+    And I should see t("users.show.re_enter_new_password")
+    When I fill in t("users.show.new_password") with "newpassword"
+    And I fill in t("users.show.re_enter_new_password") with "newpassword"
+    And I should see t("users.show.please_note_new_password")
+    And I click on t("users.show.submit_new_password") button
+    And I confirm popup
+    Then I should see t("users.update.success")
+    And I am Logged out
+    And I am on the "login" page
+    When I fill in t("activerecord.attributes.user.email") with "emma@happymutts.com"
+    And I fill in t("activerecord.attributes.user.password") with "newpassword"
+    And I click on t("devise.sessions.new.log_in") button
+    Then I should see t("devise.sessions.signed_in")
 
-  Scenario: A user needs their password rest
-    Given I am on the user page for "bob@snarkybarky.se"
-    When I click on the t("reset_password") button
-    Then I should see t("new_password_is")
-       # ex English: 'The new password is:'
-    And I should see t("please_note_new_password")
-      # ex English: 'Please record this in a safe and secure place.  Once you leave this screen you will not be able to see it again.'
+
+  @user @poltergeist
+  Scenario: A user needs their password reset
+    Given I am on the "user details" page for "bob@snarkybarky.se"
+    Then I should not see t("users.show.new_password")
+    And I should not see t("users.show.re_enter_new_password")
+    And I should not see t("users.show.submit_new_password")
+    And I should not see t("users.show.submit_new_password")
+    When I click on t("toggle.set_new_password_form.show") button
+    Then I should see t("users.show.new_password")
+    And I should see t("users.show.re_enter_new_password")
+    When I fill in t("users.show.new_password") with "snarkywoofwoof"
+    And I fill in t("users.show.re_enter_new_password") with "snarkywoofwoof"
+    And I should see t("users.show.please_note_new_password")
+    And I click on t("users.show.submit_new_password") button
+    And I confirm popup
+    Then I should see t("users.update.success")
+    And I am Logged out
+    And I am on the "login" page
+    When I fill in t("activerecord.attributes.user.email") with "bob@snarkybarky.se"
+    And I fill in t("activerecord.attributes.user.password") with "snarkywoofwoof"
+    And I click on t("devise.sessions.new.log_in") button
+    Then I should see t("devise.sessions.signed_in")
+
+
+  @user @poltergeist
+  Scenario: New password and confirmation don't match (sad path)
+    Given I am on the "user details" page for "bob@snarkybarky.se"
+    When I click on t("toggle.set_new_password_form.show") button
+    Then I should see t("users.show.new_password")
+    When I fill in t("users.show.new_password") with "snarkywoofwoof"
+    And I fill in t("users.show.re_enter_new_password") with "not-a-match"
+    And I should see t("users.show.please_note_new_password")
+    And I click on t("users.show.submit_new_password") button
+    And I confirm popup
+    Then I should see t("users.update.error")
