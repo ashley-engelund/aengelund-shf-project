@@ -21,6 +21,11 @@ class MembershipApplicationsController < ApplicationController
   end
 
 
+  def show
+    @categories = @membership_application.business_categories
+  end
+
+
   def edit
     @all_business_categories = BusinessCategory.all
   end
