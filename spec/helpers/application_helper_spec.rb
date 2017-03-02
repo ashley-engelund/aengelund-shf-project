@@ -69,7 +69,7 @@ RSpec.describe ApplicationHelper, type: :helper do
 
   it '#i18n_time_ago_in_words(past_time)' do
     t = Time.now - 1.day
-    expect(helper.i18n_time_ago_in_words(t)).to eq("#{time_ago_in_words(t)} #{I18n.t('time_ago')}")
+    expect(helper.i18n_time_ago_in_words(t)).to eq("#{I18n.t('time_ago', amount_of_time: time_ago_in_words(t))}")
   end
 
 end

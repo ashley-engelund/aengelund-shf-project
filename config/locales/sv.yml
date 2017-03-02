@@ -32,7 +32,7 @@ sv:
   'yes': &yes Ja
   'no': &no Nej
 
-  time_ago: sedan
+  time_ago: '%{amount_of_time} sedan'
 
 
   confirm_are_you_sure: &are_you_sure_confirm Är du säker

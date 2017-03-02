@@ -32,7 +32,7 @@ en:
   'yes': &yes 'Yes'
   'no': &no 'No'
 
-  time_ago: ago
+  time_ago: '%{amount_of_time} ago'
 
   confirm_are_you_sure: &are_you_sure_confirm Are you sure
 
