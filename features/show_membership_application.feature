@@ -74,7 +74,7 @@ Feature: As an Admin
     Given I am logged in as "admin@shf.com"
     And I am on the list applications page
     Then I should see "7" applications
-    And I click on "Hans Lastname"
+    And I click on "Lastname, Hans"
     Then I should be on the application page for "Hans"
     And I should see "Hans Lastname"
     And I should see "5560360793"
@@ -95,8 +95,7 @@ Feature: As an Admin
     And I am logged in as "admin@shf.com"
     And I am on the list applications page
     Then I should see "7" applications
-    And I click on "Emma Lastname"
-
+    And I click on "Lastname, Emma"
     Then I should be on the application page for "Emma"
     And I should see "Emma Lastname"
     And I should see "5562252998"
