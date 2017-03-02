@@ -55,6 +55,10 @@ sv:
     application_search_form:
       hide: Dölj Sökfunktionen
       show: Visa Sökfunktionen
+    set_new_password_form:
+      hide: "Dölj the 'Change Password' info"
+      show: "Change the User's Password"
+
 
   will_paginate:
     previous_label: "« Föregående"
@@ -394,6 +398,7 @@ sv:
     new_business_category: Skapa ny företagstyp (kategori)
     all_business_categories: Alla kategorier
 
+
   users:
     index:
       title: Alla Användare
@@ -421,9 +426,16 @@ sv:
       is_an_admin: Är en admin
       'yes': *yes
       'no': *no
+      reset_password: Change the Password
+      confirm_reset_password: "Are you sure?  This will over-write the current password for this user!\n  (If you have not recorded the password yet, choose Cancel.)"
+      new_password: Nytt Password
+      re_enter_new_password: Re-Enter the Password
+      please_note_new_password: Please record this in a safe and secure place. Once you press the Save button below you will not be able to see the password again and there is no way to display it again.
+      submit_new_password: Save the New Password
 
-
-
+    update:
+      success: Användar uppdaterad.
+      error: Ett problem hindrade användar från att raderas.
 
   admin:
     index:
