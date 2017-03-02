@@ -56,7 +56,7 @@ Feature: As an Admin
     And I should see 1 t("membership_applications.accepted")
     And I should see 3 t("membership_applications.waiting_for_applicant")
     And I should see 1 t("membership_applications.rejected")
-    And I click on "Emma Lastname"
+    And I click on "Lastname, Emma"
     Then I should be on the application page for "Emma"
     And I should see "Emma Lastname"
     And I should see "5562252998"
@@ -96,6 +96,7 @@ Feature: As an Admin
     And I am on the list applications page
     Then I should see "7" applications
     And I click on "Emma Lastname"
+
     Then I should be on the application page for "Emma"
     And I should see "Emma Lastname"
     And I should see "5562252998"
