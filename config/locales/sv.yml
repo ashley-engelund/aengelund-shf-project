@@ -402,6 +402,7 @@ sv:
       logged_in_count: *sign_in_count
       member: Medlem
       applications: Ansökningar
+      applications_tooltip: Antal öppna ansökningar
       'yes': *yes  # https://coderwall.com/p/ld65tq/rails-i18n-yes-no-translation
       'no': *no
 
