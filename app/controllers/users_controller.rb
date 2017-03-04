@@ -13,7 +13,7 @@ class UsersController < ApplicationController
     if passwords_match(user_params) && @user.update(user_params)
       redirect_to @user, notice: t('.success')
     else
-      flash[:alert] = t('.error')
+      flash[:alert] = t('.error') + '  ' + t('.passwords_dont_match')
       render :show
     end
 
