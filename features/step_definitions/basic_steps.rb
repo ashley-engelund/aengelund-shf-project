@@ -11,6 +11,11 @@ When /^I confirm popup$/ do
   page.driver.accept_modal(:confirm)
 end
 
+When /^I confirm popup with message t\("([^"]*)"\)$/ do | message |
+  # requires poltergeist:
+  page.driver.accept_modal(:confirm, {text: i18n_content("#{message}")})
+end
+
 When /^I dismiss popup$/ do
   page.driver.dismiss_modal(:confirm)
 end
