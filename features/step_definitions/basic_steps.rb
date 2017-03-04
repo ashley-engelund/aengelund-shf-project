@@ -11,9 +11,9 @@ When /^I confirm popup$/ do
   page.driver.accept_modal(:confirm)
 end
 
-When /^I confirm popup with message t\("([^"]*)"\)$/ do | message |
+When /^I confirm popup with message t\("([^"]*)"\)$/ do | modal_text |
   # requires poltergeist:
-  page.driver.accept_modal(:confirm, {text: i18n_content("#{message}")})
+  page.driver.accept_modal(:confirm, {text: i18n_content("#{modal_text}")}) # will wait until it finds the text (or reaches Capybara max wait time)
 end
 
 When /^I dismiss popup$/ do
