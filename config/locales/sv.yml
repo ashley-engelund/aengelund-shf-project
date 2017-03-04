@@ -434,6 +434,7 @@ sv:
       submit_new_password: Save the New Password
 
     update:
+      passwords_dont_match: "The two passwords entered don't match."
       success: Användar uppdaterad.
       error: Ett problem hindrade användar från att raderas.
 

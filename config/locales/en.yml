@@ -432,6 +432,7 @@ en:
       submit_new_password: Save the New Password
 
     update:
+      passwords_dont_match: "The two passwords entered don't match."
       success: The user was updated.
       error: A problem kept the user from being updated.
 
