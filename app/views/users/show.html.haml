@@ -1,7 +1,7 @@
 %header.entry-header
   - if @user.admin?
     %h1.entry-title.is-admin
-      =@user.email
+      = @user.email
       %span.small
         (#{t('.is_an_admin')})
 
@@ -29,7 +29,7 @@
 
   %p
     - if @user.reset_password_sent_at.blank?
-      =t('.password_never_reset')
+      = t('.password_never_reset')
     - else
       %b #{t('.reset_password_sent_at')}:
       #{@user.reset_password_sent_at}
