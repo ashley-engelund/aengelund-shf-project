@@ -81,3 +81,4 @@ Feature: As an admin
     And I click on t("users.show.submit_new_password") button
     And I confirm popup
     Then I should see t("users.update.error")
+    And I should see t("users.update.passwords_dont_match")
