@@ -195,6 +195,7 @@ en:
       org_nr: *org_nr
       state: *state
       manage: *manage
+      no_search_results: No records matched your search criteria.
 
     information:
       title: About Membership
