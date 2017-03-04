@@ -425,7 +425,7 @@ en:
       'yes': *yes
       'no': *no
       reset_password: Change the Password
-      confirm_reset_password: "Are you sure?\rThis will over-write the current password for this user!\r(If you have not recorded the password yet, choose Cancel.)"
+      confirm_reset_password: "Are you sure?\rThis will overwrite the current password for this user!\r(If you have not recorded the password yet, choose Cancel.)"
       new_password: New Password
       re_enter_new_password: Re-Enter the Password
       please_note_new_password: Please record this in a safe and secure place. Once you press the Save button below you will not be able to see the password again and there is no way to display it again.
