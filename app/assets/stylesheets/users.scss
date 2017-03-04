@@ -6,14 +6,14 @@ $admin-color: #ff0000;
 }
 
 .panel.admin-set-new-password-form {
-  margin-top: 1em;
   margin-left: 2em;
   margin-right: 2em;
+  margin-top: 1em;
 }
 
 //*[@id="edit_user_7"]
 
-form.form-horizontal.edit-user.admin-set-password {
+.form-horizontal.edit-user.admin-set-password {
 
   padding: 1em;
 
