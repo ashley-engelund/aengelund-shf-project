@@ -78,6 +78,9 @@ if Rails.env.development? || Rails.env.staging? || ENV['HEROKU_STAGING']
     puts "Run task 'shf:load_regions' before seeding if you want records created for"
     puts 'users, members, membership_applications, business categories and companies.'
   else
+
+    puts '\nSeeding the db with users...'
+
     r = Random.new
     NUM_USERS = 100
     num_regions = regions.size
@@ -101,15 +104,29 @@ if Rails.env.development? || Rails.env.staging? || ENV['HEROKU_STAGING']
     applications = []
 
     2.times do
-      r.rand(1..NUM_USERS).times do
+      r.rand(1..NUM_USERS).times do |i|
 
         next unless (company_number = get_company_number(r))
 
-        ma = MembershipApplication.new(first_name: FFaker::NameSE.first_name,
-                                       last_name: FFaker::NameSE.last_name,
-                                       contact_email: FFaker::InternetSE.free_email,
+        u = users[r.rand(0..NUM_USERS-1)]
+
+        #  If the user already has a membership application, use the same names.
+          # (They would only use different name if they made a mistake and submitted a whole new application.  We won't worry about that case here.)
+        if (m = MembershipApplication.find_by(user_id: u.id))
+          first_n = m.first_name
+          last_n = m.last_name
+        else
+          first_n = FFaker::NameSE.first_name
+          last_n = FFaker::NameSE.last_name
+        end
+
+        # Every 6th user has a different membership application contact email than the email they use to log in to SHF
+        ma = MembershipApplication.new(first_name: first_n,
+                                       last_name: last_n,
+                                       contact_email: (i.divmod(6).last == 0 ? FFaker::InternetSE.free_email : u.email),
                                        company_number: company_number,
-                                       user: users[r.rand(0..NUM_USERS-1)])
+                                       user: u)
+
         idx1 = r.rand(0..num_cats-1)
         ma.business_categories << business_categories[idx1]
         idx2 = r.rand(0..num_cats-1)
@@ -125,9 +142,15 @@ if Rails.env.development? || Rails.env.staging? || ENV['HEROKU_STAGING']
 
     puts "Applications created: #{MembershipApplication.all.count}"
 
-    # Accept some of the membership applications
+    #---
+    # Membership Application status
+
+    # Ensure we have a good variation of different statuses (some accepted, some rejected, etc.)
+
+    #  We're most interested in accepted applications, so first make <some random number> of those
 
     r.rand(1..applications.size).times do
+
       ma = applications[r.rand(0..(applications.size-1))]
 
       next if ma.is_accepted?
@@ -154,7 +177,24 @@ if Rails.env.development? || Rails.env.staging? || ENV['HEROKU_STAGING']
       ma.save
     end
 
-    puts "Applications accepted: #{MembershipApplication
-                                       .where(state: MA_ACCEPTED_STATE).count}"
+    #  Then with the remaining applications, evenly distribute the remaining states:
+
+    remaining_apps = MembershipApplication.where.not(state: MA_ACCEPTED_STATE)
+
+    remaining_states = MembershipApplication.aasm.states.map(&:name) - [MA_ACCEPTED_STATE]
+
+    remaining_apps.each_with_index do | app, i |
+
+      # distribute the remaining possible states equally
+      app.update(state: remaining_states[ i.divmod(remaining_states.count).last  ] )
+
+    end
+
+    puts "Membership Applications by state:"
+    states = remaining_states +  [MA_ACCEPTED_STATE]
+    states.sort.each do | state |
+      puts "  #{state}: #{MembershipApplication.where(state: state).count }"
+    end
+
   end
 end
