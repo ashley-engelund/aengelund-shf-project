@@ -426,7 +426,7 @@ sv:
       logged_in_count: *sign_in_count
       created: *created
       reset_password_sent_at: *user_reset_password_sent_at
-      password_never_reset: Lösenord har aldrig återställts.
+      password_never_reset: Användaren har aldrig återställt lösenordet.
       user_has_never_signed_in: har aldrig loggat in.
       is_an_admin: Är en admin
       'yes': *yes
