@@ -14,7 +14,7 @@ class Company < ApplicationRecord
 
   has_many :membership_applications, dependent: :destroy, inverse_of: :company
 
-  has_many :addresses, as: :addressable, dependent: :destroy, foreign_key: :addressable_id
+  has_many :addresses, as: :addressable, dependent: :destroy
 
   accepts_nested_attributes_for :addresses, allow_destroy: true
 
@@ -27,7 +27,7 @@ class Company < ApplicationRecord
 
   def self.complete
 
-    have_no_regions = Address.lacking_region.distinct.pluck(:addressable_id)
+    have_no_regions = Address.lacking_region.where(addressable_type: 'Company').distinct.pluck(:addressable_id)
 
     if have_no_regions.count > 0
       where('"companies"."name" <> :blank_name AND "companies"."id" NOT IN (:address_lacking_region)',
