@@ -18,6 +18,8 @@ RSpec.describe Address, type: :model do
     it { is_expected.to have_db_column :region_id }
     it { is_expected.to have_db_column :addressable_id }
     it { is_expected.to have_db_column :addressable_type }
+    it { is_expected.to have_db_column :latitude }
+    it { is_expected.to have_db_column :longitude }
   end
 
   describe 'Validations' do
@@ -39,8 +41,8 @@ RSpec.describe Address, type: :model do
     let(:addr_has_region) { co_has_regions.addresses.first }
 
     let(:no_region) { addr_no_region = co_missing_region.addresses.first
-                      addr_no_region.update(region: nil)
-                      addr_no_region
+    addr_no_region.update(region: nil)
+    addr_no_region
     }
 
     let!(:has_regions) { [addr_has_region] }
@@ -79,4 +81,118 @@ RSpec.describe Address, type: :model do
 
   end
 
+
+  describe 'gecoding' do
+
+    let(:expected_streetaddress) { 'Kvarnliden 10' }
+    let(:expected_postcode) { '310 40' }
+    let(:expected_kommun) { 'Halmstad V' }
+    let(:expected_city) { 'Harplinge' }
+    let(:expected_country) { 'Sveriges' }
+
+    # orig lat and long, which is wrong and should be updated if the address changes
+    let(:orig_lat) { 56.7439545 }
+    let(:orig_long) { 12.7276875 }
+
+
+    it 'geocode from address' do
+      addr = Address.new(street_address: expected_streetaddress,
+                         city: expected_city,
+                         post_code: expected_postcode,
+                         country: 'Sweden')
+
+      addr.validate
+
+      expect(addr.latitude).to eq(56.7440333)
+      expect(addr.longitude).to eq(12.727637)
+    end
+
+
+    describe 'changed address so update latitude, longitude' do
+
+      let(:addr) { Address.new(street_address: expected_streetaddress,
+                               city: expected_city,
+                               post_code: expected_postcode,
+                               kommun: expected_kommun,
+                               country: expected_country)
+      }
+
+      it 'changed street address' do
+        addr.street_address = 'Kvarnliden 2'
+        addr.validate
+
+        expect(addr.latitude).not_to eq(orig_lat)
+        expect(addr.longitude).not_to eq(orig_long)
+
+        expect(addr.latitude).to eq(56.7442343)
+        expect(addr.longitude).to eq(12.7255982)
+      end
+
+      it 'changed kommun' do
+        addr.kommun = 'Halmstad Ö'
+        addr.validate
+
+        expect(addr.latitude).not_to eq(orig_lat)
+        expect(addr.longitude).not_to eq(orig_long)
+
+        expect(addr.latitude).to eq(56.7440333)
+        expect(addr.longitude).to eq(12.727637)
+      end
+
+      it 'changed city' do
+        addr.city = 'Plingshult'
+        addr.street_address = ''
+        addr.post_code = ''
+
+        addr.validate
+
+        expect(addr.latitude).not_to eq(orig_lat)
+        expect(addr.longitude).not_to eq(orig_long)
+
+        expect(addr.latitude).to eq(56.633333)
+        expect(addr.longitude).to eq(13.2)
+      end
+
+      it 'changed region' do
+        new_region = create(:region, name: 'New Region', code: 'NR')
+        addr.region = new_region
+        addr.validate
+
+        expect(addr.latitude).not_to eq(orig_lat)
+        expect(addr.longitude).not_to eq(orig_long)
+
+        expect(addr.latitude).to eq(56.7440333)
+        expect(addr.longitude).to eq(12.727637)
+      end
+
+      it 'changed country' do
+        addr.country = 'Norway'
+        addr.validate
+
+        expect(addr.latitude).not_to eq(orig_lat)
+        expect(addr.longitude).not_to eq(orig_long)
+
+        expect(addr.latitude).to eq(56.7440333)
+        expect(addr.longitude).to eq(12.727637)
+      end
+
+
+    end
+
+
+    it 'bad address that does not return latitude and/or longitude' do
+
+      addr = Address.new(street_address: expected_streetaddress,
+                         city: 'Budapest',
+                         post_code: expected_postcode,
+                         country: 'Sweden')
+
+      addr.validate
+
+      expect(addr.latitude).to eq(nil)
+      expect(addr.longitude).to eq(nil)
+    end
+
+
+  end
 end
