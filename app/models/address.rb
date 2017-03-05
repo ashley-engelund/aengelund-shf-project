@@ -16,4 +16,20 @@ class Address < ApplicationRecord
 
   scope :lacking_region, -> { where('region_id IS NULL') }
 
+
+  geocoded_by :entire_address
+
+  after_validation :geocode,
+                   :if => lambda{ |obj| obj.changed? }
+
+
+  private
+
+  def entire_address
+    # Google can't handle 'Sveriges' as the country :-(
+    [street_address, city,  post_code].compact.join(', ')
+  end
+
+
+
 end
