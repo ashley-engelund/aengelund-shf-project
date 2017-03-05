@@ -47,31 +47,25 @@ ActiveRecord::Schema.define(version: 20170222090742) do
     t.string   "company_number"
     t.string   "phone_number"
     t.string   "email"
-    t.string   "street"
-    t.string   "post_code"
-    t.string   "city"
     t.string   "website"
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
-    t.integer  "region_id"
     t.index ["company_number"], name: "index_companies_on_company_number", unique: true, using: :btree
-    t.index ["region_id"], name: "index_companies_on_region_id", using: :btree
   end
 
   create_table "membership_applications", force: :cascade do |t|
     t.string   "company_number"
     t.string   "phone_number"
-    t.datetime "created_at",                                 null: false
-    t.datetime "updated_at",                                 null: false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
     t.integer  "user_id"
     t.string   "first_name"
     t.string   "last_name"
     t.string   "contact_email"
     t.integer  "company_id"
     t.string   "membership_number"
-    t.string   "state",             default: "under_review"
+    t.string   "state",             default: "new"
     t.index ["company_id"], name: "index_membership_applications_on_company_id", using: :btree
-    t.index ["state"], name: "index_membership_applications_on_state", using: :btree
     t.index ["user_id"], name: "index_membership_applications_on_user_id", using: :btree
   end
 
@@ -112,7 +106,6 @@ ActiveRecord::Schema.define(version: 20170222090742) do
   end
 
   add_foreign_key "addresses", "regions"
-  add_foreign_key "companies", "regions"
   add_foreign_key "membership_applications", "users"
   add_foreign_key "uploaded_files", "membership_applications"
 end
