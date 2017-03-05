@@ -36,7 +36,6 @@ Feature: As an admin
     And I fill in t("users.show.re_enter_new_password") with "newpassword"
     And I should see t("users.show.please_note_new_password")
     And I click on t("users.show.submit_new_password") button
-    And I confirm popup
     Then I should see t("users.update.success")
     And I am Logged out
     And I am on the "login" page
@@ -60,7 +59,6 @@ Feature: As an admin
     And I fill in t("users.show.re_enter_new_password") with "snarkywoofwoof"
     And I should see t("users.show.please_note_new_password")
     And I click on t("users.show.submit_new_password") button
-    And I confirm popup with message t("users.show.confirm_reset_password")
     Then I should see t("users.update.success")
     And I am Logged out
     And I am on the "login" page
@@ -79,6 +77,5 @@ Feature: As an admin
     And I fill in t("users.show.re_enter_new_password") with "not-a-match"
     And I should see t("users.show.please_note_new_password")
     And I click on t("users.show.submit_new_password") button
-    And I confirm popup with message t("users.show.confirm_reset_password")
     Then I should see t("users.update.error")
     And I should see t("users.update.passwords_dont_match")
