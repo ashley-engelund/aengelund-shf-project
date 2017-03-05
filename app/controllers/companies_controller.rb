@@ -20,6 +20,7 @@ class CompaniesController < ApplicationController
 
   def show
     @categories = @company.business_categories
+    @company.addresses << Address.new  if @company.addresses.count == 0
   end
 
 
@@ -39,6 +40,8 @@ class CompaniesController < ApplicationController
 
   def create
     authorize Company
+
+
     @company = Company.new(company_params)
     @company.addresses.first.addressable = @company  # not sure why Rails doesn't assign this automatically
 
