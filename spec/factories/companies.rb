@@ -7,14 +7,16 @@ FactoryGirl.define do
     website 'http://www.example.com'
 
     transient do
-      num_adresses 1
+      num_addresses 1
       street_address nil
       region nil
+      city nil
+      post_code nil
     end
 
     after(:build) do |company, evaluator|
 
-      evaluator.num_adresses.times do |addr_num|
+      evaluator.num_addresses.times do |addr_num|
         a = build(:company_address, addressable: company, street_address: "Hundforetagarevägen #{addr_num + 1}")
         a.street_address = evaluator.street_address if evaluator.street_address
         a.city = evaluator.city if evaluator.city
