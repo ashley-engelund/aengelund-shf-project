@@ -41,7 +41,7 @@
     %b #{t('.region')}:
     = @company.main_address.region.name if @company.main_address.region
 
-  = render partial: 'map', locals: {marker_title: @company.name, address: @company.addresses.first}
+  = render partial: 'map', locals: {marker_text: html_marker_text(@company), address: @company.addresses.first}
 
 
   - if current_user.try(:admin)
