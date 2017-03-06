@@ -36,14 +36,9 @@ Feature: As an admin
     And I fill in t("users.show.re_enter_new_password") with "newpassword"
     And I should see t("users.show.please_note_new_password")
     And I click on t("users.show.submit_new_password") button
-    Then I should see the selector "#flashes"
-    And I should see t("users.update.success")
-    And I am Logged out
-    And I am on the "login" page
-    When I fill in t("activerecord.attributes.user.email") with "emma@happymutts.com"
-    And I fill in t("activerecord.attributes.user.password") with "newpassword"
-    And I click on t("devise.sessions.new.log_in") button
-    Then I should see t("devise.sessions.signed_in")
+    #And I confirm popup
+    Then I should see flash text t("users.update.success")
+
 
 
   @poltergeist @user
@@ -60,14 +55,10 @@ Feature: As an admin
     And I fill in t("users.show.re_enter_new_password") with "snarkywoofwoof"
     And I should see t("users.show.please_note_new_password")
     And I click on t("users.show.submit_new_password") button
-    Then I should see the selector "#flashes"
+    #And I confirm popup
+    Then I should see flash text t("users.update.success")
     And I should see t("users.update.success")
-    When I am Logged out
-    And I am on the "login" page
-    When I fill in t("activerecord.attributes.user.email") with "bob@snarkybarky.se"
-    And I fill in t("activerecord.attributes.user.password") with "snarkywoofwoof"
-    And I click on t("devise.sessions.new.log_in") button
-    Then I should see t("devise.sessions.signed_in")
+
 
 
   @poltergeist @user
@@ -79,7 +70,7 @@ Feature: As an admin
     And I fill in t("users.show.re_enter_new_password") with "not-a-match"
     And I should see t("users.show.please_note_new_password")
     And I click on t("users.show.submit_new_password") button
-    And I confirm popup with message t("users.show.confirm_reset_password")
+    #And I confirm popup
     Then I should see t("users.update.error")
     And I should see t("activerecord.errors.models.user.attributes.password_confirmation.confirmation")
 
@@ -93,7 +84,7 @@ Feature: As an admin
     And I fill in t("users.show.re_enter_new_password") with "woof"
     And I should see t("users.show.please_note_new_password")
     And I click on t("users.show.submit_new_password") button
-    And I confirm popup
+    #And I confirm popup
     Then I should see t("users.update.error")
     And I should see t("errors.messages.too_short", count: 6)
     And I should not see t("activerecord.errors.models.user.attributes.password_confirmation.confirmation")
@@ -108,7 +99,7 @@ Feature: As an admin
     And I fill in t("users.show.re_enter_new_password") with "nomatch"
     And I should see t("users.show.please_note_new_password")
     And I click on t("users.show.submit_new_password") button
-    And I confirm popup with message t("users.show.confirm_reset_password")
+    #And I confirm popup
     Then I should see t("users.update.error")
     And I should see t("activerecord.errors.models.user.attributes.password_confirmation.confirmation")
     And I should see t("errors.messages.too_short", count: 6)
