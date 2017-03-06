@@ -4,23 +4,23 @@
 //  The coordinates and text for the marker are taken from elements in the document
 //   * latitude comes from an element with id 'location-latitude'
 //   * longitude comes from an element with id 'location-longitude'
-//   * text comes from an element with id 'marker-title'
+//   * text comes from an element with id 'marker-text'
 //
 //    Example of HTML that the document might have:
 //      ...
-//     <h2 id="marker-title">PuppyPuzzles-R-Us</h2>
+//     <h2 id="marker-text">PuppyPuzzles-R-Us</h2>
 //
+//     <div id="marker-text" class="hidden"><strong>PuppyPuzzles-R-Us</strong><br><p>We have the most entertaining puppy puzzles on the planet!</p><p><em>A tired puppy is a good puppy</em></p></div>
+///
 //     <p> <b>Coordinates:</b>
 //            <span id="location-latitude">59.31</span>
 //    ,
 //            <span id="location-longitude">18.0707811</span>
 //    </p>
 //
-//  If there is no text in the 'location-text' element, no pop-up box will be created.
+//  If there is no text in the 'marker-text' element, no pop-up box will be created.
 //
 function initMap() {
-
-    var marker_title = getMarkerText('marker-title');
 
     var coordinates = {lat: getNumber('location-latitude'), lng: getNumber('location-longitude')};
 
@@ -29,7 +29,9 @@ function initMap() {
         zoom: 14
     });
 
-    var marker = addMarker(coordinates, map, marker_title);
+    var marker_text = getMarkerText('marker-text');
+
+    var marker = addMarker(coordinates, map, marker_text);
 
 }
 
