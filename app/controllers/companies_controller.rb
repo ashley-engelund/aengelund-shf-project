@@ -82,6 +82,10 @@ class CompaniesController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_company
     @company = Company.includes(:addresses).find(params[:id])
+
+    needs_geocoding = @company.addresses.reject(&:geocoded?)
+    needs_geocoding.each(&:geocode_best_possible)
+    @company.save!
   end
 
 
