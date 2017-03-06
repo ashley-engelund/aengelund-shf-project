@@ -12,7 +12,7 @@ module CompaniesHelper
   end
 
   # html to display for a company when showing a marker on a map
-  def marker_text company
+  def html_marker_text company
     text = "<div id='company-map-marker'>"
       text << "<p class='name'>#{company.name}</p>"
       text << "<p class='categories'>#{list_categories company, ', '}</p>"
