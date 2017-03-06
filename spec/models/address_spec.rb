@@ -149,8 +149,8 @@ RSpec.describe Address, type: :model do
         expect(addr.latitude).not_to eq(orig_lat)
         expect(addr.longitude).not_to eq(orig_long)
 
-        expect(addr.latitude).to eq(56.633333)
-        expect(addr.longitude).to eq(13.2)
+        expect(addr.latitude).to eq(56.66263439999999)
+        expect(addr.longitude).to eq(13.0717958)
       end
 
       it 'changed region' do
@@ -180,19 +180,18 @@ RSpec.describe Address, type: :model do
     end
 
 
-    it 'bad address that does not return latitude and/or longitude' do
+    it 'if all info is nil, will at least return lat/long of Sweden' do
 
-      addr = Address.new(street_address: expected_streetaddress,
-                         city: 'Budapest',
-                         post_code: expected_postcode,
-                         country: 'Sweden')
+      addr = Address.new(street_address: nil,
+                         city: nil,
+                         post_code: nil,
+                         country: nil)
 
       addr.validate
 
-      expect(addr.latitude).to eq(nil)
-      expect(addr.longitude).to eq(nil)
+      expect(addr.latitude).to eq(60.12816100000001)
+      expect(addr.longitude).to eq(18.643501)
     end
-
 
   end
 end
