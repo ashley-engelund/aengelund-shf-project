@@ -10,10 +10,13 @@ class UsersController < ApplicationController
 
   def update
 
-    if passwords_match(user_params) && @user.update(user_params)
+    if @user.update(user_params)
       redirect_to @user, notice: t('.success')
     else
-      flash[:alert] = t('.error') + '  ' + t('.passwords_dont_match')
+      helpers.flash_message(:alert, t('.error'))
+
+      @user.errors.full_messages.each { |err_message| helpers.flash_message(:alert, err_message) }
+
       render :show
     end
 
@@ -35,12 +38,6 @@ class UsersController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def user_params
     params.require(:user).permit(:name, :email, :password, :password_confirmation)
-  end
-
-
-  # if the password was changed, ensure the confirmation matches the 1st one entered
-  def passwords_match(u_params)
-    u_params.key?('password') && u_params.key?('password_confirmation') && u_params['password'] == u_params['password_confirmation']
   end
 
 
