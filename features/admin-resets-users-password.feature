@@ -36,7 +36,8 @@ Feature: As an admin
     And I fill in t("users.show.re_enter_new_password") with "newpassword"
     And I should see t("users.show.please_note_new_password")
     And I click on t("users.show.submit_new_password") button
-    Then I should see t("users.update.success")
+    Then I should see the selector "#flashes"
+    And I should see t("users.update.success")
     And I am Logged out
     And I am on the "login" page
     When I fill in t("activerecord.attributes.user.email") with "emma@happymutts.com"
