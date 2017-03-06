@@ -5,7 +5,7 @@
   - unless @categories.nil?
     = render 'business_categories/as_list', categories: @categories
 .entry-content
-  %p
+  %p#location-text
     %b #{t('.name')}:
     = @company.name
   - if current_user && current_user.admin?
@@ -37,6 +37,9 @@
   %p
     %b #{t('.region')}:
     = @company.addresses.first.region.name if @company.addresses.first.region
+
+  = render partial: 'map', locals: {marker_title: @company.name, address: @company.addresses.first}
+
 
   - if current_user.try(:admin)
     = link_to "#{t('.delete')}", @company, method: :delete, class:'btn btn-danger', data: { confirm: "#{t('.confirm_are_you_sure')}" }
