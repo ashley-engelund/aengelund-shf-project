@@ -84,6 +84,7 @@ en:
       user:
         email: &email Email
         password: *password
+        password_confirmation: Password confirmation
         created: &created Created
         current_sign_in_at: &user_current_signed_in_time Currently signed in at
         current_sign_in_ip: &user_current_ip Currently signed in from IP address
@@ -143,6 +144,12 @@ en:
           company_number:
             taken: This company (organization number) already exists in the system.
           company_has_active_memberships: "The company has active (accepted) membership applications."
+
+        user:
+          attributes:
+            password_confirmation:
+              confirmation: doesn't match with the password entered.
+
 
       messages:
         record_invalid: "Validation failed: %{errors}"

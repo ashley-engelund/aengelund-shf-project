@@ -85,6 +85,7 @@ sv:
       user:
         email: &email E-post
         password: *password
+        password_confirmation: Lösenordsbekräftelse
         created: &created Skapad
         current_sign_in_at: &user_current_signed_in_time Inloggad
         current_sign_in_ip: &user_current_ip Inloggad med IP
@@ -143,6 +144,11 @@ sv:
           company_number:
             taken: Detta företag (org nr) finns redan i systemet.
           company_has_active_memberships: "Företaget har aktiva (godkända) medlemskap."
+
+        user:
+          attributes:
+            password_confirmation:
+              confirmation: stämmer inte med det angivna lösenordet.
 
       messages:
         record_invalid: 'Ett fel uppstod: %{errors}'
@@ -594,7 +600,7 @@ sv:
       accepted: måste accepteras
       blank: måste anges
       present: får inte anges
-      confirmation: stämmer inte överens
+      confirmation: De två lösenord du angivit matchar inte.
       empty: får ej vara tom
       equal_to: måste vara samma som
       even: måste vara jämnt
