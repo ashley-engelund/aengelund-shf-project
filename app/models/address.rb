@@ -63,6 +63,7 @@ class Address < ApplicationRecord
 
 
   def translate_sveriges_country
+    country = 'Sveriges' if country.nil?
     country.downcase == 'sveriges' ? 'Sweden' : country
   end
 
