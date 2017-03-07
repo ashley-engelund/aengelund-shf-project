@@ -11,7 +11,7 @@ Geocoder.configure(
 
   # have to have an api_key to be able to change the language with Google:
   # API key for geocoding service
-  api_key: 'AIzaSyABerOTICClmXkYmK188gIGTOf8Vx97m0E',  # for 'ashley.engelund SHF ashleyCaroline': static map key
+  api_key: ENV['GOOGLE_MAP_API'],
 
 
   # cache: nil,                 # cache object (must respond to #[], #[]=, and #keys)
