@@ -38,9 +38,9 @@ RSpec.describe Address, type: :model do
     let(:co_has_regions) { create(:company, name: 'Has Region', company_number: '4268582063', city: 'HasRegionBorg') }
     let(:co_missing_region) { create(:company, name: 'Missing Region', company_number: '6112107039', city: 'NoRegionBorg') }
 
-    let(:addr_has_region) { co_has_regions.addresses.first }
+    let(:addr_has_region) { co_has_regions.main_address }
 
-    let(:no_region) { addr_no_region = co_missing_region.addresses.first
+    let(:no_region) { addr_no_region = co_missing_region.main_address
     addr_no_region.update(region: nil)
     addr_no_region
     }
@@ -86,7 +86,7 @@ RSpec.describe Address, type: :model do
 
     let(:expected_streetaddress) { 'Kvarnliden 10' }
     let(:expected_postcode) { '310 40' }
-    let(:expected_kommun) { 'Halmstad V' }
+    let(:expected_kommun) { create(:kommun, name: 'Halmstad V') }
     let(:expected_city) { 'Harplinge' }
     let(:expected_country) { 'Sveriges' }
 
@@ -129,7 +129,7 @@ RSpec.describe Address, type: :model do
       end
 
       it 'changed kommun' do
-        addr.kommun = 'Halmstad Ö'
+        addr.kommun = create(:kommun, name: 'Halmstad Ö')
         addr.validate
 
         expect(addr.latitude).not_to eq(orig_lat)
@@ -149,8 +149,8 @@ RSpec.describe Address, type: :model do
         expect(addr.latitude).not_to eq(orig_lat)
         expect(addr.longitude).not_to eq(orig_long)
 
-        expect(addr.latitude).to eq(56.66263439999999)
-        expect(addr.longitude).to eq(13.0717958)
+        expect(addr.latitude).to eq(56.633333)
+        expect(addr.longitude).to eq(13.2)
       end
 
       it 'changed region' do
@@ -191,6 +191,54 @@ RSpec.describe Address, type: :model do
 
       expect(addr.latitude).to eq(60.12816100000001)
       expect(addr.longitude).to eq(18.643501)
+    end
+
+    describe '#geocode_best_possible' do
+
+      let(:addr) { create(:company_address, street_address: 'Matarengivägen 24',
+                            post_code: '957 31',
+                            city: 'Övertorneå')}
+
+      # TODO need to round so that we're located close enough
+
+      # 66.3887962,23.6581224
+      it 'all valid address components' do
+        addr.validate
+        expect(addr.latitude).to eq(66.39025389999999)
+        expect(addr.longitude).to eq(23.6601303)
+      end
+
+      # 66.3884486,23.6322229
+      it 'invalid street_address' do
+        addr.street_address = 'blorf'
+        addr.validate
+
+        expect(addr.latitude).to eq(66.3887731)
+        expect(addr.longitude).to eq(23.6734973)
+      end
+
+      # 66.3842785,23.6032423
+      it 'invalid post_code, street_address' do
+        addr.street_address = 'blorf'
+        addr.post_code = 'x'
+        addr.validate
+
+        expect(addr.latitude).to eq(66.3884436)
+        expect(addr.longitude).to eq(23.639283)
+      end
+
+      # 61.9091751,8.6260468
+      it 'invalid city, post_code, street_address' do
+        addr.street_address = 'blorf'
+        addr.post_code = 'x'
+        addr.city = 'x'
+        addr.validate
+
+        expect(addr.latitude).to eq(60.12816100000001)
+        expect(addr.longitude).to eq(18.643501)
+      end
+
+
     end
 
   end

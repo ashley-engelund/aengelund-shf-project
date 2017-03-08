@@ -37,15 +37,14 @@ class Address < ApplicationRecord
   # and so will guarantee that at least *some* map can be displayed.  (Important for a company!)
   def geocode_best_possible
 
-    # TODO not sure of the order of post_code, kommun, city
-    specificity_order = [street_address, post_code, kommun, city, translate_sveriges_country]
+    specificity_order = [street_address, post_code, city, translate_sveriges_country]
+
     most_specific = 0
     least_specific = specificity_order.size - 1
 
     geo_result = nil
 
     until most_specific > least_specific || !geo_result.nil?
-
       geocode_address = specificity_order[most_specific..least_specific].compact.join(', ')
       geo_result = Geocoder.coordinates(geocode_address)
       most_specific += 1
