@@ -73,7 +73,7 @@ function addMarker(coordinates, map, text) {
 
 
     // don't create a pop-up box if there's no text to display
-    if (text !=""){
+    if (text !==""){
         google.maps.event.addListener(marker, 'click', function () {
             createInfoWindow(text).open(map, marker);
         });
