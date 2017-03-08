@@ -1,13 +1,18 @@
 
 #map-container {
-  height: 400px;
-  width: 45%;
-  border-radius: 16px 16px;
+
   border-color: #fff;
+  border-radius: 16px 16px;
   border-style: solid;
-  box-shadow: 2px 2px 10px #B1B1B1;
-  margin-top: 25px;
   border-width: 7px;
+
+  box-shadow: 2px 2px 10px #b1b1b1;
+
+  height: 400px;
+
+  margin-top: 25px;
+
+  width: 45%;
 }
 
 #map-canvas {
@@ -16,7 +21,8 @@
 }
 
 #map-container #map-canvas label {
-  width: auto; display:inline;
+  display:inline;
+  width: auto;
 }
 
 
