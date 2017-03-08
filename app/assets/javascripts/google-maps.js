@@ -41,7 +41,7 @@ function initMap() {
 function getMarkerText(element_id) {
     var text = '';
 
-    if (document.getElementById(element_id) != null) {
+    if (document.getElementById(element_id) !== null) {
         text = document.getElementById(element_id).childNodes[0].nodeValue;
     }
     return text.trim();
@@ -52,7 +52,7 @@ function getMarkerText(element_id) {
 //  If there is no element_id in the document, show an error on the console
 function getNumber(element_id) {
 
-    if (document.getElementById(element_id) != null) {
+    if (document.getElementById(element_id) !== null) {
         return parseFloat(document.getElementById(element_id).childNodes[0].nodeValue)
     } else {
         console.error("Expected document to have an element with id '" + element_id + "' but it did not.");
