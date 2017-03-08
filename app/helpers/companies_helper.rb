@@ -11,6 +11,15 @@ module CompaniesHelper
     end
   end
 
+
+  # return a nicely formed URI for the company website
+  # if the company website starts with with https://, return that.
+  #  else ensure it starts with 'http://'
+  def full_uri company
+    uri = company.website
+    uri =~ %r(https?://) ? uri : "http://#{uri}"
+  end
+
   # html to display for a company when showing a marker on a map
   def html_marker_text company
     text = "<div id='company-map-marker'>"
@@ -25,4 +34,6 @@ module CompaniesHelper
 
     text
   end
+
+
 end
