@@ -39,7 +39,7 @@
         = render partial: 'map', locals: { marker_text: html_marker_text(@company), address: @company.main_address}
 
 
-    row.center#bottom-nav-buttons.
+    .row.center#bottom-nav-buttons
       - if policy(@company).update?
         = link_to "#{t('companies.edit_company')}", edit_company_path(@company), class: 'btn btn-default edit-company'
         = link_to "#{t('companies.all_companies')}", companies_path, class: 'btn btn-default all-companies'
