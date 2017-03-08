@@ -15,7 +15,6 @@
 //= require bootstrap-sprockets
 //= require turbolinks
 //= require i18n/translations
-//= require google-maps.js
 //= require_tree .
 
 document.addEventListener('turbolinks:load', function() {
