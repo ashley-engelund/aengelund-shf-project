@@ -98,39 +98,4 @@ module ApplicationHelper
   end
 
 
-
-
-  def google_static_map(location, width: 300, height: 600, zoom: 11, marked: true)
-    marker_info = marked ? "&markers=#{location.latitude}, #{location.longitude}" : ''
-    "https://maps.googleapis.com/maps/api/staticmap?center=#{lat_long(location)}&size=#{width}x#{height}&zoom=#{zoom}#{marker_info}"
-  end
-
-
-  def google_maps_js_api
-    "https://maps.googleapis.com/maps/api/js"
-  end
-
-  def google_key
-    "#{Geocoder.config[:api_key]}"
-  end
-
-  def address_as_esc_html(location)
-    location.entire_address.gsub(/[\s]/, '+')
-  end
-
-
-  def lat_long_as_esc_html(location)
-    "#{location.latitude}%2C%20#{location.longitude}"
-  end
-
-
-  def google_location_part(location)
-    "&location=#{lat_long(location)}"
-  end
-
-
-  def lat_long(location)
-    "#{location.latitude},#{location.longitude}"
-  end
-
 end
