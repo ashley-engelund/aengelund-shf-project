@@ -85,7 +85,7 @@ module ApplicationHelper
 
 
     if value.blank?
-      ''
+      default
     else
       content_tag(tag, tag_options) do
         concat content_tag(:span, "#{label}#{separator}", class: label_class)

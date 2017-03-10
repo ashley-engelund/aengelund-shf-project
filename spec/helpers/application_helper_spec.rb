@@ -119,7 +119,6 @@ RSpec.describe ApplicationHelper, type: :helper do
 
     it 'can set html options for the surrounding tag' do
       expect(helper.field_or_default('label', 'value', tag_options: {class: "blorf", id: "blorfid"})).to eq('<p class="blorf" id="blorfid"><span class="field-label">label: </span><span class="field-value">value</span></p>')
-      #eq("<p class=\"blorf\" id=\"blorfid\"><b>label</b>: value</p>")
     end
 
 
