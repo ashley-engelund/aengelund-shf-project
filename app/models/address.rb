@@ -25,7 +25,7 @@ class Address < ApplicationRecord
 
   def entire_address
     [street_address, city, post_code, sverige_if_nil].compact.join(', ')
-end
+  end
 
 
   # Geocode the address, starting with all of the data.
@@ -43,7 +43,7 @@ end
 
     geo_result = nil
 
-    until most_specific > least_specific || !geo_result.nil?
+    until most_specific > least_specific || geo_result.present?
       geocode_address = specificity_order[most_specific..least_specific].compact.join(', ')
       geo_result = Geocoder.coordinates(geocode_address)
       most_specific += 1
