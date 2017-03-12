@@ -103,8 +103,8 @@ RSpec.describe Address, type: :model do
 
       addr.validate
 
-      expect(addr.latitude).to eq(56.7440333)
-      expect(addr.longitude).to eq(12.727637)
+      expect(addr.latitude.round(3)).to eq(56.7440333.round(3))
+      expect(addr.longitude.round(3)).to eq(12.727637.round(3))
     end
 
 
@@ -124,8 +124,8 @@ RSpec.describe Address, type: :model do
         expect(addr.latitude).not_to eq(orig_lat)
         expect(addr.longitude).not_to eq(orig_long)
 
-        expect(addr.latitude).to eq(56.7442343)
-        expect(addr.longitude).to eq(12.7255982)
+        expect(addr.latitude.round(3)).to eq(56.7442343.round(3))
+        expect(addr.longitude.round(3)).to eq(12.7255982.round(3))
       end
 
       it 'changed kommun' do
@@ -135,8 +135,8 @@ RSpec.describe Address, type: :model do
         expect(addr.latitude).not_to eq(orig_lat)
         expect(addr.longitude).not_to eq(orig_long)
 
-        expect(addr.latitude).to eq(56.7440333)
-        expect(addr.longitude).to eq(12.727637)
+        expect(addr.latitude.round(3)).to eq(56.7440333.round(3))
+        expect(addr.longitude.round(3)).to eq(12.727637.round(3))
       end
 
       it 'changed city' do
@@ -149,8 +149,8 @@ RSpec.describe Address, type: :model do
         expect(addr.latitude).not_to eq(orig_lat)
         expect(addr.longitude).not_to eq(orig_long)
 
-        expect(addr.latitude).to eq(56.633333)
-        expect(addr.longitude).to eq(13.2)
+        expect(addr.latitude.round(3)).to eq(56.633333.round(3))
+        expect(addr.longitude.round(3)).to eq(13.2.round(3))
       end
 
       it 'changed region' do
@@ -161,8 +161,8 @@ RSpec.describe Address, type: :model do
         expect(addr.latitude).not_to eq(orig_lat)
         expect(addr.longitude).not_to eq(orig_long)
 
-        expect(addr.latitude).to eq(56.7440333)
-        expect(addr.longitude).to eq(12.727637)
+        expect(addr.latitude.round(3)).to eq(56.7440333.round(3))
+        expect(addr.longitude.round(3)).to eq(12.727637.round(3))
       end
 
       it 'changed country' do
@@ -172,8 +172,8 @@ RSpec.describe Address, type: :model do
         expect(addr.latitude).not_to eq(orig_lat)
         expect(addr.longitude).not_to eq(orig_long)
 
-        expect(addr.latitude).to eq(56.7440333)
-        expect(addr.longitude).to eq(12.727637)
+        expect(addr.latitude.round(3)).to eq(56.7440333.round(3))
+        expect(addr.longitude.round(3)).to eq(12.727637.round(3))
       end
 
 
@@ -189,63 +189,63 @@ RSpec.describe Address, type: :model do
 
       addr.validate
 
-      expect(addr.latitude).to eq(60.12816100000001)
-      expect(addr.longitude).to eq(18.643501)
+      expect(addr.latitude.round(3)).to eq(60.12816100000001.round(3))
+      expect(addr.longitude.round(3)).to eq(18.643501.round(3))
     end
+
 
     describe '#geocode_best_possible' do
 
-      let(:addr) { create(:company_address, street_address: 'Matarengivägen 24',
-                            post_code: '957 31',
-                            city: 'Övertorneå')}
-
-
       it 'all valid address components' do
-        addr.validate
-        expect(addr.latitude).to eq(66.39025389999999)
-        expect(addr.longitude).to eq(23.6601303)
+        address = Address.new(street_address: 'Matarengivägen 24',
+                       post_code: '957 31',
+                       city: 'Övertorneå')
+        address.validate
+        expect(address.latitude.round(3)).to eq(66.3902539.round(3))
+        expect(address.longitude.round(3)).to eq(23.6601303.round(3))
       end
 
 
       it 'invalid street_address' do
-        addr.street_address = 'blorf'
-        addr.validate
-
-        expect(addr.latitude).to eq(66.3887731)
-        expect(addr.longitude).to eq(23.6734973)
+        address = Address.new(street_address: 'blorf',
+                          post_code: '957 31',
+                          city: 'Övertorneå')
+        address.validate
+        expect(address.latitude.round(3)).to eq(66.3887731.round(3))
+        expect(address.longitude.round(3)).to eq(23.6734973.round(3))
       end
 
 
       it 'invalid post_code, street_address' do
-        addr.street_address = 'blorf'
-        addr.post_code = 'x'
-        addr.validate
-
-        expect(addr.latitude).to eq(66.3884436)
-        expect(addr.longitude).to eq(23.639283)
+        address = Address.new(street_address: 'blorf',
+                              post_code: 'x',
+                              city: 'Övertorneå')
+        address.validate
+        expect(address.latitude.round(3)).to eq(66.3884436.round(3))
+        expect(address.longitude.round(3)).to eq(23.639283.round(3))
       end
 
 
       it 'invalid city, post_code, street_address' do
-        addr.street_address = 'blorf'
-        addr.post_code = 'x'
-        addr.city = 'x'
-        addr.validate
+        address = Address.new(street_address: 'blorf',
+                              post_code: 'x',
+                              city: 'y')
+        address.validate
 
-        expect(addr.latitude).to eq(60.12816100000001)
-        expect(addr.longitude).to eq(18.643501)
+        expect(address.latitude.round(3)).to eq(60.128161.round(3))
+        expect(address.longitude.round(3)).to eq(18.643501.round(3))
       end
 
 
       it 'no address info should = Sverige' do
-        addr.street_address = 'blorf'
-        addr.post_code = 'x'
-        addr.city = 'x'
-        addr.country = nil
-        addr.validate
+        address = Address.new(street_address: nil,
+                              post_code: nil,
+                              city: nil,
+                              country: nil)
+        address.validate
 
-        expect(addr.latitude).to eq(60.12816100000001)
-        expect(addr.longitude).to eq(18.643501)
+        expect(address.latitude.round(3)).to eq(60.128161.round(3))
+        expect(address.longitude.round(3)).to eq(18.643501.round(3))
       end
 
     end
