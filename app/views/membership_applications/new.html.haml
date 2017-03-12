@@ -2,6 +2,8 @@
   %h1.entry-title= t('.title')
 .post-title-divider
   %span
+.instructions= t('membership_applications.new.instructions')
+
 .entry-content.wpcf7
   = form_for @membership_application, html: {multipart: true}, url: membership_applications_path do |f|
     - if @membership_application.errors.any?

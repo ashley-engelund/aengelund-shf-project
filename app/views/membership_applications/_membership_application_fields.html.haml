@@ -1,40 +1,52 @@
-- if current_user.admin? && @membership_application.is_accepted?
-  = f.label :membership_number, t('membership_applications.show.membership_number'), class: 'required'
-  = f.text_field :membership_number, class: 'wpcf7-form-control'
+.app-section
+  %h2.first About You
+  .answers
+    - if current_user.admin? && @membership_application.is_accepted?
+      = f.label :membership_number, t('membership_applications.show.membership_number'), class: 'required'
+      = f.text_field :membership_number, class: 'wpcf7-form-control'
 
-= f.label :first_name, t('membership_applications.show.first_name'), class: 'required'
-= f.text_field :first_name, class: 'wpcf7-form-control'
+    = f.label :first_name, t('membership_applications.show.first_name'), class: 'required'
+    = f.text_field :first_name, class: 'wpcf7-form-control'
 
-= f.label :last_name, t('membership_applications.show.last_name'), class: 'required'
-= f.text_field :last_name, class: 'wpcf7-form-control'
+    = f.label :last_name, t('membership_applications.show.last_name'), class: 'required'
+    = f.text_field :last_name, class: 'wpcf7-form-control'
 
-= f.label :company_number, t('membership_applications.show.company_number'), class: 'required'
-= f.number_field :company_number, class: 'wpcf7-form-control'
-%em= t('companies.org_nr_no_hyphens')
-%br
+    = f.label :company_number, t('membership_applications.show.company_number'), class: 'required'
+    = f.number_field :company_number, class: 'wpcf7-form-control'
+    %p.field-instruction= t('companies.org_nr_no_hyphens')
 
-= f.label :contact_email, t('membership_applications.show.contact_email'), class: 'required'
-= f.email_field :contact_email, class: 'wpcf7-form-control'
-%em= t('membership_applications.new.can_be_same_email')
-%br
 
-= f.label :phone_number, t('membership_applications.show.phone_number')
-= f.telephone_field :phone_number, class: 'wpcf7-form-control'
+    = f.label :contact_email, t('membership_applications.show.contact_email'), class: 'required'
+    = f.email_field :contact_email, class: 'wpcf7-form-control'
+    %p.field-instruction= t('membership_applications.new.can_be_same_email')
 
-- unless assocation_empty?(@all_business_categories)
-  %h3= t('membership_applications.new.application_dog_category')
-  %p= t('membership_applications.new.clue_selected_categories')
-  .checkbox
-    = f.collection_check_boxes :business_category_ids, @all_business_categories, :id, :name do |b|
-      = b.check_box(class: 'text-nicelabel', position_class: 'text_checkbox') + b.label
 
-#uploaded_files
-  = render 'uploaded_files_list', membership_application: @membership_application
+    = f.label :phone_number, t('membership_applications.show.phone_number')
+    = f.telephone_field :phone_number, class: 'wpcf7-form-control'
 
-%p= t('membership_applications.new.upload_a_file')
-%em= t('membership_applications.new.upload_more_files')
-= f.file_field 'actual_files[]', multiple: true, name: 'uploaded_file[actual_files][]'
 
+.app-section
+  - unless assocation_empty?(@all_business_categories)
+    %h2.required= t('membership_applications.new.application_dog_category')
+    %p= t('membership_applications.new.clue_selected_categories')
+    .checkbox.col-xs-offset-1
+      = f.collection_check_boxes :business_category_ids, @all_business_categories, :id, :name do |b|
+        = b.check_box(class: 'text-nicelabel', position_class: 'text_checkbox') + b.label
+
+.app-section
+  %h2= t('membership_applications.new.upload_files_section')
+  %p.instructions= t('membership_applications.new.upload_files_instructions')
+  #uploaded-files
+
+    %p.upload-button-pre= t('membership_applications.new.upload_a_file')
+
+    %span{class: "btn btn-warning btn-file"}
+      = t('membership_applications.new.upload_button')
+      = f.file_field 'actual_files[]', multiple: true, name: 'uploaded_file[actual_files][]', class: 'upload-field'
+    %p.upload-more-note.instructions= t('membership_applications.new.upload_more_files')
+
+
+    = render 'uploaded_files_list', membership_application: @membership_application
 
 - if @membership_application.may_is_ready_for_review?
   = render 'ready_for_review', f: f
