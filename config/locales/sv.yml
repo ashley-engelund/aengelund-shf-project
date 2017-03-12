@@ -163,6 +163,8 @@ sv:
   membership_applications:
     new:
       title: Ansök om medlemskap
+      instructions: some instructions here. 3 main sections. explain importance of the uploaded documents
+
       submit: *submit
       company_number: *company_number
       phone_number: &phone_number Telefonnummer
@@ -173,10 +175,14 @@ sv:
       contact_email: *contact_email
 
       can_be_same_email: Kan vara samma som du loggar in med, men behöver inte vara det.
-      application_dog_category: &application_dog_category "Ansöker som hund-*"
+      application_dog_category: &application_dog_category "Ansöker som hund-"
       clue_selected_categories: &clue_selected_categories "Blå fält = valda kategorier"
-      upload_a_file: 'Ladda upp en fil:'
+
+      upload_files_section: Underlag för att styrka min ansökan
+      upload_files_instructions: Why these are really important...(TBD)
+      upload_a_file: 'Ladda upp en fil från din dator:'
       upload_more_files: Du kan ladda upp fler filer genom att redigera din ansökan efter att du skickat in den.
+      upload_button: Välj en fil...
 
       submit_button_label: *submit
 
