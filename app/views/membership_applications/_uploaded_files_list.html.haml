@@ -1,7 +1,10 @@
 - if membership_application.uploaded_files.count < 1
-  %p= t('membership_applications.uploads.no_files')
-- else
+
   %p
+    %strong= icon('warning') + t('membership_applications.uploads.no_files')
+
+- else
+  %p.files-uploaded-list-title
     %strong= t('membership_applications.uploads.files_uploaded')
 
   %table
