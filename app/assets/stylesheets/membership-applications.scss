@@ -1,0 +1,106 @@
+.membershipapplication {
+
+  .required-field-explanation {
+    margin-top: 2em;
+    font-weight: bold;
+  }
+
+  .instructions {
+    text-align: center;
+  }
+
+  .app-section {
+
+    text-align: left;
+
+    .instructions {
+      text-align: left;
+    }
+
+    h2 {
+      border-top: 3pt solid rgba(86, 146, 206, 0.2);;
+      margin-top: 3em;
+      padding-top: 1em;
+      font-weight: bold;
+    }
+
+    h2.first {
+      border-top: none;
+      margin-top: 0;
+      padding-top: 0;
+    }
+
+    .answers {
+
+      margin-left: 1em;
+
+
+
+      input, .field-instruction {
+
+      }
+
+      .field-instruction {
+        font-style: italic;
+        font-size: smaller;
+      }
+
+
+    }
+  }
+
+  #uploaded-files {
+
+    margin-left: 1em;
+
+    background: rgba(86, 146, 206, 0.2);
+    border: 1px solid rgb(86, 146, 206);
+    padding: 2em;
+
+    p.files-uploaded-list-title {
+      margin-bottom: 0;
+    }
+   table {
+     margin-left: 1em;
+     margin-right: 1em;
+
+     th, td {
+       margin: 0;
+       padding-bottom: 0;
+       padding-top: 0;
+     }
+
+   }
+
+    p.upload-button-pre {
+      margin-bottom: 0;
+    }
+
+    .upload-more-note {
+      margin-top: 1em;
+    }
+  }
+
+
+  .btn-file {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    //min-width: 100%;
+    //min-height: 100%;
+    //font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+  }
+}
+
