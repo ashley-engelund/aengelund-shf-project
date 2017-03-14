@@ -16,16 +16,18 @@ $gray-shadow: #b1b1b1;
   margin-top: 25px;
 
   width: 45%;
+
+
+  #map-canvas label {
+    display: inline;
+    width: auto;
+  }
+
 }
 
 #map-canvas {
   height: 384px;
   // width:80%;
-}
-
-#map-container #map-canvas label {
-  display: inline;
-  width: auto;
 }
 
 
