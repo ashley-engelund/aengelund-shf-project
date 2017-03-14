@@ -25,21 +25,22 @@
       font-size: 1.8rem;
       font-weight: normal;
     }
-    .post-category .post-categories {
-      margin: 0px;
-      list-style: none;
-      display: inline-block;
 
+    .post-category .post-categories {
+      display: inline-block;
+      list-style: none;
+      margin: 0;
     }
 
     .address {
+
+      margin-bottom: 1em;
       margin-top: 2em;
 
       h2 {
         margin-bottom: 0;
       }
 
-      margin-bottom: 1em;
     }
   }
 
@@ -50,8 +51,8 @@
 
   #map {
 
-    width: 100%;
     margin: 0;
+    width: 100%;
     padding: 0;
 
     #company-map-marker {
