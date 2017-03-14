@@ -37,11 +37,11 @@ function initMap() {
 
 // get the text from element with id = element_id
 //  if there is no element_id in the document, return an empty string
-function getMarkerText(element_id) {
+function getMarkerText(elementId) {
     var text = '';
 
-    if (document.getElementById(element_id) !== null) {
-        text = document.getElementById(element_id).childNodes[0].nodeValue;
+    if (document.getElementById(elementId) !== null) {
+        text = document.getElementById(elementId).childNodes[0].nodeValue;
     }
     return text.trim();
 }
@@ -49,12 +49,12 @@ function getMarkerText(element_id) {
 
 // get the value for the element with id element_id and convert it to a Number
 //  If there is no element_id in the document, show an error on the console
-function getNumber(element_id) {
+function getNumber(elementId) {
 
-    if (document.getElementById(element_id) !== null) {
-        return parseFloat(document.getElementById(element_id).childNodes[0].nodeValue)
+    if (document.getElementById(elementId) !== null) {
+        return parseFloat(document.getElementById(elementId).childNodes[0].nodeValue);
     } else {
-        console.error("Expected document to have an element with id '" + element_id + "' but it did not.");
+        console.error("Expected document to have an element with id '" + elementId + "' but it did not.");
     }
 
 }
