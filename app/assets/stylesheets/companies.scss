@@ -4,73 +4,63 @@
 
 .show-item.company {
 
-  .entry-header {
+  margin-bottom: 0;
+  padding-top: 1rem;
 
-    font-weight: bold;
-
-    h1 {
-      font-weight: bold;
-    }
-
+  p {
+    margin-bottom: 0;
   }
 
-  .entry-content {
-    margin-bottom: 0;
-    padding-top: 1rem;
+  h2 {
+    font-size: 1.8rem;
+    font-weight: normal;
+  }
 
-    p {
+  .post-category .post-categories {
+    display: inline-block;
+    list-style: none;
+    margin: 0;
+  }
+
+  .address {
+
+    margin-bottom: 1em;
+    margin-top: 2em;
+
+    h2 {
       margin-bottom: 0;
     }
 
-    h2 {
-      font-size: 1.8rem;
-      font-weight: normal;
-    }
-
-    .post-category .post-categories {
-      display: inline-block;
-      list-style: none;
-      margin: 0;
-    }
-
-    .address {
-
-      margin-bottom: 1em;
-      margin-top: 2em;
-
-      h2 {
-        margin-bottom: 0;
-      }
-
-    }
   }
 
   #bottom-nav-buttons {
 
     margin-top: 3em;
   }
+}
 
-  #map {
 
-    margin: 0;
-    padding: 0;
-    width: 100%;
 
-    #company-map-marker {
+#map {
 
-      p {
-        margin-bottom: 0.5rem;
-      }
+  margin: 0;
+  padding: 0;
+  width: 100%;
 
-      .name {
-        font-size: larger;
-        font-weight: bold;
-      }
+  #company-map-marker {
 
-      .categories {
-        font-style: italic;
-      }
+    p {
+      margin-bottom: 0.5rem;
+    }
+
+    .name {
+      font-size: larger;
+      font-weight: bold;
+    }
+
+    .categories {
+      font-style: italic;
     }
   }
-
 }
+
