@@ -21,6 +21,21 @@ module CompaniesHelper
   end
 
 
+  # Given a collection of companies, create an array of {latitude, longitude, marker}
+  # for each company.  (Can be used by javascript to display markers for many companies)
+  def location_and_markers_for companies
+
+    results = []
+    companies.each do |company|
+      results << {latitude: company.main_address.latitude,
+                  longitude: company.main_address.longitude,
+                  text: html_marker_text(company)}
+    end
+
+    results
+  end
+
+
   # html to display for a company when showing a marker on a map
   def html_marker_text company
     text = "<div class='map-marker'>"
