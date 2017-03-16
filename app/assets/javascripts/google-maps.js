@@ -21,16 +21,85 @@
 //
 function initMap() {
 
-    var coordinates = {lat: getNumber('location-latitude'), lng: getNumber('location-longitude')};
+    var coordinates = {
+        lat: getNumber('location-latitude'),
+        lng: getNumber('location-longitude')
+    };
 
     var map = new google.maps.Map(document.getElementById('map'), {
         center: coordinates,
-        zoom: 14
+        zoom: 15
     });
 
     var marker_text = getMarkerText('marker-text');
 
     var marker = addMarker(coordinates, map, marker_text);
+
+}
+
+
+// Display a dynamic Google map
+//  centerCoordinates: the initial center for the map. (= Stockholm if none given)
+//  markers = an array of markers to display on the map
+//  icon = the icon to use for each of the markers
+//
+//  If there is only 1 marker for the map, center the map on that marker
+//  else display all of the markers,and so the center is automatically
+//   determined by the center of all of them.
+//
+function initCenteredMap(centerCoordinates, markers = [], icon = null) {
+
+    var mapCenter = {lat: 59.3293235, lng: 18.0685808}; // Stockholm: [59.32932349999999, 18.0685808]
+
+    if (centerCoordinates == null) {
+        // try to get the user's coordinates
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                mapCenter = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            });
+        }
+    }
+    else {
+        mapCenter = centerCoordinates;
+    }
+
+    var map = new google.maps.Map(document.getElementById('map'), {
+        center: mapCenter,
+        zoom: 13
+    });
+
+    var bounds = new google.maps.LatLngBounds();
+
+    addMarkersToMap(map, markers, bounds, icon);
+
+    //now fit the map to the newly inclusive bounds
+    // this will zoom in too far if there's only 1 marker
+    if (markers.length > 1) {
+        map.fitBounds(bounds);
+    }
+}
+
+
+// add the markers to the map that is defined on the page with id = 'map'
+function addMarkersToMap(map, markers = [], bounds = new google.maps.LatLngBounds(), icon) {
+
+    // if the map doesn't exist, do nothing
+    if (document.getElementById('map') !== null) {
+
+
+        markers.forEach((m) => {
+
+            var position = {
+                lat: m.latitude,
+                lng: m.longitude
+            };
+
+            addMarker(position, map, m.text, icon);
+
+            //extend the bounds to include the position for this marker
+            bounds.extend(position);
+        });
+    }
 
 }
 
@@ -60,19 +129,20 @@ function getNumber(elementId) {
 }
 
 
-
-// create a marker.  When it's clicked, pop-up a box with text in it
-function addMarker(coordinates, map, text) {
+// Create a marker. Optionally, set the icon to be used for it
+// When it's clicked, pop-up a box with text in it
+function addMarker(coordinates, map, text, icon) {
     var marker;
 
     marker = new google.maps.Marker({
         position: coordinates,
-        map: map
+        map: map,
+        icon: icon
     });
 
 
     // don't create a pop-up box if there's no text to display
-    if (text !== ''){
+    if (text !== '') {
         google.maps.event.addListener(marker, 'click', function () {
             createInfoWindow(text).open(map, marker);
         });
