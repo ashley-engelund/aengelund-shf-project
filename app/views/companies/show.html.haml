@@ -29,6 +29,8 @@
           %h2 #{t('.address')}:
           = field_or_none t('.street'), @company.main_address.street_address, tag_options: {class: 'street'}
 
+          = field_or_none t('.post_code'), @company.main_address.post_code, tag_options: {class: 'post-code'}
+
           = field_or_none t('.city'), @company.main_address.city, tag_options: {class: 'city'}
 
           = field_or_none t('.kommun'), @company.main_address.kommun.name, tag_options: {class: 'kommun'}
@@ -37,7 +39,8 @@
 
 
       .col-md-6
-        = render partial: 'map', locals: { marker_text: html_marker_text(@company), address: @company.main_address}
+        = render partial: 'map_companies', locals: { markers: location_and_markers_for([@company])}
+
 
 
     .row.center#bottom-nav-buttons
