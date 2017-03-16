@@ -1,0 +1,20 @@
+= javascript_include_tag "#{Rails.configuration.shf['google_maps_js_api']}?key=#{Rails.configuration.x.google_key}"
+
+#map
+
+:javascript
+  var markers = #{markers.to_json}
+  mapCenter = {lat: 59.3293235, lng: 18.0685808}; // default center: Stockholm: [59.32932349999999, 18.0685808]
+
+  if (markers.length == 1) {
+    mapCenter = {lat: markers[0].latitude, lng: markers[0].longitude};
+    }
+
+  var shfIcon = {
+    url: "#{image_path 'h-marke-pin2.png'}",
+    scaledSize: new google.maps.Size(27,27),
+    origin: new google.maps.Point(0,0),
+    anchor: new google.maps.Point(0, 0)};
+
+  initCenteredMap(mapCenter, markers, shfIcon);
+
