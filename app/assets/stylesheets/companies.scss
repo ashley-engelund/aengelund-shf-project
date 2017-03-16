@@ -2,6 +2,20 @@
   font-weight: bold
 }
 
+.index.company {
+
+  #map {
+
+    margin: 0;
+    padding: 0;
+    width: 100%;
+
+  }
+
+
+}
+
+
 .show-item.company {
 
   .entry-header {
@@ -56,21 +70,26 @@
     padding: 0;
     width: 100%;
 
-    #company-map-marker {
-
-      p {
-        margin-bottom: 0.5rem;
-      }
-
-      .name {
-        font-size: larger;
-        font-weight: bold;
-      }
-
-      .categories {
-        font-style: italic;
-      }
-    }
   }
 
 }
+
+
+#company-map-marker,  .company-map-marker {
+
+  p {
+    margin-bottom: 0.5rem;
+  }
+
+  .name {
+    font-size: larger;
+    font-weight: bold;
+  }
+
+  .categories {
+    font-style: italic;
+  }
+}
+
+
+
