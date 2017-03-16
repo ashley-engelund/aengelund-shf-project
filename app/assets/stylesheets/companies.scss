@@ -2,7 +2,8 @@
   font-weight: bold;
 }
 
-.show-item.company {
+
+.company {
 
   margin-bottom: 0;
   padding-top: 1rem;
@@ -16,41 +17,32 @@
     font-weight: normal;
   }
 
-  .post-category .post-categories {
-    display: inline-block;
-    list-style: none;
-    margin: 0;
+  .post-category {
+    .post-categories {
+      display: inline-block;
+      list-style: none;
+      margin: 0;
+    }
   }
 
   .address {
-
     margin-bottom: 1em;
     margin-top: 2em;
 
     h2 {
       margin-bottom: 0;
     }
-
   }
 
-  #bottom-nav-buttons {
-
+  .item-nav-buttons {
     margin-top: 3em;
   }
-}
 
 
-
-#map {
-
-  margin: 0;
-  padding: 0;
-  width: 100%;
-
-  #company-map-marker {
+  .map-marker {
 
     p {
-      margin-bottom: 0.5rem;
+      margin-bottom: .5rem;
     }
 
     .name {
@@ -63,4 +55,13 @@
     }
   }
 }
+
+
+#map {
+
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
 
