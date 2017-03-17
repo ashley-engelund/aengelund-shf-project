@@ -147,7 +147,7 @@ RSpec.describe ApplicationHelper, type: :helper do
 
     it 'unsaved company ' do
       co = build(:company)
-      expect(helper.unique_css_id(co)).to match /^company-no-id--/
+      expect(helper.unique_css_id(co)).to match(/^company-no-id--/)
     end
 
     it 'business_category  4' do
@@ -172,7 +172,7 @@ RSpec.describe ApplicationHelper, type: :helper do
 
     it 'new business_category x' do
       co = build(:business_category)
-      expect(helper.item_view_class(co, 'new')).to match /^new businesscategory businesscategory-no-id--/
+      expect(helper.item_view_class(co, 'new')).to match(/^new businesscategory businesscategory-no-id--/)
     end
 
   end
