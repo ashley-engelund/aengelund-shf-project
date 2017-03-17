@@ -13,20 +13,20 @@
 
 
     - unless current_user.try(:admin)
-      %p
-        %strong
-          #{t('info.under_construction')}
-      %p
-        #{t('.h_companies_listed_below')}
-        #{t('.how_to_search')}
 
-        %button.btn.btn-success.btn-xs.pull-right{ id: 'toggle_search_form',
-                                          href: '#company_search_form',
-                                          style: 'color:black; text-transform:none;' }
-          #{t('toggle.company_search_form.hide')}
+      .search-instructions
+        %h3
+          #{t('.h_companies_listed_below')}
+          %br
+          #{t('.how_to_search')}
 
-    .panel.panel-default{ style: 'padding-left: 5px; padding-right: 5px;',
-                          id: 'company_search_form' }
+          %button.btn.hide-search-form.btn-success.btn-xs.pull-right{ id: 'toggle_search_form',
+                                            href: '#company_search_form',
+                                            style: 'color:black; text-transform:none;' }
+            #{t('toggle.company_search_form.hide')}
+
+    .panel.panel-default.search-panel{ id: 'company_search_form' }
+
       = render 'search_form'
 
 
