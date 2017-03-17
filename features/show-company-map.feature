@@ -39,4 +39,4 @@ Feature: As a visitor
   Scenario: Show the company location on the Company detail page
     Given I am on the page for company number "5560360793"
     Then I should see "map"
-    And I should see "<div id='company-map-marker'><p class='name'>No More Snarky Barky</p><p class='categories'>Groomer</p><br><p class='entire-address'>Matarengivägen 24, Övertorneå, 957 31, Sverige</p></div>"
+    And I should see "<div class='map-marker'><p class='name'>No More Snarky Barky</p><p class='categories'>Groomer</p><br><p class='entire-address'>Matarengivägen 24, Övertorneå, 957 31, Sverige</p></div>"
