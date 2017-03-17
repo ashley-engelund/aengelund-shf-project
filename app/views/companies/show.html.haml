@@ -12,7 +12,7 @@
   .entry-content
 
     .row
-      .col-md-6
+      .col-md-5
         = field_or_none t('.name'), @company.name, tag_options: {class: 'hidden', id: 'location-text'}
 
         - if current_user && current_user.admin?
@@ -38,8 +38,8 @@
           = field_or_none t('.region'), @company.main_address.region.name, tag_options: {class: 'region'}
 
 
-      .col-md-6
-        = render partial: 'map_companies', locals: { markers: location_and_markers_for([@company])}
+      .col-md-7
+        = render partial: 'map_companies', locals: { markers: location_and_markers_for([@company], link_name: false )}
 
 
 
