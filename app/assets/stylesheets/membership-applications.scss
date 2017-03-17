@@ -1,3 +1,5 @@
+$no-files-warn-color: #ff0000;
+
 .membershipapplication {
 
   .required-field-explanation {
@@ -34,8 +36,6 @@
 
       margin-left: 1em;
 
-
-
       input, .field-instruction {
 
       }
@@ -56,6 +56,14 @@
     background: rgba(86, 146, 206, 0.2);
     border: 1px solid rgb(86, 146, 206);
     padding: 2em;
+
+    // .no-files-uploaded-warn
+
+    .no-files-uploaded-warn {
+      font-weight: bold;
+      color: $no-files-warn-color;
+      font-size: larger;
+    }
 
     p.files-uploaded-list-title {
       margin-bottom: 0;
