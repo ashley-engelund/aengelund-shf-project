@@ -1,7 +1,7 @@
 - if membership_application.uploaded_files.count < 1
 
-  %p
-    %strong= icon('warning') + t('membership_applications.uploads.no_files')
+  %p.no-files-uploaded-warn
+    = icon('warning') + t('membership_applications.uploads.no_files')
 
 - else
   %p.files-uploaded-list-title
@@ -18,5 +18,5 @@
         %tr.uploaded-files
           %td.uploaded-file
             = link_to uploaded_file.actual_file_file_name, uploaded_file.actual_file.url, target: "_blank", id: "uploaded-file-link-#{uploaded_file.id}", class: "uploaded-file-link"
-          %td{class: "delete-uploaded-file-#{uploaded_file.id}"}
+          %td{ class: "delete-uploaded-file-#{uploaded_file.id}" }
             = link_to icon('trash'), membership_application_path(membership_application.id, membership_application: { uploaded_files_attributes: { id: uploaded_file.id,  '_destroy' => true }}), method: :put, id: "uploaded-file-#{uploaded_file.id}", class: "action-delete", data: { confirm: "#{t('membership_applications.uploads.confirm_delete', filename: uploaded_file.actual_file_file_name)}" }
