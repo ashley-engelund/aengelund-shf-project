@@ -23,11 +23,11 @@ module CompaniesHelper
 
   # html to display for a company when showing a marker on a map
   def html_marker_text company
-    text = "<div id='company-map-marker'>"
+    text = "<div class='map-marker'>"
     text << "<p class='name'>#{company.name}</p>"
     text << "<p class='categories'>#{list_categories company, ', '}</p>"
     text << "<br>"
-    company.addresses.each do | addr |
+    company.addresses.each do |addr|
       text << "<p class='entire-address'>#{addr.entire_address}</p>"
     end
 
