@@ -95,7 +95,7 @@ RSpec.describe Address, type: :model do
     let(:orig_long) { 12.7276875 }
 
     def addr_details(addr, expected_msg)
-      "addr: #{addr.entire_address}, lat: #{addr.latitude}, long: #{addr.longitude}"
+      "#{expected_msg}; addr: #{addr.entire_address}, lat: #{addr.latitude}, long: #{addr.longitude}"
     end
 
     it 'geocode from address' do
