@@ -96,8 +96,8 @@ $(function(){
             // if the map doesn't exist, do nothing
             if (document.getElementById('map') !== null) {
 
-                marks = markers === null ? [] : markers;
-                bound = bounds === null ? new google.maps.LatLngBounds() : bounds;
+                var marks = markers === null ? [] : markers;
+                var bound = bounds === null ? new google.maps.LatLngBounds() : bounds;
 
                 //marks.forEach((m) => {
 
