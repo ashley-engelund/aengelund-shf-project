@@ -165,6 +165,8 @@ en:
       title: Apply for a Membership
       instructions: some instructions here. 3 main sections. explain importance of the uploaded documents
 
+      section_title_about_you: &about_you About You
+
       submit: *submit
       first_name: *first_name
       last_name: *last_name
@@ -177,10 +179,11 @@ en:
       clue_selected_categories: &clue_selected_categories "Blue box = selected categories"
 
       upload_files_section: Documents to support your application (certifications, etc.)
-      upload_files_instructions: Why these are really important...(TBD)
-      upload_a_file: 'Upload a file from your computer:'
-      upload_more_files: 'You can upload more files. After you submit your application, edit it and you can upload more there.'
-      upload_button: Choose a file...
+      upload_files_instructions: Why these are really important... SHF uses these to verify your certifications and methods. ... This ensures the standards remain high, which means the public will know that the SHF H-Marke is [valuable, credible, respected, worthy..].  (More words needed here.)
+      upload_files: 'Upload files from your computer:'
+      upload_more_files: 'You can upload more files. After you submit your application, you can edit it upload more files on that page.'
+      upload_button: Choose files to upload...
+      will_be_uploaded: 'These files will be uploaded when you submit your application:'
 
       submit_button_label: *submit
 
@@ -314,6 +317,19 @@ en:
 
     update_the_status: Update the status
     application_deleted: Application deleted.
+
+
+
+  file_uploads:
+    no_files: No files have been uploaded.
+    files_uploaded: 'Files uploaded:'
+    filename: Filename
+    file_was_uploaded: 'This file was uploaded: %{filename}'
+    confirm_delete: 'Are you sure you want to delete %{filename}?'
+    invalid_upload_type: Sorry, this is not a file type you can upload.
+    file_too_large: The file must be smaller than 5 MB
+
+
 
   companies:
     new:
