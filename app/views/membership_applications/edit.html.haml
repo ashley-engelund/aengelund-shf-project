@@ -1,4 +1,4 @@
-%div{ :id => "#{@membership_application.class.name.downcase}-#{@membership_application.id}", class: "show-item #{@membership_application.class.name.downcase} #{@membership_application.class.name.downcase}-#{@membership_application.id}" }
+%div{ :id => "#{unique_css_id(@membership_application)}", class: "#{item_view_class(@membership_application, controller.action_name)}" }
 
   %header.entry-header
     %h1.entry-title= t('.title')
