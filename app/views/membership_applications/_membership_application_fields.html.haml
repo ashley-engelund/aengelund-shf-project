@@ -1,5 +1,5 @@
 .app-section
-  %h2.first About You
+  %h2.first= t('membership_applications.new.section_title_about_you')
   .answers
     - if current_user && current_user.admin? && @membership_application.is_accepted?
       = f.label :membership_number, t('membership_applications.show.membership_number'), class: 'required'
@@ -33,21 +33,66 @@
       = f.collection_check_boxes :business_category_ids, @all_business_categories, :id, :name do |b|
         = b.check_box(class: 'text-nicelabel', position_class: 'text_checkbox') + b.label
 
-.app-section
+.app-section#supporting-files
   %h2= t('membership_applications.new.upload_files_section')
   %p.instructions= t('membership_applications.new.upload_files_instructions')
-  #uploaded-files
 
-    %p.upload-button-pre= t('membership_applications.new.upload_a_file')
+  .files
+    #upload-files
 
-    %span{class: "btn btn-warning btn-file"}
-      = t('membership_applications.new.upload_button')
-      = f.file_field 'actual_files[]', multiple: true, name: 'uploaded_file[actual_files][]', class: 'upload-field'
+      %h3.upload-button-pre= t('membership_applications.new.upload_files')
 
-    %p.upload-more-note.instructions= t('membership_applications.new.upload_more_files')
+      %span{class: "btn btn-warning btn-file"}
+        = t('membership_applications.new.upload_button')
+        = f.file_field 'actual_files[]', multiple: true, name: 'uploaded_file[actual_files][]', class: 'upload-field', id: 'upload-button'
 
+      - submit_label = @membership_application.new_record? ? t('submit') : t('save')
+      %h4.hidden.files-to-upload-title#files-to-upload-title= t('membership_applications.new.will_be_uploaded')
+
+      -# The table that lists the files to be uploaded when the form is submitted:
+      %table.hidden.table#files-to-upload
+        %tbody.files{'data-toggle': "modal-gallery", 'data-target': "#modal-gallery"}
 
     = render 'uploaded_files_list', membership_application: @membership_application
 
+
+  %p.upload-more-note.instructions= t('membership_applications.new.upload_more_files') if controller.action_name == 'new'
+
 - if @membership_application.may_is_ready_for_review?
   = render 'ready_for_review', f: f
+
+
+
+:javascript
+
+  $("#upload-button").on('change',function () {
+    console.log('upload-button change');
+
+    // update the list of files to be uploaded
+
+    var to_upload_title = document.getElementById("files-to-upload-title");
+    var upload_table = document.getElementById("files-to-upload");
+
+    var filesUploadButton = document.getElementById("upload-button");
+    var txt = "";
+
+    if ('files' in filesUploadButton) {
+
+        // unhide the title and table so we can show what will be uploaded
+        to_upload_title.className = to_upload_title.className.replace( /(?:^|\s)hidden(?!\S)/g , '' );
+        upload_table.className = upload_table.className.replace( /(?:^|\s)hidden(?!\S)/g , '' );
+
+        for (var i = 0; i < filesUploadButton.files.length; i++) {
+
+          var file = filesUploadButton.files[i];
+          if ('name' in file) {
+            var new_lastrow = upload_table.insertRow(-1);
+            var filename = new_lastrow.insertCell(0);
+            filename.innerHTML = file.name
+          }
+
+        }
+
+    }
+
+  });
