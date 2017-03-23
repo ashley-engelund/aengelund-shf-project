@@ -97,7 +97,6 @@ function addMarkersToMap(map, markers, bounds, icon) {
         var marks = markers === null ? [] : markers;
         var bound = bounds === null ? new google.maps.LatLngBounds() : bounds;
 
-        //marks.forEach((m) => {
 
         for (var i = 0, len = marks.length; i < len; i++) {
 
