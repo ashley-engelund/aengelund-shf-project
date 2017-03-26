@@ -336,3 +336,9 @@ end
 And(/^I should see xpath "([^"]*)"$/) do | xp |
   expect(page).to have_xpath(xp)
 end
+
+
+And(/^I should be on the SHF document page for "([^"]*)"$/)  do | doc_title |
+    shf_doc = ShfDocument.find_by_title(doc_title)
+  expect(current_path_without_locale(current_path)).to eq shf_document_path(shf_doc)
+end
