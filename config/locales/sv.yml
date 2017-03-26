@@ -80,6 +80,11 @@ sv:
         one: Företag
         other: Företag
 
+      shf_document:
+        one: SHF Dokument
+        other: SHF Dokument
+
+
     attributes:
 
       user:
@@ -130,6 +135,11 @@ sv:
         name: &business_category_name  Namn
         description: &description  Beskrivning
 
+      shf_document:
+        title: &title Titel
+        description: *description
+        uploader: &uploader Uppladdare
+
     errors:
 
       models:
@@ -137,7 +147,7 @@ sv:
         uploaded_file:
           attributes:
             actual_file_file_size:
-              file_too_large: 'Den uppladdade är alltför stor.'
+              file_too_large: &file_too_large 'Den uppladdade är alltför stor.'
             actual_file:
               file_too_large: 'Filen måste vara mindre än %{max}. (Filen är %{value} byte.)'
 
@@ -151,6 +161,14 @@ sv:
           attributes:
             password_confirmation:
               confirmation: stämmer inte med det angivna lösenordet.
+
+        shf_document:
+          attributes:
+            actual_file_file_size:
+              file_too_large: *file_too_large
+            actual_file:
+              file_too_large: 'Filen måste vara mindre än %{max}. (Filen är %{value} byte.)'
+
 
       messages:
         record_invalid: 'Ett fel uppstod: %{errors}'
@@ -303,8 +321,8 @@ sv:
       filename: Filnamn
       file_was_uploaded: 'Filen laddades upp: %{filename}'
       confirm_delete: 'Är du säker på att du vill radera %{filename}?'
-      invalid_upload_type: Tyvärr kan du inte ladda upp denna filtypen.
-      file_too_large: Filen måste vara mindre än 5 MB
+      invalid_upload_type: &invalid_upload_type Tyvärr kan du inte ladda upp denna filtypen.
+      file_too_large: &file_too_large_5MB Filen måste vara mindre än 5 MB
 
     update_the_status: Uppdatera status
     application_deleted: Ansökan raderad.
@@ -469,6 +487,63 @@ sv:
     export_ansokan_csv:
       success: Exporten lyckades. Du hittar filen bland din webbläsares nedladdade filer.
       error: Ett problem uppstod med exporten.
+
+
+  shf_documents:
+
+    new_shf_document: &new_shf_document Ny SHF Dokument
+    edit_shf_document: Redigera SHF Document
+    view_shf_document: Visa SHF Document
+    all_shf_documents: Alla SHF Dokument
+
+    invalid_upload_type: *invalid_upload_type
+    file_too_large: *file_too_large_5MB
+
+    index:
+      page_title: 'Historika Dokument: Styrelseprotkoll'
+      instructions: 'These are SHF Board meeting minutes.  Click on the title of a document to view it.  Depending on your browser settings, it might open in a new window or it might download.'
+      title: *title
+      description: *description
+      delete_confirm: 'Är du säker på att du vill radera %{document_title}?'
+      view_details: Visa detaljer
+
+    show:
+      page_title: 'SHF Document: %{document_title}'
+      title: *title
+      description: *description
+      uploaded_by: &uploaded_by Uppladdad av
+      uploaded_on: &uploaded_on Datum upp
+      filename: 'Filen:'
+      delete_confirm: 'Är du säker på att du vill radera %{document_title}?'
+
+    new:
+      page_title: *new_shf_document
+      title: *title
+      description: *description
+      uploaded_by: *uploaded_by
+      uploaded_on: *uploaded_on
+
+    create:
+      success: 'Filen laddades upp: %{document_title}'
+      error: 'Det fanns ett problem att ladda upp %{document_title}'
+
+    edit:
+      page_title: 'Redigera SHF Dokument: %{document_title}'
+      title: *title
+      description: *description
+      uploaded_by: *uploaded_by
+      uploaded_on: *uploaded_on
+      upload_the_document: Ladda dokument
+
+    update:
+      success: '%{document_title} uppdaterad.'
+      error: 'Det fanns ett problem att uppdatera dokumentet.'
+
+    destroy:
+      success: '%{document_title} deleted.'
+
+
+
 
   devise:
     min_length: '(minst %{minimum_length} tecken)'
