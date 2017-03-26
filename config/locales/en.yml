@@ -539,6 +539,9 @@ en:
     destroy:
       success: '%{document_title} deleted.'
 
+    minutes_and_static_pages:
+      member_pages: &member_pages Member pages
+      shf_meeting_minutes: &member_pages_board_meetings SHF Board Meeting Minutes
 
   devise:
     min_length: '(at least %{minimum_length} characters)'
@@ -641,7 +644,8 @@ en:
 
       members:
         shf_companies: SHF Companies
-        member_pages: &member_pages Member pages
+        member_pages: *member_pages
+        shf_meeting_minutes: *member_pages_board_meetings
         manage_company:
           submenu_title: Manage my company
           view_company: View Company
@@ -651,6 +655,7 @@ en:
       admin:
         shf_main_site: *shf_main_site
         member_pages: *member_pages
+        shf_meeting_minutes: *member_pages_board_meetings
         manage_applications: Manage Applications
         categories:
           submenu_title: Categories

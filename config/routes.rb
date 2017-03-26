@@ -44,6 +44,8 @@ Rails.application.routes.draw do
 
     resources :shf_documents
 
+    get 'member-pages', to: 'shf_documents#minutes_and_static_pages'
+
   end
 
   get 'information', to: 'membership_applications#information'

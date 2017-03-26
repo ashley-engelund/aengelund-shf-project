@@ -58,6 +58,9 @@ class ShfDocumentsController < ApplicationController
   end
 
 
+  def minutes_and_static_pages
+  end
+
 
   private
 

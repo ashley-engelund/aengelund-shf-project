@@ -24,5 +24,8 @@ class ShfDocumentPolicy < ApplicationPolicy
     is_admin?
   end
 
+  def minutes_and_static_pages?
+    index?
+  end
 
 end

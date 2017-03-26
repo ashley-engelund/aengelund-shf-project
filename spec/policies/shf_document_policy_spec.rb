@@ -19,6 +19,7 @@ RSpec.describe ShfDocumentPolicy do
     it { is_expected.to permit_action :destroy }
     it { is_expected.to permit_action :new }
     it { is_expected.to permit_action :create }
+    it { is_expected.to permit_action :minutes_and_static_pages }
 
   end
 
@@ -33,6 +34,7 @@ RSpec.describe ShfDocumentPolicy do
     it { is_expected.to forbid_action :destroy }
     it { is_expected.to forbid_action :new }
     it { is_expected.to forbid_action :create }
+    it { is_expected.to permit_action :minutes_and_static_pages }
   end
 
 
@@ -46,6 +48,7 @@ RSpec.describe ShfDocumentPolicy do
     it { is_expected.to forbid_action :destroy }
     it { is_expected.to forbid_action :new }
     it { is_expected.to forbid_action :create }
+    it { is_expected.to forbid_action :minutes_and_static_pages }
   end
 
 
@@ -59,5 +62,6 @@ RSpec.describe ShfDocumentPolicy do
     it { is_expected.to forbid_action :destroy }
     it { is_expected.to forbid_action :new }
     it { is_expected.to forbid_action :create }
+    it { is_expected.to forbid_action :minutes_and_static_pages }
   end
 end
