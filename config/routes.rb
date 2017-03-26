@@ -41,6 +41,9 @@ Rails.application.routes.draw do
     resources :companies, path: 'hundforetag'
 
     resources :users, path: 'anvandare'
+
+    resources :shf_documents
+
   end
 
   get 'information', to: 'membership_applications#information'
