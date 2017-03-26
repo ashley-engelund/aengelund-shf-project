@@ -28,7 +28,7 @@ class UploadedFile < ApplicationRecord
   Here's an example of the error messages in the en.yml locale file:
 
   en:
-    activerecord:
+    errors:
       models:
         uploaded_file:
           attributes:
