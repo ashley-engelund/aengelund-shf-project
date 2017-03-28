@@ -502,8 +502,8 @@ sv:
   shf_documents:
 
     new_shf_document: &new_shf_document Ny SHF Dokument
-    edit_shf_document: Redigera SHF Document
-    view_shf_document: Visa SHF Document
+    edit_shf_document: Redigera informationen SHF dokument
+    view_shf_document: Visa informationen SHF dokument
     all_shf_documents: Alla SHF Dokument
 
     invalid_upload_type: *invalid_upload_type
@@ -538,7 +538,7 @@ sv:
       error: 'Det fanns ett problem att ladda upp %{document_title}'
 
     edit:
-      page_title: 'Redigera SHF Dokument: %{document_title}'
+      page_title: 'Redigera Informationen SHF Dokument: %{document_title}'
       title: *title
       description: *description
       uploaded_by: *uploaded_by

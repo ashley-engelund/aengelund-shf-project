@@ -501,8 +501,8 @@ en:
   shf_documents:
 
     new_shf_document: &new_shf_document New SHF Document
-    edit_shf_document: Edit the SHF Document
-    view_shf_document: View the SHF Document
+    edit_shf_document: Edit the SHF document details
+    view_shf_document: View the SHF document details
     all_shf_documents: All SHF Documents
 
     invalid_upload_type: Sorry, this is not a file type you can upload.
@@ -537,7 +537,7 @@ en:
       error: 'There was a problem uploading %{document_title}'
 
     edit:
-      page_title: 'Edit SHF Document: %{document_title}'
+      page_title: 'Edit Details for SHF Document: %{document_title}'
       title: *title
       description: *description
       uploaded_by: *uploaded_by
