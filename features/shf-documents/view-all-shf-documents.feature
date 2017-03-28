@@ -98,9 +98,6 @@ Feature: SHF members (and admins) can views board meeting minutes (SHF documents
     When I click on t("shf_documents.index.description")
 
 
-  Scenario: Can sort by description
-
-
   Scenario: A visitor cannot see SHF documents
     Given I am logged out
     And I am on the "all SHF documents" page

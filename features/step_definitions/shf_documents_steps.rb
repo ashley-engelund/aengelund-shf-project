@@ -4,7 +4,7 @@ end
 
 
 And(/^I should see (\d+) shf-documents listed$/) do |number|
-  expect(page).to have_selector('.shf-document', count: number)
+  page.assert_selector('.shf-document', count: number)
 end
 
 

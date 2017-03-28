@@ -1,7 +1,7 @@
 Feature: Admin can delete uploaded SHF Documents
 
   As an admin
-  So that get rid of SHF documents that shouldn't have been uploaded
+  So that I can get rid of SHF documents that shouldn't have been uploaded
   I need to be able to delete a SHF document
 
 
