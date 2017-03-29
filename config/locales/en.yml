@@ -163,7 +163,7 @@ en:
   membership_applications:
     new:
       title: Apply for a Membership
-      instructions: some instructions here. 3 main sections. explain importance of the uploaded documents
+      instructions: 'To process your application, we need information about you and in which category you are applying as well as documents proving your skills in this/those categories.'
 
       section_title_about_you: &about_you About You
 
@@ -179,7 +179,7 @@ en:
       clue_selected_categories: &clue_selected_categories "Blue box = selected categories"
 
       upload_files_section: Documents to support your application (certifications, etc.)
-      upload_files_instructions: Why these are really important... SHF uses these to verify your certifications and methods. ... This ensures the standards remain high, which means the public will know that the SHF H-Marke is [valuable, credible, respected, worthy..].  (More words needed here.)
+      upload_files_instructions: 'The documents are very important for us to assess your application. We use them to authenticate your skills and education. This ensures that our membership standards remain high, which in turn means that the public know that the Swedish dog business is professional and reliable.'
       upload_files: 'Upload files from your computer:'
       upload_more_files: 'You can upload more files. After you submit your application, you can edit it upload more files on that page.'
       upload_button: Choose files to upload...
