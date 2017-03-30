@@ -149,11 +149,11 @@ namespace :shf do
   #                Note that 1 Address may require multiple geocode requests
   #                to get a valid locataion if the Address is a 'fake' address.
   #                See the note below about using :geocode_best_possible
-  #                 default = 0.5 seconds
+  #                 default = 0.2 seconds
   #
   #    batch_num: number of objects in each batch (also so we don't exceed
   #               the number of requests per second)
-  #                 default = 40
+  #                 default = 50
   #
   # We don't use the geocode:all  rake task
   # because we want to call the :geocode_best_possible method instead of
@@ -184,7 +184,7 @@ namespace :shf do
   desc "geocode all addresses args=[sleep_time=2,batch_num=40] (those without latitude, longitude info) NO SPACES between arguments"
   task :geocode_all_addresses, [:sleep_time, :batch_num] => :environment do |task_name, args|
 
-    args.with_defaults(sleep_time: 0.5, batch_num: 40)
+    args.with_defaults(sleep_time: 0.2, batch_num: 50)
 
     Geocoder.configure( timeout: 20)   # geocoding service timeout (secs)
 
@@ -192,14 +192,11 @@ namespace :shf do
     start_time = Time.now
     log = start_logging(start_time, logfile, "Geocode All Addresses (RAILS_ENV = #{Rails.env} arguments = #{args.each { |arg| arg.inspect} }  )")
 
-    no_location =  Address.not_geocoded
+    not_geocoded = Address.not_geocoded
+    log_and_show log, Logger::INFO, "  #{not_geocoded.count} Addresses are not yet geocoded.  Will now geocode them..."
+    Address.geocode_all_needed(sleep_between: args[:sleep_time].to_f, num_per_batch: args[:batch_num].to_i)
 
-    no_location.find_each(batch_size: args[:batch_num].to_i) do | addr |
-      addr.geocode_best_possible
-      addr.save
-      log_and_show log, Logger::INFO, "  Geocoded Address id: #{addr.id}  now latitude= #{addr.latitude}, longitude= #{addr.longitude}"
-      sleep(args[:sleep_time].to_f)
-    end
+    log_and_show log, Logger::INFO, "  After running Address.geocode_all_needed(sleep_between: #{args[:sleep_time].to_f}, num_per_batch: #{args[:batch_num].to_i}), #{Address.not_geocoded.count} Addresses are not geocoded."
 
     log_and_show log, Logger::INFO, "Information was logged to: #{logfile}"
     finish_and_close_log(log, start_time, Time.now, "Geocode All Addresses")
