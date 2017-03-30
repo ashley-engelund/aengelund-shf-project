@@ -324,7 +324,7 @@ RSpec.describe Address, type: :model do
            WHERE street_address = 'Matarengivägen 24'
         SQL
 
-        result = Address.connection.execute(query)
+        Address.connection.execute(query)
 
         need_geocoding = Address.not_geocoded
         needed_geocoding = need_geocoding.count
@@ -347,7 +347,7 @@ RSpec.describe Address, type: :model do
           UPDATE addresses SET latitude=NULL, longitude=NULL
         SQL
 
-        result =  Address.connection.execute(query)
+        Address.connection.execute(query)
 
         need_geocoding = Address.not_geocoded
         needed_geocoding = need_geocoding.count

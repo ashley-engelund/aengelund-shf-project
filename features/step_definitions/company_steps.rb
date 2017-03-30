@@ -68,6 +68,6 @@ Given(/^all addresses for the company named "([^"]*)" are not geocoded$/) do |co
   addr_ids = co.addresses.map(&:id)
 
   query = "UPDATE addresses SET latitude=NULL, longitude=NULL WHERE id in (#{addr_ids.join(', ')})"
-  result = Address.connection.exec_query(query)
+  Address.connection.exec_query(query)
 
 end

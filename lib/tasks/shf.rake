@@ -182,7 +182,7 @@ namespace :shf do
   # Note that there are NO SPACES after the commas (between the arguments)
   #
   desc "geocode all addresses args=[sleep_time=2,batch_num=40] (those without latitude, longitude info) NO SPACES between arguments"
-  task :geocode_all_addresses, [:sleep_time, :batch_num] => :environment do |task_name, args|
+  task :geocode_all_addresses, [:sleep_time, :batch_num] => :environment do |_task_name, args|
 
     args.with_defaults(sleep_time: 0.2, batch_num: 50)
 
