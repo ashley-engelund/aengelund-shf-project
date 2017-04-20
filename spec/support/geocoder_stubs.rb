@@ -57,15 +57,13 @@ stubbed_addresses = {
 
     "Hundforetagarevägen 5, 310 40, Harplinge, Sverige" =>
         hunforetagarevagen(5),
-    "Hundforetagarevägen 5, 310 40, Harplinge, Sverige" =>
-        hunforetagarevagen(5),
 
 
     "Hundforetagarevägen 1, 310 40, HasRegionBorg, Sverige" =>
         {
             'latitude' => 56.7422437,
             'longitude' => 12.7206453,
-            'address' => 'Hundvägen 101, 310 40, HasRegionBorg, Sverige',
+            'address' => 'Hundforetagarevägen 101, 310 40, HasRegionBorg, Sverige',
             'city' => 'HasRegionBorg',
             'state' => 'Hallands län',
             'postal_code' => '310 40',
@@ -78,7 +76,7 @@ stubbed_addresses = {
         {
             'latitude' => 56.7422437,
             'longitude' => 12.7206453,
-            'address' => 'Hundvägen 101, 310 40, HasRegionBorg, Sverige',
+            'address' => 'Hundforetagarevägen 101, 310 40, HasRegionBorg, Sverige',
             'city' => 'HasRegionBorg',
             'state' => 'Hallands län',
             'postal_code' => '310 40',
@@ -105,7 +103,7 @@ stubbed_addresses = {
         {
             'latitude' => 56.7422433,
             'longitude' => 12.7255982,
-            'address' => 'Kvarnlide 2, 310 40, Harplinge, Sverige',
+            'address' => 'Kvarnlide 10, 310 40, Harplinge, Sverige',
             'city' => 'Halmstad V',
             'state' => 'Hallands län',
             'postal_code' => '310 40',
@@ -118,7 +116,7 @@ stubbed_addresses = {
         {
             'latitude' => 56.7422437,
             'longitude' => 12.7206453,
-            'address' => 'Hundvägen 101, 310 40, Bagarmossen, Sverige',
+            'address' => 'Hundforetagarevägen 1, 310 40, Bagarmossen, Sverige',
             'city' => 'Bagarmossen',
             'state' => 'Hallands län',
             'postal_code' => '310 40',
@@ -255,7 +253,7 @@ stubbed_addresses = {
         {
             'latitude' => 60.12816100000001,
             'longitude' => 18.643501,
-            'address' => 'Hundforetagarevägen 1, 310 40, Harplinge, Sverige',
+            'address' => 'Sverige',
             'city' => 'Stockholm',
             'city' => 'Harplinge',
             'state' => 'Hallands län',
