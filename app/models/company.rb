@@ -81,14 +81,7 @@ class Company < ApplicationRecord
 
 
   def se_mailing_csv_str
-
-    if addresses.empty?
-      AddressExporter.se_mailing_csv_str( nil )
-
-    else
       AddressExporter.se_mailing_csv_str( main_address )
-
-    end
   end
 
 
