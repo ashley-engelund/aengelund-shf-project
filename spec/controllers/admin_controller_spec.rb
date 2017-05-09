@@ -83,12 +83,12 @@ RSpec.describe AdminController, type: :controller do
           # create 1 application in each state
           MembershipApplication.aasm.states.each do |app_state|
 
-            u = FactoryGirl.create(:user, email: "#{app_state.name.to_s}@example.com")
+            u = FactoryGirl.create(:user, email: "#{app_state.name}@example.com")
 
             m = FactoryGirl.create :membership_application,
-                                   first_name:    "First#{app_state.name.to_s}",
-                                   last_name:     "Last#{app_state.name.to_s}",
-                                   contact_email: "#{app_state.name.to_s}@example.com",
+                                   first_name:    "First#{app_state.name}",
+                                   last_name:     "Last#{app_state.name}",
+                                   contact_email: "#{app_state.name}@example.com",
                                    state:         app_state.name,
                                    user:          u
 
