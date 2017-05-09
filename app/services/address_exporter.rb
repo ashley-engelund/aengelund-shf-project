@@ -33,7 +33,7 @@ class AddressExporter
 
   private
 
-  # if country == 'Sveriges' return what the Swedish Postal service wants to see for a mailing address
+  # if country == 'Sverige' return what the Swedish Postal service wants to see for a mailing address
   def self.country_postal(address)
 
     if address

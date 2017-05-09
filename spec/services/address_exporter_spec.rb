@@ -86,7 +86,7 @@ RSpec.describe AddressExporter do
 
 
 
-    it "will print SE-Sweden for the country if the country attribute == 'Sveriges'" do
+    it "will print SE-Sweden for the country if the country attribute == 'Sverige'" do
 
       export_str = AddressExporter.se_mailing_csv_str(valid_address1)
 
