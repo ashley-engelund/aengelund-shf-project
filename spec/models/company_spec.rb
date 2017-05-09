@@ -1,5 +1,9 @@
 require 'rails_helper'
 
+require_relative File.join('..', '..', 'app', 'services', 'address_exporter')
+
+
+
 RSpec.describe Company, type: :model do
 
   let(:no_name) do
@@ -8,7 +12,7 @@ RSpec.describe Company, type: :model do
 
   let(:nil_region) do
     nil_co = create(:company, name: 'Nil Region',
-                     company_number: '6112107039')
+                    company_number: '6112107039')
 
     no_region = create(:company_address, addressable: nil_co, region: nil)
 
@@ -17,22 +21,22 @@ RSpec.describe Company, type: :model do
 
   let(:complete_co) do
     create(:company, name: 'Complete Company',
-                     company_number: '4268582063')
+           company_number: '4268582063')
   end
 
   let(:complete_co2) do
-    create(:company, name: 'Complete Company 2',
-                     company_number: '5560360793',
-                     address_visibility: 'city')
+    create(:company, name:     'Complete Company 2',
+           company_number:     '5560360793',
+           address_visibility: 'city')
   end
 
   let(:complete_co3) do
-    create(:company, name: 'Complete Company 3',
-                     company_number: '5569467466',
-                     address_visibility: 'none')
+    create(:company, name:     'Complete Company 3',
+           company_number:     '5569467466',
+           address_visibility: 'none')
   end
 
-  let!(:complete_companies) { [complete_co] }
+  let!(:complete_companies) {[complete_co]}
 
   let!(:incomplete_companies) do
     incomplete_cos = []
@@ -48,31 +52,31 @@ RSpec.describe Company, type: :model do
   end
 
   describe 'DB Table' do
-    it { is_expected.to have_db_column :id }
-    it { is_expected.to have_db_column :name }
-    it { is_expected.to have_db_column :company_number }
-    it { is_expected.to have_db_column :phone_number }
-    it { is_expected.to have_db_column :email }
-    it { is_expected.to have_db_column :website }
-    it { is_expected.to have_db_column :description }
-    it { is_expected.to have_db_column :address_visibility }
+    it {is_expected.to have_db_column :id}
+    it {is_expected.to have_db_column :name}
+    it {is_expected.to have_db_column :company_number}
+    it {is_expected.to have_db_column :phone_number}
+    it {is_expected.to have_db_column :email}
+    it {is_expected.to have_db_column :website}
+    it {is_expected.to have_db_column :description}
+    it {is_expected.to have_db_column :address_visibility}
   end
 
   describe 'Validations' do
-    it { is_expected.to validate_presence_of :company_number }
-    it { is_expected.to validate_length_of(:company_number).is_equal_to(10) }
-    it { is_expected.to allow_value('user@example.com').for(:email) }
-    it { is_expected.not_to allow_value('userexample.com').for(:email) }
-    it { is_expected.to validate_inclusion_of(:address_visibility)
-      .in_array(Company::ADDRESS_VISIBILITY) }
+    it {is_expected.to validate_presence_of :company_number}
+    it {is_expected.to validate_length_of(:company_number).is_equal_to(10)}
+    it {is_expected.to allow_value('user@example.com').for(:email)}
+    it {is_expected.not_to allow_value('userexample.com').for(:email)}
+    it {is_expected.to validate_inclusion_of(:address_visibility)
+                           .in_array(Company::ADDRESS_VISIBILITY)}
 
   end
 
   describe 'Associations' do
-    it { is_expected.to have_many(:business_categories).through(:membership_applications) }
-    it { is_expected.to have_many(:membership_applications) }
-    it { is_expected.to have_many(:addresses) }
-    it { is_expected.to have_many(:pictures) }
+    it {is_expected.to have_many(:business_categories).through(:membership_applications)}
+    it {is_expected.to have_many(:membership_applications)}
+    it {is_expected.to have_many(:addresses)}
+    it {is_expected.to have_many(:pictures)}
   end
 
 
@@ -97,37 +101,37 @@ RSpec.describe Company, type: :model do
       complete_co3
       scope_records = Company.address_visible
       expect(scope_records).
-        to match_array [ no_name, nil_region, complete_co, complete_co2 ]
+          to match_array [no_name, nil_region, complete_co, complete_co2]
     end
   end
 
 
   describe 'categories = all employee categories' do
 
-    let(:company) { create(:company, company_number: '5562252998') }
+    let(:company) {create(:company, company_number: '5562252998')}
 
-    let(:employee1) { create(:user) }
-    let(:employee2) { create(:user) }
-    let(:employee3) { create(:user) }
+    let(:employee1) {create(:user)}
+    let(:employee2) {create(:user)}
+    let(:employee3) {create(:user)}
 
-    let(:cat1) { create(:business_category, name: 'cat1') }
-    let(:cat2) { create(:business_category, name: 'cat2') }
-    let(:cat3) { create(:business_category, name: 'cat3') }
+    let(:cat1) {create(:business_category, name: 'cat1')}
+    let(:cat2) {create(:business_category, name: 'cat2')}
+    let(:cat3) {create(:business_category, name: 'cat3')}
 
     let(:m1) do
       create(:membership_application, :accepted, user: employee1,
-             num_categories: 0,
-             company_number: company.company_number)
+             num_categories:                           0,
+             company_number:                           company.company_number)
     end
     let(:m2) do
       create(:membership_application, :accepted, user: employee2,
-             num_categories: 0,
-             company_number: company.company_number)
+             num_categories:                           0,
+             company_number:                           company.company_number)
     end
     let(:m3) do
       create(:membership_application, :accepted, user: employee3,
-             num_categories: 0,
-             company_number: company.company_number)
+             num_categories:                           0,
+             company_number:                           company.company_number)
     end
 
     before(:all) do
@@ -161,7 +165,7 @@ RSpec.describe Company, type: :model do
 
   describe '#main_address' do
 
-    let(:company) { create(:company, num_addresses: 3) }
+    let(:company) {create(:company, num_addresses: 3)}
 
     it 'returns the first address for the company' do
       expect(company.addresses.count).to eq 3
@@ -171,9 +175,45 @@ RSpec.describe Company, type: :model do
   end
 
 
+  describe '#se_mailing_csv_str (export CSV string for postal address)' do
+
+    it 'just commas (no data between them) if there is no address' do
+      company = build(:company)
+
+      company.addresses.delete_all
+
+      expected_str = AddressExporter.se_mailing_csv_str(nil)
+
+      expect(company.se_mailing_csv_str).to eq expected_str
+
+    end
+
+    it 'uses the main address (1 address)' do
+
+      company = create(:company)
+
+      expected_str = AddressExporter.se_mailing_csv_str(company.main_address)
+
+      expect(company.se_mailing_csv_str).to eq expected_str
+
+    end
+
+    it 'uses the main address when it has multiple addresses' do
+
+      company = create(:company, num_addresses: 3)
+
+      expected_str = AddressExporter.se_mailing_csv_str(company.main_address)
+
+      expect(company.se_mailing_csv_str).to eq expected_str
+
+    end
+
+  end
+
+
   describe '#sanitize_website' do
 
-    let(:company) { create(:company) }
+    let(:company) {create(:company)}
 
     it 'website = "javascript://alert(alert-text)"' do
       company.website = "javascript://alert('alert-text')"
