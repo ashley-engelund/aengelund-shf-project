@@ -14,12 +14,12 @@ RSpec.describe AddressExporter do
     let(:overtornea_kommun) { FactoryGirl.create(:kommun, name: 'Övertorneå') }
 
     let(:valid_address1) { addr1 = FactoryGirl.create(:address,
-                                         street_address: 'Matarengivägen 24',
-                                         post_code:      '957 31',
-                                         city:           'Övertorneå',
-                                         kommun:         overtornea_kommun,
-                                         region:         norbotten_region,
-                                         addressable:    a_company)
+                                                      street_address: 'Matarengivägen 24',
+                                                      post_code: '957 31',
+                                                      city: 'Övertorneå',
+                                                      kommun: overtornea_kommun,
+                                                      region: norbotten_region,
+                                                      addressable: a_company)
     addr1
     }
 
@@ -40,8 +40,6 @@ RSpec.describe AddressExporter do
 
     it 'is a comma separated string' do
 
-      export_str = AddressExporter.se_mailing_csv_str(valid_address1)
-
       expected_str = "#{valid_address1.street_address},#{post_code_str valid_address1.post_code},#{valid_address1.city},#{valid_address1.kommun.name },#{valid_address1.region.name},SE-Sweden"
 
       expect(AddressExporter.se_mailing_csv_str(valid_address1)).to eq expected_str
@@ -50,12 +48,12 @@ RSpec.describe AddressExporter do
 
     it "post_code starts with a single quote (') so spreadsheets will see it as text, not a number (so any spaces are not lost)" do
 
-      export_str = AddressExporter.se_mailing_csv_str(valid_address1)
-
       expected_str = "#{valid_address1.street_address},#{post_code_str valid_address1.post_code},#{valid_address1.city},#{valid_address1.kommun.name },#{valid_address1.region.name},SE-Sweden"
 
-      expect(AddressExporter.se_mailing_csv_str(valid_address1)).to match(/957 31/)
-      expect(AddressExporter.se_mailing_csv_str(valid_address1)).not_to match(/95731/)
+      export_str = AddressExporter.se_mailing_csv_str(valid_address1)
+
+      expect(export_str).to match(/957 31/)
+      expect(export_str).not_to match(/95731/)
 
     end
 
@@ -63,8 +61,6 @@ RSpec.describe AddressExporter do
     it 'handles a nil kommun' do
 
       valid_address1.kommun = nil
-
-      export_str = AddressExporter.se_mailing_csv_str(valid_address1)
 
       expected_str = "#{valid_address1.street_address},#{post_code_str valid_address1.post_code},#{valid_address1.city},,#{valid_address1.region.name},SE-Sweden"
 
@@ -76,14 +72,11 @@ RSpec.describe AddressExporter do
 
       valid_address1.region = nil
 
-      export_str = AddressExporter.se_mailing_csv_str(valid_address1)
-
       expected_str = "#{valid_address1.street_address},#{post_code_str valid_address1.post_code},#{valid_address1.city},#{valid_address1.kommun.name },,SE-Sweden"
 
       expect(AddressExporter.se_mailing_csv_str(valid_address1)).to eq expected_str
 
     end
-
 
 
     it "will print SE-Sweden for the country if the country attribute == 'Sverige'" do

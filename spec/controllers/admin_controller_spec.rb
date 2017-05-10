@@ -13,13 +13,13 @@ RSpec.describe AdminController, type: :controller do
   include Devise::Test::ControllerHelpers
 
   # this will bypass Pundit policy access checks so logging in is not necessary
-  before(:each) {Warden.test_mode!}
+  before(:each) { Warden.test_mode! }
 
-  after(:each) {Warden.test_reset!}
+  after(:each) { Warden.test_reset! }
 
-  let(:user) {create(:user)}
+  let(:user) { create(:user) }
 
-  let(:csv_header) {out_str = ''
+  let(:csv_header) { out_str = ''
   out_str << "'#{I18n.t('activerecord.attributes.membership_application.contact_email').strip}',"
   out_str << "'#{I18n.t('activerecord.attributes.membership_application.first_name').strip}',"
   out_str << "'#{I18n.t('activerecord.attributes.membership_application.last_name').strip}',"
@@ -34,7 +34,6 @@ RSpec.describe AdminController, type: :controller do
   out_str << "'#{I18n.t('activerecord.attributes.address.country').strip}'"
   out_str << "\n"
   out_str}
-
 
 
   describe '#export_ankosan_csv' do
@@ -55,10 +54,9 @@ RSpec.describe AdminController, type: :controller do
 
         post :export_ansokan_csv
 
-        expect(response.body).to eq  csv_header
+        expect(response.body).to eq csv_header
 
       end
-
 
 
       describe 'with 0 membership applications' do
@@ -96,8 +94,8 @@ RSpec.describe AdminController, type: :controller do
 
             result_str << member1_info + ','
 
-            result_str << (m.company.nil? ? '' : '"' + m.company.name + '"' )
-            result_str <<  ','
+            result_str << (m.company.nil? ? '' : '"' + m.company.name + '"')
+            result_str << ','
 
             result_str << m.se_mailing_csv_str + "\n"
 
@@ -134,7 +132,7 @@ RSpec.describe AdminController, type: :controller do
 
           member1.update(membership_number: '1234567890')
 
-          member1_info              = "#{member1.contact_email},#{member1.first_name},#{member1.last_name},#{member1.membership_number},"+ I18n.t("membership_applications.state.#{member1.state}")
+          member1_info = "#{member1.contact_email},#{member1.first_name},#{member1.last_name},#{member1.membership_number},"+ I18n.t("membership_applications.state.#{member1.state}")
 
           result_str << member1_info + ','
           result_str << '"' + c1.name + '"' +','
