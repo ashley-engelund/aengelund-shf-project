@@ -48,8 +48,6 @@ RSpec.describe AddressExporter do
 
     it "post_code starts with a single quote (') so spreadsheets will see it as text, not a number (so any spaces are not lost)" do
 
-      expected_str = "#{valid_address1.street_address},#{post_code_str valid_address1.post_code},#{valid_address1.city},#{valid_address1.kommun.name },#{valid_address1.region.name},SE-Sweden"
-
       export_str = AddressExporter.se_mailing_csv_str(valid_address1)
 
       expect(export_str).to match(/957 31/)
