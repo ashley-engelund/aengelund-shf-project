@@ -185,6 +185,12 @@ sv:
           has_one: Kan inte ta bort post då beroende %{record} finns
           has_many: Kan inte ta bort poster då beroende %{record} finns
 
+  address_visibility:
+    street_address: *street
+    post_code: *post_code
+    city: *city
+    kommun: *kommun
+    none: Ingen
 
   # Automatisk och manuell sökning för views:
   membership_applications:
@@ -401,14 +407,18 @@ sv:
       success: Företaget raderat.
       error: Ett problem hindrade företaget från att raderas.
 
+    form:
+      region_tooltip: Välj "Sverige" om företaget är verksamt i
+       flera län, eller "Online" om det (i huvudsak) finns på nätet
+      visibility_tooltip: Hur detaljerat din adress visas för besökare (inkl kartor). Välj 'Ingen' för att inte visa din adress för besökare alls.
+      org_nr_tooltip: Endast siffror (ej bindestreck)
+
     company_name: Företagsnamn
     telephone_number: Telefonnummer
     operations_region: *region
-    op_region_multiple_use_sweden: Välj "Sverige" om företaget är verksamt i
-      flera län, eller "Online" om det fungerar oftast (eller uteslutande) på nätet.
     website_include_http: Företagets webbplats
-    org_nr_no_hyphens: Endast siffror (ej bindestreck)
     description: Beskrivning av företaget
+    address_visibility: Adressens synlighet
 
     all_companies: Alla företag
     edit_company: Redigera detta företag
@@ -529,7 +539,6 @@ sv:
     view_shf_document: Information om dokument
     all_shf_documents: Alla uppladdade dokument
     all_shf_minutes: Alla mötesprotokoll
-    edit_shf_document_contents: Redigera dokumentinnehållet
 
     invalid_upload_type: *invalid_upload_type
     file_too_large: *file_too_large_5MB
@@ -586,10 +595,14 @@ sv:
       shf_meeting_minutes: &member_pages_board_meetings Styrelseprotokoll
 
     contents_show:
-      page_title: '%{document_title}'
+      edit_member_page: Redigera sida
 
     contents_edit:
-      page_title: 'Redigera innehåll för SHF Document: %{document_title}'
+      page_title: 'Redigera medlemssida: %{document_title}'
+
+    contents_form:
+      member_page_title: Titel
+      member_page_contents: Innehåll
 
     contents_update:
       success: '%{document_title} uppdaterades utan problem.'
