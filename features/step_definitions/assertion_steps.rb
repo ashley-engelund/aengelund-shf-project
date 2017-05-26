@@ -426,3 +426,7 @@ Then /^"([^"]*)" should( not)? have t\("([^"]*)"\) selected$/ do | select_list, 
    expect(field_value).send( (negate ? :not_to : :to),  eq(i18n_content(expected_string)) )
 
 end
+
+Then(/^I should be on the all member app waiting reasons page$/) do
+  expect(current_path_without_locale(current_path)).to eq admin_only_member_app_waiting_reasons_path
+end
