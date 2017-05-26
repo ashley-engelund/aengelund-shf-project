@@ -15,30 +15,30 @@ RSpec.describe AdminPolicy do
 
   describe 'For a member that is a part of a company' do
     let(:members_company) { Company.find_by_company_number('5562728336')}
-    subject { described_class.new(admin).authorized? }
+    subject { described_class.new(member).authorized? }
 
-    it { is_expected.to be_truthy }
+    it { is_expected.to be_falsey }
 
   end
 
   describe 'For a member that is not part of a company' do
-    subject { described_class.new(admin).authorized? }
+    subject { described_class.new(member).authorized? }
 
-    it { is_expected.to be_truthy }
+    it { is_expected.to be_falsey }
 
   end
 
   describe 'For a user (logged in)' do
-    subject { described_class.new(admin).authorized? }
+    subject { described_class.new(user_1).authorized? }
 
-    it { is_expected.to be_truthy }
+    it { is_expected.to be_falsey }
 
   end
 
   describe 'For a visitor (not logged in)' do
-    subject { described_class.new(admin).authorized? }
+    subject { described_class.new(nil).authorized? }
 
-    it { is_expected.to be_truthy }
+    it { is_expected.to be_falsey }
 
   end
 end
