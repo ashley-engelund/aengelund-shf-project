@@ -18,6 +18,12 @@ RSpec.describe AdminOnly::MemberAppWaitingReason, type: :model do
   end
 
 
+  describe 'Validations' do
+
+    it { is_expected.to validate_presence_of :name_sv }
+
+  end
+
   describe '#other_reason_placeholder?' do
 
     let(:reason) { subject }

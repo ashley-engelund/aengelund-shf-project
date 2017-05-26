@@ -2,6 +2,7 @@ module AdminOnly
   
   class MemberAppWaitingReason < ApplicationRecord
 
+    validates_presence_of :name_sv
 
     def other_reason_placeholder?
       name_sv == self.class.other_reason_name
