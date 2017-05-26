@@ -256,6 +256,45 @@ Then(/^t\("([^"]*)"\) should( not)? be visible$/) do |string, not_see|
 end
 
 
+# Have to be sure to wait for any javascript to execute since it may hide or show an item
+Then(/^item "([^"]*)" should( not)? be visible$/) do | item, negate|
+
+  if negate
+    expect(page).to have_field(item, visible: false)
+
+  else
+    expect( find_field(item).visible? ).to be_truthy
+  end
+
+end
+
+
+# Tests that an input or button with the given label is disabled.
+Then /^the "([^\"]*)" (field|button|item) should( not)? be disabled$/ do |label, kind, negate|
+
+  if kind == 'field'
+    element = find_field(label)
+  elsif kind == 'button'
+    element = find_button(label)
+  else
+    element = find(label)
+  end
+
+  expect(["false", "", nil]).send(negate ? :to : :not_to,  include(element[:disabled]) )
+
+end
+
+
+# Tests that an input or button with the given label is disabled.
+Then /^the "([^\"]*)" field should( not)? be set to "([^\"]*)"$/ do |label, negate, text_value|
+
+  element = find_field(label)
+
+  expect(["false", "", nil]).send(negate ? :to : :not_to,  have_content(text_value) )
+
+end
+
+
 Then(/^I should see link "([^"]*)" with target = "([^"]*)"$/) do |link_identifier, target_value|
   expect(find_link(link_identifier)[:target]).to eq(target_value)
 end
@@ -362,5 +401,28 @@ Then(/^all addresses for the company named "([^"]*)" should( not)? be geocoded$/
   else
     expect( co.addresses.reject(&:geocoded? ).count).to be 0
   end
+
+end
+
+
+# Checks that a certain option is selected for a text field (from https://github.com/makandra/spreewald)
+Then /^"([^"]*)" should( not)? have t\("([^"]*)"\) selected$/ do | select_list, negate, expected_string |
+
+    field = find_field(select_list)
+
+    field_value = case field.tag_name
+                    when 'select'
+                      options = field.all('option')
+                      selected_option = options.detect(&:selected?) || options.first
+                      if selected_option && selected_option.text.present?
+                        selected_option.text.strip
+                      else
+                        ''
+                      end
+                    else
+                      field.value
+                  end
+
+   expect(field_value).send( (negate ? :not_to : :to),  eq(i18n_content(expected_string)) )
 
 end
