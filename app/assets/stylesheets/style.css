@@ -3280,7 +3280,7 @@ Post tags
     font-size:10px !important;
     line-height:1 !important;
     letter-spacing:1px;
-    word-break: break-word;
+    word-break: normal; /* break-word;  */
     text-transform:uppercase;
     color:#888;
     margin: 0 6px 2px 0;
