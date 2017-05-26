@@ -85,8 +85,9 @@ Feature: Admin manages the list of reasons why SHF is waiting for info from an a
     Given I am logged in as "admin@shf.se"
     When I am on the "all waiting for info reasons" page
     Then I should see 2 reasons listed
-    And I click on t("admin_only.member_app_waiting_reasons.new_member_app_waiting_reason")
+    And I click on "new-member-app-waiting-reason"
     Then I should see t("admin_only.member_app_waiting_reasons.new.title")
+    And I should be on the "new waiting for info reason" page
     When I fill in the translated form with data:
       | activerecord.attributes.member_app_waiting_reason.name_sv | activerecord.attributes.member_app_waiting_reason.name_en | activerecord.attributes.member_app_waiting_reason.description_sv | activerecord.attributes.member_app_waiting_reason.description_en |
       | Namn på svenska                                           | Name in English                                           | Beskrivning på svenska                                           | Description in English                                           |
@@ -95,6 +96,22 @@ Feature: Admin manages the list of reasons why SHF is waiting for info from an a
     When I am on the "all waiting for info reasons" page
     Then I should see 3 reasons listed
     And I should see "Namn på svenska"
+
+
+  @admin
+  Scenario: Admin adds a new reason but leaves required name_sv blank (SAD PATH)
+    Given I am logged in as "admin@shf.se"
+    When I am on the "all waiting for info reasons" page
+    Then I should see 2 reasons listed
+    And I click on "new-member-app-waiting-reason"
+    Then I should be on the "new waiting for info reason" page
+    When I fill in the translated form with data:
+      | activerecord.attributes.member_app_waiting_reason.name_en | activerecord.attributes.member_app_waiting_reason.description_sv | activerecord.attributes.member_app_waiting_reason.description_en |
+      | Name in English                                           | Beskrivning på svenska                                           | Description in English                                           |
+    And I click on t("save")
+    When I am on the "all waiting for info reasons" page
+    Then I should see 2 reasons listed
+    And I should not see "Name in English"
 
 
   @admin
@@ -131,6 +148,15 @@ Feature: Admin manages the list of reasons why SHF is waiting for info from an a
     Then I should see t("admin_only.member_app_waiting_reasons.update.success")
     And I should see "this is a long description in English"
     And I should not see "description 1"
+
+
+  Scenario: Admin edits a reason but leaves required field name_sv blank (SAD PATH)
+    Given I am logged in as "admin@shf.se"
+    And I am on the edit member app waiting reason with name_sv "namn 1"
+    And I fill in t("activerecord.attributes.member_app_waiting_reason.name_sv") with ""
+    And I fill in t("activerecord.attributes.member_app_waiting_reason.description_en") with "this is a long description in English"
+    And I click on the t("save") button
+    And I should not see "this is a long description in English"
 
 
   @admin
