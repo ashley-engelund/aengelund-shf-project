@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe AdminOnlyPolicy do
+RSpec.describe AdminOnly::AdminOnlyPolicy do
 
   let(:user_1) { create(:user, email: 'user@random.com') }
   let(:member) { create(:member_with_membership_app, email: 'member@random.com', company_number: '5562728336')}
