@@ -110,7 +110,7 @@ And(/^I should not see t\("([^"]*)"\) link$/) do |link_label|
 end
 
 
-Then(/^I should be on "([^"]*)" page$/) do |page|
+Then(/^I should be on (?:the )*"([^"]*)" page$/) do |page|
   case page.downcase
     when  'login'
       path = new_user_session_path
@@ -124,7 +124,12 @@ Then(/^I should be on "([^"]*)" page$/) do |page|
       path = information_path
     when 'member instructions'
       path = information_path
+    when 'all waiting for info reasons'
+      path = admin_only_member_app_waiting_reasons_path
+    when 'new waiting for info reason'
+      path = new_admin_only_member_app_waiting_reason_path
   end
+
   expect(current_path_without_locale(current_path)).to eq path
 end
 
