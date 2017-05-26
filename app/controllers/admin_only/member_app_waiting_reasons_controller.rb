@@ -33,7 +33,7 @@ module AdminOnly
 
       respond_to do |format|
         if @member_app_waiting_reason.save
-          format.html { redirect_to @member_app_waiting_reason, notice: t('.success') }
+          format.html { redirect_to @member_app_waiting_reason, notice: t('.success'), only_path: true  }
           format.json { render :show, status: :created, location: @member_app_waiting_reason }
         else
           format.html { render :new, notice: t('.error') }
@@ -46,7 +46,7 @@ module AdminOnly
     def update
       respond_to do |format|
         if @member_app_waiting_reason.update(member_app_waiting_reason_params)
-          format.html { redirect_to @member_app_waiting_reason, notice: t('.success') }
+          format.html { redirect_to @member_app_waiting_reason, notice: t('.success'), only_path: true  }
           format.json { render :show, status: :ok, location: @member_app_waiting_reason }
         else
           format.html { render :edit, notice: t('.error') }
@@ -59,7 +59,7 @@ module AdminOnly
     def destroy
       if @member_app_waiting_reason.destroy
         respond_to do |format|
-          format.html { redirect_to admin_only_member_app_waiting_reasons_url, notice: t('.success') }
+          format.html { redirect_to admin_only_member_app_waiting_reasons_url, notice: t('.success'), only_path: true  }
           format.json { head :no_content }
         end
       else
