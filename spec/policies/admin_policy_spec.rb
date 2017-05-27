@@ -15,7 +15,7 @@ RSpec.describe AdminPolicy do
 
   describe 'For a member that is a part of a company' do
     let(:members_company) { Company.find_by_company_number('5562728336')}
-    subject { described_class.new(member).authorized? }
+    subject { described_class.new(members_company).authorized? }
 
     it { is_expected.to be_falsey }
 
