@@ -208,7 +208,8 @@ Feature: As an Admin
   @admin
   Scenario: Admin cannot change from 'waiting for applicant' to 'waiting for applicant'
     Given I am on "AnnaWaiting" application page
-    Then I should not see button t("membership_applications.ask_applicant_for_info_btn")
+    Then I should not see t("membership_applications.ask_applicant_for_info_btn")
+
 
   @admin
   Scenario: 'Waiting for applicant' status is not changed if admin edits the application
