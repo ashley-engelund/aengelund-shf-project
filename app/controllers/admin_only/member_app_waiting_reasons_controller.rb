@@ -33,10 +33,10 @@ module AdminOnly
 
       respond_to do |format|
         if @member_app_waiting_reason.save
-          format.html { redirect_to @member_app_waiting_reason, notice: t('.success'), only_path: true  }
+          format.html { redirect_to @member_app_waiting_reason, notice: t('admin_only.member_app_waiting_reasons.create.success'), only_path: true  }
           format.json { render :show, status: :created, location: @member_app_waiting_reason }
         else
-          format.html { render :new, notice: t('.error') }
+          format.html { render :new, notice: t('admin_only.member_app_waiting_reasons.create.error') }
           format.json { render json: @member_app_waiting_reason.errors, status: :unprocessable_entity }
         end
       end
@@ -46,10 +46,10 @@ module AdminOnly
     def update
       respond_to do |format|
         if @member_app_waiting_reason.update(member_app_waiting_reason_params)
-          format.html { redirect_to @member_app_waiting_reason, notice: t('.success'), only_path: true  }
+          format.html { redirect_to @member_app_waiting_reason, notice: t('admin_only.member_app_waiting_reasons.update.success'), only_path: true  }
           format.json { render :show, status: :ok, location: @member_app_waiting_reason }
         else
-          format.html { render :edit, notice: t('.error') }
+          format.html { render :edit, notice: t('admin_only.member_app_waiting_reasons.update.error') }
           format.json { render json: @member_app_waiting_reason.errors, status: :unprocessable_entity }
         end
       end
@@ -59,12 +59,12 @@ module AdminOnly
     def destroy
       if @member_app_waiting_reason.destroy
         respond_to do |format|
-          format.html { redirect_to admin_only_member_app_waiting_reasons_url, notice: t('.success'), only_path: true  }
+          format.html { redirect_to admin_only_member_app_waiting_reasons_url, notice: t('admin_only.member_app_waiting_reasons.destroy.success'), only_path: true  }
           format.json { head :no_content }
         end
       else
         respond_to do |format|
-          format.html { render admin_only_member_app_waiting_reasons_url, notice: t('.error') }
+          format.html { render admin_only_member_app_waiting_reasons_url, notice: t('admin_only.member_app_waiting_reasons.destroy.error') }
           format.json { render json: @member_app_waiting_reason.errors, status: :unprocessable_entity }
         end
       end
