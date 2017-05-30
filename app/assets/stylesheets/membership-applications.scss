@@ -9,6 +9,9 @@ $border-med-blue-a-light: rgba(86, 146, 206, 0.2);
 
 $files-table-background: #ffffff;
 
+$app-state-border-blue: rgb(142, 173, 206);
+
+
 .membershipapplication {
 
   .entry-content.wpcf7 {
@@ -129,27 +132,14 @@ $files-table-background: #ffffff;
 
   #application-status {
 
-    border: 1pt solid rgb(142, 173, 206);
+    border: 1pt solid $app-state-border-blue;
     margin-left: 1rem;
     padding-left: 1rem;
 
-    .button_to {
-      margin-bottom: 0.5rem;
-    }
-
-    .waiting_reason_title {
-      font-weight: bold;
-      text-align: right;
-    }
-
 
     .row {
-      margin-top: 1rem;
       margin-bottom: 1rem;
-    }
-
-    #admin-change-status-buttons #other_text_field  input {
-      text-align: left;
+      margin-top: 1rem;
     }
 
 
