@@ -4,6 +4,8 @@ module AdminOnly
 
     validates_presence_of :name_sv
 
+
+    # is this a custom reason entered or is it the placeholder for "Other (enter a custom reason)" for the UI
     def other_reason_placeholder?
       name_sv == self.class.other_reason_name
     end
