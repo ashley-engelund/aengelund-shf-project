@@ -808,9 +808,9 @@ sv:
           list_users: Användare
 
         member_app_waiting_reasons:
-          submenu_title: "Väntar på informationskäl"
-          list_member_app_waiting_reasons: *all_app_waiting_reasons
-          new_member_app_waiting_reasons: *new_app_waiting_reason
+          submenu_title: "Väntar på information skäl"
+          list_member_app_waiting_reasons: "Alla skäl"
+          new_member_app_waiting_reasons: "Ny skäl"
 
 
   #----------

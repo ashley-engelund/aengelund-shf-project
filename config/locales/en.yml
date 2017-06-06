@@ -806,8 +806,8 @@ en:
 
         member_app_waiting_reasons:
           submenu_title: "Waiting for Information reasons"
-          list_member_app_waiting_reasons: *all_app_waiting_reasons
-          new_member_app_waiting_reasons: *new_app_waiting_reason
+          list_member_app_waiting_reasons: "All reasons"
+          new_member_app_waiting_reasons: "New reason"
 
 
 
