@@ -5,7 +5,7 @@ module AdminOnly
     validates_presence_of :name_sv
 
 
-    # is this a custom reason entered or is it the placeholder for "Other (enter a custom reason)" for the UI
+    # Is this the placeholder for "Other (enter a custom reason)" for the UI (true) or a custom reason entered (false)
     def other_reason_placeholder?
       name_sv == self.class.other_reason_name
     end
