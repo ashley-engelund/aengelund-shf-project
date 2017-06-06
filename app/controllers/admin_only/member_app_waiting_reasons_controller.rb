@@ -20,6 +20,7 @@ module AdminOnly
 
 
     def new
+      authorize MemberAppWaitingReason
       @member_app_waiting_reason = MemberAppWaitingReason.new
     end
 
@@ -29,6 +30,7 @@ module AdminOnly
 
 
     def create
+      authorize MemberAppWaitingReason
       @member_app_waiting_reason = MemberAppWaitingReason.new(member_app_waiting_reason_params)
 
       respond_to do |format|
