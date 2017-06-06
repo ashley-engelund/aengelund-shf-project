@@ -242,6 +242,15 @@ And(/^I should see t\("([^"]*)", ([^:]*): "([^"]*)"\)$/) do |content, key, value
 end
 
 
+And(/^I should see t\("([^"]*)", ([^:]*): "([^"]*)", ([^:]*): "([^"]*)"\)$/) do | content, key1, value1, key2, value2 |
+  expect(page).to have_content I18n.t("#{content}", key1.to_sym => value1, key2.to_sym => value2)
+end
+
+And(/^I should not see t\("([^"]*)", ([^:]*): "([^"]*)", ([^:]*): "([^"]*)"\)$/) do | content, key1, value1, key2, value2 |
+  expect(page).not_to have_content I18n.t("#{content}", key1.to_sym => value1, key2.to_sym => value2)
+end
+
+
 Then(/^I should see t\("([^"]*)", authentication_keys: '([^']*)'\)$/) do |error, auth_key|
   expect(page).to have_content I18n.t("#{error}", authentication_keys: auth_key)
 end
