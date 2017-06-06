@@ -78,6 +78,71 @@ Feature: Admin manages the list of reasons why SHF is waiting for info from an a
 
 
 
+  @visitor
+  Scenario: A visitor cannot create a new reason
+    Given I am logged out
+    When I am on the "new waiting for info reason" page
+    Then I should see t("errors.not_permitted")
+    And I should not see t("admin_only.member_app_waiting_reasons.new.title")
+
+  @user
+  Scenario: A logged in user cannot create a new reason
+    Given I am logged in as "anna_waiting_for_info@nosnarkybarky.se"
+    When I am on the "new waiting for info reason" page
+    Then I should see t("errors.not_permitted")
+    And I should not see t("admin_only.member_app_waiting_reasons.new.title")
+
+
+  @member
+  Scenario: A member cannot create a new reason
+    Given I am logged in as "emma@happymutts.se"
+    When I am on the "new waiting for info reason" page
+    Then I should see t("errors.not_permitted")
+    And I should not see t("admin_only.member_app_waiting_reasons.new.title")
+
+
+  @admin
+  Scenario: An admin can create a new reason
+    Given I am logged in as "admin@shf.se"
+    When I am on the "new waiting for info reason" page
+    Then I should not see t("errors.not_permitted")
+    And I should see t("admin_only.member_app_waiting_reasons.new.title")
+
+
+
+
+  @visitor
+  Scenario: A visitor cannot edit a reason
+    Given I am logged out
+    When I am on the edit member app waiting reason with name_sv "namn 1"
+    Then I should see t("errors.not_permitted")
+    And I should not see t("admin_only.member_app_waiting_reasons.edit.title", name_sv: "namn 1", name_en: "name 1")
+
+  @user
+  Scenario: A logged in user cannot edit a reason
+    Given I am logged in as "anna_waiting_for_info@nosnarkybarky.se"
+    When I am on the edit member app waiting reason with name_sv "namn 1"
+    Then I should see t("errors.not_permitted")
+    And I should not see t("admin_only.member_app_waiting_reasons.edit.title", name_sv: "namn 1", name_en: "name 1")
+
+
+  @member
+  Scenario: A member cannot edit a reason
+    Given I am logged in as "emma@happymutts.se"
+    When I am on the edit member app waiting reason with name_sv "namn 1"
+    Then I should see t("errors.not_permitted")
+    And I should not see t("admin_only.member_app_waiting_reasons.edit.title", name_sv: "namn 1", name_en: "name 1")
+
+
+  @admin
+  Scenario: An admin can edit a reason
+    Given I am logged in as "admin@shf.se"
+    When I am on the edit member app waiting reason with name_sv "namn 1"
+    Then I should not see t("errors.not_permitted")
+    And I should see t("admin_only.member_app_waiting_reasons.edit.title", name_sv: "namn 1", name_en: "name 1")
+
+
+
   # Basic CRUD and managing the reasons:
 
   @admin
