@@ -17,7 +17,7 @@ Dotenv.load('/var/www/shf/shared/.env')
 
 
 
-Backup::Model.new(:production_backup, 'Description for production_backup') do
+Backup::Model.new(:production_backup, 'data: db, entire current release (includes /public); storage: AWS, local[60 most recent]') do
   ##
   # Split [Splitter]
   #
@@ -53,27 +53,11 @@ Backup::Model.new(:production_backup, 'Description for production_backup') do
   archive :rails_codebase_archive do |archive|
    # archive.use_sudo
     app_root = '/var/www/shf/'
-    app_shared = "#{app_root}shared/"   # shared for all releases
+    app_current = "#{app_root}current/"  # current release
 
-    archive.add "#{app_shared}.env"
-    archive.add "#{app_shared}bin/"
-    archive.add "#{app_shared}config/"
-    archive.add "#{app_shared}log/"
-    archive.add "#{app_shared}public/"
-    archive.add "#{app_root}Gemfile"
-    archive.add "#{app_root}Gemfile.lock"
-
+    archive.add app_current
   end
 
-
-  ##
-  # store the backup as a local copy:
-  #  Local (Copy) [Storage]
-  #
-  store_with Local do |local|
-    local.path       = '~/BACKUPS/'
-    local.keep       = 45
-  end
 
   ##
   #  store the backup on AWS S3
@@ -82,8 +66,8 @@ Backup::Model.new(:production_backup, 'Description for production_backup') do
     # AWS Credentials
     s3.access_key_id     = ENV['SHF_AWS_S3_BACKUP_KEY_ID']
     s3.secret_access_key = ENV['SHF_AWS_S3_BACKUP_SECRET_ACCESS_KEY']
-    # Or, to use a IAM Profile:
-    # s3.use_iam_profile = true
+     # Or, to use a IAM Profile:
+     #  s3.use_iam_profile = true
 
     s3.region             = ENV['SHF_AWS_S3_BACKUP_REGION']
     s3.bucket             = ENV['SHF_AWS_S3_BACKUP_BUCKET']
@@ -94,7 +78,20 @@ Backup::Model.new(:production_backup, 'Description for production_backup') do
   end
 
 
- ##
+  ##
+  # store the backup as a local copy:
+  #  Local (Copy) [Storage]
+  #
+  #   Local storage should be done last so that the backup is moved.
+  #   Otherwise it will have to make an additional copy for any other storage done after this.
+  #
+  store_with Local do |local|
+    local.path       = '~/BACKUPS/'
+    local.keep       = 45
+  end
+
+
+  ##
  # TODO:  add a Notifier
 
 
