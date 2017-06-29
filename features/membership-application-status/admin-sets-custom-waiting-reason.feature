@@ -80,6 +80,7 @@ Feature: Admin sets or enters the reason they are waiting for info from a user
     When I set "member_app_waiting_reasons" to t("admin_only.member_app_waiting_reasons.other_custom_reason")
     And I fill in "custom_reason_text" with "This is my reason"
     And I press enter in "custom_reason_text"
+    And I wait for all ajax requests to complete
     And I set "member_app_waiting_reasons" to "waiting for payment"
     And I am on the list applications page
     And I am on "AnnaWaiting" application page
