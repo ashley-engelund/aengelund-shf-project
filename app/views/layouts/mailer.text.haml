@@ -1,1 +1,10 @@
+= t('shf_mailer.greeting', greeting_name: @greeting_name)
+= ' '
+
 = yield
+= ' '
+
+= render 'shf_mailer/shf_mail_signoff'
+
+= render 'shf_mailer/shf_mail_footer'
+

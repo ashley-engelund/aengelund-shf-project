@@ -1,3 +1,17 @@
-%hmtl
+%html
+  %head
+    = stylesheet_link_tag 'shf-mailer', media: 'all'
+
   %body
-    = yield
+
+    #email{class: action_name}
+
+      #greeting
+        %h2= t('shf_mailer.greeting', greeting_name: @greeting_name)
+
+      #email-content
+        = yield
+
+      = render 'shf_mailer/shf_mail_signoff'
+
+      = render 'shf_mailer/shf_mail_footer'
