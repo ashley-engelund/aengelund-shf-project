@@ -40,9 +40,6 @@ Rails.application.configure do
 
   config.action_mailer.show_previews = true
 
-  # Where the mailer preview templates can be found
-  config.action_mailer.preview_path = File.join(Rails.root, 'app', 'mailers', 'previews')
-
 
   #
   ###
