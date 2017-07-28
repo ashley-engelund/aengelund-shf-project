@@ -700,6 +700,16 @@ sv:
       delete_confirm: "Är du säker på att du vill radera orsaken: %{name_sv} (%{name_en})?"
 
 
+  shf_mailer:
+    greeting: "Hej %{greeting_name}"
+    shf_signoff: "Voof!"
+    shf_signature: "Sveriges Hundföretagare "
+    shf_signature_url: "http://sverigeshundforetagare.se"
+
+    footer:
+      text: "Please don't reply to this email. (Should reply email be set to info@... or member-help@... ?)  Received this by mistake ....? <what should go here?>"
+
+
   devise:
     min_length: '(minst %{minimum_length} tecken)'
 
