@@ -1,0 +1,34 @@
+
+#email {
+
+  #greeting {
+
+  }
+
+  #email-content {
+    margin-left: 1rem;
+  }
+
+  #signoff {
+
+    .signoff {
+      margin-top: 2rem;
+      font-style: italic;
+      font-weight: bold;
+      font-size: larger;
+    }
+
+    #signature {
+      .shf {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+
+  #footer {
+    font-size: smaller;
+    color: #6aa6ed;
+  }
+
+}
