@@ -4,12 +4,12 @@
 
   %body
 
-    #email{class: action_name}
+    .email{ class: action_name }
 
-      #greeting
+      .greeting
         %h2= t('shf_mailer.greeting', greeting_name: @greeting_name)
 
-      #email-content
+      .email-content
         = yield
 
       = render 'shf_mailer/shf_mail_signoff'
