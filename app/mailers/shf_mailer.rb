@@ -10,8 +10,8 @@ class ShfMailer < Devise::Mailer
   DEFAULT_MAILGUN_DOMAIN = 'sverigeshundforetagare.se'
 
   # the following 2 lines are required to use this with Devise:
-  helper :application   # gives access to all helpers defined within `application_helper`.
-  include Devise::Controllers::UrlHelpers   # access to  eg. `confirmation_url`
+  helper :application # gives access to all helpers defined within `application_helper`.
+  include Devise::Controllers::UrlHelpers # access to  eg. `confirmation_url`
 
   # vars used in the layout:
   # @greeting_name: the name used in the greeting line.  If it is nil, no greeting line is shown
@@ -35,33 +35,21 @@ class ShfMailer < Devise::Mailer
   end
 
 
-  # Devise methods  (is there a way to refactor these? they are all so similar)
+  # Set the instance var @greeting_name before calling each Devise method via super
+  %w(
+      confirmation_instructions
+      reset_password_instructions
+      unlock_instructions
+      email_changed
+      password_change
+      ).each do |method|
 
-  def confirmation_instructions(record, token, opts={})
-    set_greeting_name(record)
-    super
+    define_method(method) do |resource, *args|
+      set_greeting_name(resource)
+      super(resource, *args)
+    end
+
   end
-
-  def reset_password_instructions(record, token, opts={})
-    set_greeting_name(record)
-    super
-  end
-
-  def unlock_instructions(record, token, opts={})
-    set_greeting_name(record)
-    super
-  end
-
-  def email_changed(record, opts={})
-    set_greeting_name(record)
-    super
-  end
-
-  def password_change(record, opts={})
-    set_greeting_name(record)
-    super
-  end
-
 
 
   private
@@ -75,5 +63,6 @@ class ShfMailer < Devise::Mailer
     end
 
   end
+
 
 end
