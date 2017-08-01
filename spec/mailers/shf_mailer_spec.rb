@@ -6,6 +6,9 @@ require 'email_spec/rspec'
 
 RSpec.describe ShfMailer, type: :mailer do
 
+  include Devise::Mailers::Helpers
+
+
   TEST_TEMPLATE = 'empty_template'
 
 
@@ -77,27 +80,27 @@ RSpec.describe ShfMailer, type: :mailer do
   describe 'content is correct' do
 
     before(:all) do
-      @email = ShfMailer.new.mail(to: 'test@example.com',
-                                  subject: 'test subject',
-                                  template_name: TEST_TEMPLATE) # since we don't have a 'real' action, need to specify the template
+      @recipient = create(:user)
+      @email = ShfMailer.new.reset_password_instructions(@recipient, :reset_password_instructions)
     end
 
 
     it "should be set to be delivered to the email passed in" do
-      expect(@email).to deliver_to("test@example.com")
+      expect(@email).to deliver_to(@recipient.email)
     end
 
 
     it "should have the correct subject" do
-      expect(@email).to have_subject(/test subject/)
+      initialize_from_record(@recipient) # required to use Devise::Mailers::Helpers subject_for
+      expect(@email).to have_subject( subject_for(:reset_password_instructions) )
     end
 
     it "default from address is ENV['SHF_NOREPLY_EMAIL']" do
       expect(@email).to be_delivered_from(ENV['SHF_NOREPLY_EMAIL'])
     end
 
-    it 'should have a greeting' do
-      expect(@email).to have_body_text(I18n.t('shf_mailer.greeting', greeting_name: ''))
+    it 'greeting uses first and last name' do
+      expect(@email).to have_body_text(I18n.t('shf_mailer.greeting', greeting_name: @recipient.full_name))
     end
 
 
