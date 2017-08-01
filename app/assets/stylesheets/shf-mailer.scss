@@ -2,9 +2,6 @@ $footer-color:  #6aa6ed;
 
 .email {
 
-  .greeting {
-
-  }
 
   .email-content {
     margin-left: 1rem;
@@ -28,8 +25,8 @@ $footer-color:  #6aa6ed;
 
 
   .footer {
-    font-size: smaller;
     color: $footer-color;
+    font-size: smaller;
   }
 
 }
