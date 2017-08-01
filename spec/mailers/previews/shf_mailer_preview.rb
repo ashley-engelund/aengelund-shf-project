@@ -2,4 +2,10 @@
 
 class ShfMailerPreview < ActionMailer::Preview
 
+
+  def reset_password_instructions
+    ShfMailer.reset_password_instructions(User.second, "faketoken", {})
+  end
+
+
 end
