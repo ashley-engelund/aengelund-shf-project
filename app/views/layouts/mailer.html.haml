@@ -7,7 +7,7 @@
     .email{ class: action_name }
 
       .greeting
-        %h2= t('shf_mailer.greeting', greeting_name: @greeting_name)
+        %h2= t('shf_mailer.greeting', greeting_name: @greeting_name) if @greeting_name
 
       .email-content
         = yield
