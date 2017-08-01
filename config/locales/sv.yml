@@ -701,7 +701,7 @@ sv:
 
 
   shf_mailer:
-    greeting: "Hej %{greeting_name}"
+    greeting: "Hallå %{greeting_name}"
     shf_signoff: "Voof!"
     shf_signature: "Sveriges Hundföretagare "
     shf_signature_url: "http://sverigeshundforetagare.se"
