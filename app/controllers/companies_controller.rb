@@ -55,6 +55,8 @@ class CompaniesController < ApplicationController
 
     Ckeditor::Picture.images_category = 'company_' + @company.id.to_s
     Ckeditor::Picture.for_company_id  = @company.id
+
+    @company.main_address # this will create one if it's nil ( == lazy initialization)
   end
 
 
