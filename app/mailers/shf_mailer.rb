@@ -1,13 +1,12 @@
 class ShfMailer < Devise::Mailer
 
-  # @see https://github.com/mailgun/mailgun-ruby/docs for examples
+  # @see https://github.com/mailgun/mailgun-ruby/tree/master/docs for examples
   # @see https://github.com/plataformatec/devise/wiki/How-To:-Use-custom-mailer
   #   for instructions on using this custom mailer with Devise
 
   default from: ENV['SHF_NOREPLY_EMAIL']
   layout 'mailer'
 
-  DEFAULT_MAILGUN_DOMAIN = 'sverigeshundforetagare.se'
 
   # the following 2 lines are required to use this with Devise:
   helper :application # gives access to all helpers defined within `application_helper`.
@@ -31,7 +30,7 @@ class ShfMailer < Devise::Mailer
 
   # the specific SHF domain for the Mailgun account (it's not the sandbox domain)
   def domain
-    ENV.fetch('MAILGUN_DOMAIN', DEFAULT_MAILGUN_DOMAIN)
+    ENV['MAILGUN_DOMAIN']
   end
 
 

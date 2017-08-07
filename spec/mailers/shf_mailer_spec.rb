@@ -49,24 +49,14 @@ RSpec.describe ShfMailer, type: :mailer do
 
   describe '#domain' do
 
-    describe 'should never be nil, even if not defined in ENV' do
+    it 'can be nil (which should then rightly mean an error response from Mailgun)' do
 
+      stub_const('ENV', ENV.to_hash)
+      ENV.delete('MAILGUN_DOMAIN')
 
-      it 'is not nil' do
-        stub_const('ENV', ENV.to_hash)
-        ENV.delete('MAILGUN_DOMAIN')
-
-        expect(subject.domain).not_to be_nil
-      end
-
-      it 'default value is sverigeshundforetagare.se' do
-        stub_const('ENV', ENV.to_hash)
-        ENV.delete('MAILGUN_DOMAIN')
-
-        expect(subject.domain).to eq 'sverigeshundforetagare.se'
-      end
-
+      expect(subject.domain).to be_nil
     end
+
 
     it 'can be some value (not nil)' do
       stub_const('ENV', ENV.to_hash.merge('MAILGUN_DOMAIN' => 'blorf.com'))
@@ -92,7 +82,7 @@ RSpec.describe ShfMailer, type: :mailer do
 
     it "should have the correct subject" do
       initialize_from_record(@recipient) # required to use Devise::Mailers::Helpers subject_for
-      expect(@email).to have_subject( subject_for(:reset_password_instructions) )
+      expect(@email).to have_subject(subject_for(:reset_password_instructions))
     end
 
     it "default from address is ENV['SHF_NOREPLY_EMAIL']" do
