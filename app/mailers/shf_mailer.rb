@@ -51,6 +51,18 @@ class ShfMailer < Devise::Mailer
   end
 
 
+  def accept(member_application)
+
+    #member_application = MembershipApplication.find(7)
+    @action_name = 'accept'
+    @greeting_name = set_greeting_name(member_application.user)
+
+    mail(to: member_application.user.email , subject: t('shf_mailer.membership_application.accept.subject') )
+
+  end
+
+
+
   private
 
   def set_greeting_name(record)

@@ -710,6 +710,13 @@ sv:
       text: "Please don't reply to this email. (Should reply email be set to info@... or member-help@... ?)  Received this by mistake ....? <what should go here?>"
 
 
+    membership_application:
+      accept:
+        subject: "Välkommen! Din SHF-ansökan har godkänts"
+        greeting: &email_greeting "Hej %{greeting_name}"
+        message_text: "Vi är glada att meddela att din ansökan till SHF har godkänts!"
+
+
   devise:
     min_length: '(minst %{minimum_length} tecken)'
 

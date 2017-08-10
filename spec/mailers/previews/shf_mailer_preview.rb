@@ -11,4 +11,15 @@ class ShfMailerPreview < ActionMailer::Preview
   end
 
 
+
+  def accept
+
+    member_app = User.second.membership_applications.last
+
+    #ShfMailer.accept(MembershipApplication.find(7))
+    ShfMailer.accept(member_app)
+  end
+
+
+
 end

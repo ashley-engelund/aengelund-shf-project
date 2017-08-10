@@ -707,6 +707,11 @@ en:
     footer:
       text: "Please don't reply to this email. (Should reply email be set to info@... or member-help@... ?)  Received this by mistake ....? <what should go here?>"
 
+    membership_application:
+      accept:
+        subject: "Welcome! Your SHF application has been approved"
+        message_text: "We're happy to let you know your application to SHF has been approved!"
+
 
   devise:
     min_length: '(at least %{minimum_length} characters)'
