@@ -42,6 +42,8 @@ sv:
 
   confirm_are_you_sure: &are_you_sure_confirm Är du säker
 
+  hello: Hallå, %{name}
+
   info:
     logged_in_as_admin: Du är inloggad som admin
     under_construction: Sidan är under uppbyggnad, mer information och funktioner kommer att komma efterhand.
@@ -265,7 +267,7 @@ sv:
       enter_member_number: Var god ange medlemsnummer och spara.
 
     show:
-      title: Ansökan från %{member_full_name}
+      title: Ansökan från %{user_full_name}
       first_name: *first_name
       last_name: *last_name
       phone_number: *phone_number
@@ -432,6 +434,8 @@ sv:
       phone_number: *company_phone
       email: &company_email Företagets e-postadress
       address: &address Adress
+      main_address: Huvudadress
+      other_addresses: Andra adresser
       street: *street
       post_code: *post_code
       city: *city
@@ -729,7 +733,7 @@ sv:
         submit_button_label: Skapa användare
         success: Ett nytt konto har skapats
       edit:
-        title: Redigera användare
+        title: Redigera din profil
         unconfirmed_email_for: 'Obekräftad mailadress för: %{unconfirmed_email}'
         leave_blank_if_no_change: lämna tomt om du inte vill byta
         confirm_password: *confirm_password
@@ -823,7 +827,7 @@ sv:
         member_pages: *member_pages
         shf_meeting_minutes: *member_pages_board_meetings
         manage_company:
-          submenu_title: Hantera företag
+          submenu_title: Mitt företag
           view_company: Visa företagssida
           edit_company: Redigera företag
         my_application: *my_application
@@ -835,19 +839,21 @@ sv:
         manage_applications: Hantera ansökningar
         categories:
           submenu_title: Kategorier
-          list_categories: Lista kategorier
+          manage_categories: Hantera kategorier
           new_category: Ny kategori
         companies:
           submenu_title: Företag
-          list_companies: Lista företag
+          manage_companies: Hantera företag
           new_company: Nytt företag
+        applications:
+          submenu_title: *applications
+          manage_applications: Hantera ansökningar
+          waiting_reasons: "Väntar på information skäl"
         users:
           list_users: Användare
 
-        member_app_waiting_reasons:
-          submenu_title: "Orsaker"
-          list_member_app_waiting_reasons: "Alla orsaker"
-          new_member_app_waiting_reasons: "Ny orsak"
+        administration:
+          submenu_title: Administrering
 
 
   #----------
