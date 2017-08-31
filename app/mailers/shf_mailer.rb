@@ -10,7 +10,7 @@ class ShfMailer < Devise::Mailer
 
   # the following 2 lines are required to use this with Devise:
   helper :application # gives access to all helpers defined within `application_helper`.
-  include Devise::Controllers::UrlHelpers # access to  eg. `confirmation_url`
+  include Devise::Controllers::UrlHelpers # access to  e.g. `confirmation_url`
 
   # vars used in the layout:
   # @greeting_name: the name used in the greeting line.  If it is nil, no greeting line is shown
@@ -53,7 +53,6 @@ class ShfMailer < Devise::Mailer
 
   def accept(member_application)
 
-    #member_application = MembershipApplication.find(7)
     @action_name = 'accept'
     @greeting_name = set_greeting_name(member_application.user)
 
