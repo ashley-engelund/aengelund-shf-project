@@ -715,6 +715,7 @@ en:
     membership_application:
       accept:
         subject: "Welcome! Your SHF application has been approved"
+        greeting: &email_greeting "Hello %{greeting_name}"
         message_text: "We're happy to let you know your application to SHF has been approved!"
 
 
