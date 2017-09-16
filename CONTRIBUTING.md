@@ -103,8 +103,13 @@ Work is defined in Pivotal Tracker.  Discussions take place there, in Slack, and
 
 ### Features
 Any feature should include Cucumber acceptance tests and RSpec tests where appropriate.
-
-We try to avoid view and controller specs, and focus purely on unit tests at the model and service level where possible.  However, there are times when the functionality is complex enough in a controller that it merits a unit test (RSpec).  Views should be thoroughly tested and exercised with feature (cucumber) tests.  
+ 
+ Generally we do not use unit-level tests for views. Views should be thoroughly tested and exercised with feature (cucumber) tests.
+ But we do unit tests for situations that require those - for instance:
+   1. confirming that menu views are rendered consistent with our menu structure design, and 
+   2. confirming the presence of hidden elements, HTML attributes, etc. that
+    could not be easily tested (if at all) in a cucumber test.
+   
 
 
 ### Bug fixes
@@ -117,7 +122,7 @@ A bugfix may include an acceptance test depending on where the bug occurred.
 
 _TODO_  _where should this user story go in the code?  as a cucumber acceptance test or as a documentation block?  in the github issue?_
 
-Where possible please include a user story in the following form to indicate the higher level issue that is being addressed:
+Where possible please include a user story or stories in the following form to indicate the higher level issue that is being addressed:
 
 ```gherkin
 As an administrator
@@ -152,7 +157,7 @@ Our default working branch is currently `develop`.  We do work by creating branc
 ### Fork the repo if you haven't already  
 Each developer will usually work with a [fork](https://help.github.com/articles/fork-a-repo/) of the [main repository on Agile Ventures](https://github.com/AgileVentures/shf-project).
  
-#### ...or sync your fork before starting on a new task
+#### ...or sync your fork before starting on a new story
 Before starting work on a new feature or bugfix, please ensure you have [synced your fork to upstream/develop](https://help.github.com/articles/syncing-a-fork/):
 
 ```
@@ -166,10 +171,10 @@ Note that you should be re-syncing daily (even hourly at very active times) on y
  
 When you create a branch to work on your feature or bug-fix, please name your branch so that others can understand the context, purpose, and intent for it.
  
-This is our naming convention:  `[sprintNN]-[Pivotal Tracker ID number]-[short-task-description] `
+This is our naming convention:  `[sprintNN or target_release]-[Pivotal Tracker ID number]-[short-story-description] `
 
   
-For example, if you are working on a feature in _sprint 24,_  the ID for that task in PivotalTracker is _1059872,_ and the title of that task is _"Add the CONTRIBUTING.md file",_ you can create and check out your branch like this:
+For example, if you are working on a feature in _sprint 24,_  the ID for that story in PivotalTracker is _1059872,_ and the title of that story is _"Add the CONTRIBUTING.md file",_ you can create and check out your branch like this:
 
 ```
 git checkout -b sprint24-#1059872-add-contributing-md
@@ -195,11 +200,11 @@ git pull upstream develop
 Be sure to create your PR against the **develop** branch!
 
 We connect the PR in GitHub to the PivotalTracker story manually (simple, but quick and explicit):
-- put a link to the PivotalTracker task in the PR description, _and_
-- update the name of the task in PivotalTracker task so that it starts with the PR number. (You have to save the PR first to get the number.)
-    Ex:  If the PR number that GitHub assigns is _357_ and the original task name in Pivotal Tracker is _"Add the CONTRIBUTING.md file,"_ then edit the task name to be _"357 - Add the CONTRIBUTING.md file"_
+- put a link to the PivotalTracker story in the PR description, _and_
+- update the name of the story in PivotalTracker story so that it starts with the PR number. (You have to save the PR first to get the number.)
+    Ex:  If the PR number that GitHub assigns is _357_ and the original story name in Pivotal Tracker is _"Add the CONTRIBUTING.md file,"_ then edit the story name to be _"357 - Add the CONTRIBUTING.md file"_
     
-   **This makes it quick and easy for someone scanning the tasks in PivotalTracker to see if there's a PR for a task.**
+   **This makes it quick and easy for someone scanning the stories in PivotalTracker to see if there's a PR for a story.**
      
   
       
@@ -214,7 +219,7 @@ Team members can review and give you feedback as you work. This helps ensure tha
 
 #### One change per PR
 
-Please ensure that each commit in your pull request makes a _single_ coherent change and that the overall pull request only includes commits related to the specific Pivotal Tracker task (feature, chore, bug) that the pull request is addressing.
+Please ensure that each commit in your pull request makes a _single_ coherent change and that the overall pull request only includes commits related to the specific Pivotal Tracker story (feature, chore, bug) that the pull request is addressing.
 This helps the project managers understand the PRs and merge them more quickly.
 
 If your PR is addressing a GitHub issue (which doesn't happen much in this project), please include a sensible description of your code and a tag `fixes #<issue-id>` e.g. :
