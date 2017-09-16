@@ -1,5 +1,5 @@
 digraph statechart {
-	graph [bb="0,0,1571.9,1114.5",
+	graph [bb="0,0,1644.9,1201.9",
 		bgcolor=white,
 		rankdir=TB
 	];
@@ -19,116 +19,124 @@ digraph statechart {
 		fontsize=14,
 		height=0.5,
 		label="Pivotal Tracker Feature\l",
-		pos="331,960.04",
+		pos="404,1035.9",
 		shape=plaintext,
 		width=2.4562];
-	picked_upcoming_release_from_icebox	 [height=0.51389,
-		label=<<table BORDER="0" CELLBORDER="1"> <tr><td BORDER="0" ALIGN="CENTER">Picked upcoming release from icebox</td></tr> </table>>,
-		pos="452,750.04",
-		width=3.1806];
+	picked_a_story_from_an_upcoming_release	 [height=0.66667,
+		label=<<table BORDER="0" CELLBORDER="1"><tr><td SIDES="B" ALIGN="LEFT" COLOR="gray40"><FONT FACE="Arial:italic" POINT-SIZE="10" COLOR="gray20">enter state action: start work on story</FONT></td></tr> <tr><td BORDER="0" ALIGN="CENTER">Picked a story from an upcoming release</td></tr> </table>>,
+		pos="525,808.89",
+		width=3.4583];
 	discussed	 [height=0.51389,
 		label=<<table BORDER="0" CELLBORDER="1"> <tr><td BORDER="0" ALIGN="CENTER">Discussed</td></tr> </table>>,
-		pos="452,664.39",
+		pos="525,717.74",
 		width=1.0833];
-	picked_upcoming_release_from_icebox -> discussed	 [label=" discuss_task   ",
-		lp="489.6,707.22",
-		pos="e,452,682.42 452,731.71 452,720.42 452,705.45 452,692.59"];
-	"1e9e6e16-55bf-4fd5-b40a-0d2e90c64e89"	 [color=black,
+	picked_a_story_from_an_upcoming_release -> discussed	 [label=" discuss_task   ",
+		lp="562.6,760.57",
+		pos="e,525,735.99 525,784.94 525,773.12 525,758.64 525,746.24"];
+	"17671243-efec-49fc-a1c2-e7621799b792"	 [color=black,
 		fillcolor=green,
 		fixedsize=true,
 		fontname=Ariel,
 		fontsize=7,
 		height=0.41667,
 		label=start,
-		pos="452,960.04",
+		pos="525,1035.9",
 		shape=doublecircle,
 		style=filled,
 		width=0.41667];
-	"1e9e6e16-55bf-4fd5-b40a-0d2e90c64e89" -> picked_upcoming_release_from_icebox	 [pos="e,452,768.31 452,944.75 452,910.49 452,823.25 452,778.47"];
+	"17671243-efec-49fc-a1c2-e7621799b792" -> picked_a_story_from_an_upcoming_release	 [pos="e,525,832.65 525,1020.8 525,985.59 525,892.89 525,842.92"];
 	points_assigned	 [height=0.51389,
 		label=<<table BORDER="0" CELLBORDER="1"> <tr><td BORDER="0" ALIGN="CENTER">Points assigned</td></tr> </table>>,
-		pos="233,578.74",
+		pos="310,632.1",
 		width=1.5139];
 	discussed -> points_assigned	 [label=" vote_on_feature [:at_least_3_people_voted]  ",
-		lp="326.92,621.57",
-		pos="e,218.26,596.83 412.59,663.46 351.74,662.63 239.3,657.07 214.16,627.89 208.68,621.54 209.72,613.41 213.23,605.65"];
+		lp="399.92,674.92",
+		pos="e,292.78,650.44 485.59,716.81 424.74,715.98 312.3,710.42 287.16,681.24 281.6,674.8 282.99,666.76 287.05,659.12"];
 	started	 [height=0.91667,
 		label=<<table BORDER="0" CELLBORDER="1"><tr><td SIDES="B" ALIGN="LEFT" COLOR="gray40"><FONT FACE="Arial:italic" POINT-SIZE="10" COLOR="gray20">enter state action: write feature or spec</FONT></td></tr> <tr><td BORDER="0" ALIGN="CENTER">Started</td></tr> <tr><td SIDES="T" ALIGN="RIGHT" COLOR="gray40"><FONT FACE="Arial:italic" POINT-SIZE="10" COLOR="gray20">exit state action: all tests pass</FONT></td></tr></table>>,
-		pos="361,478.6",
+		pos="436,531.95",
 		width=2.75];
 	discussed -> started	 [label=" start_work [:is_not_client_facing]  ",
-		lp="540.37,578.74",
-		pos="e,421.88,511.1 454.63,646.29 457.86,619.33 460.45,566.24 438,529.6 435.48,525.48 432.48,521.64 429.14,518.06"];
+		lp="613.37,632.1",
+		pos="e,495.32,564.64 527.57,699.68 530.73,672.76 533.22,619.73 511,582.95 508.61,579 505.78,575.29 502.64,571.83"];
 	points_assigned -> started	 [label=" start_work [:is_client_facing]  ",
-		lp="364.67,535.92",
-		pos="e,315.22,511.36 252.7,560.64 263.7,551.26 277.75,539.55 290.66,529.6 295.92,525.54 301.47,521.39 307.05,517.3"];
-	finished_waiting_for_scrum_review	 [height=0.66667,
-		label=<<table BORDER="0" CELLBORDER="1"> <tr><td BORDER="0" ALIGN="CENTER">Finished waiting for scrum review</td></tr> <tr><td SIDES="T" ALIGN="RIGHT" COLOR="gray40"><FONT FACE="Arial:italic" POINT-SIZE="10" COLOR="gray20">exit state action: explained and demoed in scrum meeting</FONT></td></tr></table>>,
-		pos="267,372.95",
-		width=3.9028];
-	started -> finished_waiting_for_scrum_review	 [label=" finished_PR   ",
-		lp="395.77,421.27",
-		pos="e,335.52,396.64 364.04,445.78 363.55,435.15 361.24,423.78 355,414.95 351.78,410.39 347.92,406.32 343.64,402.7"];
-	finished_waiting_for_scrum_review -> started	 [label=" shf_team_says_not_finished   ",
-		lp="275.82,421.27",
-		pos="e,261.66,467.63 211.54,396.52 198.5,405.14 190.63,415.77 199.35,427.6 212.35,445.23 231.5,456.83 252.11,464.42"];
+		lp="437.67,589.27",
+		pos="e,388.29,564.65 327.88,614.01 338.09,604.53 351.28,592.72 363.66,582.95 368.89,578.82 374.45,574.64 380.06,570.55"];
+	finished_scrum_review	 [height=0.91667,
+		label=<<table BORDER="0" CELLBORDER="1"><tr><td SIDES="B" ALIGN="LEFT" COLOR="gray40"><FONT FACE="Arial:italic" POINT-SIZE="10" COLOR="gray20">enter state action: explained and demoed in scrum meeting</FONT></td></tr> <tr><td BORDER="0" ALIGN="CENTER">Finished scrum review</td></tr> <tr><td SIDES="T" ALIGN="RIGHT" COLOR="gray40"><FONT FACE="Arial:italic" POINT-SIZE="10" COLOR="gray20">exit state action: team approves</FONT></td></tr></table>>,
+		pos="394,417.3",
+		width=4];
+	started -> finished_scrum_review	 [label=" finished_PR   ",
+		lp="539.77,474.62",
+		pos="e,484.09,449.85 494.17,499.15 503.5,489.97 508.07,479.4 501,468.3 498.32,464.09 495.18,460.22 491.7,456.68"];
+	finished_scrum_review -> started	 [label=" shf_team_says_not_finished   ",
+		lp="421.82,474.62",
+		pos="e,361.15,499.23 350.95,450.02 343.1,459.61 339.12,470.39 345.35,480.95 347.73,484.97 350.56,488.7 353.73,492.14"];
 	deployed_to_heroku_and_waiting_for_client_review	 [height=0.66667,
-		label=<<table BORDER="0" CELLBORDER="1"><tr><td SIDES="B" ALIGN="LEFT" COLOR="gray40"><FONT FACE="Arial:italic" POINT-SIZE="10" COLOR="gray20">enter state action: press finish button in meeting</FONT></td></tr> <tr><td BORDER="0" ALIGN="CENTER">Deployed to heroku and waiting for client review</td></tr> </table>>,
-		pos="317,276.3",
-		width=4.0694];
-	finished_waiting_for_scrum_review -> deployed_to_heroku_and_waiting_for_client_review	 [label=" approved_in_scrum_meeting [:is_client_facing]  ",
-		lp="414.23,324.62",
-		pos="e,305.01,300 279.1,349.03 285.43,337.06 293.27,322.21 300.18,309.14"];
-	deployed_to_production	 [height=0.66667,
-		label=<<table BORDER="0" CELLBORDER="1"><tr><td SIDES="B" ALIGN="LEFT" COLOR="gray40"><FONT FACE="Arial:italic" POINT-SIZE="10" COLOR="gray20">enter state action: press delivered button</FONT></td></tr> <tr><td BORDER="0" ALIGN="CENTER">Deployed to production</td></tr> </table>>,
-		pos="103,83",
-		width=2.8611];
-	finished_waiting_for_scrum_review -> deployed_to_production	 [label=" approved_in_scrum_meeting [:is_not_client_facing]  ",
-		lp="161.94,227.97",
-		pos="e,78.142,106.69 189.15,349.43 134.29,329.03 64.83,292.99 31.125,234.3 7.9545,193.95 42.285,144.96 71.001,114.12"];
+		label=<<table BORDER="0" CELLBORDER="1"><tr><td SIDES="B" ALIGN="LEFT" COLOR="gray40"><FONT FACE="Arial:italic" POINT-SIZE="10" COLOR="gray20">enter state action: click finish and deliver buttons in meeting, development branch changes merged to heroku</FONT></td></tr> <tr><td BORDER="0" ALIGN="CENTER">Deployed to heroku and waiting for client review</td></tr> </table>>,
+		pos="440,311.65",
+		width=7.0417];
+	finished_scrum_review -> deployed_to_heroku_and_waiting_for_client_review	 [label=" approved_in_scrum_meeting [:is_client_facing]  ",
+		lp="543.23,359.97",
+		pos="e,431.66,335.28 410.31,384.76 413.3,378.68 416.32,372.33 419,366.3 422.07,359.39 425.16,351.88 427.99,344.72"];
+	deployed_to_heroku	 [height=0.66667,
+		label=<<table BORDER="0" CELLBORDER="1"><tr><td SIDES="B" ALIGN="LEFT" COLOR="gray40"><FONT FACE="Arial:italic" POINT-SIZE="10" COLOR="gray20">enter state action: development branch changes merged to heroku</FONT></td></tr> <tr><td BORDER="0" ALIGN="CENTER">Deployed to heroku</td></tr> </table>>,
+		pos="160,245.65",
+		width=4.4444];
+	finished_scrum_review -> deployed_to_heroku	 [label=" approved_in_scrum_meeting [:is_not_client_facing]  ",
+		lp="285.94,359.97",
+		pos="e,151.02,269.26 249.91,401.37 207.27,393.8 168.38,382.62 155.12,366.3 135.48,342.12 140.51,305.25 148.05,278.83"];
 	client_accepted	 [height=0.66667,
 		label=<<table BORDER="0" CELLBORDER="1"><tr><td SIDES="B" ALIGN="LEFT" COLOR="gray40"><FONT FACE="Arial:italic" POINT-SIZE="10" COLOR="gray20">enter state action: press accepted button in meeting</FONT></td></tr> <tr><td BORDER="0" ALIGN="CENTER">Client accepted</td></tr> </table>>,
-		pos="278,179.65",
+		pos="355,179.65",
 		width=3.5417];
 	deployed_to_heroku_and_waiting_for_client_review -> client_accepted	 [label=" client_accepts [:demo_on_heroku_passes]  ",
-		lp="408.85,227.97",
-		pos="e,287.37,203.2 307.71,252.58 303.79,243.02 299.18,231.79 295,221.65 293.8,218.75 292.56,215.74 291.31,212.72"];
+		lp="487.85,245.65",
+		pos="e,356.47,203.38 396.96,288.07 389.93,282.81 383.32,276.66 378.31,269.65 366.59,253.24 360.76,231.38 357.86,213.43"];
 	client_rejected	 [height=0.66667,
 		label=<<table BORDER="0" CELLBORDER="1"><tr><td SIDES="B" ALIGN="LEFT" COLOR="gray40"><FONT FACE="Arial:italic" POINT-SIZE="10" COLOR="gray20">enter state action: press rejected button in meeting</FONT></td></tr> <tr><td BORDER="0" ALIGN="CENTER">Client rejected</td></tr> </table>>,
-		pos="597,179.65",
+		pos="674,179.65",
 		width=3.4722];
 	deployed_to_heroku_and_waiting_for_client_review -> client_rejected	 [label=" client_rejects   ",
-		lp="584.21,227.97",
-		pos="e,571.25,203.24 463.54,253.92 483.6,248.72 503.6,242.28 522,234.3 536.44,228.04 550.85,218.67 563.12,209.51"];
+		lp="669.21,245.65",
+		pos="e,649.08,203.41 560.36,288.04 572.94,283.08 585.1,277.03 596,269.65 617.99,254.77 614.07,241.61 631.58,221.65 634.79,217.99 638.27,\
+214.28 641.8,210.66"];
+	deployed_to_production	 [height=0.66667,
+		label=<<table BORDER="0" CELLBORDER="1"><tr><td SIDES="B" ALIGN="LEFT" COLOR="gray40"><FONT FACE="Arial:italic" POINT-SIZE="10" COLOR="gray20">enter state action: merge changes from heroku to digitalocean</FONT></td></tr> <tr><td BORDER="0" ALIGN="CENTER">Deployed to production</td></tr> </table>>,
+		pos="219,83",
+		width=4.1667];
+	deployed_to_heroku -> deployed_to_production	 [label=" deploy   ",
+		lp="196.32,179.65",
+		pos="e,201.14,106.56 160.8,222.06 162.06,203.67 165.26,177.31 173.36,155.65 178.68,141.42 187.11,127.04 195.29,114.94"];
 	client_accepted -> deployed_to_production	 [label=" deploy   ",
-		lp="223.32,131.32",
-		pos="e,144.88,106.65 236.08,155.98 211.39,142.62 179.98,125.63 153.87,111.51"];
+		lp="318.32,131.32",
+		pos="e,251.78,106.81 322.42,155.98 303.72,142.96 280.06,126.49 260.09,112.6"];
 	client_rejected -> discussed	 [label=" discuss_task   ",
-		lp="686.6,421.27",
-		pos="e,491.39,663.44 617.85,203.27 632.32,221.36 649,248.11 649,275.3 649,579.74 649,579.74 649,579.74 649,643.72 559.9,659.48 501.55,\
-662.94"];
-	"325eb227-b9d3-4d52-b668-4158f056b871"	 [color=black,
+		lp="759.6,474.62",
+		pos="e,564.39,716.79 696.5,203.45 700.94,209.03 705.11,215.24 708,221.65 724.48,258.14 722,270.61 722,310.65 722,633.1 722,633.1 722,\
+633.1 722,697.07 632.9,712.83 574.55,716.29"];
+	"be9ffa60-5f9c-4f66-8171-55523b7a76ab"	 [color=black,
 		fillcolor=blue,
 		fixedsize=true,
 		fontname=Ariel,
 		fontsize=7,
 		height=0.30556,
 		label="",
-		pos="103,11",
+		pos="219,11",
 		shape=doublecircle,
 		style=filled,
 		width=0.30556];
-	deployed_to_production -> "325eb227-b9d3-4d52-b668-4158f056b871"	 [pos="e,103,22.362 103,59.466 103,50.796 103,40.951 103,32.484"];
-	"State Transition Table"	 [height=4.2917,
-		label=<<TABLE CELLPADDING="4" CELLSPACING="0" TITLE="State Transition Table"><TR><TD ALIGN="LEFT"><FONT COLOR="black">Old State</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="black">Triggering Event</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="black">Iff All These Are True</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="black">New State</FONT></TD></TR><TR><TD ALIGN="LEFT">picked_upcoming_release_from_icebox</TD><TD ALIGN="LEFT">discuss_task</TD><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">discussed</TD></TR><TR><TD ALIGN="LEFT">client_rejected</TD><TD ALIGN="LEFT">discuss_task</TD><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">discussed</TD></TR><TR><TD ALIGN="LEFT">discussed</TD><TD ALIGN="LEFT">vote_on_feature</TD><TD ALIGN="LEFT">at_least_3_people_voted</TD><TD ALIGN="LEFT">points_assigned</TD></TR><TR><TD ALIGN="LEFT">points_assigned</TD><TD ALIGN="LEFT">start_work</TD><TD ALIGN="LEFT">is_client_facing</TD><TD ALIGN="LEFT">started</TD></TR><TR><TD ALIGN="LEFT">discussed</TD><TD ALIGN="LEFT">start_work</TD><TD ALIGN="LEFT">is_not_client_facing</TD><TD ALIGN="LEFT">started</TD></TR><TR><TD ALIGN="LEFT">started</TD><TD ALIGN="LEFT">finished_PR</TD><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">finished_waiting_for_scrum_review</TD></TR><TR><TD ALIGN="LEFT">finished_waiting_for_scrum_review</TD><TD ALIGN="LEFT">approved_in_scrum_meeting</TD><TD ALIGN="LEFT">is_client_facing</TD><TD ALIGN="LEFT">deployed_to_heroku_and_waiting_for_client_review</TD></TR><TR><TD ALIGN="LEFT">finished_waiting_for_scrum_review</TD><TD ALIGN="LEFT">approved_in_scrum_meeting</TD><TD ALIGN="LEFT">is_not_client_facing</TD><TD ALIGN="LEFT">deployed_to_production</TD></TR><TR><TD ALIGN="LEFT">finished_waiting_for_scrum_review</TD><TD ALIGN="LEFT">shf_team_says_not_finished</TD><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">started</TD></TR><TR><TD ALIGN="LEFT">deployed_to_heroku_and_waiting_for_client_review</TD><TD ALIGN="LEFT">client_accepts</TD><TD ALIGN="LEFT">demo_on_heroku_passes</TD><TD ALIGN="LEFT">client_accepted</TD></TR><TR><TD ALIGN="LEFT">deployed_to_heroku_and_waiting_for_client_review</TD><TD ALIGN="LEFT">client_rejects</TD><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">client_rejected</TD></TR><TR><TD ALIGN="LEFT">client_accepted</TD><TD ALIGN="LEFT">deploy</TD><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">deployed_to_production</TD></TR></TABLE>>,
-		pos="954,960.04",
+	deployed_to_production -> "be9ffa60-5f9c-4f66-8171-55523b7a76ab"	 [pos="e,219,22.362 219,59.466 219,50.796 219,40.951 219,32.484"];
+	"State Transition Table"	 [height=4.6111,
+		label=<<TABLE CELLPADDING="4" CELLSPACING="0" TITLE="State Transition Table"><TR><TD ALIGN="LEFT"><FONT COLOR="black">Old State</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="black">Triggering Event</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="black">Iff All These Are True</FONT></TD><TD ALIGN="LEFT"><FONT COLOR="black">New State</FONT></TD></TR><TR><TD ALIGN="LEFT">picked_a_story_from_an_upcoming_release</TD><TD ALIGN="LEFT">discuss_task</TD><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">discussed</TD></TR><TR><TD ALIGN="LEFT">client_rejected</TD><TD ALIGN="LEFT">discuss_task</TD><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">discussed</TD></TR><TR><TD ALIGN="LEFT">discussed</TD><TD ALIGN="LEFT">vote_on_feature</TD><TD ALIGN="LEFT">at_least_3_people_voted</TD><TD ALIGN="LEFT">points_assigned</TD></TR><TR><TD ALIGN="LEFT">points_assigned</TD><TD ALIGN="LEFT">start_work</TD><TD ALIGN="LEFT">is_client_facing</TD><TD ALIGN="LEFT">started</TD></TR><TR><TD ALIGN="LEFT">discussed</TD><TD ALIGN="LEFT">start_work</TD><TD ALIGN="LEFT">is_not_client_facing</TD><TD ALIGN="LEFT">started</TD></TR><TR><TD ALIGN="LEFT">started</TD><TD ALIGN="LEFT">finished_PR</TD><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">finished_scrum_review</TD></TR><TR><TD ALIGN="LEFT">finished_scrum_review</TD><TD ALIGN="LEFT">approved_in_scrum_meeting</TD><TD ALIGN="LEFT">is_client_facing</TD><TD ALIGN="LEFT">deployed_to_heroku_and_waiting_for_client_review</TD></TR><TR><TD ALIGN="LEFT">finished_scrum_review</TD><TD ALIGN="LEFT">approved_in_scrum_meeting</TD><TD ALIGN="LEFT">is_not_client_facing</TD><TD ALIGN="LEFT">deployed_to_heroku</TD></TR><TR><TD ALIGN="LEFT">finished_scrum_review</TD><TD ALIGN="LEFT">shf_team_says_not_finished</TD><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">started</TD></TR><TR><TD ALIGN="LEFT">deployed_to_heroku_and_waiting_for_client_review</TD><TD ALIGN="LEFT">client_accepts</TD><TD ALIGN="LEFT">demo_on_heroku_passes</TD><TD ALIGN="LEFT">client_accepted</TD></TR><TR><TD ALIGN="LEFT">deployed_to_heroku_and_waiting_for_client_review</TD><TD ALIGN="LEFT">client_rejects</TD><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">client_rejected</TD></TR><TR><TD ALIGN="LEFT">client_accepted</TD><TD ALIGN="LEFT">deploy</TD><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">deployed_to_production</TD></TR><TR><TD ALIGN="LEFT">deployed_to_heroku</TD><TD ALIGN="LEFT">deploy</TD><TD ALIGN="LEFT"></TD><TD ALIGN="LEFT">deployed_to_production</TD></TR></TABLE>>,
+		pos="1027,1035.9",
 		shape=plaintext,
 		width=13.014];
 	footer	 [fontcolor=black,
 		fontsize=6,
 		height=0.5,
-		label="Date: Sep 12 2017 - 18:33\lGenerated by AASM StateCharts 1.1.6\lhttp://github.com/weedySeaDragon",
-		pos="1506,960.04",
+		label="Date: Sep 16 2017 - 12:15\lGenerated by AASM StateCharts 1.1.6\lhttp://github.com/weedySeaDragon",
+		pos="1579,1035.9",
 		shape=plaintext,
 		width=1.831];
 }
