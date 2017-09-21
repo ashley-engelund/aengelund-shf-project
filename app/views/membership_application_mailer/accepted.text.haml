@@ -1,7 +1,5 @@
--provide :signoff do
+- provide :signoff do
   = render 'membership_application_mailer/signoff'
-
--# FIXME # When using <tt>url_for</tt> you'll need to provide the <tt>:host</tt>, <tt>:controller</tt>, and <tt>:action</tt>:
 
 = t('shf_mailer.membership_application.accepted.message_text.youre_active')  + url_for(@member_app.company)
 \

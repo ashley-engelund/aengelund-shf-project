@@ -9,37 +9,37 @@
       -# this formatting is made to match what MailChimp sends
       .mailchimp
 
-        %table.body-table{align: 'center', cellspacing: '0', cellpadding: '0'}
+        %table.body-table{ align: 'center', cellspacing: '0', cellpadding: '0' }
           %tbody
             %tr
-              %td.body-cell{align: 'center', valign: 'top'}
+              %td.body-cell{ align: 'center', valign: 'top' }
 
-                %table{cellspacing: '0', cellpadding: '0', border: 0, width: "100%"}
+                %table{ cellspacing: '0', cellpadding: '0', border: 0, width: "100%" }
                   %tr
-                    %td.template-preheader{align: 'center', valign: 'top'}
+                    %td.template-preheader{ align: 'center', valign: 'top' }
                       = render 'shf_mailer/mailchimpstyle_preheader'
 
                   %tr
-                    %td.template-header{align: 'center', valign: 'top'}
+                    %td.template-header{ align: 'center', valign: 'top' }
                       = render 'shf_mailer/mailchimpstyle_header'
 
 
                   %tr
-                    %td.template-body{align: 'center', valign: 'top'}
+                    %td.template-body{ align: 'center', valign: 'top' }
 
-                      %table.template-container{cellspacing: "0", cellpadding: "0", align: "center"}
+                      %table.template-container{ cellspacing: "0", cellpadding: "0", align: "center" }
                         %tbody
                           %tr
-                            %td.body-container{valign: 'top'}
+                            %td.body-container{ valign: 'top' }
 
-                              %table.text-block{cellspacing: "0", cellpadding: "0"}
+                              %table.text-block{ cellspacing: "0", cellpadding: "0" }
                                 %tbody.text-block-outer
                                   %tr
-                                    %td.text-block-inner{valign: "top"}
-                                      %table.text-content-container{cellspacing: "0", cellpadding:"0", align: 'left'}
+                                    %td.text-block-inner{ valign: "top" }
+                                      %table.text-content-container{ cellspacing: "0", cellpadding:"0", align: 'left' }
                                         %tbody
                                           %tr
-                                            %td.text-content{valign: "top"}
+                                            %td.text-content{ valign: "top" }
 
                                               .greeting
                                                 %h2= t('shf_mailer.greeting', greeting_name: @greeting_name) if @greeting_name
@@ -51,36 +51,36 @@
                                               = render 'shf_mailer/shf_mail_footer'
 
 
-                              %table.divider-block{cellspacing: '0', cellpadding: '0'}
+                              %table.divider-block{ cellspacing: '0', cellpadding: '0' }
                                 %tbody
                                   %tr
                                     %td
 
 
 
-                              %table.follow-block{cellspacing: "0", cellpadding: "0"}
+                              %table.follow-block{ cellspacing: "0", cellpadding: "0" }
                                 %tbody.follow-block-outer
                                   %tr
-                                    %td.follow-block-inner{align: "center", valign: "top"}
+                                    %td.follow-block-inner{ align: "center", valign: "top" }
 
-                                      %table.follow-content-container{cellspacing: "0", cellpadding: "0"}
+                                      %table.follow-content-container{ cellspacing: "0", cellpadding: "0" }
                                         %tbody
                                           %tr
                                             %td
 
-                                              %table.follow-content{cellspacing: '0', cellpadding: '0'}
+                                              %table.follow-content{ cellspacing: '0', cellpadding: '0' }
                                                 %tbody
                                                   %tr
-                                                    %td{align: "center", valign: "top"}
+                                                    %td{ align: "center", valign: "top" }
 
-                                                      %table{cellspacing: '0', cellpadding: '0', align: "center"}
+                                                      %table{ cellspacing: '0', cellpadding: '0', align: "center" }
                                                         %tbody
                                                           %tr
-                                                            %td{align: "center", valign: "top"}
+                                                            %td{ align: "center", valign: "top" }
                                                               -# this is the partial for each item
                                                               =# render 'mailchipstyle_follow_item.html.haml'
 
 
                   %tr
-                    %td.template-footer{align: 'center', valign: 'top'}
+                    %td.template-footer{ align: 'center', valign: 'top' }
                       = render 'shf_mailer/mailchimpstyle_footer'
