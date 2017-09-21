@@ -10,8 +10,8 @@ class MembershipApplicationMailerPreview < ActionMailer::Preview
   end
 
 
-  def received
-    MembershipApplicationMailer.received(random_member_app)
+  def acknowledge_received
+    MembershipApplicationMailer.acknowledge_received(random_member_app)
   end
 
 
