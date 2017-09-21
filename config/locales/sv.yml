@@ -721,7 +721,7 @@ sv:
         shf_name: *SHF_name
         shf_motto: KOMPETENS – GLÄDJE – OMTANKE
         email_sent_to: Det här mailet skickades till %{email_sent_to}
-        why_you_are_receiving: Du får detta mail för att du är medlem i SVERIGES HUNDFÖRETAGARE
+        why_you_are_receiving: Du får detta e-postmeddelande eftersom du är intresserad av medlemsskap i SVERIGES HUNDFÖRETAGARE eller du är av medlem.
 
     admin:
       signoff: Tack
@@ -749,7 +749,7 @@ sv:
         subject: "Välkommen som medlem i Sveriges Hundföretagare"
         greeting: *email_greeting
         message_text:
-          youre_active: "Du har nu aktiverats som medlem i systemet och kan logga in och hantera din profil och bygga upp din företagssida. När du är inloggad kan du redigerar din företagssida här: "
+          youre_active: "Du har nu aktiverats som medlem i systemet och kan logga in och hantera din profil och bygga upp din företagssida. När du är inloggad kan du redigera din företagssida här: "
           access_fb_group: "Som medlem får du även tillgång till vår slutna Facebookgrupp: "
           and_member_pages: "samt dolda sidor i vårt medlemssystem: "
 

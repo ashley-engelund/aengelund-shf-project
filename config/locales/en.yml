@@ -718,7 +718,7 @@ en:
         shf_name: *SHF_name
         shf_motto: KOMPETENS – GLÄDJE – OMTANKE
         email_sent_to: This email was sent to %{email_sent_to}
-        why_you_are_receiving: You are receiving this email because have signed up with SVERIGES HUNDFÖRETAGARE
+        why_you_are_receiving: You are receiving this email because you are interested in a membership to SVERIGES HUNDFÖRETAGARE or you are a member.
 
     admin:
       signoff: Thanks
@@ -730,8 +730,8 @@ en:
         message_text:
           new_app_arrived: "A new membership application has been submitted that you should look at: "
           from: From
-          view_app_here: "Du kan se medlemskapsansökan här: "
-          must_be_logged_in: "(Du måste vara inloggad som en administratör för att se det.)"
+          view_app_here: "You can view the membership application here: "
+          must_be_logged_in: "(You must be logged in as the administrator to view it.)"
 
     membership_application:
       signoff: "Best Regards,"
@@ -746,7 +746,7 @@ en:
         subject: "Welcome! Your SHF application has been approved"
         greeting: *email_greeting
         message_text:
-          youre_active: "You have now been activated as a member of the system and can log in and manage your profile and build your business page. Once you are logged in, you can edit your company page here: %{company_page_link}"
+          youre_active: "You have now been activated as a member of the system and can log in and manage your profile and build your business page. Once you are logged in, you can edit your company page here: "
           access_fb_group: "As a member, you will also have access to our closed Facebook group: "
           and_member_pages: "as well as hidden pages in our member system: "
 
