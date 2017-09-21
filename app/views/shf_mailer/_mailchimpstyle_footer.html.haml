@@ -1,0 +1,17 @@
+%table.templateContainer{cellspacing: '0', cellpadding: '0', align: 'center'}
+  %tbody
+    %tr
+      %td.footerContainer{valign: 'top'}
+        %table.TextBlock{cellspacing: '0', cellpadding: '0'}
+          %tbody.TextBlockOuter
+            %tr
+              %td.TextBlockInner{valign: 'top'}
+
+                %table.TextContentContainer{cellspacing: '0', cellpadding: '0', align: 'left'}
+                  %tbody
+                    %tr
+                      %td.TextContent{valign: 'top'}
+
+                        %div.sent-to
+                          %p= t('shf_mailer.footer.text.email_sent_to', email_sent_to: @recipient_email).html_safe
+                          %p= t('shf_mailer.footer.text.why_you_are_receiving')
