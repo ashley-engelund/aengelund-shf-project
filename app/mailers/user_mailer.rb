@@ -1,7 +1,5 @@
 class UserMailer < ShfMailer
 
-  # TODO can this be accomplished with a simple callback?  before_action:
-
   # Set the instance vars before calling each Devise method via super
   %w(
       confirmation_instructions
