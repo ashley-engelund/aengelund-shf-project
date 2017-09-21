@@ -56,7 +56,7 @@ $dark-gray: #222222;
     }
 
     .body-table {
-      background-color: $background-light-gray;
+
       border: 1px;
       border-collapse: collapse;
       height: 100%;
@@ -75,7 +75,6 @@ $dark-gray: #222222;
     }
 
     .template-container {
-      background-color: $white;
       border-collapse: collapse;
       max-width: 600px;
       width: 100%;
@@ -90,13 +89,7 @@ $dark-gray: #222222;
     }
 
     .template-preheader {
-      background-color: $background-light-gray;
-      background-image: none;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: cover;
-      border-bottom: 0;
-      border-top: 0;
+
       padding-bottom: 9px;
       padding-top: 9px;
 
@@ -143,17 +136,11 @@ $dark-gray: #222222;
 
     .template-body {
 
-      background-color: $background-light-gray;
-      background-image: none;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: cover;
-      border-bottom: 0;
-      border-top: 0;
       padding-bottom: 9px;
       padding-top: 9px;
 
       .template-container {
+        background-color: $white;
         border: 0;
         margin-top: 30px;
         width: 100%;
@@ -255,9 +242,6 @@ $dark-gray: #222222;
 
     .template-footer {
 
-      background: $background-light-gray none no-repeat center;
-      background-size: cover;
-      border-top: 1px solid $border-light-gray;
       padding-bottom: 20px;
       padding-top: 20px;
 
@@ -281,7 +265,7 @@ $dark-gray: #222222;
       }
 
       .template-container {
-        background-color: $white;
+
         border-top: 1px solid $border-light-gray;
 
         .footer-container {
