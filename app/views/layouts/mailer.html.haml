@@ -6,12 +6,81 @@
 
     .email{ class: action_name }
 
-      .greeting
-        %h2= t('shf_mailer.greeting', greeting_name: @greeting_name) if @greeting_name
+      -# this formatting is made to match what MailChimp sends
+      .mailchimp
 
-      .email-content
-        = yield
+        %table.bodyTable{align: 'center', cellspacing: '0', cellpadding: '0'}
+          %tbody
+            %tr
+              %td.bodyCell{align: 'center', valign: 'top'}
 
-      = render 'shf_mailer/shf_mail_signoff'
+                %table{cellspacing: '0', cellpadding: '0', border: 0, width: "100%"}
+                  %tr
+                    %td.templatePreheader{align: 'center', valign: 'top'}
+                      = render 'shf_mailer/mailchimpstyle_preheader'
 
-      = render 'shf_mailer/shf_mail_footer'
+                  %tr
+                    %td.templateHeader{align: 'center', valign: 'top'}
+                      = render 'shf_mailer/mailchimpstyle_header'
+
+
+                  %tr
+                    %td.templateBody{align: 'center', valign: 'top'}
+
+                      %table.templateContainer{cellspacing: "0", cellpadding: "0", align: "center"}
+                        %tbody
+                          %tr
+                            %td.bodyContainer{valign: 'top'}
+
+                              %table.TextBlock{cellspacing: "0", cellpadding: "0"}
+                                %tbody.TextBlockOuter
+                                  %tr
+                                    %td.TextBlockInner{valign: "top"}
+                                      %table.TextContentContainer{cellspacing: "0", cellpadding:"0", align: 'left'}
+                                        %tbody
+                                          %tr
+                                            %td.TextContent{valign: "top"}
+
+                                              .greeting
+                                                %h2= t('shf_mailer.greeting', greeting_name: @greeting_name) if @greeting_name
+
+                                              = yield
+
+                                              = yield :signoff
+
+                                              = render 'shf_mailer/shf_mail_footer'
+
+
+                              %table.DividerBlock{cellspacing: '0', cellpadding: '0'}
+                                %tbody
+                                  %tr
+                                    %td
+
+
+
+                              %table.FollowBlock{cellspacing: "0", cellpadding: "0"}
+                                %tbody.FollowBlockOuter
+                                  %tr
+                                    %td.FollowBlockInner{align: "center", valign: "top"}
+
+                                      %table.FollowContentContainer{cellspacing: "0", cellpadding: "0"}
+                                        %tbody
+                                          %tr
+                                            %td
+
+                                              %table.FollowContent{cellspacing: '0', cellpadding: '0'}
+                                                %tbody
+                                                  %tr
+                                                    %td{align: "center", valign: "top"}
+
+                                                      %table{cellspacing: '0', cellpadding: '0', align: "center"}
+                                                        %tbody
+                                                          %tr
+                                                            %td{align: "center", valign: "top"}
+                                                              -# this is the partial for each item
+                                                              =# render 'mailchipstyle_follow_item.html.haml'
+
+
+                  %tr
+                    %td.templateFooter{align: 'center', valign: 'top'}
+                      = render 'shf_mailer/mailchimpstyle_footer'
