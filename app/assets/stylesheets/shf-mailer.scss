@@ -1,7 +1,530 @@
-$footer-color:  #6aa6ed;
+$footer-color: #6aa6ed;
 
 .email {
 
+  // to match the emails sent by mailchip
+  .mailchimp {
+
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background-color: #f7f7f2;
+
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+    table {
+
+      .bodyTable {
+        border-collapse: collapse;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+
+        width: 100%;
+        background-color: #f7f7f2;
+
+        border: 1px;
+
+        td.bodyCell {
+
+          height: 100%;
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          border-top: 0;
+
+        }
+
+      }
+
+      .templateContainer {
+        border-collapse: collapse;
+        // max-width: 600px !important;
+        width: 100%;
+      }
+
+      .TextBlock {
+        min-width: 100%;
+        border-collapse: collapse;
+        border: 0;
+        width: 100%;
+      }
+
+    }
+
+    td.templatePreheader {
+      background-color: #f7f7f2;
+      background-image: none;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      border-top: 0;
+      border-bottom: 0;
+      padding-top: 9px;
+      padding-bottom: 9px;
+
+      table.templateContainer {
+        border: 0;
+        width: 100%;
+
+        td.preheaderContainer {
+
+          table.TextBlock {
+            border: 0;
+            width: 100%;
+
+            tbody.TextBlockOuter {
+
+              td.TextBlockInner {
+
+                table.TextContentContainer {
+                  border: 0;
+
+                  td.TextContent {
+                    p {
+                      color: #ffffff;
+                    }
+
+                  }
+                }
+
+              }
+            }
+
+          }
+
+        }
+
+      }
+
+    }
+
+    td.templateHeader {
+
+      // background-color: #ffffff;
+      background-image: none;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+
+      padding-top: 9px;
+      padding-bottom: 0;
+      border: 0;
+      width: 100%;
+
+      table {
+
+        td.headerContainer {
+
+          table.ImageBlock {
+            min-width: 100%;
+            border-collapse: collapse;
+            border: 0;
+            width: 100%;
+
+            tbody.ImageBlockOuter {
+
+              td.ImageBlockInner {
+                padding: 0;
+
+                table.ImageContentContainer {
+                  min-width: 100%;
+                  border-collapse: collapse;
+                  border: 0;
+                  width: 100%;
+
+                  td.ImageContent {
+                    padding-right: 0;
+                    padding-left: 0;
+                    padding-top: 0;
+                    padding-bottom: 0;
+
+                    img {
+                      max-width: 693px;
+                      padding-bottom: 0;
+                      display: inline !important;
+                      vertical-align: bottom;
+                      border: 0;
+                      height: auto;
+                      outline: none;
+                      text-decoration: none;
+                    }
+
+                  }
+
+                }
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    }
+
+    td.templateBody {
+
+      background-color: #ffffff;
+      background-image: none;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+      border-top: 0;
+      border-bottom: 0;
+      padding-top: 9px;
+      padding-bottom: 9px;
+
+      table.templateContainer {
+        width: 100%;
+        border: 0;
+
+        margin-top: 30px;
+
+        td.bodyContainer {
+
+          table.TextBlock {
+            border: 0;
+            width: 100%;
+
+            tbody.TextBlockOuter {
+
+              td.TextBlockInner {
+                padding-top: 9px;
+
+                table.TextContentContainer {
+                  max-width: 100%;
+                  min-width: 100%;
+                  border-collapse: collapse;
+                  width: 100%;
+                  border: 0;
+
+                  td.TextContent {
+                    padding-top: 0;
+                    padding-right: 18px;
+                    padding-bottom: 9px;
+                    padding-left: 18px;
+                    //word-break: break-word;
+                    color: #222222;
+                    font-family: 'Open Sans', 'HelveticaNeue', Helvetica, Arial, sans-serif;
+                    font-size: 14px;
+                    line-height: 150%;
+                    text-align: left;
+
+                    h1 {
+                      display: block;
+                      margin: 0;
+                      padding: 0;
+                      color: #222222;
+                      font-family: 'OpenSans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                      font-size: 26px;
+                      font-style: normal;
+                      font-weight: normal;
+                      line-height: 125%;
+                      letter-spacing: normal;
+                      text-align: left;
+
+                    }
+
+                    .from-info {
+                      p {
+                        padding: 0;
+                        margin: 0;
+                      }
+                      p.from {
+                        font-weight: bold;
+                      }
+                      p.user_name,
+                      p.user_email {
+                        margin-left: 30px;
+                      }
+                    }
+
+                    p {
+                      margin: 10px 0;
+                      padding: 0;
+                      color: #222222;
+                      font-family: 'Open Sans', 'HelveticaNeue', Helvetica, Arial, sans-serif;
+                      font-size: 14px;
+                      line-height: 150%;
+                      text-align: left;
+
+                    }
+
+                    #signoff {
+                      margin-top: 30px;
+                    }
+
+                    #signature {
+                      p {
+                        font-style: italic;
+                        margin: 0;
+                      }
+                      p.signature {
+                        font-size: larger;
+                      }
+                    }
+
+                    .mail-body-footer {
+
+                      border-top: 1pt solid black;
+                      margin-top: 20px;
+
+                      p {
+                        margin: 4px 0 0 0;
+                        padding: 0;
+                        line-height: 130%;
+                      }
+
+                      p.shf-name {
+                        //  font-size: larger;
+                        font-weight: bold;
+                      }
+
+                    }
+                  }
+
+                }
+
+              }
+            }
+          }
+
+          table.DividerBlock {
+            border: 0;
+            width: 100%;
+
+            tbody.DividerBlockOuter {
+              min-width: 100%;
+              border-collapse: collapse;
+              table-layout: fixed !important;
+
+              td.DividerBlockInner {
+                min-width: 100%;
+                padding: 18px;
+
+                table.DividerContent {
+
+                  min-width: 100%;
+                  border-top: 2px dotted #eaeaea;
+                  border-collapse: collapse;
+
+                  width: 100%;
+
+                }
+              }
+
+            }
+
+          }
+
+          table.FollowBlock {
+            min-width: 100%;
+            border-collapse: collapse;
+            border: 0;
+            width: 100%;
+
+            td.FollowBlockInner {
+              padding: 9px;
+
+              table.FollowContentContainer {
+
+                min-width: 100%;
+                border-collapse: collapse;
+                border: 0;
+                width: 100%;
+
+                td {
+                  padding-left: 9px;
+                  padding-right: 9px;
+
+                  table.FollowContent {
+                    min-width: 100%;
+                    background-color: #ffffff;
+                    border-collapse: collapse;
+                    border: 0;
+                    width: 100%;
+
+                    td {
+                      padding-top: 9px;
+                      padding-right: 9px;
+                      padding-left: 9px;
+
+                      table {
+                        border-collapse: collapse;
+                        border: 0;
+
+                        td {
+
+                          table {
+                            display: inline;
+                            border-collapse: collapse;
+                            border: 0;
+
+                            td.FollowContentItemContainer {
+                              padding-right: 10px;
+                              padding-bottom: 9px;
+
+                              table.FollowContentItem {
+                                border-collapse: collapse;
+                                border: 0;
+                                width: 100%;
+
+                                td {
+                                  padding-top: 5px;
+                                  padding-right: 10px;
+                                  padding-bottom: 5px;
+                                  padding-left: 9px;
+
+                                  table {
+                                    border-collapse: collapse;
+                                    border: 0;
+
+                                    td.FollowIconContent {
+                                      width: 24px;
+
+                                      a {
+                                        display: block;
+                                        border: 0;
+                                        height: auto;
+                                        outline: none;
+                                        text-decoration: none;
+
+                                      }
+
+                                    }
+
+                                  }
+
+                                }
+
+                              }
+
+                            }
+
+                          }
+
+                        }
+
+                      }
+                    }
+
+                  }
+
+                }
+
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    }
+
+    td.Divider {
+
+    }
+
+    td.templateFooter {
+
+      p {
+        padding: 0;
+        margin: 0;
+        line-height: 130%;
+      }
+
+      .sent-to {
+        margin-top: 20px;
+        color: #606060;
+        font-family: Helvetica, Arial, sans-serif;
+
+        p {
+          font-size: 11px;
+          padding: 0;
+          margin: 0;
+          line-height: 150%;
+        }
+      }
+
+      background: #f7f7f2 none no-repeat center;
+      background-size: cover;
+
+      padding-top: 20px;
+      padding-bottom: 20px;
+
+      border-top: 1px solid #E5E5E5;
+
+      table.templateContainer {
+        background-color: #FFFFFF;
+        border-top: 1px solid #E5E5E5;
+
+        td.footerContainer {
+
+          table.TextBlock {
+            min-width: 100%;
+            border-collapse: collapse;
+            border: 0;
+            width: 100%;
+
+            tbody.TextBlockOuter {
+
+              td.TextBlockInner {
+                padding-top: 9px;
+
+                table.TextContentContainer {
+                  max-width: 100%;
+                  min-width: 100%;
+                  border-collapse: collapse;
+                  border: 0;
+                  width: 100%;
+
+                  td.TextContent {
+                    padding-top: 0;
+                    padding-right: 18px;
+                    padding-bottom: 9px;
+                    padding-left: 18px;
+                    //word-break: break-word;
+                    color: #656565;
+                    font-family: Helvetica, sans-serif;
+                    font-size: 12px;
+                    line-height: 150%;
+                    text-align: center;
+
+                  }
+
+                }
+
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+  // end .mailchimp
+
+  .member_application_received {
+
+    .from-info {
+      p {
+        padding: 0;
+        margin: 0;
+      }
+    }
+  }
 
   .email-content {
     margin-left: 1rem;
@@ -23,10 +546,9 @@ $footer-color:  #6aa6ed;
     }
   }
 
-
   .footer {
-    color: $footer-color;
-    font-size: smaller;
+    // color: $footer-color;
+    // font-size: smaller;
   }
 
 }
