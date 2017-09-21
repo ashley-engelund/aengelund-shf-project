@@ -12,9 +12,6 @@ class ShfMailer < Devise::Mailer
   helper :application # gives access to all helpers defined within `application_helper`.
   include Devise::Controllers::UrlHelpers # access to  e.g. `confirmation_url`
 
-  # vars used in the layout:
-  # @greeting_name: the name used in the greeting line.  If it is nil, no greeting line is shown
-
 
   def mailgun_client
     Mailgun::Client.new(ENV['MAILGUN_API_KEY'])
@@ -34,33 +31,6 @@ class ShfMailer < Devise::Mailer
   end
 
 
-  # Set the instance var @greeting_name before calling each Devise method via super
-  %w(
-      confirmation_instructions
-      reset_password_instructions
-      unlock_instructions
-      email_changed
-      password_change
-      ).each do |method|
-
-    define_method(method) do |resource, *args|
-      set_greeting_name(resource)
-      super(resource, *args)
-    end
-
-  end
-
-
-  def accept(member_application)
-
-    @action_name = 'accept'
-    @greeting_name = set_greeting_name(member_application.user)
-
-    mail(to: member_application.user.email , subject: t('shf_mailer.membership_application.accept.subject') )
-
-  end
-
-
 
   private
 
@@ -72,6 +42,11 @@ class ShfMailer < Devise::Mailer
       @greeting_name = record.email
     end
 
+  end
+
+
+  def set_recipient_email(record)
+    @recipient_email = record.email if record.respond_to? :email
   end
 
 
