@@ -4,7 +4,7 @@
 
 %p= t('shf_mailer.admin.new_application_received.message_text.new_app_arrived')
 
-%div.from-info
+.from-info
   %p.from= t('shf_mailer.admin.new_application_received.message_text.from')
   %p.user_name= @member_app.user.full_name
   %p.user_email= @member_app.contact_email
