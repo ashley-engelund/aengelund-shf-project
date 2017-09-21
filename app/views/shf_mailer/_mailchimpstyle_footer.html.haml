@@ -1,16 +1,16 @@
-%table.templateContainer{cellspacing: '0', cellpadding: '0', align: 'center'}
+%table.template-container{cellspacing: '0', cellpadding: '0', align: 'center'}
   %tbody
     %tr
-      %td.footerContainer{valign: 'top'}
-        %table.TextBlock{cellspacing: '0', cellpadding: '0'}
-          %tbody.TextBlockOuter
+      %td.footer-container{valign: 'top'}
+        %table.text-block{cellspacing: '0', cellpadding: '0'}
+          %tbody.text-block-outer
             %tr
-              %td.TextBlockInner{valign: 'top'}
+              %td.text-block-inner{valign: 'top'}
 
-                %table.TextContentContainer{cellspacing: '0', cellpadding: '0', align: 'left'}
+                %table.text-content-container{cellspacing: '0', cellpadding: '0', align: 'left'}
                   %tbody
                     %tr
-                      %td.TextContent{valign: 'top'}
+                      %td.text-content{valign: 'top'}
 
                         %div.sent-to
                           %p= t('shf_mailer.footer.text.email_sent_to', email_sent_to: @recipient_email).html_safe
