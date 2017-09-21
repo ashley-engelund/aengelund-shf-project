@@ -741,11 +741,11 @@ sv:
       signature: *medlemsansvarig
       signature_url: "http://sverigeshundforetagare.se"
 
-      new:
+      acknowledge_received:
         subject: Din ansökan till Sveriges Hundföretagare är mottagen
         message_text: "Din ansökan är mottagen, på grund av hög arbetsbelastning tar det en stund innan vi kommer till den. Så var inte orolig om det tar en stund innan du hör från oss."
 
-      accept:
+      accepted:
         subject: "Välkommen som medlem i Sveriges Hundföretagare"
         greeting: *email_greeting
         message_text:

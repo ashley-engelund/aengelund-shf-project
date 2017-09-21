@@ -708,7 +708,7 @@ en:
 
 
   shf_mailer:
-    greeting: "Hello %{greeting_name}"
+    greeting: &email_greeting "Hello %{greeting_name}"
 
     trouble_reading_browser: "Having trouble reading this? View it in a browser"
     email_us: "If you have any questions or suggestions, email us at "
@@ -738,13 +738,13 @@ en:
       signature: *medlemsansvarig
       signature_url: "http://sverigeshundforetagare.se"
 
-      new:
+      acknowledge_received:
         subject: Your application to Sveriges Hundföretagare has been received
         message_text: "Your application has been received.  We're all working hard, so it might take a while before we get to it. So do not worry if it takes a while before you hear from us."
 
-      accept:
+      accepted:
         subject: "Welcome! Your SHF application has been approved"
-        greeting: &email_greeting "Hello %{greeting_name}"
+        greeting: *email_greeting
         message_text:
           youre_active: "You have now been activated as a member of the system and can log in and manage your profile and build your business page. Once you are logged in, you can edit your company page here: %{company_page_link}"
           access_fb_group: "As a member, you will also have access to our closed Facebook group: "
