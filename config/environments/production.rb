@@ -72,9 +72,12 @@ Rails.application.configure do
   # since the template will not have the context of a request
   # (as a controller does) and thus the full URL will be required to create
   # links in the email.  This setting defines the host (domain) for the URL.
-  config.action_mailer.default_url_options = { host: ENV['DEFAULT_HOST'] ||
-                                                     'hitta.sverigeshundforetagare.se' }
+  config.action_mailer.default_url_options = { host: ENV['SHF_MAIL_ASSETS_HOST'] ||
+                                                     'http://hitta.sverigeshundforetagare.se' }
 
+  # used by Premailer to create the absolute URL for assets in emails (like images)
+  config.action_mailer.asset_host     =   ENV['SHF_MAIL_ASSETS_HOST'] ||
+                                                 'http://hitta.sverigeshundforetagare.se'
   #
   ###
 

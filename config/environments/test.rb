@@ -44,7 +44,10 @@ Rails.application.configure do
   # since the template will not have the context of a request
   # (as a controller does) and thus the full URL will be required to create
   # links in the email.  This setting defines the host (domain) for the URL.
-  config.action_mailer.default_url_options = { :host => 'localhost' }
+  config.action_mailer.default_url_options = { host: 'http://localhost:3000' }
+
+  # used by Premailer to create the absolute URL for assets in emails (like images)
+  config.action_mailer.asset_host     = 'http://localhost:3000'
 
   # DO raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.

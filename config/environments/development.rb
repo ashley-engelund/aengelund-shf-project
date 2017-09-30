@@ -42,6 +42,15 @@ Rails.application.configure do
 
   config.action_mailer.show_previews = true
 
+  # used by Premailer to create the absolute URL for assets in emails (like images)
+  config.action_mailer.asset_host     = 'http://localhost:3000'
+
+  # Mail templates will need to use "_url" helpers rather than "_path" helpers
+  # since the template will not have the context of a request
+  # (as a controller does) and thus the full URL will be required to create
+  # links in the email.  This setting defines the host (domain) for the URL.
+  config.action_mailer.default_url_options = { host: 'http://localhost:3000' }
+
 
   #
   ###
