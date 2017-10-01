@@ -1,5 +1,15 @@
 class ApplicationMailer < ActionMailer::Base
 
+  # Formatting email is tricky because you cannot use the same CSS as you can in web pages,
+  # and some email servers (like Google) will strip out a lot of stuff you would
+  # typically put into the <head></head> section -- like references to stylesheets.
+  # So you have to make sure that most things (styles, images, etc.) are *inline*
+  # in the email html source.
+  # This blog post is particularly helpful describing the issues and how to handle things:
+  #
+  #  @url http://www.simonnordberg.com/creating-robust-email-templates-in-action-mailer/
+  #
+
   include MailgunConfig
 
   include CommonMailUtils
