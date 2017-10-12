@@ -367,7 +367,6 @@ CREATE TABLE membership_applications (
     user_id bigint,
     contact_email character varying,
     company_id bigint,
-    membership_number character varying,
     state character varying DEFAULT 'new'::character varying,
     member_app_waiting_reasons_id integer,
     custom_reason_text character varying
@@ -538,7 +537,8 @@ CREATE TABLE users (
     updated_at timestamp without time zone NOT NULL,
     admin boolean DEFAULT false,
     first_name character varying,
-    last_name character varying
+    last_name character varying,
+    membership_number character varying
 );
 
 
@@ -836,13 +836,6 @@ CREATE INDEX index_membership_applications_on_member_app_waiting_reasons_id ON m
 
 
 --
--- Name: index_membership_applications_on_membership_number; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE UNIQUE INDEX index_membership_applications_on_membership_number ON membership_applications USING btree (membership_number);
-
-
---
 -- Name: index_membership_applications_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -882,6 +875,13 @@ CREATE INDEX index_uploaded_files_on_membership_application_id ON uploaded_files
 --
 
 CREATE UNIQUE INDEX index_users_on_email ON users USING btree (email);
+
+
+--
+-- Name: index_users_on_membership_number; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_users_on_membership_number ON users USING btree (membership_number);
 
 
 --
@@ -999,6 +999,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20170918123414'),
 ('20170919120008'),
 ('20170920153643'),
-('20170922144510');
+('20170922144510'),
+('20171005113112');
 
 

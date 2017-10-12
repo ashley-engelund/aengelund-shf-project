@@ -124,6 +124,7 @@ sv:
         email: &email Profil E-post
         password: *password
         password_confirmation: Lösenordsbekräftelse
+        membership_number: &membership_number Medlemsnummer
         created: &created Skapad
         current_sign_in_at: &user_current_signed_in_time Inloggad
         current_sign_in_ip: &user_current_ip Inloggad med IP
@@ -141,7 +142,6 @@ sv:
         contact_email: &contact_email Kontakt e-post
         state: &state Status
         phone_number: Telefonnummer
-        membership_number: &membership_number Medlemsnummer
 
       address:
         street: &street Gata
@@ -502,6 +502,9 @@ sv:
       title: 'Redigera adress för: %{company_name}'
       delete: 'Ta bort den här adressen'
       delete_confirm: Är du säker på att du vill radera den här adressen?
+      cannot_delete_address: (Företagets mailadress - kan inte raderas)
+      delete_address_tooltip: Om du vill radera den här adressen anger du en
+                              annan adress som företagets mailadress.
     update:
       error: Det gick inte att uppdatera adressen.
       success: Adressen uppdaterades.
