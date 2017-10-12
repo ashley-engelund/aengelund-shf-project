@@ -22,6 +22,28 @@ class ApplicationMailer < ActionMailer::Base
   helper :application # gives access to all helpers defined within `application_helper`.
 
 
+  # if there is a problem communicating with the MailGun REST server, log the problem
+  def self.deliver_mail(mail)
+
+    begin
+      super
+
+    rescue => e
+
+      # This would be a great place to use the ExceptionNotification gem so we
+      # can also do other notifications in case we cannot communicate at all with MailGun.
+
+      # LOG the error
+      error_prefix = '>>> MAILGUN ERROR!  '
+      logger.debug ( error_prefix + "Could not send email via mailgun at #{Time.now}" )
+      logger.debug { error_prefix + " Error received from Mailgun: #{e}" }
+
+      raise e
+
+    end
+  end
+
+
   def test_email(user)
     @action_name = __method__.to_s
     @greeting_name = set_greeting_name(user)
