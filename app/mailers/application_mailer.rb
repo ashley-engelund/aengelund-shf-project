@@ -35,8 +35,8 @@ class ApplicationMailer < ActionMailer::Base
 
       # LOG the error
       error_prefix = '>>> MAILGUN ERROR!  '
-      logger.debug ( error_prefix + "Could not send email via mailgun at #{Time.now}" )
-      logger.debug { error_prefix + " Error received from Mailgun: #{e}" }
+      logger.debug( error_prefix + "Could not send email via mailgun at #{Time.now}" )
+      logger.debug{ error_prefix + " Error received from Mailgun: #{e}" }
 
       raise e
 
