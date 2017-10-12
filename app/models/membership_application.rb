@@ -42,6 +42,7 @@ class MembershipApplication < ApplicationRecord
   scope :open, -> { where.not(state: [:accepted, :rejected]) }
 
   delegate :full_name, to: :user, prefix: true
+  delegate :membership_number, :membership_number=, to: :user, prefix: false
 
   include AASM
 
@@ -135,6 +136,9 @@ class MembershipApplication < ApplicationRecord
   def accept_membership
     begin
 
+      user.issue_membership_number
+      user.save
+
       company = Company.find_or_create_by!(company_number: company_number) do |co|
         co.email = contact_email
       end
@@ -149,6 +153,7 @@ class MembershipApplication < ApplicationRecord
 
 
   def reject_membership
+    user.update(membership_number: nil)
     delete_uploaded_files
   end
 

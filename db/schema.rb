@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170704095534) do
+ActiveRecord::Schema.define(version: 20171005113112) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -26,6 +26,8 @@ ActiveRecord::Schema.define(version: 20170704095534) do
     t.bigint "kommun_id"
     t.float "latitude"
     t.float "longitude"
+    t.string "visibility", default: "street_address"
+    t.boolean "mail", default: false
     t.index ["addressable_type", "addressable_id"], name: "index_addresses_on_addressable_type_and_addressable_id"
     t.index ["kommun_id"], name: "index_addresses_on_kommun_id"
     t.index ["latitude", "longitude"], name: "index_addresses_on_latitude_and_longitude"
@@ -70,7 +72,6 @@ ActiveRecord::Schema.define(version: 20170704095534) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "description"
-    t.string "address_visibility", default: "street_address"
     t.index ["company_number"], name: "index_companies_on_company_number", unique: true
   end
 
@@ -105,7 +106,6 @@ ActiveRecord::Schema.define(version: 20170704095534) do
     t.bigint "user_id"
     t.string "contact_email"
     t.bigint "company_id"
-    t.string "membership_number"
     t.string "state", default: "new"
     t.integer "member_app_waiting_reasons_id"
     t.string "custom_reason_text"
@@ -161,7 +161,9 @@ ActiveRecord::Schema.define(version: 20170704095534) do
     t.boolean "admin", default: false
     t.string "first_name"
     t.string "last_name"
+    t.string "membership_number"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["membership_number"], name: "index_users_on_membership_number", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 

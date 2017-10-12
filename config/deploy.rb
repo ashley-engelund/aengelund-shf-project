@@ -2,7 +2,7 @@
 lock '3.6.1'
 
 set :rbenv_type, :user
-set :rbenv_ruby, '2.4.1'
+set :rbenv_ruby, '2.4.2'
 
 set :application, 'shf'
 set :repo_url, 'git@github.com:AgileVentures/shf-project.git'
@@ -31,6 +31,7 @@ set :linked_dirs, %w{
   public/.well-known
   public/storage
   public/ckeditor_assets
+  app/views/pages
 }
 
 # public/.well-known  created by diffouo (raoul) when this was set up. used for ??? (not used?)
@@ -38,6 +39,7 @@ set :linked_dirs, %w{
 # public/uploads      created by diffouo (raoul) when this was set up. used for ??? (not used?)
 # public/storage  Files uploaded for  membership applications
 # public/ckeditor_assets Files uploaded by members, admins when using the ckeditor (ex: company page custom infor, SHF member documents)
+# app/views/pages  Member Documents are stored here.  (Eventually they should moved to a different directory)
 
 
 set :keep_releases, 5

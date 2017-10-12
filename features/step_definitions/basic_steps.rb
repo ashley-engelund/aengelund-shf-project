@@ -1,18 +1,31 @@
-When(/^I click on(?: the)? #{CAPTURE_STRING}[ ]?(link|button)?$/) do |element, type|
+When(/^I click on(?: the)?( \w*)? #{CAPTURE_STRING}[ ]?(link|button)?$/) do |ordinal, element, type|
+# use 'ordinal' when selecting among links or buttons all of which
+# have the same selector (e.g., same label)
+
+  raise 'must specify link or button to use ordinal' if ordinal and !type
+
+  index = ordinal ? [0, 1, 2, 3, 4].send(ordinal.lstrip) : 0
+
   case type
     when 'link'
-      click_link element
+      all(:link, element)[index].click
     when 'button'
-      click_button element
+      all(:button, element)[index].click
     else
       click_link_or_button element
   end
 end
 
 When /^I confirm popup$/ do
-  # requires poltergeist:
-  using_wait_time 3 do
-    page.driver.accept_modal(:confirm)
+
+  if Capybara.current_driver == :poltergeist
+    using_wait_time 3 do
+      page.driver.accept_modal(:confirm)
+    end
+  elsif Capybara.current_driver == :selenium_browser
+    page.driver.browser.switch_to.alert.accept
+  else
+    raise 'step not configured for current browser driver'
   end
 end
 
@@ -50,12 +63,20 @@ When(/^(?:I|they) select #{CAPTURE_STRING} in select list #{CAPTURE_STRING}$/) d
   select option, from: list
 end
 
+When(/^(?:I|they) select radio button #{CAPTURE_STRING}/) do |label_text|
+  find(:xpath, "//label[contains(.,'#{label_text}')]/input[@type='radio']").click
+end
+
 When(/^I click the #{CAPTURE_STRING} action for the row with #{CAPTURE_STRING}$/) do |action, row_content|
   find(:xpath, "//tr[contains(.,'#{row_content}')]/td/a", :text => "#{action}").click
 end
 
 When(/^I (check|uncheck) the checkbox with id #{CAPTURE_STRING}$/) do |action, element_id|
   send action, element_id
+end
+
+When(/^I click the radio button with id #{CAPTURE_STRING}$/) do |element_id|
+  find("##{element_id}").click
 end
 
 When(/^I wait(?: for)? (\d+) second(?:s)?$/) do |seconds|
@@ -68,3 +89,6 @@ When /^I wait for all ajax requests to complete$/ do
   end
 end
 
+And(/^show me the page$/) do
+  save_and_open_page
+end

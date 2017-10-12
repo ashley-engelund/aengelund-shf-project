@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.4.1'
+ruby '2.4.2'
 gem 'dotenv-rails'
 gem 'rails', '5.1'
 gem 'pg', '~> 0.18'
@@ -58,7 +58,10 @@ gem 'geocoder'
 
 gem 'sanitize'
 
-gem 'mailgun_rails'
+gem 'mailgun-ruby'
+gem 'premailer-rails'  # converts css to inline; required for html emails to look ok
+gem 'nokogiri'         # must explicity require this gem for premailer-rails
+
 
 group :development, :test do
   gem 'rspec-rails'
@@ -99,7 +102,7 @@ group :development do
   # to generate state machine diagrams
   # ex: for membership_application state machine:
   #   bundle exec aasm_statecharts -i ./app/models membership_application -t -d ./doc
-  gem 'aasm_statecharts',  github: 'weedySeaDragon/aasm_statecharts'
+  gem 'aasm_statecharts',  '~> 1.1.7', github: 'weedySeaDragon/aasm_statecharts'
 
 
 end

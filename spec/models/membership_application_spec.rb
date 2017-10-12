@@ -44,7 +44,6 @@ RSpec.describe MembershipApplication, type: :model do
     it {is_expected.to have_db_column :company_number}
     it {is_expected.to have_db_column :phone_number}
     it {is_expected.to have_db_column :contact_email}
-    it {is_expected.to have_db_column :membership_number}
     it {is_expected.to have_db_column :state}
     it {is_expected.to have_db_column :custom_reason_text}
   end
@@ -328,7 +327,32 @@ RSpec.describe MembershipApplication, type: :model do
 
     end
 
+  end
 
+
+  describe 'membership number generator' do
+
+    let(:user) { create(:user) }
+    let(:new_app) { create(:membership_application, user: user) }
+
+    before(:each) do
+      new_app.start_review
+    end
+
+    it 'does not generate a membership_number for a new application' do
+      expect(user.membership_number).to be_nil
+    end
+
+    it 'generates a membership_number when an application is accepted' do
+      new_app.accept
+      expect(user.membership_number).not_to be_blank
+    end
+
+    it 'removes the membership_number when an application is rejected' do
+      new_app.accept
+      new_app.reject
+      expect(user.membership_number).to be_nil
+    end
 
   end
 

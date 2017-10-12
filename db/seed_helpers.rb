@@ -38,13 +38,12 @@ module SeedHelper
   end
 
 
-  def get_next_membership_number
-
-    MembershipApplication.last.nil? ? FIRST_MEMBERSHIP_NUMBER : MembershipApplication.last.id + FIRST_MEMBERSHIP_NUMBER
-  end
-
-
   def make_applications(users)
+
+    # make at least one accepted membership application
+    user = users.delete_at(0)
+    return if user == nil
+    make_n_save_app(user, MA_ACCEPTED_STATE)
 
     small_number_of_users = users.count < 3 ? 0 : [1, (0.1 * users.count).round].max
 
@@ -93,10 +92,13 @@ module SeedHelper
 
     ma.state = state
 
-    # make a full company object (instance) for the accepted membership application
-    ma.company = make_new_company(ma.company_number)
+    if state == MA_ACCEPTED_STATE then
+      # make a full company object (instance) for the accepted membership application
+      ma.company = make_new_company(ma.company_number)
 
-    ma.membership_number = get_next_membership_number
+      user.issue_membership_number
+    end
+
 
     # ensure that this is the *last* application for the user
     user.membership_applications << ma
@@ -116,11 +118,10 @@ module SeedHelper
 
     # make a full company instance
     company = Company.new(company_number: company_number,
-                          email: FFaker::InternetSE.free_email,
+                          email: FFaker::InternetSE.disposable_email,
                           name: FFaker::CompanySE.name,
                           phone_number: FFaker::PhoneNumberSE.phone_number,
-                          website: FFaker::InternetSE.http_url,
-                          address_visibility: 'street_address')
+                          website: FFaker::InternetSE.http_url)
     if(company.save)
 
       address = Address.new(addressable: company,
@@ -128,7 +129,8 @@ module SeedHelper
                             street_address: FFaker::AddressSE.street_address,
                             post_code: FFaker::AddressSE.zip_code,
                             region: regions[FFaker.rand(0..num_regions-1)],
-                            kommun: kommuns[FFaker.rand(0..num_kommuns-1)])
+                            kommun: kommuns[FFaker.rand(0..num_kommuns-1)],
+                            visibility: 'street_address')
 
       address.save
     end
@@ -144,7 +146,7 @@ module SeedHelper
     business_categories = BusinessCategory.all.to_a
 
     # for 1 in 8 apps, use a different contact email than the user's email
-    ma = MembershipApplication.new(contact_email: ( (Random.new.rand(1..8)) == 0 ? FFaker::InternetSE.free_email : u.email),
+    ma = MembershipApplication.new(contact_email: ( (Random.new.rand(1..8)) == 0 ? FFaker::InternetSE.disposable_email : u.email),
                                    company_number: company_number,
                                    user: u)
 

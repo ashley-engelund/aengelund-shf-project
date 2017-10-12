@@ -52,9 +52,10 @@ module PathHelpers
         path = new_shf_document_path
       when 'user details'
         path = user_path(user)
-      else
-        fail("no path defined for \"#{pagename}\"")
     end
+
+    expect(path).not_to be_empty, "A step was called with path= '#{pagename}', but that path is not defined in #{__method__} \n    (which is in #{__FILE__}"
+
     path
   end
 end
@@ -82,7 +83,7 @@ Then(/^I should( not)? see #{CAPTURE_STRING} link$/) do |negate, link_label|
 end
 
 
-Then(/^I should( not)? see the checkbox with id "([^"]*)" unchecked$/) do |negate, checkbox_id|
+Then(/^I should( not)? see the (?:checkbox|radio button) with id "([^"]*)" unchecked$/) do |negate, checkbox_id|
   expect(page).send (negate ? :not_to : :to),  have_unchecked_field(checkbox_id)
 end
 
@@ -112,6 +113,10 @@ end
 
 Then(/^I should see "([^"]*)" business categories/) do |number|
   expect(page).to have_selector('tr.business_category', count: number)
+end
+
+Then(/^I should see "([^"]*)" address(?:es)?/) do |number|
+  expect(page).to have_selector('tr.address', count: number)
 end
 
 

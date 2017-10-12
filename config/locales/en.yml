@@ -3,6 +3,8 @@ en:
 
   title: "SWEDEN'S ETHICAL DOG COMPANIES"
 
+  SHF_name: &SHF_name "Swedish Dog Industry Association"
+
   home: Home
   about: About
   more: More
@@ -44,6 +46,13 @@ en:
   confirm_are_you_sure: &are_you_sure_confirm Are you sure
 
   hello: 'Hello, %{name}'
+
+  shf_home_url: &shf_home_url http://www.sverigeshundforetagare.se
+  shf_medlemssystem_url: &shf_medlemssystem_url http://hitta.sverigeshundforetagare.se
+  shf_facebook_url: &shf_facebook_url http://www.facebook.com/sverigeshundforetagare
+  shf_facebook_group_url: &shf_facebook_group_url https://www.facebook.com/groups/sverigeshundforetagare/
+  shf_instagram_url: &shf_instagram_url http://instagram.com/sverigeshundforetagare
+
 
   info:
     logged_in_as_admin: You are logged in as an admin.
@@ -115,6 +124,7 @@ en:
         email: &email Profile Email
         password: *password
         password_confirmation: Password confirmation
+        membership_number: &membership_number Membership number
         created: &created Created
         current_sign_in_at: &user_current_signed_in_time Currently signed in at
         current_sign_in_ip: &user_current_ip Currently signed in from IP address
@@ -124,7 +134,6 @@ en:
         created: *created
         reset_password_sent_at: &user_reset_password_sent_at Password reset info sent
 
-
       membership_application:
         company_number: &company_number Company number
         first_name: *first_name
@@ -132,7 +141,6 @@ en:
         contact_email: &contact_email Contact Email
         state: &state Status
         phone_number: Phone number
-        membership_number: Membership number
 
       address:
         street: &street Street
@@ -142,6 +150,7 @@ en:
         region: &region Region
         region_short: &region_short Län
         country: country
+        mail: Mail
 
       company:
         company_number: *org_nr
@@ -263,7 +272,7 @@ en:
     update:
       success: The application was updated.
       error: One or more problems prevented your application from being updated.
-      enter_member_number: Please enter the member number and save.
+      enter_member_number: Please review the member number and save.
 
     show:
       title: Application from %{user_full_name}
@@ -275,7 +284,7 @@ en:
       contact_email: *contact_email
       app_status: Application status
       change_status: Change the status
-      membership_number: Membership number
+      membership_number: *membership_number
       with_categories: Categories
       delete: *delete
       confirm_are_you_sure: *are_you_sure_confirm
@@ -285,6 +294,7 @@ en:
     index:
       title: All incoming applications
       name: Name
+      membership_number: No.
       org_nr: *org_nr
       state: *state
       manage: *manage
@@ -309,7 +319,7 @@ en:
       user:
         title: "Hey -- we're glad you're interested!"
         how_to_apply: "To submit your membership application, go to
-                       %{link} and fill in all the necessary details,
+                       the link below and fill in all the necessary details,
                         including the categories that apply to you."
         once_it_is_submitted: "Once your application is submitted, we will review it.
                         This takes a while, so do not worry if you do not hear from us for a bit."
@@ -437,6 +447,7 @@ en:
       main_address: Main Address
       other_addresses: Other Addresses
       address: Address
+      mailing_address: Mail
       street: *street
       post_code: *post_code
       city: *city
@@ -444,8 +455,10 @@ en:
       region: *region
       website: Company website
       org_nr: *org_nr
-      delete: "Delete the company"
+      delete: "Delete company"
       confirm_are_you_sure: '*are_you_sure_confirm you want to delete the company?'
+      add_address: 'Add address'
+      click_to_edit: 'click to edit'
     index:
       title: Find H-labeled companies
       admin_title: Edit member companies
@@ -475,7 +488,7 @@ en:
     operations_region: County of operations
     website_include_http: Company website
     description: Customized Company Description
-    address_visibility: Address Visibility
+    address_visibility: Visibility
 
     all_companies: All companies
     edit_company: Edit company
@@ -483,6 +496,27 @@ en:
     list_all_companies: List all companies
     new_company: Create new company
 
+  addresses:
+    edit:
+      title: 'Editing Address for: %{company_name}'
+      delete: 'Delete this address'
+      delete_confirm: Are you sure you want to delete this address?
+      cannot_delete_address: (Company mail address - cannot be deleted)
+      delete_address_tooltip: If you want to delete this address, specify
+                              another address as the company mail address.
+    update:
+      error: There was a problem updating the address.
+      success: The address was updated.
+    new:
+      title: 'New Address for: %{company_name}'
+    create:
+      error: One or more problems prevented the address from being created.
+      success: The address was created successfully.
+      success_sole_address: "The address was created successfully
+                            (and is the default mailing address for the company)."
+    destroy:
+      success: Address deleted.
+      error: Could not delete the address.
 
 
   business_categories:
@@ -533,17 +567,7 @@ en:
   users:
     index:
       title: All Users
-      first_name: *first_name
-      last_name: *last_name
-      email: *email
-      created: *created
-      last_login: *user_last_login
-      logged_in_count: *sign_in_count
-      member: Member
-      applications: *applications
-      applications_tooltip: Number of open applications
-      'yes': *yes  # https://coderwall.com/p/ld65tq/rails-i18n-yes-no-translation
-      'no': *no
+      no_search_results: No records matched your search criteria.
 
     show:
       email: *email
@@ -571,7 +595,28 @@ en:
       success: The user was updated.
       error: A problem kept the user from being updated.
 
+    search_form:
+      profile_email: 'Profile Email'
+      search: 'Search'
+      are_members: 'Are members'
+      are_not_members: 'Are not members'
+      all_users: 'All users'
 
+    user:
+      user_has_never_signed_in: has never logged in.
+      'yes': *yes # https://coderwall.com/p/ld65tq/rails-i18n-yes-no-translation
+      'no': *no
+
+    users_list:
+      first_name: *first_name
+      last_name: *last_name
+      email: *email
+      created: *created
+      last_login: *user_last_login
+      logged_in_count: *sign_in_count
+      member: Member
+      applications: *applications
+      applications_tooltip: Number of open applications
 
   admin:
     index:
@@ -698,6 +743,50 @@ en:
       delete_confirm: "Are you sure you want to delete the reason: %{name_sv} (%{name_en})?"
 
 
+  application_mailer:
+    greeting: &email_greeting "Hello %{greeting_name}"
+
+    trouble_reading_browser: "Having trouble reading this? View it in a browser"
+    email_us: "If you have any questions or suggestions, email us at "
+
+    footer:
+      text:
+        shf_name: *SHF_name
+        shf_motto: KOMPETENS – GLÄDJE – OMTANKE
+        email_sent_to: This email was sent to %{email_sent_to}
+        why_you_are_receiving: You are receiving this email because you are interested in a membership to SVERIGES HUNDFÖRETAGARE or you are a member.
+
+    admin:
+      signoff: Thanks
+      signature: &medlemsansvarig Membership Committee
+
+      new_application_received:
+        subject: A new SHF Member Application has been received
+
+        message_text:
+          new_app_arrived: "A new membership application has been submitted that you should look at: "
+          from: From
+          view_app_here: "You can view the membership application here: "
+          must_be_logged_in: "(You must be logged in as the administrator to view it.)"
+
+    membership_application:
+      signoff: "Best Regards,"
+      signature: *medlemsansvarig
+      signature_url: "http://sverigeshundforetagare.se"
+
+      acknowledge_received:
+        subject: Your application to Sveriges Hundföretagare has been received
+        message_text: "Your application has been received.  We are all working hard, so it might take a while before we get to it. So do not worry if it takes a while before you hear from us."
+
+      accepted:
+        subject: "Welcome! Your SHF application has been approved"
+        greeting: *email_greeting
+        message_text:
+          youre_active: "You have now been activated as a member of the system and can log in and manage your profile and build your business page. Once you are logged in, you can edit your company page here: "
+          access_fb_group: "As a member, you will also have access to our closed Facebook group: "
+          and_member_pages: "as well as hidden pages in our member system: "
+
+
   devise:
     min_length: '(at least %{minimum_length} characters)'
 
@@ -719,7 +808,7 @@ en:
         submit_button_label: *update
         delete_my_account: Delete my account
         unregister: Unregister
-        confirm_are_you_sure: *are_you_sure_confirm
+        confirm_are_you_sure: Are you sure your want to DELETE your account?
         back: *back
         success: Your account has been updated successfully
     sessions:

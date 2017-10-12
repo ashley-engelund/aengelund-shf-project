@@ -4,7 +4,6 @@ class CompaniesController < ApplicationController
   before_action :set_company, only: [:show, :edit, :update, :destroy]
   before_action :authorize_company, only: [:update, :show, :edit, :destroy]
 
-
   def index
     authorize Company
 
@@ -37,14 +36,12 @@ class CompaniesController < ApplicationController
 
   def show
     @categories = @company.business_categories
-    @company.addresses << Address.new  if @company.addresses.count == 0
   end
 
 
   def new
     authorize Company
     @company = Company.new
-    @addresses = @company.addresses.build
 
     @all_business_categories = BusinessCategory.all
   end
@@ -63,7 +60,6 @@ class CompaniesController < ApplicationController
     authorize Company
 
     @company = Company.new( sanitize_website(company_params) )
-    @company.main_address.addressable = @company  # not sure why Rails doesn't assign this automatically
 
     if @company.save
       redirect_to @company, notice: t('.success')
@@ -75,37 +71,12 @@ class CompaniesController < ApplicationController
 
 
   def update
-    # Get company params and address params separately. This is because we need
-    #   to update the company first (in case address_visibility changed).
-    # (Normally the address would be updated *before* the company.
-    #   If that happened, then the gecoding for the address could be
-    #   using the "old" address_visibility.)
-
-    cmpy_params = company_params
-    addr_params = cmpy_params.delete(:addresses_attributes)['0']
-
-    address = @company.main_address
-    address.assign_attributes(addr_params)
-
-    if address.valid? && @company.update( sanitize_website(cmpy_params) )
-
-      address.save if address.changed?
-
-      # We need to geocode the address if 1) address_visibility has changed, and
-      # 2) address did not change (geocoding happens automatically upon save)
-
-      if @company.previous_changes.include?('address_visibility') && !address.changed?
-        address.reload # get latest version of company object
-        address.geocode_best_possible
-        address.save
-      end
-
+    if @company.update( sanitize_website(company_params) )
       redirect_to @company, notice: t('.success')
     else
       flash.now[:alert] = t('.error')
       render :edit
     end
-
   end
 
 
@@ -143,15 +114,14 @@ class CompaniesController < ApplicationController
                                     :email,
                                     :website,
                                     :description,
-                                    :address_visibility,
-                                    {business_category_ids: []},
         addresses_attributes: [:id,
                                 :street_address,
                                 :post_code,
                                 :kommun_id,
                                 :city,
                                 :region_id,
-                                :country])
+                                :country,
+                                :visibility])
   end
 
 
