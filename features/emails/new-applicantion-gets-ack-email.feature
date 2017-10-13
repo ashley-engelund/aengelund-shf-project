@@ -38,7 +38,7 @@ Feature: New Applicant gets an email acknowledging their application
     And I select "Groomer" Category
     And I click on t("membership_applications.new.submit_button_label")
     Then I should be on the "landing" page
-    And I should see t("membership_applications.create.success")
+    And I should see t("membership_applications.create.success", email_address: emma@happymutts.com)
     Then "emma@happymutts.com" should receive an email
     And I open the email
     And I should see t("application_mailer.membership_application.acknowledge_received.subject") in the email subject
