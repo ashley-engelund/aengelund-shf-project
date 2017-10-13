@@ -263,7 +263,7 @@ sv:
       submit_button_label: *submit
 
     create:
-      success: "Tack, din ansökan har skickats. Du borde få ett mail inom kort på %{email_address} med information om vad du kan förvänta sig nästa."
+      success: "Tack, din ansökan har skickats. Du borde få en bekräftelse inom kort till %{email_address}."
       error: Ett eller flera problem hindrade din ansökan från att skickas.
 
     edit:
