@@ -3,7 +3,7 @@ Feature: New Applicant gets an email acknowledging their application
   As a new applicant,
   So that I know that SHF received my application and that I didn't do something wrong,
   and so I know what I should expect to happen next,
-  I should get an email acknowleding my new application
+  I should get an email acknowledging my new application
 
 
   Background:
