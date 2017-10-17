@@ -200,34 +200,39 @@ RSpec.describe ApplicationMailer, type: :mailer do
       num_lines_per_batch = 5000
 
       num_matched = 0
-      File.open(fname, "r") do |f|
 
-        # use an enumerator to read just (num_lines_per_batch) lines at a time
-        f.lazy.each_slice(num_lines_per_batch) do |lines|
+      if File.exist? fname
+        File.open(fname, "r") do |f|
 
-          num_matched += lines.select { |line| line.match(match_regexp) }.count
+          # use an enumerator to read just (num_lines_per_batch) lines at a time
+          f.lazy.each_slice(num_lines_per_batch) do |lines|
+
+            num_matched += lines.select { |line| line.match(match_regexp) }.count
+
+          end
 
         end
-
+      else
+        num_matched = 0
       end
+
       num_matched
     end
 
 
-    it 'will write to the log file if there was a problem sending info to Mailgun' do
+    it 'will write to the Mailgun log file if there was a problem sending info to Mailgun' do
 
       test_user = create(:user)
       mail_to_send = ApplicationMailer.test_email(test_user)
 
-      # this is a mocked response/error from the vcr cassette file
-      expect { mail_to_send.deliver }.to raise_error(Mailgun::CommunicationError)
+      log_fname = ApplicationMailer::LOG_FILE
 
-      log_fname = File.absolute_path(Rails.configuration.paths["log"].first)
-
-      mailgun_error_regexp = />>> MAILGUN ERROR\!\s+Could not send email via mailgun at/
+      mailgun_error_regexp = /\s+Could not send email via mailgun at/
 
       before_mailgun_errors = num_matches_in_file(log_fname, mailgun_error_regexp)
-      expect { mail_to_send.deliver }.to raise_error(Mailgun::CommunicationError)
+
+      # this is a mocked post and response that will return an error from the vcr cassette file
+      mail_to_send.deliver
 
       after_mailgun_errors = num_matches_in_file(log_fname, mailgun_error_regexp)
       expect(after_mailgun_errors - before_mailgun_errors).to eq 1
