@@ -215,6 +215,190 @@ ALTER SEQUENCE companies_id_seq OWNED BY companies.id;
 
 
 --
+-- Name: dinkurs_events; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE dinkurs_events (
+    id bigint NOT NULL,
+    dinkurs_id character varying,
+    event_name character varying,
+    event_place_geometry_location character varying,
+    event_host character varying,
+    event_fee double precision,
+    event_fee_tax double precision,
+    event_pub timestamp without time zone,
+    event_apply timestamp without time zone,
+    event_start timestamp without time zone,
+    event_stop timestamp without time zone,
+    event_participant_number numeric,
+    event_participant_reserve numeric,
+    event_participants numeric,
+    event_occasions character varying,
+    event_group character varying,
+    event_position character varying,
+    event_instructor_1 character varying,
+    event_instructor_2 character varying,
+    event_instructor_3 character varying,
+    event_infotext character varying,
+    event_commenttext character varying,
+    event_ticket_info character varying,
+    event_key character varying,
+    event_url_id character varying,
+    event_url_key character varying,
+    event_completion_text character varying,
+    event_aftertext character varying,
+    event_event_dates character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: TABLE dinkurs_events; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON TABLE dinkurs_events IS 'Information tracked by the DinKurs.se system about an Event';
+
+
+--
+-- Name: COLUMN dinkurs_events.dinkurs_id; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.dinkurs_id IS 'unique identifier for the event in the DinKurs system';
+
+
+--
+-- Name: COLUMN dinkurs_events.event_name; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.event_name IS 'text name of the event';
+
+
+--
+-- Name: COLUMN dinkurs_events.event_place_geometry_location; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.event_place_geometry_location IS 'location ';
+
+
+--
+-- Name: COLUMN dinkurs_events.event_fee; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.event_fee IS 'cost of the event (for a ticket)';
+
+
+--
+-- Name: COLUMN dinkurs_events.event_fee_tax; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.event_fee_tax IS 'tax that is in addition to the cost';
+
+
+--
+-- Name: COLUMN dinkurs_events.event_pub; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.event_pub IS 'date the event is published?';
+
+
+--
+-- Name: COLUMN dinkurs_events.event_apply; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.event_apply IS 'TODO date ? ';
+
+
+--
+-- Name: COLUMN dinkurs_events.event_start; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.event_start IS 'start date and time for the event';
+
+
+--
+-- Name: COLUMN dinkurs_events.event_stop; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.event_stop IS 'stop date and time for the event';
+
+
+--
+-- Name: COLUMN dinkurs_events.event_participant_number; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.event_participant_number IS 'max. number of participants allowed for the event';
+
+
+--
+-- Name: COLUMN dinkurs_events.event_participant_reserve; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.event_participant_reserve IS 'number of participants waiting for a spot to be available for the event';
+
+
+--
+-- Name: COLUMN dinkurs_events.event_participants; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.event_participants IS 'number of participants signed up for the event';
+
+
+--
+-- Name: COLUMN dinkurs_events.event_instructor_1; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.event_instructor_1 IS 'name of instructor 1 for the event';
+
+
+--
+-- Name: COLUMN dinkurs_events.event_instructor_2; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.event_instructor_2 IS 'name of instructor 2 for the event';
+
+
+--
+-- Name: COLUMN dinkurs_events.event_instructor_3; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.event_instructor_3 IS 'name of instructor 3 for the event';
+
+
+--
+-- Name: COLUMN dinkurs_events.event_infotext; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.event_infotext IS 'More text details about the event';
+
+
+--
+-- Name: COLUMN dinkurs_events.event_key; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.event_key IS 'unique identifier for DinKurs used to construct the event_url_key';
+
+
+--
+-- Name: dinkurs_events_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE dinkurs_events_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: dinkurs_events_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE dinkurs_events_id_seq OWNED BY dinkurs_events.id;
+
+
+--
 -- Name: kommuns; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -600,6 +784,13 @@ ALTER TABLE ONLY companies ALTER COLUMN id SET DEFAULT nextval('companies_id_seq
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY dinkurs_events ALTER COLUMN id SET DEFAULT nextval('dinkurs_events_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY kommuns ALTER COLUMN id SET DEFAULT nextval('kommuns_id_seq'::regclass);
 
 
@@ -698,6 +889,14 @@ ALTER TABLE ONLY ckeditor_assets
 
 ALTER TABLE ONLY companies
     ADD CONSTRAINT companies_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: dinkurs_events_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY dinkurs_events
+    ADD CONSTRAINT dinkurs_events_pkey PRIMARY KEY (id);
 
 
 --
@@ -1000,6 +1199,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20170919120008'),
 ('20170920153643'),
 ('20170922144510'),
-('20171005113112');
+('20171005113112'),
+('20171019040050');
 
 

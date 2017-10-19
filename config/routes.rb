@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :dinkurs_events
   mount Ckeditor::Engine => '/ckeditor'
   filter :locale
 
