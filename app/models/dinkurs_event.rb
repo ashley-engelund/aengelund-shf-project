@@ -1,0 +1,2 @@
+class DinkursEvent < ApplicationRecord
+end
