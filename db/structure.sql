@@ -249,7 +249,8 @@ CREATE TABLE dinkurs_events (
     event_aftertext character varying,
     event_event_dates character varying,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    company_id bigint
 );
 
 
@@ -1021,6 +1022,13 @@ CREATE UNIQUE INDEX index_companies_on_company_number ON companies USING btree (
 
 
 --
+-- Name: index_dinkurs_events_on_company_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_dinkurs_events_on_company_id ON dinkurs_events USING btree (company_id);
+
+
+--
 -- Name: index_membership_applications_on_company_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1139,6 +1147,14 @@ ALTER TABLE ONLY membership_applications
 
 
 --
+-- Name: fk_rails_cc19f0fa08; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY dinkurs_events
+    ADD CONSTRAINT fk_rails_cc19f0fa08 FOREIGN KEY (company_id) REFERENCES companies(id);
+
+
+--
 -- Name: fk_rails_f7aa0f06a9; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1200,6 +1216,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20170920153643'),
 ('20170922144510'),
 ('20171005113112'),
-('20171019040050');
+('20171019040050'),
+('20171024001218');
 
 
