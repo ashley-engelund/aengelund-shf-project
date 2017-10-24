@@ -1,33 +1,31 @@
 class DinkursEventsController < ApplicationController
 
   before_action :set_dinkurs_event, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_dinkurs_event, only: [:show, :edit, :update, :destroy]
 
-  # TODO before_action :authorize_dinkurs_event, only: []
 
-
-  # GET /dinkurs_events
-  # GET /dinkurs_events.json
   def index
+    authorize DinkursEvent
     @dinkurs_events = DinkursEvent.all
   end
 
-  # GET /dinkurs_events/1
-  # GET /dinkurs_events/1.json
+
   def show
   end
 
-  # GET /dinkurs_events/new
+
   def new
+    authorize DinkursEvent
     @dinkurs_event = DinkursEvent.new
   end
 
-  # GET /dinkurs_events/1/edit
+
   def edit
   end
 
-  # POST /dinkurs_events
-  # POST /dinkurs_events.json
+
   def create
+    authorize DinkursEvent
     @dinkurs_event = DinkursEvent.new(dinkurs_event_params)
 
     respond_to do |format|
@@ -41,8 +39,7 @@ class DinkursEventsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /dinkurs_events/1
-  # PATCH/PUT /dinkurs_events/1.json
+
   def update
     respond_to do |format|
       if @dinkurs_event.update(dinkurs_event_params)
@@ -55,8 +52,7 @@ class DinkursEventsController < ApplicationController
     end
   end
 
-  # DELETE /dinkurs_events/1
-  # DELETE /dinkurs_events/1.json
+
   def destroy
     @dinkurs_event.destroy
     respond_to do |format|
@@ -65,14 +61,26 @@ class DinkursEventsController < ApplicationController
     end
   end
 
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_dinkurs_event
-      @dinkurs_event = DinkursEvent.find(params[:id])
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def dinkurs_event_params
-      params.fetch(:dinkurs_event, {})
-    end
+  private
+
+  # Use callbacks to share common setup or constraints between actions.
+  def set_dinkurs_event
+    @dinkurs_event = DinkursEvent.find(params[:id])
+  end
+
+
+  def authorize_dinkurs_event
+    authorize @dinkurs_event
+  end
+
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def dinkurs_event_params
+    # TODO - finish this list
+    params.require(:dinkurs_event).permit(:event_name, :dinkurs_id, :event_place, :event_place_geometry, :event_host, :event_fee,
+    :event_fee_tax, :event_pub, :event_apply, :event_start, :event_stop,
+    :event_key, :event_url_id, :event_url_key, :company_id)
+  end
+
 end
