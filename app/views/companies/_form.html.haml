@@ -23,4 +23,7 @@
   = f.label :description, "#{t('companies.description')}"
   = f.cktext_area :description, class: 'wpcf7-form-control'
 
+  = f.label :dinkurs_key, "#{t('companies.show.dinkurs_key')}"
+  = f.text_field :dinkurs_key, class: 'wpcf7-form-control'
+
   = f.submit "#{t('submit')}"

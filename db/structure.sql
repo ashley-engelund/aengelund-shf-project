@@ -191,7 +191,8 @@ CREATE TABLE companies (
     website character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    description text
+    description text,
+    dinkurs_key character varying
 );
 
 
@@ -1217,6 +1218,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20170922144510'),
 ('20171005113112'),
 ('20171019040050'),
-('20171024001218');
+('20171024001218'),
+('20171024065456');
 
 

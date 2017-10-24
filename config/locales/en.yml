@@ -164,6 +164,7 @@ en:
         region_short: *region_short
         website: Website
         org_nr: *org_nr
+        dinkurs_key: &dinkurs_company_key Dinkurs Company key
 
 
       business_category:
@@ -455,6 +456,8 @@ en:
       region: *region
       website: Company website
       org_nr: *org_nr
+      dinkurs_key: *dinkurs_company_key
+
       delete: "Delete company"
       confirm_are_you_sure: '*are_you_sure_confirm you want to delete the company?'
       add_address: 'Add address'

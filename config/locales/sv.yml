@@ -165,6 +165,7 @@ sv:
         kommun: *kommun
         region: *region
         region_short: *region_short
+        dinkurs_key: &dinkurs_company_key Dinkurs Företag key
 
       business_category:
         name: &business_category_name  Namn
@@ -457,6 +458,8 @@ sv:
       region: *region
       website: Företagets webbplats
       org_nr: *org_nr
+      dinkurs_key: *dinkurs_company_key
+
       delete: Radera företaget
       confirm_are_you_sure: *are_you_sure_confirm
       add_address: 'Lägg till adress'

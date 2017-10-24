@@ -114,6 +114,7 @@ class CompaniesController < ApplicationController
                                     :email,
                                     :website,
                                     :description,
+                                    :dinkurs_key,
         addresses_attributes: [:id,
                                 :street_address,
                                 :post_code,

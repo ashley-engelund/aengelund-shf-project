@@ -33,9 +33,11 @@
                    locals: { markers: location_and_markers_for([@company],
                    link_name: false )}
 
-    .col-md-12.address
 
-      - user_can_edit = policy(@company).update?
+    - user_can_edit = policy(@company).update?
+
+
+    .col-md-12.address
 
       - addresses = user_can_edit ? @company.addresses : @company.addresses.visible
 
@@ -74,6 +76,19 @@
                 - else
                   %td
                     = address.entire_address
+
+
+    - if user_can_edit
+      .row
+        .col-md-5
+          %p.dinkurs-key
+            .field-label= t('.dinkurs_key') +':'
+            .field-value= @company.dinkurs_key ? @company.dinkurs_key : "(#{t('none')})"
+
+      .row.center
+        -# button to get and show all dinkurs events
+
+
 
     .row.center.item-nav-buttons#item-nav-buttons
 
