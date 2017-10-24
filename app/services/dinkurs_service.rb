@@ -54,7 +54,7 @@ class DinkursService
 
   def self.get_dikurs_event_xml(dinkurs_company_id)
 
-    url = DINKURS_XML_URL + "?company_key=#{dinkurs_company_id}"
+    url = DINKURS_XML_URL + '?' + DINKURS_COMPANY_ARG + "=#{dinkurs_company_id}"
 
     response = HTTParty.get(url, debug_output: $stdout)
 
