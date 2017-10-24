@@ -1,19 +1,31 @@
 require 'rails_helper'
 
+require 'pp'
+
+require_relative(File.join(__dir__, '..', '..', 'app', 'services', 'dinkurs_service'))
+
+
 
 RSpec.describe DinkursEvent, type: :model do
-
 
   describe 'Factory' do
     it 'has a valid factory' do
       expect(create(:dinkurs_event)).to be_valid
     end
 
+    it 'creates a new dinkurs event for a company' do
+      company = create(:company)
+      new_dk_event1 = create(:dinkurs_event, company: company)
+      expect(new_dk_event1.company.company_number).to eq(company.company_number)
+    end
+
     it 'creates a new dinkurs event id from a sequence' do
-      new_dk_event1 = create(:dinkurs_event)
-      new_dk_event2 = create(:dinkurs_event)
+      company = create(:company)
+      new_dk_event1 = create(:dinkurs_event, company: company)
+      new_dk_event2 = create(:dinkurs_event, company: company)
       expect(new_dk_event1.dinkurs_id).not_to eq(new_dk_event2.dinkurs_id)
     end
+
   end
 
   describe 'DB Table' do
@@ -64,33 +76,17 @@ RSpec.describe DinkursEvent, type: :model do
   end
 
   describe 'Validations' do
-
+    it { is_expected.to validate_presence_of :dinkurs_id }
+    it { is_expected.to validate_presence_of :event_name }
+    it { is_expected.to validate_presence_of :event_start }
+    it { is_expected.to validate_presence_of :event_key }
+    it { is_expected.to validate_presence_of :event_url_id }
+    it { is_expected.to validate_presence_of :event_url_key }
   end
+
 
   describe 'Associations' do
-
-  end
-
-
-  describe 'gets event from dinkurs given a dinkurs company id', vcr: { cassette_name: 'dinkurs', record: :none } do
-
-    # do not actually hit the net; mock the responses from the vcr file instead
-    before(:all) do
-      WebMock.disable_net_connect!(allow_localhost: true)
-    end
-
-    after(:all) do
-      WebMock.allow_net_connect!(allow_localhost: true)
-    end
-
-
-    it 'gets the event info from dinkurs'
-
-    it 'updates the event info if needed'
-
-    it 'creates the info in SHF if needed'
-
-
+    it { is_expected.to belong_to(:company) }  # TODO member or company or either?
   end
 
 
