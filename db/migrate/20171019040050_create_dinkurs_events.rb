@@ -7,7 +7,7 @@ class CreateDinkursEvents < ActiveRecord::Migration[5.1]
 
       t.string  :event_name,                            comment: "text name of the event"
       t.string  :event_place_geometry_location,         comment: "location "
-      t.string  :event_host,                            comment: ""
+      t.string  :event_host,                            comment: "" # TODO what is this field?
 
       t.float  :event_fee,                             comment: "cost of the event (for a ticket)"
       t.float  :event_fee_tax,                         comment: "tax that is in addition to the cost"
@@ -24,7 +24,7 @@ class CreateDinkursEvents < ActiveRecord::Migration[5.1]
       t.string  :event_occasions,                        comment: "" # TODO what is this field?
       t.string  :event_group,                            comment: "" # TODO what is this field?
 
-      t.string  :event_position,                         comment: ""
+      t.string  :event_position,                         comment: "" # TODO what is this field?
       t.string  :event_instructor_1,                     comment: "name of instructor 1 for the event"
       t.string  :event_instructor_2,                     comment: "name of instructor 2 for the event"
       t.string  :event_instructor_3,                     comment: "name of instructor 3 for the event"
