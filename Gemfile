@@ -62,6 +62,9 @@ gem 'mailgun-ruby'
 gem 'premailer-rails'  # converts css to inline; required for html emails to look ok
 gem 'nokogiri'         # must explicity require this gem for premailer-rails
 
+gem 'httparty'
+gem 'jwt'
+
 
 group :development, :test do
   gem 'rspec-rails'
@@ -115,4 +118,8 @@ group :test do
   gem 'email_spec'
   gem 'selenium-webdriver'
   gem 'chromedriver-helper'
+
+  gem 'webmock'  # to mock web (HTTP) interactions.  Required by the vcr gem
+  gem 'vcr'      # to record and 'playback' (mock) http requests
+
 end

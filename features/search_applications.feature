@@ -6,12 +6,12 @@ I want to search for applications by various criteria
 
 Background:
   Given the following users exists
-    | first_name | last_name  | email                | admin |
-    | Fred       | Fransson   | fred@barkyboys.com   |       |
-    | John       | Johanssen  | john@happymutts.com  |       |
-    | Anna       | Anderson   | anna@dogsrus.com     |       |
-    | Emma       | Eriksson   | emma@weluvdogs.com   |       |
-    | admin      | admin      | admin@shf.se         | true  |
+    | first_name | last_name  | email                | admin | membership_number |
+    | Fred       | Fransson   | fred@barkyboys.com   |       | 3                 |
+    | John       | Johanssen  | john@happymutts.com  |       | 14                |
+    | Anna       | Anderson   | anna@dogsrus.com     |       | 1                 |
+    | Emma       | Eriksson   | emma@weluvdogs.com   |       | 2                 |
+    | admin      | admin      | admin@shf.se         | true  |                   |
 
   And the following business categories exist
     | name         |
@@ -44,7 +44,7 @@ Background:
   And I am logged in as "admin@shf.se"
   And I am on the "membership applications" page
 
-@javascript
+@selenium
 Scenario: Search by user's last name
   And I should see "Fred"
   And I should see "John"
@@ -57,7 +57,7 @@ Scenario: Search by user's last name
   And I should not see "Anna"
   And I should not see "Emma"
 
-@javascript
+@selenium
 Scenario: Search by company (org) number
   Then I select "5569467466" in select list t("membership_applications.index.org_nr")
   And I click on t("search")
@@ -70,7 +70,7 @@ Scenario: Search by company (org) number
   Then I should see "Eriksson, Emma"
   Then I should see "Johanssen, John"
 
-@javascript
+@selenium
 Scenario: Search by status
   Then I select "Under review" in select list t("membership_applications.index.state")
   And I click on t("search")
@@ -85,7 +85,7 @@ Scenario: Search by status
   And I should not see "John"
   And I should not see "Fred"
 
-@javascript
+@selenium
 Scenario: Search by status and company number
   Then I select "Under review" in select list t("membership_applications.index.state")
   Then I select "2120000142" in select list t("membership_applications.index.org_nr")
@@ -101,13 +101,36 @@ Scenario: Search by status and company number
   And I should not see "Anna"
   And I should not see "Fred"
 
-@javascript
+@selenium
+Scenario: Search by membership number
+  Then I select "1" in select list t("membership_applications.index.membership_number")
+  And I click on t("search")
+  Then I should see "Anderson, Anna"
+  And I should not see "John"
+  And I should not see "Emma"
+  And I should not see "Fred"
+  Then I select "14" in select list t("membership_applications.index.membership_number")
+  And I click on t("search")
+  Then I should see "Johanssen, John"
+
+@selenium
 Scenario: Can sort by user lastname
   Then I click on t("membership_applications.index.name") link
   And I should see "Anderson" before "Eriksson"
   And I should see "Eriksson" before "Fransson"
   And I should see "Fransson" before "Johanssen"
   Then I click on t("membership_applications.index.name") link
+  And I should see "Johanssen" before "Fransson"
+  And I should see "Fransson" before "Eriksson"
+  And I should see "Eriksson" before "Anderson"
+
+@selenium
+Scenario: Can sort by user membership number
+  Then I click on t("membership_applications.index.membership_number") link
+  And I should see "Anderson" before "Eriksson"
+  And I should see "Eriksson" before "Fransson"
+  And I should see "Fransson" before "Johanssen"
+  Then I click on t("membership_applications.index.membership_number") link
   And I should see "Johanssen" before "Fransson"
   And I should see "Fransson" before "Eriksson"
   And I should see "Eriksson" before "Anderson"
