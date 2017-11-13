@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171024001218) do
+ActiveRecord::Schema.define(version: 20171005113112) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -149,6 +149,18 @@ ActiveRecord::Schema.define(version: 20171024001218) do
     t.index ["user_id"], name: "index_membership_applications_on_user_id"
   end
 
+  create_table "payments", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "company_id"
+    t.string "payment_type"
+    t.string "status"
+    t.string "hips_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_payments_on_company_id"
+    t.index ["user_id"], name: "index_payments_on_user_id"
+  end
+
   create_table "regions", force: :cascade do |t|
     t.string "name"
     t.string "code"
@@ -208,6 +220,8 @@ ActiveRecord::Schema.define(version: 20171024001218) do
   add_foreign_key "dinkurs_events", "companies"
   add_foreign_key "membership_applications", "member_app_waiting_reasons", column: "member_app_waiting_reasons_id"
   add_foreign_key "membership_applications", "users"
+  add_foreign_key "payments", "companies"
+  add_foreign_key "payments", "users"
   add_foreign_key "shf_documents", "users", column: "uploader_id"
   add_foreign_key "uploaded_files", "membership_applications"
 end

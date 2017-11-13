@@ -1,5 +1,6 @@
 SET statement_timeout = 0;
 SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
@@ -191,8 +192,7 @@ CREATE TABLE companies (
     website character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    description text,
-    dinkurs_key character varying
+    description text
 );
 
 
@@ -213,191 +213,6 @@ CREATE SEQUENCE companies_id_seq
 --
 
 ALTER SEQUENCE companies_id_seq OWNED BY companies.id;
-
-
---
--- Name: dinkurs_events; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE dinkurs_events (
-    id bigint NOT NULL,
-    dinkurs_id character varying,
-    event_name character varying,
-    event_place_geometry_location character varying,
-    event_host character varying,
-    event_fee double precision,
-    event_fee_tax double precision,
-    event_pub timestamp without time zone,
-    event_apply timestamp without time zone,
-    event_start timestamp without time zone,
-    event_stop timestamp without time zone,
-    event_participant_number numeric,
-    event_participant_reserve numeric,
-    event_participants numeric,
-    event_occasions character varying,
-    event_group character varying,
-    event_position character varying,
-    event_instructor_1 character varying,
-    event_instructor_2 character varying,
-    event_instructor_3 character varying,
-    event_infotext character varying,
-    event_commenttext character varying,
-    event_ticket_info character varying,
-    event_key character varying,
-    event_url_id character varying,
-    event_url_key character varying,
-    event_completion_text character varying,
-    event_aftertext character varying,
-    event_event_dates character varying,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    company_id bigint
-);
-
-
---
--- Name: TABLE dinkurs_events; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON TABLE dinkurs_events IS 'Information tracked by the DinKurs.se system about an Event';
-
-
---
--- Name: COLUMN dinkurs_events.dinkurs_id; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.dinkurs_id IS 'unique identifier for the event in the DinKurs system';
-
-
---
--- Name: COLUMN dinkurs_events.event_name; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_name IS 'text name of the event';
-
-
---
--- Name: COLUMN dinkurs_events.event_place_geometry_location; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_place_geometry_location IS 'location ';
-
-
---
--- Name: COLUMN dinkurs_events.event_fee; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_fee IS 'cost of the event (for a ticket)';
-
-
---
--- Name: COLUMN dinkurs_events.event_fee_tax; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_fee_tax IS 'tax that is in addition to the cost';
-
-
---
--- Name: COLUMN dinkurs_events.event_pub; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_pub IS 'date the event is published?';
-
-
---
--- Name: COLUMN dinkurs_events.event_apply; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_apply IS 'TODO date ? ';
-
-
---
--- Name: COLUMN dinkurs_events.event_start; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_start IS 'start date and time for the event';
-
-
---
--- Name: COLUMN dinkurs_events.event_stop; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_stop IS 'stop date and time for the event';
-
-
---
--- Name: COLUMN dinkurs_events.event_participant_number; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_participant_number IS 'max. number of participants allowed for the event';
-
-
---
--- Name: COLUMN dinkurs_events.event_participant_reserve; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_participant_reserve IS 'number of participants waiting for a spot to be available for the event';
-
-
---
--- Name: COLUMN dinkurs_events.event_participants; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_participants IS 'number of participants signed up for the event';
-
-
---
--- Name: COLUMN dinkurs_events.event_instructor_1; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_instructor_1 IS 'name of instructor 1 for the event';
-
-
---
--- Name: COLUMN dinkurs_events.event_instructor_2; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_instructor_2 IS 'name of instructor 2 for the event';
-
-
---
--- Name: COLUMN dinkurs_events.event_instructor_3; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_instructor_3 IS 'name of instructor 3 for the event';
-
-
---
--- Name: COLUMN dinkurs_events.event_infotext; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_infotext IS 'More text details about the event';
-
-
---
--- Name: COLUMN dinkurs_events.event_key; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_key IS 'unique identifier for DinKurs used to construct the event_url_key';
-
-
---
--- Name: dinkurs_events_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE dinkurs_events_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: dinkurs_events_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE dinkurs_events_id_seq OWNED BY dinkurs_events.id;
 
 
 --
@@ -591,6 +406,41 @@ CREATE SEQUENCE membership_number_seq
 
 
 --
+-- Name: payments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE payments (
+    id bigint NOT NULL,
+    user_id bigint,
+    company_id bigint,
+    payment_type character varying,
+    status character varying,
+    hips_id character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: payments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE payments_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: payments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE payments_id_seq OWNED BY payments.id;
+
+
+--
 -- Name: regions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -748,105 +598,105 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: addresses id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY addresses ALTER COLUMN id SET DEFAULT nextval('addresses_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: business_categories id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY business_categories ALTER COLUMN id SET DEFAULT nextval('business_categories_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: business_categories_membership_applications id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY business_categories_membership_applications ALTER COLUMN id SET DEFAULT nextval('business_categories_membership_applications_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: ckeditor_assets id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY ckeditor_assets ALTER COLUMN id SET DEFAULT nextval('ckeditor_assets_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: companies id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY companies ALTER COLUMN id SET DEFAULT nextval('companies_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY dinkurs_events ALTER COLUMN id SET DEFAULT nextval('dinkurs_events_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: kommuns id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY kommuns ALTER COLUMN id SET DEFAULT nextval('kommuns_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: member_app_waiting_reasons id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY member_app_waiting_reasons ALTER COLUMN id SET DEFAULT nextval('member_app_waiting_reasons_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: member_pages id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY member_pages ALTER COLUMN id SET DEFAULT nextval('member_pages_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: membership_applications id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY membership_applications ALTER COLUMN id SET DEFAULT nextval('membership_applications_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: payments id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY payments ALTER COLUMN id SET DEFAULT nextval('payments_id_seq'::regclass);
+
+
+--
+-- Name: regions id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY regions ALTER COLUMN id SET DEFAULT nextval('regions_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: shf_documents id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY shf_documents ALTER COLUMN id SET DEFAULT nextval('shf_documents_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: uploaded_files id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY uploaded_files ALTER COLUMN id SET DEFAULT nextval('uploaded_files_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
 
 
 --
--- Name: addresses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: addresses addresses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY addresses
@@ -854,7 +704,7 @@ ALTER TABLE ONLY addresses
 
 
 --
--- Name: ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY ar_internal_metadata
@@ -862,7 +712,7 @@ ALTER TABLE ONLY ar_internal_metadata
 
 
 --
--- Name: business_categories_membership_applications_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: business_categories_membership_applications business_categories_membership_applications_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY business_categories_membership_applications
@@ -870,7 +720,7 @@ ALTER TABLE ONLY business_categories_membership_applications
 
 
 --
--- Name: business_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: business_categories business_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY business_categories
@@ -878,7 +728,7 @@ ALTER TABLE ONLY business_categories
 
 
 --
--- Name: ckeditor_assets_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: ckeditor_assets ckeditor_assets_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY ckeditor_assets
@@ -886,7 +736,7 @@ ALTER TABLE ONLY ckeditor_assets
 
 
 --
--- Name: companies_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: companies companies_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY companies
@@ -894,15 +744,7 @@ ALTER TABLE ONLY companies
 
 
 --
--- Name: dinkurs_events_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY dinkurs_events
-    ADD CONSTRAINT dinkurs_events_pkey PRIMARY KEY (id);
-
-
---
--- Name: kommuns_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: kommuns kommuns_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY kommuns
@@ -910,7 +752,7 @@ ALTER TABLE ONLY kommuns
 
 
 --
--- Name: member_app_waiting_reasons_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: member_app_waiting_reasons member_app_waiting_reasons_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY member_app_waiting_reasons
@@ -918,7 +760,7 @@ ALTER TABLE ONLY member_app_waiting_reasons
 
 
 --
--- Name: member_pages_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: member_pages member_pages_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY member_pages
@@ -926,7 +768,7 @@ ALTER TABLE ONLY member_pages
 
 
 --
--- Name: membership_applications_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: membership_applications membership_applications_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY membership_applications
@@ -934,7 +776,15 @@ ALTER TABLE ONLY membership_applications
 
 
 --
--- Name: regions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: payments payments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY payments
+    ADD CONSTRAINT payments_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: regions regions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY regions
@@ -942,7 +792,7 @@ ALTER TABLE ONLY regions
 
 
 --
--- Name: schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY schema_migrations
@@ -950,7 +800,7 @@ ALTER TABLE ONLY schema_migrations
 
 
 --
--- Name: shf_documents_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: shf_documents shf_documents_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY shf_documents
@@ -958,7 +808,7 @@ ALTER TABLE ONLY shf_documents
 
 
 --
--- Name: uploaded_files_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: uploaded_files uploaded_files_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY uploaded_files
@@ -966,7 +816,7 @@ ALTER TABLE ONLY uploaded_files
 
 
 --
--- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY users
@@ -1023,13 +873,6 @@ CREATE UNIQUE INDEX index_companies_on_company_number ON companies USING btree (
 
 
 --
--- Name: index_dinkurs_events_on_company_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_dinkurs_events_on_company_id ON dinkurs_events USING btree (company_id);
-
-
---
 -- Name: index_membership_applications_on_company_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1062,6 +905,20 @@ CREATE INDEX index_on_applications ON business_categories_membership_application
 --
 
 CREATE INDEX index_on_categories ON business_categories_membership_applications USING btree (business_category_id);
+
+
+--
+-- Name: index_payments_on_company_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_payments_on_company_id ON payments USING btree (company_id);
+
+
+--
+-- Name: index_payments_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_payments_on_user_id ON payments USING btree (user_id);
 
 
 --
@@ -1100,7 +957,23 @@ CREATE UNIQUE INDEX index_users_on_reset_password_token ON users USING btree (re
 
 
 --
--- Name: fk_rails_1b8d2a3863; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: payments fk_rails_081dc04a02; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY payments
+    ADD CONSTRAINT fk_rails_081dc04a02 FOREIGN KEY (user_id) REFERENCES users(id);
+
+
+--
+-- Name: payments fk_rails_0fc68a9316; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY payments
+    ADD CONSTRAINT fk_rails_0fc68a9316 FOREIGN KEY (company_id) REFERENCES companies(id);
+
+
+--
+-- Name: ckeditor_assets fk_rails_1b8d2a3863; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY ckeditor_assets
@@ -1108,7 +981,7 @@ ALTER TABLE ONLY ckeditor_assets
 
 
 --
--- Name: fk_rails_2224289299; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: uploaded_files fk_rails_2224289299; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY uploaded_files
@@ -1116,7 +989,7 @@ ALTER TABLE ONLY uploaded_files
 
 
 --
--- Name: fk_rails_3ee395b045; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: membership_applications fk_rails_3ee395b045; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY membership_applications
@@ -1124,7 +997,7 @@ ALTER TABLE ONLY membership_applications
 
 
 --
--- Name: fk_rails_76a66052a5; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: addresses fk_rails_76a66052a5; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY addresses
@@ -1132,7 +1005,7 @@ ALTER TABLE ONLY addresses
 
 
 --
--- Name: fk_rails_bb6df17516; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: shf_documents fk_rails_bb6df17516; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY shf_documents
@@ -1140,7 +1013,7 @@ ALTER TABLE ONLY shf_documents
 
 
 --
--- Name: fk_rails_be394644c4; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: membership_applications fk_rails_be394644c4; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY membership_applications
@@ -1148,15 +1021,7 @@ ALTER TABLE ONLY membership_applications
 
 
 --
--- Name: fk_rails_cc19f0fa08; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY dinkurs_events
-    ADD CONSTRAINT fk_rails_cc19f0fa08 FOREIGN KEY (company_id) REFERENCES companies(id);
-
-
---
--- Name: fk_rails_f7aa0f06a9; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: addresses fk_rails_f7aa0f06a9; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY addresses
@@ -1217,8 +1082,6 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20170920153643'),
 ('20170922144510'),
 ('20171005113112'),
-('20171019040050'),
-('20171024001218'),
-('20171024065456');
+('20171013141538');
 
 

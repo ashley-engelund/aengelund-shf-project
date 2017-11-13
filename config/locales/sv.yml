@@ -115,6 +115,9 @@ sv:
         one: Dokument
         other: Dokument
 
+      payment:
+        one: Betalning
+        other: Betalningar
 
     attributes:
 
@@ -134,6 +137,8 @@ sv:
         created: *created
         reset_password_sent_at: &user_reset_password_sent_at Information angående återställning av lösenord sändes
 
+      payment:
+        payment_type: Betalningstyp
 
       membership_application:
         company_number: &company_number Organisationsnummer
@@ -232,6 +237,11 @@ sv:
     city: *city
     kommun: *kommun
     none: *none
+
+  payment:
+    payment_type:
+      member_fee: Medlemsavgift
+      branding_fee: H-märkesavgift
 
   # Automatisk och manuell sökning för views:
   membership_applications:
@@ -574,6 +584,7 @@ sv:
       no_search_results: Din sökning gav inget resultat, prova att ta bort något av dina val.
 
     show:
+      membership_number: *membership_number
       email: *email
       current_sign_in_at: *user_current_signed_in_time
       current_sign_in_ip: *user_current_ip
@@ -600,6 +611,7 @@ sv:
       error: Ett problem hindrade användarinformationen från att uppdateras.
 
     search_form:
+      membership_number: &membership_number_short Nr.
       profile_email: Profil e-post
       search: Sök
       are_members: Är medlemmar
@@ -612,6 +624,7 @@ sv:
       'no': *no
 
     users_list:
+      membership_number: *membership_number_short
       first_name: *first_name
       last_name: *last_name
       email: *email
@@ -621,6 +634,18 @@ sv:
       member: Medlem
       applications: *applications
       applications_tooltip: Antal öppna ansökningar
+
+  payments:
+    create:
+      page_title: &page_title '%{payment_type} Betalning genom: %{user_name}'
+      title: *page_title
+      something_wrong: Något gick fel - kontakta systemadministratören på medlem@sverigeshundforetagare.se
+
+    success:
+      success: Betalning framgångsrikt genomförd - tack!
+
+    error:
+      error: Det uppstod ett fel vid behandlingen av din betalning
 
   admin:
     index:
@@ -904,6 +929,7 @@ sv:
           view_company: Visa företagssida
           edit_company: Redigera företag
         my_application: *my_application
+        pay_membership: Betala medlemsavgift
 
       admin:
         shf_main_site: *shf_main_site

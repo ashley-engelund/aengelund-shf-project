@@ -115,6 +115,10 @@ en:
         one: SHF Document
         other: SHF Documents
 
+      payment:
+        one: Payment
+        other: Payments
+
 
     attributes:
 
@@ -133,6 +137,9 @@ en:
         sign_in_count: &sign_in_count Logins
         created: *created
         reset_password_sent_at: &user_reset_password_sent_at Password reset info sent
+
+      payment:
+        payment_type: Payment Type
 
       membership_application:
         company_number: &company_number Company number
@@ -230,6 +237,11 @@ en:
     city: *city
     kommun: *kommun
     none: *none
+
+  payment:
+    payment_type:
+      member_fee: Member Fee
+      branding_fee: Branding Fee
 
  # Automatic and manual lookup for views:
   membership_applications:
@@ -573,6 +585,7 @@ en:
       no_search_results: No records matched your search criteria.
 
     show:
+      membership_number: *membership_number
       email: *email
       current_sign_in_at: *user_current_signed_in_time
       current_sign_in_ip: *user_current_ip
@@ -599,6 +612,7 @@ en:
       error: A problem kept the user from being updated.
 
     search_form:
+      membership_number: &membership_number_short No.
       profile_email: 'Profile Email'
       search: 'Search'
       are_members: 'Are members'
@@ -611,6 +625,7 @@ en:
       'no': *no
 
     users_list:
+      membership_number: *membership_number_short
       first_name: *first_name
       last_name: *last_name
       email: *email
@@ -620,6 +635,18 @@ en:
       member: Member
       applications: *applications
       applications_tooltip: Number of open applications
+
+  payments:
+    create:
+      page_title: &page_title '%{payment_type} Payment by: %{user_name}'
+      title: *page_title
+      something_wrong: Something went wrong - contact the system administrator at member@sverigeshundforetagare.se
+
+    success:
+      success: Payment successfully processed - thank you!
+
+    error:
+      error: There was an error in processing your payment
 
   admin:
     index:
@@ -900,6 +927,7 @@ en:
           view_company: View Company
           edit_company: Edit My Company
         my_application: *my_application
+        pay_membership: Pay Membership Fee
 
       admin:
         shf_main_site: *shf_main_site
