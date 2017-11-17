@@ -57,3 +57,42 @@ namespace :deploy do
 
   after :publishing, :restart
 end
+
+
+
+# Run a rails console or a rails dbconsole
+# @url https://gist.github.com/toobulkeh/8214198
+#
+# Note: this assumes that there is a /bin/rails  file that is capable of
+# running a rails console.
+#
+# Usage:
+#  bundle exec cap production rails:console
+#  bundle exec cap production rails:dbconsole
+namespace :rails do
+  desc "Open the rails console"
+  task :console do
+    on roles(:app) do
+      rails_env = fetch(:rails_env, 'production')
+      execute_interactively "$HOME/.rbenv/bin/rbenv exec bundle exec rails console #{rails_env}"
+    end
+  end
+
+  desc "Open the rails dbconsole"
+  task :dbconsole do
+    on roles(:app) do
+      rails_env = fetch(:rails_env, 'production')
+      execute_interactively "$HOME/.rbenv/bin/rbenv exec bundle exec rails dbconsole #{rails_env}"
+    end
+  end
+
+
+  # ssh to the server
+  def execute_interactively(command)
+    server = fetch(:bundle_servers).first
+    user = server.user
+    port = server.port || 22
+
+    exec "ssh -l #{user} #{host} -p #{port} -t 'cd #{deploy_to}/current && #{command}'"
+  end
+end
