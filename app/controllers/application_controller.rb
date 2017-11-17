@@ -13,6 +13,15 @@ class ApplicationController < ActionController::Base
 
   end
 
+
+  # This should be called when the app is deployed to ensure that
+  # exception notifications are working in the production environment, and perhaps also called periodically
+  # to ensure notifications are working between deployments.
+  def test_exception_notifications
+    raise 'This is a just a test of the exception notifications to ensure they are working.'
+  end
+
+
   protected
 
   def configure_permitted_parameters

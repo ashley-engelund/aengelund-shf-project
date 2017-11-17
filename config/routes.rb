@@ -115,6 +115,9 @@ Rails.application.routes.draw do
 
   get 'information', to: 'membership_applications#information'
 
+  # Route for testing Exception Notification configuration
+  get "test_exception_notifications" => "application#test_exception_notifications"
+
   root to: 'companies#index'
 
 end
