@@ -25,7 +25,7 @@ set :linked_files, %w{config/database.yml config/secrets.yml .env}
 # These directories are in the 'shared' directory on the production system: /var/www/shf/shared/
 # (That is the convention for Capistrano deployments.)
 set :linked_dirs, %w{
-  bin log tmp/pids tmp/cache tmp/sockets vendor/bundle
+  log tmp/pids tmp/cache tmp/sockets vendor/bundle
   public/system
   public/uploads
   public/.well-known
@@ -41,6 +41,8 @@ set :linked_dirs, %w{
 # public/ckeditor_assets Files uploaded by members, admins when using the ckeditor (ex: company page custom infor, SHF member documents)
 # app/views/pages  Member Documents are stored here.  (Eventually they should moved to a different directory)
 
+# ensure the binstubs (files in /bin) are generated
+set :bundle_binstubs, nil
 
 set :keep_releases, 5
 
