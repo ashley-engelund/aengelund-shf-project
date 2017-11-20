@@ -57,7 +57,11 @@ Rails.application.routes.draw do
 
     resources :companies, path: 'hundforetag'
 
-    resources :users, path: 'anvandare'
+    resources :users, path: 'anvandare' do
+      member do
+        put 'edit_status', to: 'users#edit_status', as: 'edit_status'
+      end
+    end
 
     resources :shf_documents
 
