@@ -36,12 +36,14 @@ class User < ApplicationRecord
     # start_date = prior payment expire date + 1 day
     # expire_date = start_date + 1 year - 1 day
     # (special rules apply for remainder of 2017)
+    #
+    # all date calculations should be done with Date.today so everything is based on UTC (vs. using Date.current)
     user = find(user_id)
 
     if user.membership_expire_date
       start_date = user.most_recent_payment.expire_date + 1.day
     else
-      start_date = Date.current
+      start_date = Date.today
     end
     if Date.today.year == 2017
       expire_date = Date.new(2018, 12, 31)

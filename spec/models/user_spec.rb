@@ -464,7 +464,7 @@ RSpec.describe User, type: :model do
       context 'start_date' do
 
         it 'returns today if no prior payment' do
-          expect(User.next_payment_dates(user.id)[0]).to eq Date.current
+          expect(User.next_payment_dates(user.id)[0]).to eq Date.today
         end
 
         it 'returns prior-payment-expire_date plus one day if prior payment' do

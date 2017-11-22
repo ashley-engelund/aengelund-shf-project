@@ -22,7 +22,7 @@ module UsersHelper
   end
 
   def expire_date_css_class(expire_date)
-    today = Date.current
+    today = Date.today
     if today < expire_date << 1
       value_class = 'Yes'  # green
     elsif today >= expire_date
