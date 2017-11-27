@@ -11,7 +11,7 @@ The main project documentation is on the [page for this project at the AgileVent
 _This is a project of [AgileVentures](http://www.agileventures.org), a non-profit organization dedicated to crowdsourced learning and project development._  
 
 
-Sempahore status: [![Build Status](https://semaphoreci.com/api/v1/lollypop27/shf-project/branches/develop/badge.svg)](https://semaphoreci.com/lollypop27/shf-project)
+Sempahore status: [![Semaphore Status](https://semaphoreci.com/api/v1/shf-project/shf-project/branches/develop/shields_badge.svg)](https://semaphoreci.com/shf-project/shf-project)
 
 Codeclimate: [![Code Climate](https://codeclimate.com/github/AgileVentures/shf-project/badges/gpa.svg)](https://codeclimate.com/github/AgileVentures/shf-project)
 
@@ -23,8 +23,11 @@ This project runs on a Ruby on Rails stack with postgreSQL as the repository.
 - rails 5.1.0 (5.1.0 as of July 04, 2017)
 - Postgresql DB
 - imagemagik https://www.imagemagick.org
-- phantomjs (required for integration tests [cucumber tests]) http://phantomjs.org/
-- chromedriver (https://sites.google.com/a/chromium.org/chromedriver/downloads)
+
+Required for integration tests (cucumber + capybara):
+- chromedriver 2.32.498537 or higher https://sites.google.com/a/chromium.org/chromedriver/downloads
+- phantomjs  http://phantomjs.org/
+
 
 ## Installation
 
