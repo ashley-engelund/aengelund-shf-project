@@ -85,7 +85,8 @@ Rails.application.configure do
 end
 
 =begin
-       # Uncomment this block to test exception notifications in a development environment
+       # Uncomment this block to test exception notifications in a development environment.
+       # WARNING:  it will *really* send notifications!
 
 # Notify of any exceptions using the exception_notification gem
 Rails.application.config.middleware.use ExceptionNotification::Rack,
