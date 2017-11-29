@@ -475,6 +475,8 @@ en:
       website: Company website
       org_nr: *org_nr
       dinkurs_key: *dinkurs_company_key
+      dinkurs_help: "If you have a Dinkurs.se account and want to also show the company events here, enter the Dinkurs.se company key."
+      dinkurs_help_can_leave_blank: "(You can leave it blank if you don't have a Dinkurs.se account.)"
 
       delete: "Delete company"
       confirm_are_you_sure: '*are_you_sure_confirm you want to delete the company?'
@@ -496,6 +498,11 @@ en:
     destroy:
       success: Company deleted.
       error: Could not delete the company.
+
+    get_dinkurs_events:
+      success:
+      error:
+
 
     form:
       region_tooltip: Choose "Sweden" if the company operates

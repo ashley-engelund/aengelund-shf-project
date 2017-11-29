@@ -476,6 +476,8 @@ sv:
       website: Företagets webbplats
       org_nr: *org_nr
       dinkurs_key: *dinkurs_company_key
+      dinkurs_help: "Om du har ett Dinkurs.se konto och vill visa företagshändelser här, ange Dinkurs.se företagsnyckel.."
+      dinkurs_help_can_leave_blank: "(Du kan lämna den tom om du inte har ett Dinkurs.se konto.)"
 
       delete: Radera företaget
       confirm_are_you_sure: *are_you_sure_confirm
