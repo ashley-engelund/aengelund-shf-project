@@ -5,7 +5,6 @@ require 'pp'
 require_relative(File.join(__dir__, '..', '..', 'app', 'services', 'dinkurs_service'))
 
 
-
 RSpec.describe DinkursEvent, type: :model do
 
   describe 'Factory' do
@@ -28,66 +27,128 @@ RSpec.describe DinkursEvent, type: :model do
 
   end
 
+
   describe 'DB Table' do
     it { is_expected.to have_db_column :id }
     it { is_expected.to have_db_column :dinkurs_id }
 
-    it { is_expected.to have_db_column :event_name }
-    it { is_expected.to have_db_column :event_place_geometry_location }
-    it { is_expected.to have_db_column :event_host }
+    it { is_expected.to have_db_column :name }
+    it { is_expected.to have_db_column :place }
+    it { is_expected.to have_db_column :place_geometry_location }
+    it { is_expected.to have_db_column :host }
 
-    it { is_expected.to have_db_column :event_fee }
-    it { is_expected.to have_db_column :event_fee_tax }
+    it { is_expected.to have_db_column :fee }
+    it { is_expected.to have_db_column :fee_tax }
 
-    it { is_expected.to have_db_column :event_pub }  # date
-    it { is_expected.to have_db_column :event_apply } # date
-    it { is_expected.to have_db_column :event_start } # date
-    it { is_expected.to have_db_column :event_stop } # date
+    it { is_expected.to have_db_column :pub } # date
+    it { is_expected.to have_db_column :apply } # date
+    it { is_expected.to have_db_column :start } # date
+    it { is_expected.to have_db_column :stop } # date
 
-    it { is_expected.to have_db_column :event_participant_number }
-    it { is_expected.to have_db_column :event_participant_reserve }
+    it { is_expected.to have_db_column :participant_number }
+    it { is_expected.to have_db_column :participant_reserve }
 
-    it { is_expected.to have_db_column :event_participants }
+    it { is_expected.to have_db_column :participants }
 
-    it { is_expected.to have_db_column :event_occasions }
-    it { is_expected.to have_db_column :event_group }
+    it { is_expected.to have_db_column :occasions }
+    it { is_expected.to have_db_column :group }
 
-    it { is_expected.to have_db_column :event_position }  # number
-    it { is_expected.to have_db_column :event_instructor_1 }
-    it { is_expected.to have_db_column :event_instructor_2 }
-    it { is_expected.to have_db_column :event_instructor_3 }
-
-
-    it { is_expected.to have_db_column :event_infotext }
-    it { is_expected.to have_db_column :event_commenttext }
+    it { is_expected.to have_db_column :position } # number
+    it { is_expected.to have_db_column :instructor_1 }
+    it { is_expected.to have_db_column :instructor_2 }
+    it { is_expected.to have_db_column :instructor_3 }
 
 
-    it { is_expected.to have_db_column :event_ticket_info }
+    it { is_expected.to have_db_column :infotext }
+    it { is_expected.to have_db_column :commenttext }
 
-    it { is_expected.to have_db_column :event_key }  # unique identifier for DinKurs used to construct the event_url_key ?
-    it { is_expected.to have_db_column :event_url_id }
-    it { is_expected.to have_db_column :event_url_key }
 
-    it { is_expected.to have_db_column :event_completion_text }
-    it { is_expected.to have_db_column :event_aftertext }
+    it { is_expected.to have_db_column :ticket_info }
 
-    it { is_expected.to have_db_column :event_event_dates }
+    it { is_expected.to have_db_column :key } # unique identifier for DinKurs used to construct the event_url_key ?
+    it { is_expected.to have_db_column :url_id }
+    it { is_expected.to have_db_column :url_key }
+
+    it { is_expected.to have_db_column :completion_text }
+    it { is_expected.to have_db_column :aftertext }
+
+    it { is_expected.to have_db_column :dates }
 
   end
 
   describe 'Validations' do
     it { is_expected.to validate_presence_of :dinkurs_id }
-    it { is_expected.to validate_presence_of :event_name }
-    it { is_expected.to validate_presence_of :event_start }
-    it { is_expected.to validate_presence_of :event_key }
-    it { is_expected.to validate_presence_of :event_url_id }
-    it { is_expected.to validate_presence_of :event_url_key }
+    it { is_expected.to validate_presence_of :name }
+    it { is_expected.to validate_presence_of :start }
+    it { is_expected.to validate_presence_of :key }
+    it { is_expected.to validate_presence_of :url_id }
+    it { is_expected.to validate_presence_of :url_key }
   end
-
 
   describe 'Associations' do
-    it { is_expected.to belong_to(:company) }  # TODO member or company or either?
+    it { is_expected.to belong_to(:company) }
+  end
+
+  describe 'create from an event Hash' do
+
+    it 'valid event info hash as returned from DinKurs.se' do
+
+      event_hash = { 'id' => ['1234'],
+                     'name' => { '__content__' => 'This Event' },
+                     'place' => { '__content__' => 'Hundistan' },
+                     'start' => { '__content__' => '2017-11-19' },
+                     'stop' => { '__content__' => '2017-11-29' },
+                     'pub' => { '__content__' => '2017-10-01' },
+                     'key' => { '__content__' => 'key123' },
+                     'url_id' => { '__content__' => '456789' },
+                     'url_key' => { '__content__' => 'key123_456789' },
+      }
+
+      new_dkev = DinkursEvent.new_from_event_hash(event_hash)
+      expect(new_dkev.dinkurs_id).to eq '1234'
+      expect(new_dkev.name).to eq 'This Event'
+      expect(new_dkev.place).to eq 'Hundistan'
+      expect(new_dkev.start).to eq Date.parse('2017-11-19')
+      expect(new_dkev.stop).to eq Date.parse('2017-11-29')
+      expect(new_dkev.pub).to eq Date.parse('2017-10-01')
+      expect(new_dkev.key).to eq 'key123'
+      expect(new_dkev.url_id).to eq '456789'
+      expect(new_dkev.url_key).to eq 'key123_456789'
+
+
+    end
+
   end
 
 
+  describe '.key_content' do
+
+    it 'nil if the key is not found' do
+      expect(described_class.key_content({ 'blorf' => { '__content__' => 123 } }, 'not_found_key')).to be_nil
+
+    end
+
+    it 'nil if _content_ is not the key in the nested hash' do
+      expect(described_class.key_content({ 'blorf' => { '_not_content_' => 123 } }, 'blorf')).to be_nil
+    end
+
+    it "the value ['key']['_content_']" do
+      expect(described_class.key_content({ 'blorf' => { '__content__' => 123 } }, 'blorf')).to eq 123
+    end
+  end
+
+
+  describe '.key_content_date' do
+    it 'nil if key not found' do
+      expect(described_class.key_content_date({ 'blorf' => { '__content__' => '2017-11-29' } }, 'not_found_key')).to be_nil
+    end
+
+    it 'nil if value is not a String' do
+      expect(described_class.key_content_date({ 'blorf' => { '__content__' => 42 } }, 'blorf')).to be_nil
+    end
+
+    it 'date if hash has key and is a string' do
+      expect(described_class.key_content_date({ 'blorf' => { '__content__' => '2017-11-29' } }, 'blorf')).to eq Date.parse('2017-11-29')
+    end
+  end
 end
