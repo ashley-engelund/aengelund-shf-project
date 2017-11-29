@@ -1,8 +1,9 @@
 class CompaniesController < ApplicationController
   include PaginationUtility
 
-  before_action :set_company, only: [:show, :edit, :update, :destroy]
-  before_action :authorize_company, only: [:update, :show, :edit, :destroy]
+  before_action :set_company, only: [:show, :edit, :update, :destroy, :get_dinkurs_events]
+  before_action :authorize_company, only: [:update, :show, :edit, :destroy, :get_dinkurs_events]
+
 
   def index
     authorize Company
@@ -13,11 +14,11 @@ class CompaniesController < ApplicationController
 
     # only select companies that are 'complete'; see the Company.complete scope
 
-    @all_companies =  @search_params.result(distinct: true)
-                          .complete
-                          .includes(:business_categories)
-                          .includes(addresses: [ :region, :kommun ])
-                          .joins(addresses: [ :region, :kommun ])
+    @all_companies = @search_params.result(distinct: true)
+                         .complete
+                         .includes(:business_categories)
+                         .includes(addresses: [:region, :kommun])
+                         .joins(addresses: [:region, :kommun])
 
     # The last qualifier ("joins") on above statement ("addresses: :region") is
     # to get around a problem with DISTINCT queries used with ransack when also
@@ -26,7 +27,7 @@ class CompaniesController < ApplicationController
 
     @all_visible_companies = @all_companies.address_visible
 
-    @all_visible_companies.each { | co | geocode_if_needed co  }
+    @all_visible_companies.each { |co| geocode_if_needed co }
 
     @companies = @all_companies.page(params[:page]).per_page(items_per_page)
 
@@ -51,7 +52,7 @@ class CompaniesController < ApplicationController
     @all_business_categories = BusinessCategory.all
 
     Ckeditor::Picture.images_category = 'company_' + @company.id.to_s
-    Ckeditor::Picture.for_company_id  = @company.id
+    Ckeditor::Picture.for_company_id = @company.id
 
   end
 
@@ -59,7 +60,7 @@ class CompaniesController < ApplicationController
   def create
     authorize Company
 
-    @company = Company.new( sanitize_website(company_params) )
+    @company = Company.new(sanitize_website(company_params))
 
     if @company.save
       redirect_to @company, notice: t('.success')
@@ -71,7 +72,7 @@ class CompaniesController < ApplicationController
 
 
   def update
-    if @company.update( sanitize_website(company_params) )
+    if @company.update(sanitize_website(company_params))
       redirect_to @company, notice: t('.success')
     else
       flash.now[:alert] = t('.error')
@@ -93,6 +94,45 @@ class CompaniesController < ApplicationController
   end
 
 
+  def get_dinkurs_events
+    raise 'Unsupported request' unless request.xhr?
+
+    # get dinkurs events for the company
+    dinkurs_events = DinkursService.get_events(@company.dinkurs_key)
+    # TODO display the events fetched
+
+    puts "\n\n==========\nDinkurs events fetched:\n"
+    unless dinkurs_events.nil?
+      dinkurs_events.each do | dk_event |
+        puts "   #{dk_event.inspect}"
+      end
+
+      # TODO save the events
+
+      render partial: 'dinkurs_events_teaser_list', locals: { dk_events: dinkurs_events }
+    else
+      helpers.flash_message(:alert, t('.error'))
+      render :show
+    end
+
+    # TODO if fetch was successful,
+    #  populate some little bit of info about the events with a link to where to find the full list.
+
+    # example code used when payments are fetched from an external system (HIPS):
+=begin
+    if @company.update(sanitize_website(company_params))  &&
+        (payment ? payment.update(payment_params) : true)
+
+      #render partial: 'member_payment_status', locals: { user: @user }
+    else
+      helpers.flash_message(:alert, t('.error'))
+      render :show
+    end
+=end
+
+  end
+
+
   private
   # Use callbacks to share common setup or constraints between actions.
   def set_company
@@ -104,7 +144,7 @@ class CompaniesController < ApplicationController
   def geocode_if_needed(company)
     needs_geocoding = company.addresses.reject(&:geocoded?)
     needs_geocoding.each(&:geocode_best_possible)
-    company.save!  if needs_geocoding.count > 0
+    company.save! if needs_geocoding.count > 0
   end
 
 
@@ -115,14 +155,14 @@ class CompaniesController < ApplicationController
                                     :website,
                                     :description,
                                     :dinkurs_key,
-        addresses_attributes: [:id,
-                                :street_address,
-                                :post_code,
-                                :kommun_id,
-                                :city,
-                                :region_id,
-                                :country,
-                                :visibility])
+                                    addresses_attributes: [:id,
+                                                           :street_address,
+                                                           :post_code,
+                                                           :kommun_id,
+                                                           :city,
+                                                           :region_id,
+                                                           :country,
+                                                           :visibility])
   end
 
 
@@ -132,7 +172,7 @@ class CompaniesController < ApplicationController
 
 
   def sanitize_website(params)
-    params['website'] = URLSanitizer.sanitize( params.fetch('website','') )
+    params['website'] = URLSanitizer.sanitize(params.fetch('website', ''))
     params
   end
 
