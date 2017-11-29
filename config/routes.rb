@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
 
-  resources :dinkurs_events
+
   mount Ckeditor::Engine => '/ckeditor'
   filter :locale
 
@@ -59,7 +59,11 @@ Rails.application.routes.draw do
 
     end
 
-    resources :companies, path: 'hundforetag'
+    resources :companies, path: 'hundforetag' do
+      member do
+        post 'get_dinkurs_events', to: 'companies#get_dinkurs_events', as: 'get_dinkurs_events'
+      end
+    end
 
     resources :users, path: 'anvandare' do
       member do
@@ -68,6 +72,9 @@ Rails.application.routes.draw do
     end
 
     resources :shf_documents
+
+    resources :dinkurs_events
+
 
     get 'shf_documents/contents/:page',
       to: 'shf_documents#contents_show', as: 'contents_show'
