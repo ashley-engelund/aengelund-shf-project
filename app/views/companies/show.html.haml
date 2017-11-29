@@ -80,14 +80,17 @@
 
     - if user_can_edit
       .row
-        .col-md-5
+        .col-md-4
           %p.dinkurs-key
-            .field-label= t('.dinkurs_key') +':'
-            .field-value= @company.dinkurs_key ? @company.dinkurs_key : "(#{t('none')})"
+            = field_or_none t('.dinkurs_key'), @company.dinkurs_key, tag_options: {class: 'dinkurs-key'}
 
-      .row.center
-        -# button to get and show all dinkurs events
+            = button_to 'get Dinkurs events',
+                        [:get_dinkurs_events, @company],
+                        id: 'getDinkursEvents',
+                        remote: true
 
+        .col-md-8
+          #dinkurs-events
 
 
     .row.center.item-nav-buttons#item-nav-buttons
