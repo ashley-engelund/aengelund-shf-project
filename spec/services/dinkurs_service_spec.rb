@@ -6,7 +6,7 @@ require_relative(File.join(__dir__, '..', '..', 'app', 'services', 'dinkurs_serv
 # record: :new_episodes
 
 
-RSpec.describe DinkursService, :vcr do
+RSpec.describe DinkursService, vcr: {record: :none } do
 
   # use this block to ensure the response is in UTF-8 (and not ASCII which may be binary):
   VCR.configure do |c|
