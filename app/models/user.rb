@@ -11,14 +11,6 @@ class User < ApplicationRecord
   validates_presence_of :first_name, :last_name, unless: Proc.new {!new_record? && !(first_name_changed? || last_name_changed?)}
   validates_uniqueness_of :membership_number, allow_blank: true
 
-  scope :are_members, lambda {
-    User.all.select { | user | user.member? }
-  }
-
-  scope :are_not_members, lambda {
-    User.all.reject { | user | user.member? }
-  }
-
   def most_recent_payment
     payments.completed.order(:created_at).last
   end
@@ -93,11 +85,6 @@ class User < ApplicationRecord
   end
 
 
-  def admin?
-    admin
-  end
-
-
   def is_member_or_admin?
     admin? || member?
   end
@@ -111,7 +98,7 @@ class User < ApplicationRecord
   def companies
     if admin?
       Company.all
-    elsif is_member_or_admin? && has_membership_application?
+    elsif member? && has_membership_application?
       cos = membership_applications.reload.map(&:company).compact
       cos.uniq(&:company_number)
     else
