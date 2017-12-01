@@ -49,14 +49,15 @@ class MembershipApplicationsController < ApplicationController
     if @membership_application.save
 
       if new_file_uploaded(params)
+
+        MembershipApplicationMailer.acknowledge_received(@membership_application).deliver
+        send_new_membership_application_notice_to_admins(@membership_application)
+
         helpers.flash_message(:notice, t('.success', email_address: @membership_application.contact_email))
         redirect_to root_path
       else
         create_error(t('.error'))
       end
-
-
-      MembershipApplicationMailer.acknowledge_received(@membership_application).deliver
 
     else
       create_error(t('.error'))
@@ -249,6 +250,12 @@ class MembershipApplicationsController < ApplicationController
       render :edit
     end
 
+  end
+
+  def send_new_membership_application_notice_to_admins(new_membership_application)
+    User.admins.each do |admin|
+      AdminMailer.new_member_application_received(new_membership_application, admin).deliver_now
+    end
   end
 
 
