@@ -8,6 +8,11 @@
 = '     ' + @member_app.user.full_name
 = '     ' + @member_app.contact_email
 
+
+= '        # ' + I18n.t('activerecord.attributes.membership_application.uploaded_files.many') + ': ' + @member_app.uploaded_files.count.to_s
+= '        ' + I18n.t('activerecord.attributes.company.company_number') + ': ' + @member_app.company_number
+
+
 \
 = t('application_mailer.admin.new_application_received.message_text.view_app_here')
 = '     ' + url_for(@member_app)
