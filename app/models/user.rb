@@ -11,6 +11,8 @@ class User < ApplicationRecord
   validates_presence_of :first_name, :last_name, unless: Proc.new {!new_record? && !(first_name_changed? || last_name_changed?)}
   validates_uniqueness_of :membership_number, allow_blank: true
 
+  scope :admins, -> { where(admin: true) }
+
   def most_recent_payment
     payments.completed.order(:created_at).last
   end
