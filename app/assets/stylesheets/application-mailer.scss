@@ -181,11 +181,21 @@ $dark-gray: #222222;
 
               .from {
                 font-weight: bold;
+                margin-top: 1rem;
+              }
+
+              .user_name {
+                font-weight: bold;
               }
 
               .user_name,
               .user_email {
                 margin-left: 30px;
+              }
+
+              .number_files_uploaded,
+              .company_number {
+                margin-left: 60px;
               }
 
             }
