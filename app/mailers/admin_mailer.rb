@@ -5,7 +5,7 @@ class AdminMailer < ApplicationMailer
 
     @member_app = new_member_app
 
-    set_mail_info  __method__, admin
+    set_mail_info __method__, admin
 
     mail to: @recipient_email, subject: t('application_mailer.admin.new_application_received.subject')
 

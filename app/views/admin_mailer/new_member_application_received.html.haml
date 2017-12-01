@@ -6,11 +6,11 @@
 
 .from-info
   %p.from= t('application_mailer.admin.new_application_received.message_text.from')
-  %p.user_name= @member_app.user.full_name
-  %p.user_email= @member_app.contact_email
+  %p.user-name= @member_app.user.full_name
+  %p.user-email= @member_app.contact_email
 
-  %p.number_files_uploaded= '# ' + I18n.t('activerecord.attributes.membership_application.uploaded_files.many') + ': ' + @member_app.uploaded_files.count.to_s
-  %p.company_number=I18n.t('activerecord.attributes.company.company_number') +': ' + @member_app.company_number
+  %p.number-files-uploaded= '# ' + I18n.t('activerecord.attributes.membership_application.uploaded_files.many') + ': ' + @member_app.uploaded_files.count.to_s
+  %p.company-number= I18n.t('activerecord.attributes.company.company_number') +': ' + @member_app.company_number
 
 %p
   = t('application_mailer.admin.new_application_received.message_text.view_app_here') + ' '
