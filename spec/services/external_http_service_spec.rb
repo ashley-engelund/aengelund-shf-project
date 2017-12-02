@@ -40,7 +40,7 @@ RSpec.describe ExternalHTTPService, :vcr do
     # TODO - how to test this?
 
     it 'is a Hash' do
-      pending
+      #pending
     #  expect(fetched_response).to be_instance_of(Hash)
     end
 
