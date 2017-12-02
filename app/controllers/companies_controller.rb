@@ -95,13 +95,13 @@ class CompaniesController < ApplicationController
 
 
   def get_dinkurs_events
+
     raise 'Unsupported request' unless request.xhr?
 
     # get dinkurs events for the company
     dinkurs_events = DinkursService.get_events(@company.dinkurs_key)
-    # TODO display the events fetched
 
-    puts "\n\n==========\nDinkurs events fetched:\n"
+
     unless dinkurs_events.nil?
       dinkurs_events.each do | dk_event |
         puts "   #{dk_event.inspect}"
