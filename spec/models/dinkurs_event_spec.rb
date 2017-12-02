@@ -93,15 +93,15 @@ RSpec.describe DinkursEvent, type: :model do
 
     it 'valid event info hash as returned from DinKurs.se' do
 
-      event_hash = { 'id' => ['1234'],
-                     'name' => { '__content__' => 'This Event' },
-                     'place' => { '__content__' => 'Hundistan' },
-                     'start' => { '__content__' => '2017-11-19' },
-                     'stop' => { '__content__' => '2017-11-29' },
-                     'pub' => { '__content__' => '2017-10-01' },
-                     'key' => { '__content__' => 'key123' },
-                     'url_id' => { '__content__' => '456789' },
-                     'url_key' => { '__content__' => 'key123_456789' },
+      event_hash = { 'event_id' => ['1234'],
+                     'event_name' => { '__content__' => 'This Event' },
+                     'event_place' => { '__content__' => 'Hundistan' },
+                     'event_start' => { '__content__' => '2017-11-19' },
+                     'event_stop' => { '__content__' => '2017-11-29' },
+                     'event_pub' => { '__content__' => '2017-10-01' },
+                     'event_key' => { '__content__' => 'key123' },
+                     'event_url_id' => { '__content__' => '456789' },
+                     'event_url_key' => { '__content__' => 'key123_456789' },
       }
 
       new_dkev = DinkursEvent.new_from_event_hash(event_hash)

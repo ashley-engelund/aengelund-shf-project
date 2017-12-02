@@ -7,7 +7,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: plpgsql; Type: EXTENSION; Schema: -;  Owner: -
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
 --
 
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
@@ -222,37 +222,37 @@ ALTER SEQUENCE companies_id_seq OWNED BY companies.id;
 CREATE TABLE dinkurs_events (
     id bigint NOT NULL,
     dinkurs_id character varying,
-    event_name character varying,
-    event_place_geometry_location character varying,
-    event_host character varying,
-    event_fee double precision,
-    event_fee_tax double precision,
-    event_pub timestamp without time zone,
-    event_apply timestamp without time zone,
-    event_start timestamp without time zone,
-    event_stop timestamp without time zone,
-    event_participant_number numeric,
-    event_participant_reserve numeric,
-    event_participants numeric,
-    event_occasions character varying,
-    event_group character varying,
-    event_position character varying,
-    event_instructor_1 character varying,
-    event_instructor_2 character varying,
-    event_instructor_3 character varying,
-    event_infotext character varying,
-    event_commenttext character varying,
-    event_ticket_info character varying,
-    event_key character varying,
-    event_url_id character varying,
-    event_url_key character varying,
-    event_completion_text character varying,
-    event_aftertext character varying,
-    event_event_dates character varying,
+    name character varying,
+    place_geometry_location character varying,
+    host character varying,
+    fee double precision,
+    fee_tax double precision,
+    pub timestamp without time zone,
+    apply timestamp without time zone,
+    start timestamp without time zone,
+    stop timestamp without time zone,
+    participant_number numeric,
+    participant_reserve numeric,
+    participants numeric,
+    occasions character varying,
+    "group" character varying,
+    "position" character varying,
+    instructor_1 character varying,
+    instructor_2 character varying,
+    instructor_3 character varying,
+    infotext character varying,
+    commenttext character varying,
+    ticket_info character varying,
+    key character varying,
+    url_id character varying,
+    url_key character varying,
+    completion_text character varying,
+    aftertext character varying,
+    dates character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     company_id bigint,
-    event_place character varying
+    place character varying
 );
 
 
@@ -271,115 +271,115 @@ COMMENT ON COLUMN dinkurs_events.dinkurs_id IS 'unique identifier for the event 
 
 
 --
--- Name: COLUMN dinkurs_events.event_name; Type: COMMENT; Schema: public; Owner: -
+-- Name: COLUMN dinkurs_events.name; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON COLUMN dinkurs_events.event_name IS 'text name of the event';
-
-
---
--- Name: COLUMN dinkurs_events.event_place_geometry_location; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_place_geometry_location IS 'location ';
+COMMENT ON COLUMN dinkurs_events.name IS 'text name of the event';
 
 
 --
--- Name: COLUMN dinkurs_events.event_fee; Type: COMMENT; Schema: public; Owner: -
+-- Name: COLUMN dinkurs_events.place_geometry_location; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON COLUMN dinkurs_events.event_fee IS 'cost of the event (for a ticket)';
-
-
---
--- Name: COLUMN dinkurs_events.event_fee_tax; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_fee_tax IS 'tax that is in addition to the cost';
+COMMENT ON COLUMN dinkurs_events.place_geometry_location IS 'location geocoordinates';
 
 
 --
--- Name: COLUMN dinkurs_events.event_pub; Type: COMMENT; Schema: public; Owner: -
+-- Name: COLUMN dinkurs_events.fee; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON COLUMN dinkurs_events.event_pub IS 'date the event is published?';
-
-
---
--- Name: COLUMN dinkurs_events.event_apply; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_apply IS 'TODO date ? ';
+COMMENT ON COLUMN dinkurs_events.fee IS 'cost of the event (for a ticket)';
 
 
 --
--- Name: COLUMN dinkurs_events.event_start; Type: COMMENT; Schema: public; Owner: -
+-- Name: COLUMN dinkurs_events.fee_tax; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON COLUMN dinkurs_events.event_start IS 'start date and time for the event';
-
-
---
--- Name: COLUMN dinkurs_events.event_stop; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_stop IS 'stop date and time for the event';
+COMMENT ON COLUMN dinkurs_events.fee_tax IS 'tax that is in addition to the cost';
 
 
 --
--- Name: COLUMN dinkurs_events.event_participant_number; Type: COMMENT; Schema: public; Owner: -
+-- Name: COLUMN dinkurs_events.pub; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON COLUMN dinkurs_events.event_participant_number IS 'max. number of participants allowed for the event';
-
-
---
--- Name: COLUMN dinkurs_events.event_participant_reserve; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_participant_reserve IS 'number of participants waiting for a spot to be available for the event';
+COMMENT ON COLUMN dinkurs_events.pub IS 'date the event is published?';
 
 
 --
--- Name: COLUMN dinkurs_events.event_participants; Type: COMMENT; Schema: public; Owner: -
+-- Name: COLUMN dinkurs_events.apply; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON COLUMN dinkurs_events.event_participants IS 'number of participants signed up for the event';
-
-
---
--- Name: COLUMN dinkurs_events.event_instructor_1; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_instructor_1 IS 'name of instructor 1 for the event';
+COMMENT ON COLUMN dinkurs_events.apply IS 'TODO date ? ';
 
 
 --
--- Name: COLUMN dinkurs_events.event_instructor_2; Type: COMMENT; Schema: public; Owner: -
+-- Name: COLUMN dinkurs_events.start; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON COLUMN dinkurs_events.event_instructor_2 IS 'name of instructor 2 for the event';
-
-
---
--- Name: COLUMN dinkurs_events.event_instructor_3; Type: COMMENT; Schema: public; Owner: -
---
-
-COMMENT ON COLUMN dinkurs_events.event_instructor_3 IS 'name of instructor 3 for the event';
+COMMENT ON COLUMN dinkurs_events.start IS 'start date and time for the event';
 
 
 --
--- Name: COLUMN dinkurs_events.event_infotext; Type: COMMENT; Schema: public; Owner: -
+-- Name: COLUMN dinkurs_events.stop; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON COLUMN dinkurs_events.event_infotext IS 'More text details about the event';
+COMMENT ON COLUMN dinkurs_events.stop IS 'stop date and time for the event';
 
 
 --
--- Name: COLUMN dinkurs_events.event_key; Type: COMMENT; Schema: public; Owner: -
+-- Name: COLUMN dinkurs_events.participant_number; Type: COMMENT; Schema: public; Owner: -
 --
 
-COMMENT ON COLUMN dinkurs_events.event_key IS 'unique identifier for DinKurs used to construct the event_url_key';
+COMMENT ON COLUMN dinkurs_events.participant_number IS 'max. number of participants allowed for the event';
+
+
+--
+-- Name: COLUMN dinkurs_events.participant_reserve; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.participant_reserve IS 'number of participants waiting for a spot to be available for the event';
+
+
+--
+-- Name: COLUMN dinkurs_events.participants; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.participants IS 'number of participants signed up for the event';
+
+
+--
+-- Name: COLUMN dinkurs_events.instructor_1; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.instructor_1 IS 'name of instructor 1 for the event';
+
+
+--
+-- Name: COLUMN dinkurs_events.instructor_2; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.instructor_2 IS 'name of instructor 2 for the event';
+
+
+--
+-- Name: COLUMN dinkurs_events.instructor_3; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.instructor_3 IS 'name of instructor 3 for the event';
+
+
+--
+-- Name: COLUMN dinkurs_events.infotext; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.infotext IS 'More text details about the event';
+
+
+--
+-- Name: COLUMN dinkurs_events.key; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN dinkurs_events.key IS 'unique identifier for DinKurs used to construct the event_url_key';
 
 
 --
@@ -1309,6 +1309,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20171025191957'),
 ('20171026103648'),
 ('20171109142139'),
+('20171120170441'),
 ('20171129011045');
 
 
