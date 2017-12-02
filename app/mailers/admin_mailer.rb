@@ -11,17 +11,5 @@ class AdminMailer < ApplicationMailer
 
   end
 
-
-  private
-
-  def set_mail_info(method_sym, admin)
-    @greeting_name = set_greeting_name admin
-    @recipient_email = set_recipient_email admin
-
-    @action_name = method_sym.to_s
-
-  end
-
-
-
+  
 end
