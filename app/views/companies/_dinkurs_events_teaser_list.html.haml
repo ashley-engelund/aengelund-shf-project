@@ -1,20 +1,20 @@
-DinKurs Events:
+%h3 DinKurs Events:
 
 %table.table.table-hover
   %thead
     %tr
       %th
-        'Event name'
+        Event name
       %th
-        'Start Date'
+        Start Date
     %tr
   %tbody
     - dk_events.each do | dk_event |
       %tr.dk_event{class: "#{dk_event.id}-dk_event"}
         %td.event-name
-          = dk_event.event_name
+          = dk_event.name
         %td.event-start-date
-          = dk_event.event_start
+          = dk_event.start
 
 
 -# if the number of events > the TEASER_LIMIT...

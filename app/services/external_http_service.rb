@@ -15,7 +15,13 @@ class ExternalHTTPService
     response = HTTParty.get(response_url(args),
                             headers: response_headers(args))
 
-    return response.parsed_response if return_immediately?(response)
+    # body == "No company specified"
+    begin
+      # if response is ok (200) :
+      return response.parsed_response if return_immediately?(response)
+    rescue
+
+    end
 
     processed_response = process(response)
 
@@ -73,6 +79,7 @@ class ExternalHTTPService
   def self.return_after_processing?(processed_response)
     false
   end
+
 
   # child classes can override as needed
   #

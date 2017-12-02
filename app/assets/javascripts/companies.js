@@ -1,9 +1,19 @@
-$(function () {
-    'use strict';
+$(document).ready(function () {
 
-    $('#getDinkursEvents').on('ajax:success', function (e, data) {
-        console.log('success!');
-        html(data).appendTo("#dinkurs-events");
+    var dk_fetch = $('.dinkurs-fetch');
+
+    dk_fetch
+    $('.dinkurs-fetch').on('ajax:before',  function(event, data) {
+        // show some sort of spinner or message to let them know the fetch is happening...
+    });
+
+    $('.dinkurs-fetch').on('ajax:complete',  function(event, data) {
+        // hide the spinner or message to let them know the fetch is happening...
+    });
+
+
+    $('.dinkurs-fetch').on('ajax:success',  function(event, data) {
+        $('#dinkurs-events').html(data);
     });
 
 });
