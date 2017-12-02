@@ -2,13 +2,6 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
 
-  before(:all) do
-    expect(BusinessCategory.count).to eq(0)
-    expect(Company.count).to eq(0)
-    expect(MembershipApplication.count).to eq(0)
-    expect(User.count).to eq(0)
-  end
-
   describe 'Factory' do
     it 'has a valid factory' do
       expect(create(:user)).to be_valid
@@ -424,12 +417,12 @@ RSpec.describe User, type: :model do
     let(:payment1) do
       create(:payment, user: user, status: success,
              notes: 'these are notes for payment1',
-             expire_date: Date.new(2018, 1, 1))
+             expire_date: Date.new(2018, 1, 1).in_time_zone)
     end
     let(:payment2) do
       create(:payment, user: user, status: success,
              notes: 'these are notes for payment2',
-             expire_date: Date.new(2018, 7, 1))
+             expire_date: Date.new(2018, 7, 1).in_time_zone)
     end
 
     describe '#membership_expire_date' do
@@ -464,7 +457,7 @@ RSpec.describe User, type: :model do
       context 'start_date' do
 
         it 'returns today if no prior payment' do
-          expect(User.next_payment_dates(user.id)[0]).to eq Date.today
+          expect(User.next_payment_dates(user.id)[0]).to eq Date.current
         end
 
         it 'returns prior-payment-expire_date plus one day if prior payment' do
@@ -482,15 +475,15 @@ RSpec.describe User, type: :model do
         describe 'during the year 2017' do
 
           it 'returns January 1, 2018' do
-            Timecop.freeze(Date.new(2017, 10, 1))
+            Timecop.freeze(Date.new(2017, 10, 1).in_time_zone)
             expect(User.next_payment_dates(user.id)[1])
-              .to eq Date.new(2018, 12, 31)
+              .to eq Date.new(2018, 12, 31).in_time_zone
           end
         end
 
         describe 'after year 2017' do
           it 'returns prior expire_date plus one year' do
-            Timecop.freeze(Date.new(2018, 7, 1))
+            Timecop.freeze(Date.new(2018, 7, 1).in_time_zone)
             payment1
             expect(User.next_payment_dates(user.id)[1])
               .to eq payment1.expire_date + 1.year
