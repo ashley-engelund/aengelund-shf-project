@@ -530,8 +530,7 @@ en:
       error: Could not delete the company.
 
     get_dinkurs_events:
-      success:
-      error:
+      error: "Unable to get events from DinKurs"
 
 
     form:

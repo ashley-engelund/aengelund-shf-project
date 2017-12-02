@@ -528,6 +528,9 @@ sv:
       success: Företaget raderat.
       error: Ett problem hindrade företaget från att raderas.
 
+    get_dinkurs_events:
+      error: "Kan inte hämta evenemang från DinKurs.se"
+
     form:
       region_tooltip: Välj "Sverige" om företaget är verksamt i
        flera län, eller "Online" om det (i huvudsak) finns på nätet
