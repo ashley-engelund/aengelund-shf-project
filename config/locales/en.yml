@@ -819,8 +819,14 @@ en:
         subject: Your application to Sveriges Hundföretagare has been received
         message_text: "Your application has been received.  We are all working hard, so it might take a while before we get to it. So do not worry if it takes a while before you hear from us."
 
+      app_approved:
+        subject: Your SHF application is approved.  Next = payment
+        message_text: "(need the text for this...)"
+
+
+    user:
       accepted:
-        subject: "Welcome! Your SHF application has been approved"
+        subject: "Welcome to SHF! You're now a member"
         greeting: *email_greeting
         message_text:
           youre_active: "You have now been activated as a member of the system and can log in and manage your profile and build your business page. Once you are logged in, you can edit your company page here: "

@@ -820,6 +820,12 @@ sv:
         subject: Din ansökan till Sveriges Hundföretagare är mottagen
         message_text: "Din ansökan är mottagen, på grund av hög arbetsbelastning tar det en stund innan vi kommer till den. Så var inte orolig om det tar en stund innan du hör från oss."
 
+      app_approved:
+        subject: Din ansökan till Sveriges Hundföretagare är mottagen. Next is payment
+        message_text: "(need the text for this...)"
+
+
+    user:
       accepted:
         subject: "Välkommen som medlem i Sveriges Hundföretagare"
         greeting: *email_greeting
