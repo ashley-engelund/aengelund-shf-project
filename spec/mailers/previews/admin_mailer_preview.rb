@@ -7,11 +7,15 @@ class AdminMailerPreview < ActionMailer::Preview
 
   include PickRandomHelpers
 
+
   def new_member_application_received
     admin = User.find_by(admin: true)
-    AdminMailer.new_member_application_received(random_member_app, admin)
-  end
 
+    app = random_member_app
+    upload_random_num_files(app)
+
+    AdminMailer.new_member_application_received(app, admin)
+  end
 
 
 end
