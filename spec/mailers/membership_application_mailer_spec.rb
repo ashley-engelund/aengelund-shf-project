@@ -17,13 +17,13 @@ RSpec.describe MembershipApplicationMailer, type: :mailer do
   let!(:test_user) { create(:user, email: 'user@example.com') }
 
 
-  describe '#accepted' do
+  describe '#app_approved' do
 
     let(:accepted_app) { create(:membership_application, :accepted, user: test_user) }
-    let(:email_sent) { MembershipApplicationMailer.accepted(accepted_app) }
+    let(:email_sent) { MembershipApplicationMailer.app_approved(accepted_app) }
 
     it_behaves_like 'a successfully created email',
-                    I18n.t('application_mailer.membership_application.accepted.subject'),
+                    I18n.t('application_mailer.membership_application.app_approved.subject'),
                     'user@example.com',
                     I18n.t('application_mailer.greeting', greeting_name: 'Firstname Lastname') do
       let(:email_created) { email_sent }

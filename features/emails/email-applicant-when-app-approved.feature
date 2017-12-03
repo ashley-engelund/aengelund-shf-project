@@ -1,9 +1,9 @@
-Feature: Applicant gets an email when they are approved
+Feature: Applicant gets an email when the application is approved
 
   As an applicant,
-  So that I know that SHF has approved me for membership
+  So that I know that SHF has approved the application (still need to pay)
   and so I know what I should expect to happen next,
-  I should get an email letting me know I've been approved
+  I should get an email letting me know the application was approved and now I need to pay
 
 
   Background:
@@ -43,6 +43,6 @@ Feature: Applicant gets an email when they are approved
     Then "emma@happymutts.se" should receive an email
     And I am logged in as "emma@happymutts.se"
     And I open the email
-    And I should see t("application_mailer.membership_application.accepted.subject") in the email subject
-    And I should see t("application_mailer.membership_application.accepted.message_text.youre_active") in the email body
+    And I should see t("application_mailer.membership_application.app_approved.subject") in the email subject
+    And I should see t("application_mailer.membership_application.app_approved.message_text") in the email body
 

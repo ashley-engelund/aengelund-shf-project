@@ -113,8 +113,8 @@ class MembershipApplication < ApplicationRecord
 
       update(company: company)
 
-      # email the applicant to let them know they've been accepted:
-      MembershipApplicationMailer.accepted(self).deliver
+      # email the applicant to let them know the application was approved:
+      MembershipApplicationMailer.app_approved(self).deliver
 
     rescue => e
       puts "ERROR: could not accept_membership.  error: #{e.inspect}"

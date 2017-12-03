@@ -1,0 +1,7 @@
+- provide :signoff do
+  = render 'membership_application_mailer/signoff'
+
+%p  Your application has been reviewed and is good. Your next step is to submit your payment.  Here's how:
+%p     step 1: ....
+
+%p=  I18n.t("application_mailer.membership_application.app_approved.message_text")
