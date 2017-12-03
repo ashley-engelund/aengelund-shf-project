@@ -194,8 +194,13 @@ $dark-gray: #222222;
               }
 
               .number-files-uploaded,
-              .company-number {
+              .company-number,
+              .phone-number {
                 margin-left: 60px;
+              }
+
+              .uploaded-file-name {
+                margin-left: 90px;
               }
 
             }
