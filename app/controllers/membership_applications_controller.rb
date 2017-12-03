@@ -46,13 +46,14 @@ class MembershipApplicationsController < ApplicationController
   def create
     @membership_application = MembershipApplication.new(user: current_user)
     @membership_application.update(membership_application_params)
+
     if @membership_application.save
 
-      if new_file_uploaded(params)
+      file_uploads_successful =   new_file_uploaded(params)
 
-        MembershipApplicationMailer.acknowledge_received(@membership_application).deliver
-        send_new_membership_application_notice_to_admins(@membership_application)
+      send_new_app_emails(@membership_application)
 
+      if file_uploads_successful
         helpers.flash_message(:notice, t('.success', email_address: @membership_application.contact_email))
         redirect_to root_path
       else
@@ -252,9 +253,17 @@ class MembershipApplicationsController < ApplicationController
 
   end
 
-  def send_new_membership_application_notice_to_admins(new_membership_application)
+  def send_new_app_emails(new_membership_app)
+
+    MembershipApplicationMailer.acknowledge_received(new_membership_app).deliver
+    send_new_membership_application_notice_to_admins(new_membership_app)
+
+  end
+
+
+  def send_new_membership_application_notice_to_admins(new_membership_app)
     User.admins.each do |admin|
-      AdminMailer.new_member_application_received(new_membership_application, admin).deliver_now
+      AdminMailer.new_member_application_received(new_membership_app, admin).deliver
     end
   end
 
