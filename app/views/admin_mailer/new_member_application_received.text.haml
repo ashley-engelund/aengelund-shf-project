@@ -13,7 +13,7 @@
 
 = '        # ' + I18n.t('activerecord.attributes.membership_application.uploaded_files.many') + ': ' + @member_app.uploaded_files.count.to_s
 - @member_app.uploaded_files.each do |uploaded_file|
-  ='            ' + uploaded_file.actual_file_file_name
+  = '            ' + uploaded_file.actual_file_file_name
 
 
 \
