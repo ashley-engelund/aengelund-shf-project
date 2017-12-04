@@ -255,7 +255,7 @@ class MembershipApplicationsController < ApplicationController
 
   def send_new_app_emails(new_membership_app)
 
-    MembershipApplicationMailer.acknowledge_received(new_membership_app).deliver
+    MembershipApplicationMailer.acknowledge_received(new_membership_app).deliver_now
     send_new_membership_application_notice_to_admins(new_membership_app)
 
   end
@@ -263,7 +263,7 @@ class MembershipApplicationsController < ApplicationController
 
   def send_new_membership_application_notice_to_admins(new_membership_app)
     User.admins.each do |admin|
-      AdminMailer.new_member_application_received(new_membership_app, admin).deliver
+      AdminMailer.new_member_application_received(new_membership_app, admin).deliver_now
     end
   end
 
