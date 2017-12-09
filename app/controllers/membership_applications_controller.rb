@@ -2,7 +2,9 @@ class MembershipApplicationsController < ApplicationController
   include PaginationUtility
 
   before_action :get_membership_application, except: [:information, :index, :new, :create]
-  before_action :authorize_membership_application, only: [:update, :show, :edit]
+
+  before_action :authorize_membership_application
+
   before_action :set_other_waiting_reason, only: [:show, :edit, :update, :need_info]
 
 
@@ -14,7 +16,6 @@ class MembershipApplicationsController < ApplicationController
 
 
   def index
-    authorize MembershipApplication
 
     session[:membership_application_items_selection] ||= 'All' if current_user.admin?
 
@@ -113,13 +114,6 @@ class MembershipApplicationsController < ApplicationController
   end
 
 
-  def check_and_mark_if_ready_for_review(app_params)
-    if app_params.fetch('marked_ready_for_review', false) && app_params['marked_ready_for_review'] != "0"
-      @membership_application.is_ready_for_review!
-    end
-  end
-
-
   def information
 
   end
@@ -171,7 +165,10 @@ class MembershipApplicationsController < ApplicationController
   end
 
 
+  #------------------------------------
   private
+
+
   def membership_application_params
     params.require(:membership_application).permit(*policy(@membership_application || MembershipApplication).permitted_attributes)
   end
@@ -184,7 +181,14 @@ class MembershipApplicationsController < ApplicationController
 
 
   def authorize_membership_application
-    authorize @membership_application
+    @membership_application.nil? ? (authorize MembershipApplication) : (authorize @membership_application)
+  end
+
+
+  def check_and_mark_if_ready_for_review(app_params)
+    if app_params.fetch('marked_ready_for_review', false) && app_params['marked_ready_for_review'] != "0"
+      @membership_application.is_ready_for_review!
+    end
   end
 
 
