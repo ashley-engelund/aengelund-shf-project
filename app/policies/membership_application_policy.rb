@@ -39,8 +39,13 @@ class MembershipApplicationPolicy < ApplicationPolicy
   end
 
 
-  def new?
+  def index?
     user.admin?
+  end
+
+
+  def new?
+    !user.admin? && not_a_visitor
   end
 
 
@@ -81,28 +86,33 @@ class MembershipApplicationPolicy < ApplicationPolicy
   end
 
 
+  def start_review?
+    user.admin?
+  end
+
+
   #------
   private
 
 
   def user_owner_attributes
     [
-     :company_number,
-     :contact_email,
-     :phone_number,
-     {business_category_ids: []},
-     :marked_ready_for_review,
-     :uploaded_files,
-     uploaded_files_attributes: [:id,
-                                 :actual_file,
-                                 :actual_file_file_name,
-                                 :actual_file_file_size,
-                                 :actual_file_content_type,
-                                 :actual_file_updated_at,
-                                 :_destroy],
-     user_attributes: [:first_name,
-                       :last_name]
-     ]
+        :company_number,
+        :contact_email,
+        :phone_number,
+        { business_category_ids: [] },
+        :marked_ready_for_review,
+        :uploaded_files,
+        uploaded_files_attributes: [:id,
+                                    :actual_file,
+                                    :actual_file_file_name,
+                                    :actual_file_file_size,
+                                    :actual_file_content_type,
+                                    :actual_file_updated_at,
+                                    :_destroy],
+        user_attributes: [:first_name,
+                          :last_name]
+    ]
   end
 
 
@@ -133,8 +143,9 @@ class MembershipApplicationPolicy < ApplicationPolicy
     record.respond_to?(:user) && record.user == user
   end
 
+
   def not_a_visitor
-    ! user.is_a? Visitor
+    !user.is_a? Visitor
   end
 
 end
