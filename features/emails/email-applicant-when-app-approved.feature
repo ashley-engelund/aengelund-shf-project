@@ -44,5 +44,5 @@ Feature: Applicant gets an email when the application is approved
     And I am logged in as "emma@happymutts.se"
     And I open the email
     And I should see t("application_mailer.membership_application.app_approved.subject") in the email subject
-    And I should see t("application_mailer.membership_application.app_approved.message_text") in the email body
+
 
