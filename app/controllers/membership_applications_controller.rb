@@ -60,9 +60,6 @@ class MembershipApplicationsController < ApplicationController
         create_error(t('.error'))
       end
 
-
-      MembershipApplicationMailer.acknowledge_received(@membership_application).deliver_now
-
     else
       create_error(t('.error'))
     end
