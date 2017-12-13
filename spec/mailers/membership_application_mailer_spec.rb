@@ -77,7 +77,7 @@ RSpec.describe MembershipApplicationMailer, type: :mailer do
 
         payment_success = Payment.order_to_payment_status('successful')
 
-        payment = create(:payment,
+        create(:payment,
                          user: user1,
                          status: payment_success,
                          company: co,
