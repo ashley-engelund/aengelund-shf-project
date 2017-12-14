@@ -2,9 +2,7 @@ class MembershipApplicationsController < ApplicationController
   include PaginationUtility
 
   before_action :get_membership_application, except: [:information, :index, :new, :create]
-
   before_action :authorize_membership_application
-
   before_action :set_other_waiting_reason, only: [:show, :edit, :update, :need_info]
 
 
@@ -165,7 +163,6 @@ class MembershipApplicationsController < ApplicationController
   end
 
 
-  #------------------------------------
   private
 
 
