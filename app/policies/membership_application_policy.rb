@@ -45,7 +45,7 @@ class MembershipApplicationPolicy < ApplicationPolicy
 
 
   def new?
-    !user.admin? && not_a_visitor
+    super && !user.admin? && not_a_visitor
   end
 
 
