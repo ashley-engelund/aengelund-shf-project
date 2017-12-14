@@ -21,12 +21,12 @@ class LuhnChecksum
   #
   def self.valid?(integer_or_str)
 
-    # quick checks for the easy cases:
-    return false if integer_or_str.to_s.empty?
+    if no_digits?(integer_or_str)
+      false
+    else
+      for_number(integer_or_str) % 10 == 0
+    end
 
-    return false if integer_or_str.to_s.scan(/\d/).empty?
-
-    for_number(integer_or_str) % 10 == 0
   end
 
 
@@ -49,19 +49,30 @@ class LuhnChecksum
   #  and  any leading zeros will add 0 to the checksum, so they don't matter
   #
   def self.for_number(integer_or_str)
-    return 1 if integer_or_str.nil? || integer_or_str.to_s.scan(/\d/).empty? # nil or if there are no digits
 
-    checksum = 0
-    digits = integer_or_str.to_s.reverse.scan(/\d/).map { |d| d.to_i } # convert to all digits and reverse
+    if no_digits?(integer_or_str)
+      1
+    else
 
+      checksum = 0
+      digits = integer_or_str.to_s.reverse.scan(/\d/).map { |d| d.to_i } # convert to all digits and reverse
 
-    digits.each_slice(2) do |odd, even|
-      double = even.to_i * 2
-      double -= 9 if double > 9
-      checksum += double + odd
+      digits.each_slice(2) do |odd, even|
+        double = even.to_i * 2
+        double -= 9 if double > 9
+        checksum += double + odd
+      end
+
+      checksum
     end
 
-    checksum
+  end
+
+
+  private
+
+  def self.no_digits?(integer_or_str)
+    integer_or_str.nil? || integer_or_str.to_s.scan(/\d/).empty? # nil or if there are no digits
   end
 
 end
