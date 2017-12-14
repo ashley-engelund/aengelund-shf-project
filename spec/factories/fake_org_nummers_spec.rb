@@ -1,6 +1,6 @@
 require_relative 'fake_org_nummers'
 
-require 'spec_helper'
+require_relative '../spec_helper'
 
 require 'orgnummer'
 

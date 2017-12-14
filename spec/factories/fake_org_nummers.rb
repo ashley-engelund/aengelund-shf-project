@@ -8,8 +8,8 @@ require_relative '../../app/services/luhn_checksum'
 
 class FakeOrgNummers
 
-  MAX_NUM = 9999999999
-  MIN_NUM = 1
+  MAX_NUM = 9999999999 unless defined?(MAX_NUM)
+  MIN_NUM = 1 unless defined?(MIN_NUM)
 
 
   def self.generate(number_to_generate = 1)
