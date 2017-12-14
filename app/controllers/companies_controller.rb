@@ -1,9 +1,8 @@
 class CompaniesController < ApplicationController
   include PaginationUtility
 
-  before_action :set_company, only: [:show, :edit, :update, :destroy, :get_dinkurs_events]
+  before_action :set_company, only: [:show, :edit, :update, :destroy, :edit_payment, :get_dinkurs_events]
   before_action :authorize_company, only: [:update, :show, :edit, :destroy, :get_dinkurs_events]
-
 
   def index
     authorize Company
@@ -14,11 +13,13 @@ class CompaniesController < ApplicationController
 
     # only select companies that are 'complete'; see the Company.complete scope
 
-    @all_companies = @search_params.result(distinct: true)
-                         .complete
-                         .includes(:business_categories)
-                         .includes(addresses: [:region, :kommun])
-                         .joins(addresses: [:region, :kommun])
+    @all_companies =  @search_params.result(distinct: true)
+                          .complete
+                          .includes(:business_categories)
+                          .includes(addresses: [ :region, :kommun ])
+                          .joins(addresses: [ :region, :kommun ])
+
+    @all_companies = @all_companies.branding_licensed unless current_user.admin?
 
     # The last qualifier ("joins") on above statement ("addresses: :region") is
     # to get around a problem with DISTINCT queries used with ransack when also
@@ -90,9 +91,21 @@ class CompaniesController < ApplicationController
       helpers.flash_message(:alert, "#{t('companies.destroy.error')}: #{translated_errors}")
       redirect_to @company
     end
-
   end
 
+  def edit_payment
+    raise 'Unsupported request' unless request.xhr?
+    authorize Company
+
+    payment = @company.most_recent_branding_payment
+    payment.update!(payment_params) if payment
+
+    render partial: 'branding_payment_status', locals: { company: @company }
+
+  rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved
+    render partial: 'branding_payment_status',
+           locals: { company: @company, error: t('companies.update.error') }
+  end
 
   def get_dinkurs_events
 
@@ -155,14 +168,18 @@ class CompaniesController < ApplicationController
                                     :website,
                                     :description,
                                     :dinkurs_key,
-                                    addresses_attributes: [:id,
-                                                           :street_address,
-                                                           :post_code,
-                                                           :kommun_id,
-                                                           :city,
-                                                           :region_id,
-                                                           :country,
-                                                           :visibility])
+        addresses_attributes: [:id,
+                                :street_address,
+                                :post_code,
+                                :kommun_id,
+                                :city,
+                                :region_id,
+                                :country,
+                                :visibility])
+  end
+
+  def payment_params
+    params.require(:payment).permit(:expire_date, :notes)
   end
 
 

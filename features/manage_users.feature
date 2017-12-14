@@ -37,15 +37,14 @@ Feature: As an admin
 
   @time_adjust
   Scenario: The right info is displayed for a user
-    Given the date is set to "2017-10-30"
-
+    Given the date is set to "2017-11-01"
     Given The user "emma@happymutts.com" was created 3 days ago
     And I am logged in as "admin@shf.se"
     When I am on the "all users" page
     Then I should see "emma@happymutts.com"
     And I should see "3 dagar sedan" for class "created-at" in the row for user "emma@happymutts.com"
     And I should see "1" for class "sign-in-count" in the row for user "emma@happymutts.com"
-    And I should see t("yes") for class "is-member" in the row for user "emma@happymutts.com"
+    And I should see t("no") for class "is-member" in the row for user "emma@happymutts.com"
     And I should see t("no") for class "is-member" in the row for user "david@dogs.com"
     And I should not see "3 månader sedan" in the row for user "ernt@mutts.com"
     And I should see "1" for class "applications-open" in the row for user "ernt@mutts.com"

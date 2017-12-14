@@ -21,6 +21,10 @@ class CompanyPolicy < ApplicationPolicy
     user.admin? || is_in_company?(record)
   end
 
+  def edit_payment?
+    user.admin?
+  end
+
   def get_dinkurs_events?
     update?
   end

@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
 
-
   mount Ckeditor::Engine => '/ckeditor'
   filter :locale
 
@@ -61,6 +60,7 @@ Rails.application.routes.draw do
 
     resources :companies, path: 'hundforetag' do
       member do
+        put 'edit_payment', to: 'companies#edit_payment', as: 'edit_payment'
         post 'get_dinkurs_events', to: 'companies#get_dinkurs_events', as: 'get_dinkurs_events'
       end
     end
@@ -71,21 +71,21 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :shf_documents
+    resources :shf_documents, path: 'dokument'
 
     resources :dinkurs_events
 
-
-    get 'shf_documents/contents/:page',
+    get 'dokument/innehall/:page',
       to: 'shf_documents#contents_show', as: 'contents_show'
 
-    get 'shf_documents/contents/:page/redigera',
+    get 'dokument/innehall/:page/redigera',
       to: 'shf_documents#contents_edit', as: 'contents_edit'
 
-    patch 'shf_documents/contents/:page',
+    patch 'dokument/innehall/:page',
       to: 'shf_documents#contents_update', as: 'contents_update'
 
-    get 'member-pages', to: 'shf_documents#minutes_and_static_pages'
+    get 'medlemssidor', to: 'shf_documents#minutes_and_static_pages',
+                        as: 'member_pages'
 
   end
 
