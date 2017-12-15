@@ -1,6 +1,5 @@
-require_relative(File.join(__dir__, '..', '..', 'app', 'services', 'luhn_checksum'))
-
 require 'spec_helper'
+require_relative(File.join( SERVICES_PATH, 'luhn_checksum'))
 
 
 RSpec.describe LuhnChecksum do
