@@ -9,6 +9,8 @@
 #
 class LuhnChecksum
 
+  NO_DIGITS_IN_INPUT = 1
+
   #
   # Does the last digit of the number meet the Luhn checksum test?
   #
@@ -24,7 +26,7 @@ class LuhnChecksum
     if no_digits?(integer_or_str)
       false
     else
-      for_number(integer_or_str) % 10 == 0
+      compute(integer_or_str) % 10 == 0
     end
 
   end
@@ -48,10 +50,10 @@ class LuhnChecksum
   # Note the the checksum of 0 = 0
   #  and  any leading zeros will add 0 to the checksum, so they don't matter
   #
-  def self.for_number(integer_or_str)
+  def self.compute(integer_or_str)
 
     if no_digits?(integer_or_str)
-      1
+      NO_DIGITS_IN_INPUT
     else
 
       checksum = 0
