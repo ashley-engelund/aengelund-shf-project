@@ -49,13 +49,14 @@ class MembershipApplicationPolicy < ApplicationPolicy
   end
 
 
+  # an Admin cannot create an Application because we currently have no way to say who the application is for (which User)
   def new?
     super && !user.admin? && not_a_visitor
   end
 
 
   def create?
-    super && !user.admin?
+    record.is_a?(MembershipApplication) ? owner? : !user.admin? && not_a_visitor
   end
 
 
