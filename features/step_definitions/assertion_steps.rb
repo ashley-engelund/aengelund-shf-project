@@ -11,6 +11,8 @@ module PathHelpers
         path = new_user_session_path
       when 'landing'
         path = root_path
+      when 'new application'
+        path = new_membership_application_path
       when 'edit application', 'edit my application'
         user.membership_applications.reload
         path = edit_membership_application_path(user.membership_application)
