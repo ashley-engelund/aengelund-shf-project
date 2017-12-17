@@ -29,10 +29,7 @@ class OrgNummersGenerator
     while results.count < number_to_generate && (num_tries < all_possible) do
       number_to_generate.times do
         org_num = generate_one
-        if results.add? org_num
-          results.add org_num
-          num_tries += 1
-        end
+        num_tries += 1 if results.add?(org_num)
       end
 
     end
