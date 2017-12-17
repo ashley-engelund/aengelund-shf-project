@@ -4,14 +4,13 @@
 # https://sv.wikipedia.org/wiki/Organisationsnummer
 #
 
-require_relative './luhn_checksum'
-
+require 'orgnummer'
 require 'set'
 
 class OrgNummersGenerator
 
   MAX_NUM = 9999999999 unless defined?(MAX_NUM)
-  MIN_NUM = 0 unless defined?(MIN_NUM)
+  MIN_NUM = 1000000000 unless defined?(MIN_NUM)  # orgnummer gem will not recognize any number less than this as valid
 
   NONE_FOUND = nil  unless defined?(NONE_FOUND)
 
@@ -26,7 +25,7 @@ class OrgNummersGenerator
     # num_tries keeps use from trying forever.
     # It is a somewhat arbitrary limit on how many times we can try.
     # Even though each try is a Random number, so it is possible to get the same number more than once,
-    # this is a reasonble (if clunky) limit.
+    # this is a reasonable (if clunky) limit.
     while results.count < number_to_generate && (num_tries < all_possible) do
       number_to_generate.times do
         org_num = generate_one
@@ -47,10 +46,9 @@ class OrgNummersGenerator
     current_try = Random.rand(MIN_NUM..MAX_NUM)
 
     # just brute force keep trying until we blindly find one that validates
-    # Note that LuhnChecksum.valid?(9999999999) == true So if we hit our max, we're OK because we've found one that validates with the checksum
-    until LuhnChecksum.valid?(current_try)
-      current_try += 1
-    end
+    # Note that Orgnummer.new(9999999999).valid? == true So if we hit our max, we're OK because we've found one that validates with the checksum
+    current_try += 1 until Orgnummer.new(current_try).valid?
+
     "%010d" % "#{current_try}" # pad with zeros as needed
   end
 
