@@ -3,23 +3,36 @@ require 'rails_helper'
 
 describe MembershipApplicationPolicy do
 
+  CRUD_ACTIONS = [:new, :create, :show, :edit, :update, :destroy].freeze
+  APP_STATE_CHANGE_ACTIONS = [:accept, :reject, :need_info, :cancel_need_info, :start_review].freeze
+
+
   let(:admin) { create(:user, email: 'admin@shf.se', admin: true) }
 
   let(:member_not_owner) { create(:member_with_membership_app, email: 'member_not_owner@random.com') }
-  let(:member_applicant) { create(:member_with_membership_app, email: 'member_owner@random.com') }
+  let(:member_applicant) do
+    member = create(:member_with_membership_app, email: 'member_owner@random.com')
+    # need to have 2 applications for this member: an accepted one (create with the line above),
+    # and a new one:
+    create(:membership_application,
+                     user: member,
+                     state: :new)
+    member
+  end
 
-  let(:user_applicant) { create(:user, email: 'user_applicant@random.com') }
+  let(:user_applicant) do
+    u = create(:user, email: 'user_applicant@random.com')
+    create(:membership_application,
+                     user: u,
+                     state: :new)
+    u
+  end
+
   let(:user_not_owner) { create(:user, email: 'user_not_owner@random.com') }
 
-  let(:application) { create(:membership_application,
-                             user: user_applicant,
-                             state: :under_review) }
+  let(:application) { user_applicant.membership_applications.last }
 
   let(:visitor) { build(:visitor) }
-
-
-  let(:crud_actions) { [:new, :create, :index, :show, :edit, :update, :destroy] }
-  let(:app_state_change_actions) { [:accept, :reject, :need_info, :cancel_need_info, :start_review] }
 
 
   describe 'changing the application state attribute, given a controller action' do
@@ -27,22 +40,10 @@ describe MembershipApplicationPolicy do
     describe 'for a Visitor' do
       subject { described_class.new(visitor, application) }
 
-      it 'forbits create' do
-        is_expected.to forbid_mass_assignment_of(:state).for_action(:create)
-      end
-
-      it 'forbids edit' do
-        is_expected.to forbid_mass_assignment_of(:state).for_action(:edit)
-      end
-      it 'forbids update' do
-        is_expected.to forbid_mass_assignment_of(:state).for_action(:update)
-      end
-      it 'forbids destroy' do
-        is_expected.to forbid_mass_assignment_of(:state).for_action(:destroy)
-      end
-
-      it 'forbids see (show)' do
-        is_expected.to forbid_mass_assignment_of(:state).for_action(:show)
+      CRUD_ACTIONS.each do |action|
+        it "forbids :state change for :#{action} action" do
+          is_expected.to forbid_mass_assignment_of(:state).for_action(action)
+        end
       end
     end
 
@@ -54,126 +55,75 @@ describe MembershipApplicationPolicy do
 
         describe "For #{user_class} (not the owner of the application)" do
 
-          it 'forbids new' do
-            expect(described_class.new(self.send(current_user), application)).to forbid_mass_assignment_of(:state).for_action(:new)
-          end
+          # Note that for the member_application, the last application is new. The first application is already approved.
+          # These tests check the 2nd application: the one that starts out as :new
+          let(:app_being_checked) { user_applicant.membership_applications.last }
 
-          it 'forbids create ' do
-            expect(described_class.new(self.send(current_user), application)).to forbid_mass_assignment_of(:state).for_action(:create)
+          CRUD_ACTIONS.each do |action|
+            it "forbids :state to be changed for :#{action} action" do
+              expect(described_class.new(self.send(current_user), app_being_checked)).to forbid_mass_assignment_of(:state).for_action(action)
+            end
           end
-
-          it 'forbids show' do
-            expect(described_class.new(self.send(current_user), application)).to forbid_mass_assignment_of(:state).for_action(:show)
-          end
-
-          it 'forbids edit' do
-            expect(described_class.new(self.send(current_user), application)).to forbid_mass_assignment_of(:state).for_action(:edit)
-          end
-
-          it 'forbids update' do
-            expect(described_class.new(self.send(current_user), application)).to forbid_mass_assignment_of(:state).for_action(:update)
-          end
-
-          it 'forbids destroy' do
-            expect(described_class.new(self.send(current_user), application)).to forbid_mass_assignment_of(:state).for_action(:destroy)
-          end
-
         end
-
-      end
-
-    end
-
-
-    describe 'for User that is the owner of the SHFApplication' do
-      subject { described_class.new(user_applicant, application) }
-
-      it 'permits show' do
-        is_expected.to permit_mass_assignment_of(:state).for_action(:show)
-      end
-
-      it 'permits create' do
-        is_expected.to permit_mass_assignment_of(:state).for_action(:create)
-      end
-
-      it 'permits edit' do
-        is_expected.to permit_mass_assignment_of(:state).for_action(:edit)
-      end
-
-      it 'permits update' do
-        is_expected.to permit_mass_assignment_of(:state).for_action(:update)
-      end
-
-      it 'forbids destroy' do
-        is_expected.to forbid_mass_assignment_of(:state).for_action(:destroy)
       end
     end
 
 
-    describe 'For the Member owner of the application' do
+    describe 'Member or User that is the owner of a *new* SHFApplication' do
+
+      { 'Member': :member_applicant,
+        'User': :user_applicant }.each do |user_class, current_user|
+
+        describe "For #{user_class} (is the owner of a new application)" do
+
+          # Note that for the member_application, the last application is new. The first application is already approved.
+          # These tests check the 2nd application: the one that starts out as :new
+          let(:app_being_checked) { self.send(current_user).membership_applications.last }
+
+          (CRUD_ACTIONS - [:destroy]).each do |action|
+            it "permits :state to be changed for :#{action} action" do
+              expect(described_class.new(self.send(current_user), app_being_checked)).to permit_mass_assignment_of(:state).for_action(action)
+            end
+          end
+
+          it 'forbids :state to be changed for destroy' do
+            expect(described_class.new(self.send(current_user), app_being_checked)).to forbid_mass_assignment_of(:state).for_action(:destroy)
+          end
+        end
+      end
+    end
+
+
+    describe 'For the Member owner of an *approved* SHFApplication' do
 
       subject { described_class.new(member_applicant, member_applicant.membership_applications.first) }
 
-      it 'forbids new for a new application' do
-        is_expected.to forbid_mass_assignment_of(:state).for_action(:new)
-      end
-
-      it 'forbids create for a new application' do
-        is_expected.to forbid_mass_assignment_of(:state).for_action(:create)
-      end
-
       it 'permits show' do
         is_expected.to permit_mass_assignment_of(:state).for_action(:show)
       end
 
-      it 'forbids edit' do
-        is_expected.to forbid_mass_assignment_of(:state).for_action(:edit)
+      (CRUD_ACTIONS - [:show]).each do |action|
+        it "forbids :state to be changed for #{action}" do
+          is_expected.to forbid_mass_assignment_of(:state).for_action(action)
+        end
       end
-
-      it 'forbids update' do
-        is_expected.to forbid_mass_assignment_of(:state).for_action(:update)
-      end
-
-      it 'forbids destroy' do
-        is_expected.to forbid_mass_assignment_of(:state).for_action(:destroy)
-      end
-
     end
 
 
     describe 'for Admins' do
       subject { described_class.new(admin, application) }
 
-      it 'permits show the state' do
-        is_expected.to permit_mass_assignment_of(:state).for_action(:show)
-      end
-
-      it 'permits create a state' do
-        is_expected.to permit_mass_assignment_of(:state).for_action(:create)
-      end
-
-      it 'permits do all actions with #state' do
-        is_expected.to permit_mass_assignment_of(:state)
-      end
-
-      it 'permits edit the state' do
-        is_expected.to permit_mass_assignment_of(:state).for_action(:edit)
-      end
-
-      it 'permits update the state' do
-        is_expected.to permit_mass_assignment_of(:state).for_action(:update)
-      end
-
-      it 'permits destroy the state' do
-        is_expected.to permit_mass_assignment_of(:state).for_action(:destroy)
+      CRUD_ACTIONS.each do |action|
+        it "permits :state to be changed for :#{action} action" do
+          is_expected.to permit_mass_assignment_of(:state).for_action(action)
+        end
       end
     end
 
   end
 
 
-  describe 'actions on the membership application' do
-
+  describe 'actions on the SHF membership application' do
 
     describe 'For visitors (not logged in)' do
       subject { described_class.new(visitor, application) }
@@ -182,12 +132,16 @@ describe MembershipApplicationPolicy do
         is_expected.to forbid_action :information
       end
 
+      it 'forbids :index' do
+        is_expected.to forbid_action :index
+      end
+
       it 'forbids all CRUD actions' do
-        is_expected.to forbid_actions(crud_actions)
+        is_expected.to forbid_actions(CRUD_ACTIONS)
       end
 
       it 'forbids all application state change actions' do
-        is_expected.to forbid_actions app_state_change_actions
+        is_expected.to forbid_actions APP_STATE_CHANGE_ACTIONS
       end
 
     end
@@ -209,7 +163,7 @@ describe MembershipApplicationPolicy do
           end
 
           it 'permits create for a new application (not already instantiated)' do
-            expect(described_class.new(self.send(current_user), MembershipApplication)).to forbid_action :create
+            expect(described_class.new(self.send(current_user), MembershipApplication)).to permit_action :create
           end
 
           it 'forbids create for an existing application (already instantiated)' do
@@ -217,111 +171,119 @@ describe MembershipApplicationPolicy do
           end
 
           it 'forbids all other CRUD actions (that are not :new or :create)' do
-            expect(described_class.new(self.send(current_user), application)).to forbid_actions(crud_actions - [:new, :create])
-          end
-
-          it 'forbids all application state change actions' do
-            expect(described_class.new(self.send(current_user), application)).to forbid_actions app_state_change_actions
+            expect(described_class.new(self.send(current_user), application)).to forbid_actions(CRUD_ACTIONS - [:new, :create])
           end
 
           it 'permits :information' do
             expect(described_class.new(self.send(current_user), application)).to permit_action :information
           end
 
+          it 'forbids :index' do
+            expect(described_class.new(self.send(current_user), application)).to forbid_action :index
+          end
+
+          it 'forbids all application state change actions' do
+            expect(described_class.new(self.send(current_user), application)).to forbid_actions APP_STATE_CHANGE_ACTIONS
+          end
+
         end
       end
 
     end
 
 
-    describe 'For User that is the owner of the SHFApplication' do
-      subject { described_class.new(user_applicant, application) }
+    describe 'For User or Member that is the owner of a *new* SHFApplication' do
 
-      it 'permits new for a new application (not already instantiated)' do
-        expect(described_class.new(user_applicant, MembershipApplication)).to permit_action :new
-      end
+      { 'Member': :member_applicant,
+        'User': :user_applicant }.each do |user_class, current_user|
 
-      it 'forbids new for an existing application (already instantiated)' do
-        is_expected.to forbid_action :new
-      end
+        describe "For #{user_class} (is the owner of a new application)" do
 
-      it 'forbids create for a new application (not already instantiated)' do
-        expect(described_class.new(user_applicant, MembershipApplication)).to forbid_action :create
-      end
+          # Note that for the member_application, the last application is new. The first application is already approved.
+          # These tests check the 2nd application: the one that starts out as :new
+          let(:app_being_checked) { self.send(current_user).membership_applications.last }
 
-      it 'permits create for an existing application (already instantiated)' do
-        is_expected.to permit_action :create
-      end
+          it 'permits new for a new application (not already instantiated)' do
+            expect(described_class.new(self.send(current_user), MembershipApplication)).to permit_action :new
+          end
 
-      it 'permits show' do
-        is_expected.to permit_action :show
-      end
+          it 'forbids new for an existing application (already instantiated)' do
+            expect(described_class.new(self.send(current_user), app_being_checked)).to forbid_action :new
+          end
 
-      it 'forbids index' do
-        is_expected.to forbid_action :index
-      end
+          it 'permits create for a new application (not already instantiated)' do
+            expect(described_class.new(self.send(current_user), MembershipApplication)).to permit_action :create
+          end
 
-      describe 'permits changes (:edit, :update) when application is not approved or rejected' do
+          it 'permits create for an existing application (already instantiated)' do
+            expect(described_class.new(self.send(current_user), app_being_checked)).to permit_action :create
+          end
 
-        it 'application is new' do
-          is_expected.to permit_actions [:edit, :update]
+          it 'permits show' do
+            expect(described_class.new(self.send(current_user), app_being_checked)).to permit_action :show
+          end
+
+          it 'forbids index' do
+            expect(described_class.new(self.send(current_user), app_being_checked)).to forbid_action :index
+          end
+
+          it 'permits :information' do
+            expect(described_class.new(self.send(current_user), app_being_checked)).to permit_action :information
+          end
+
+          describe 'permits changes (:edit, :update) when application is not approved or rejected' do
+
+            it 'application is new' do
+              expect(described_class.new(self.send(current_user), app_being_checked)).to permit_edit_and_update_actions
+            end
+
+            it 'application is under_review' do
+              app_being_checked.start_review
+              expect(described_class.new(self.send(current_user), app_being_checked)).to permit_edit_and_update_actions
+            end
+
+            it 'application is waiting_for_applicant' do
+              app_being_checked.start_review
+              app_being_checked.ask_applicant_for_info
+              expect(described_class.new(self.send(current_user), app_being_checked)).to permit_edit_and_update_actions
+            end
+
+            it 'application is ready_for_review' do
+              app_being_checked.start_review
+              app_being_checked.ask_applicant_for_info
+              app_being_checked.is_ready_for_review
+              expect(described_class.new(self.send(current_user), app_being_checked)).to permit_edit_and_update_actions
+            end
+
+          end
+
+          it 'forbids edit and update for an approved application' do
+            app_being_checked.start_review
+            app_being_checked.accept
+            expect(described_class.new(self.send(current_user), app_being_checked)).to forbid_edit_and_update_actions
+          end
+
+          it 'forbids edit and update for a rejected application' do
+            app_being_checked.start_review
+            app_being_checked.reject
+            expect(described_class.new(self.send(current_user), app_being_checked)).to forbid_edit_and_update_actions
+          end
+
+          it 'forbids destroy' do
+            expect(described_class.new(self.send(current_user), app_being_checked)).to forbid_action :destroy
+          end
+
+          it "forbids all application state change actions (#{user_class} cannot change the app state)" do
+            expect(described_class.new(self.send(current_user), app_being_checked)).to forbid_actions APP_STATE_CHANGE_ACTIONS
+          end
+
         end
 
-        it 'application is under_review' do
-          is_expected.to permit_actions [:edit, :update]
-        end
-
-        it 'application is waiting_for_applicant' do
-          is_expected.to permit_actions [:edit, :update]
-        end
-
-        it 'application is ready_for_review' do
-          is_expected.to permit_actions [:edit, :update]
-        end
-
       end
-
-      it 'forbids edit for an approved application' do
-        application.accept
-        is_expected.to forbid_action :edit
-      end
-
-      it 'forbids edit for a rejected application' do
-        application.reject
-        is_expected.to forbid_action :edit
-      end
-
-      it 'permits update when the application is not approved or rejected' do
-        # TODO
-        is_expected.to permit_action :update
-      end
-
-      it 'forbids update for an approved application' do
-        application.accept
-        is_expected.to forbid_action :update
-      end
-
-      it 'forbids update for a rejected application' do
-        application.reject
-        is_expected.to forbid_action :update
-      end
-
-      it 'forbids destroy' do
-        is_expected.to forbid_action :destroy
-      end
-
-      it 'forbids all application state change actions' do
-        is_expected.to forbid_actions app_state_change_actions
-      end
-
-      it 'permits :information' do
-        is_expected.to permit_action :information
-      end
-
     end
 
 
-    describe 'For Member that is the owner of the MembershipApplication' do
+    describe 'For Member that is the owner of an *approved* SHFApplication' do
       subject { described_class.new(member_applicant, member_applicant.membership_applications.first) }
 
       it 'permits new for a new application (not already instantiated)' do
@@ -333,10 +295,10 @@ describe MembershipApplicationPolicy do
       end
 
       it 'permits create for a new application (not already instantiated)' do
-        expect(described_class.new(member_applicant, MembershipApplication)).to forbid_action :create
+        expect(described_class.new(member_applicant, MembershipApplication)).to permit_action :create
       end
 
-      it 'forbids create for an existing application (already instantiated)' do
+      it 'permits create for an existing application (already instantiated)' do
         is_expected.to permit_action :create
       end
 
@@ -344,20 +306,20 @@ describe MembershipApplicationPolicy do
         is_expected.to permit_action :show
       end
 
-      it 'forbids index' do
-        is_expected.to forbid_action :index
-      end
-
       it 'forbids changing or deleting the application [:edit, :update, :destroy]' do
         is_expected.to forbid_actions [:edit, :update, :destroy]
       end
 
-      it 'forbids all application state change actions' do
-        is_expected.to forbid_actions app_state_change_actions
+      it 'forbids index' do
+        is_expected.to forbid_action :index
       end
 
       it 'permits :information' do
         is_expected.to permit_action :information
+      end
+
+      it 'forbids all application state change actions' do
+        is_expected.to forbid_actions APP_STATE_CHANGE_ACTIONS
       end
 
     end
@@ -374,48 +336,29 @@ describe MembershipApplicationPolicy do
         is_expected.to forbid_action :create
       end
 
-      it 'permits show' do
-        is_expected.to permit_action :show
+      describe 'permits all CRUD actions except :new and :create' do
+        (CRUD_ACTIONS - [:new, :create]).each do | action |
+          it "permits #{action}" do
+            is_expected.to permit_action action
+          end
+        end
       end
+
       it 'permits index' do
         is_expected.to permit_action :index
       end
 
-      it 'permits edit' do
-        is_expected.to permit_action :edit
-      end
-      it 'permits update' do
-        is_expected.to permit_action :update
+      it 'permits information' do
+        is_expected.to permit_action :information
       end
 
-      it 'permits destroy' do
-        is_expected.to permit_action :destroy
+      describe 'permits all application state change actions' do
+        APP_STATE_CHANGE_ACTIONS.each do | state_change |
+          it "permits #{state_change}" do
+            is_expected.to permit_action state_change
+          end
+        end
       end
-
-      it 'permits accept' do
-        is_expected.to permit_action :accept
-      end
-
-      it 'permits reject' do
-        is_expected.to permit_action :reject
-      end
-
-      it 'permits need_info' do
-        is_expected.to permit_action :need_info
-      end
-
-      it 'permits cancel_need_info' do
-        is_expected.to permit_action :cancel_need_info
-      end
-
-      it 'permits cancel_need_info' do
-        is_expected.to permit_action :cancel_need_info
-      end
-
-      it 'permits start_review' do
-        is_expected.to permit_action :start_review
-      end
-
     end
   end
 
