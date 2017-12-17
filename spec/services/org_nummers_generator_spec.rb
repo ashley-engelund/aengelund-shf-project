@@ -18,13 +18,13 @@ RSpec.describe OrgNummersGenerator do
 
     describe 'returns a Set of (frozen) strings; empty if number requests is <= 0' do
 
-      it 'generate(-1)' do
+      it 'generate(-1) is empty' do
         generated = described_class.generate(-1)
         expect(generated).to be_a Set
         expect(generated).to be_empty
       end
 
-      it 'generate(0)' do
+      it 'generate(0) is empty' do
         generated = described_class.generate(0)
         expect(generated).to be_a Set
         expect(generated).to be_empty
