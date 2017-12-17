@@ -57,7 +57,7 @@ class MembershipApplication < ApplicationRecord
 
 
     event :start_review do
-      transitions from: :new, to: :under_review #, guard: :not_a_member?
+      transitions from: :new, to: :under_review
       transitions from: :ready_for_review, to: :under_review
     end
 
