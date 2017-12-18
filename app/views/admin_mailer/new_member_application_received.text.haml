@@ -1,5 +1,5 @@
 - provide :signoff do
-  = render 'admin_mailer/signoff'
+  = render 'application_mailer/signoff', signoff: t('application_mailer.admin.signoff')
 
 
 = t('application_mailer.admin.new_application_received.message_text.new_app_arrived')
@@ -21,5 +21,3 @@
 = '     ' + url_for(@shf_app)
 \
 = t('application_mailer.admin.new_application_received.message_text.must_be_logged_in')
-\
-

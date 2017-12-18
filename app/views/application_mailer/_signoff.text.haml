@@ -1,0 +1,10 @@
+-# The following are optional local variables:
+-#  signoff_text   (default = t('application_mailer.signoff') )
+-#  signature      (default = t('application_mailer.signature'))
+-#
+- signoff = local_assigns.fetch :signoff, t('application_mailer.signoff')
+- signature = local_assigns.fetch :signature, t('application_mailer.signature')
+= signoff
+\
+= signature
+= t('SHF_name')
