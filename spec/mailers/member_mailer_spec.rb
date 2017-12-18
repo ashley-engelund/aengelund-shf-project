@@ -19,7 +19,7 @@ RSpec.describe MemberMailer, type: :mailer do
 
   describe '#membership_granted' do
 
-    MEM_GRANTED_SCOPE = 'application_mailer.member.membership_granted'
+    MEM_GRANTED_SCOPE = 'mailers.member_mailer.membership_granted'
 
 
     let(:accepted_app) { create(:shf_application, :accepted, user: test_user) }
@@ -29,7 +29,7 @@ RSpec.describe MemberMailer, type: :mailer do
     it_behaves_like 'a successfully created email',
                     I18n.t('subject', scope: MEM_GRANTED_SCOPE),
                     'user@example.com',
-                    I18n.t('application_mailer.greeting', greeting_name: 'Firstname Lastname') do
+                    'Firstname Lastname' do
       let(:email_created) { email_sent }
     end
 
