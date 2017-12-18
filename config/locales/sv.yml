@@ -846,6 +846,15 @@ sv:
           and_member_pages: "samt dolda sidor i vårt medlemssystem: "
 
 
+    member_mailer:
+      membership_granted:
+        subject: Welcome to Sveriges Hundföretagre! You're now a member!
+        message_text:
+          now_a_member:  You are now a member of SHF.  <value, what this means>
+          next_steps: Now you need to.... (company page, read about using the logo)
+
+
+
   devise:
     min_length: '(minst %{minimum_length} tecken)'
 
