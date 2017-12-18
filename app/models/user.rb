@@ -91,6 +91,7 @@ class User < ApplicationRecord
 
   def grant_membership
     update(member: true, membership_number: issue_membership_number)
+    MemberMailer.membership_granted(self).deliver
   end
 
 

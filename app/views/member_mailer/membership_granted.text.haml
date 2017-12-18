@@ -1,0 +1,10 @@
+- provide :signoff do
+  = render 'application_mailer/signoff'
+
+- message_scope = 'mailers.member_mailer.membership_granted.message_text'
+
+= I18n.t('now_a_member', scope: message_scope)
+= I18n.t('next_steps', scope: message_scope)
+\
+= render 'application_mailer/email_us_membership'
+\
