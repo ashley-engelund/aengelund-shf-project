@@ -793,22 +793,26 @@ en:
       delete_confirm: "Are you sure you want to delete the reason: %{name_sv} (%{name_en})?"
 
 
-  application_mailer:
-    greeting: &email_greeting "Hello %{greeting_name}"
+  mailers:
+    application_mailer:
+      greeting: &email_greeting "Hello %{greeting_name}"
 
-    trouble_reading_browser: "Having trouble reading this? View it in a browser"
-    email_us: "If you have any questions or suggestions, email us at "
+      email_us: "If you have any questions or suggestions, email us at "
 
-    footer:
-      text:
-        shf_name: *SHF_name
-        shf_motto: KOMPETENS – GLÄDJE – OMTANKE
-        email_sent_to: This email was sent to %{email_sent_to}
-        why_you_are_receiving: You are receiving this email because you are interested in a membership to SVERIGES HUNDFÖRETAGARE or you are a member.
-
-    admin:
-      signoff: Thanks
+      signoff: "Best Regards,"
       signature: &medlemsansvarig Membership Committee
+      signature_url: "http://sverigeshundforetagare.se"
+
+      footer:
+        text:
+          shf_name: *SHF_name
+          shf_motto: KOMPETENS – GLÄDJE – OMTANKE
+          email_sent_to: This email was sent to %{email_sent_to}
+          why_you_are_receiving: You are receiving this email because you are interested in a membership to SVERIGES HUNDFÖRETAGARE or you are a member.
+
+
+    admin_mailer:
+      signoff: Thanks
 
       new_application_received:
         subject: A new SHF Member Application has been received
@@ -819,11 +823,8 @@ en:
           view_app_here: "You can view the membership application here: "
           must_be_logged_in: "(You must be logged in as the administrator to view it.)"
 
-    shf_application:
-      signoff: "Best Regards,"
-      signature: *medlemsansvarig
-      signature_url: "http://sverigeshundforetagare.se"
 
+    shf_application_mailer:
       acknowledge_received:
         subject: Your application to Sveriges Hundföretagare has been received
         message_text: "Your application has been received.  We are all working hard, so it might take a while before we get to it. So do not worry if it takes a while before you hear from us."
@@ -835,7 +836,8 @@ en:
           h_branding_not_paid: "När detta är gjort behöver du göra färdigt din företagssida och betala din H-märkningsvagift. Mer information om hur du gör det kommer i ett mail efter att du betalt din medlemsavgift."
           thanks:  "Thank you for wanting to be a member and contributing to a Sweden with an ethical dog industry."
 
-    user:
+
+    user_mailer:
       accepted:
         subject: "Welcome to SHF! You're now a member"
         greeting: *email_greeting
