@@ -13,7 +13,7 @@ class User < ApplicationRecord
 
   validates_presence_of :first_name, :last_name, unless: Proc.new {!new_record? && !(first_name_changed? || last_name_changed?)}
   validates_uniqueness_of :membership_number, allow_blank: true
-  
+
   scope :admins, -> { where(admin: true) }
 
   scope :members, -> { where(member: true) }
@@ -89,9 +89,10 @@ class User < ApplicationRecord
   end
 
 
-  def grant_membership
+  # Need to be able to turn off 'sending email' during seeding
+  def grant_membership(send_email: true)
     update(member: true, membership_number: issue_membership_number)
-    MemberMailer.membership_granted(self).deliver
+    MemberMailer.membership_granted(self).deliver if send_email
   end
 
 
