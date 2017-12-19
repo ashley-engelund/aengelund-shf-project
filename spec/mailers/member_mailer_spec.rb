@@ -33,12 +33,8 @@ RSpec.describe MemberMailer, type: :mailer do
       let(:email_created) { email_sent }
     end
 
-    it 'says your are now a member' do
-      expect(email_sent).to have_body_text(I18n.t('message_text.now_a_member', scope: MEM_GRANTED_SCOPE))
-    end
-
-    it 'tells you what you need to do next' do
-      expect(email_sent).to have_body_text(I18n.t('message_text.next_steps', scope: MEM_GRANTED_SCOPE))
+    it 'repeats the welcome from the subject line' do
+      expect(email_sent).to have_body_text(I18n.t('message_text.welcome', scope: MEM_GRANTED_SCOPE))
     end
 
     it 'says you are now an active member' do

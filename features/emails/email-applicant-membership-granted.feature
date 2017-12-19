@@ -46,9 +46,9 @@ Feature: Applicant gets an email when membership has been granted. (They are now
     And I am logged in as "emma@happymutts.se"
     And I open the email
     And I should see t("mailers.member_mailer.membership_granted.subject") in the email subject
-    And I should see t("mailers.member_mailer.membership_granted.message_text.now_a_member") in the email body
-    And I should see t("mailers.member_mailer.membership_granted.message_text.next_steps") in the email body
-
+    And I should see t("mailers.member_mailer.membership_granted.message_text.welcome") in the email body
+    And I should see t("mailers.member_mailer.membership_granted.message_text.youre_active") in the email body
+    
 
   @time_adjust   @selenium
   Scenario: [SAD PATH] Applicant does not pay all fees, membership is not granted; no email is sent (2017)

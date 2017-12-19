@@ -4,8 +4,7 @@
 - message_scope = 'mailers.member_mailer.membership_granted.message_text'
 
 = render layout: 'layouts/mail_from_membership' do
-  %p= I18n.t('now_a_member', scope: message_scope)
-  %p= I18n.t('next_steps', scope: message_scope)
+  %p= t('welcome', scope: message_scope) + '.'
 
   %p
     = t('youre_active', scope: message_scope)
