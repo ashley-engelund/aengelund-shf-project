@@ -837,22 +837,16 @@ en:
           thanks:  "Thank you for wanting to be a member and contributing to a Sweden with an ethical dog industry."
 
 
-    user_mailer:
-      accepted:
+    member_mailer:
+      membership_granted:
         subject: "Welcome to SHF! You're now a member"
         greeting: *email_greeting
         message_text:
+          now_a_member:  You are now a member of SHF.  [value, what this means]
+          next_steps: Now you need to.... (company page, read about using the logo)
           youre_active: "You have now been activated as a member of the system and can log in and manage your profile and build your business page. Once you are logged in, you can edit your company page here: "
           access_fb_group: "As a member, you will also have access to our closed Facebook group: "
           and_member_pages: "as well as hidden pages in our member system: "
-
-
-    member_mailer:
-      membership_granted:
-        subject: Welcome to Sveriges Hundföretagre! You're now a member!
-        message_text:
-          now_a_member:  You are now a member of SHF.  [value, what this means]
-          next_steps: Now you need to.... (company page, read about using the logo)
 
 
 

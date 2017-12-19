@@ -836,22 +836,16 @@ sv:
           thanks:  "Tack för att du vill vara medlem och bidrar till ett kvalitetssäkrat hundsverige."
 
 
-    user_mailer:
-      accepted:
+    member_mailer:
+      membership_granted:
         subject: "Välkommen som medlem i Sveriges Hundföretagare"
         greeting: *email_greeting
         message_text:
+          now_a_member:  You are now a member of SHF.  <value, what this means>
+          next_steps: Now you need to.... (company page, read about using the logo)
           youre_active: "Du har nu aktiverats som medlem i systemet och kan logga in och hantera din profil och bygga upp din företagssida. När du är inloggad kan du redigera din företagssida här: "
           access_fb_group: "Som medlem får du även tillgång till vår slutna Facebookgrupp: "
           and_member_pages: "samt dolda sidor i vårt medlemssystem: "
-
-
-    member_mailer:
-      membership_granted:
-        subject: Welcome to Sveriges Hundföretagre! You're now a member!
-        message_text:
-          now_a_member:  You are now a member of SHF.  <value, what this means>
-          next_steps: Now you need to.... (company page, read about using the logo)
 
 
 
