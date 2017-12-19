@@ -30,6 +30,10 @@ class User < ApplicationRecord
     payment_notes(Payment::PAYMENT_TYPE_MEMBER)
   end
 
+  def membership_current?
+    membership_expire_date&.future?
+  end
+
   def self.next_membership_payment_dates(user_id)
     next_payment_dates(user_id, Payment::PAYMENT_TYPE_MEMBER)
   end
@@ -44,6 +48,14 @@ class User < ApplicationRecord
 
   def has_shf_application?
     shf_applications.any?
+  end
+
+  def check_member_status
+    # Called from Warden after user authentication - see after_sign_in.rb
+    # If member payment has expired, revoke membership status.
+    if member? && ! membership_current?
+      update(member: false)
+    end
   end
 
 
