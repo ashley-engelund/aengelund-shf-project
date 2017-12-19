@@ -41,6 +41,18 @@ RSpec.describe MemberMailer, type: :mailer do
       expect(email_sent).to have_body_text(I18n.t('message_text.next_steps', scope: MEM_GRANTED_SCOPE))
     end
 
+    it 'says you are now an active member' do
+      expect(email_sent).to have_body_text(I18n.t('message_text.youre_active', scope: MEM_GRANTED_SCOPE))
+    end
+
+    it 'gives you the Facebook group URL' do
+      expect(email_sent).to have_body_text(I18n.t('message_text.access_fb_group', scope: MEM_GRANTED_SCOPE))
+    end
+
+    it 'tell you about the Member Pages' do
+      expect(email_sent).to have_body_text(I18n.t('message_text.and_member_pages', scope: MEM_GRANTED_SCOPE))
+    end
+
   end
 
 

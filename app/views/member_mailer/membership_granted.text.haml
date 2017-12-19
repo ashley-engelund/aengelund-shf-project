@@ -3,8 +3,13 @@
 
 - message_scope = 'mailers.member_mailer.membership_granted.message_text'
 
-= I18n.t('now_a_member', scope: message_scope)
-= I18n.t('next_steps', scope: message_scope)
-\
-= render 'application_mailer/email_us_membership'
-\
+= render layout: 'layouts/mail_from_membership' do
+  = I18n.t('now_a_member', scope: message_scope)
+  = I18n.t('next_steps', scope: message_scope)
+
+  = t('youre_active', scope: message_scope)  + edit_company_url(@member.company)
+  \
+  = t('access_fb_group', scope: message_scope)
+  = t('shf_facebook_group_url')
+  \
+  = t('and_member_pages', scope: message_scope) + t('shf_medlemssystem_url')
