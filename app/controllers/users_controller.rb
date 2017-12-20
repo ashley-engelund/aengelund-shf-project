@@ -4,6 +4,7 @@ class UsersController < ApplicationController
   before_action :set_user, except: :index
   before_action :authorize_user, only: [:show]
 
+
   def index
     authorize User
     action_params, @items_count, items_per_page = process_pagination_params('user')
@@ -17,10 +18,17 @@ class UsersController < ApplicationController
     membership_filter = 'member = true' if @filter_are_members
     membership_filter = 'member = false' if @filter_are_not_members
 
-    @q = User.ransack(action_params)
-    @users = @q.result.includes(:shf_applications).where(membership_filter).page(params[:page]).per_page(items_per_page)
+    begin
+      @q = User.ransack(action_params)
+    rescue
+      recover_from_bad_search_params(users_path, t('activerecord.models.company.other'))
 
-    render partial: 'users_list', locals: { q: @q, users: @users, items_count: @items_count } if request.xhr?
+    else
+      @users = @q.result.includes(:shf_applications).where(membership_filter).page(params[:page]).per_page(items_per_page)
+
+      render partial: 'users_list', locals: { q: @q, users: @users, items_count: @items_count } if request.xhr?
+    end
+
   end
 
 
@@ -36,6 +44,7 @@ class UsersController < ApplicationController
     end
   end
 
+
   def edit_status
     raise 'Unsupported request' unless request.xhr?
     authorize User
@@ -43,14 +52,15 @@ class UsersController < ApplicationController
     payment = @user.most_recent_membership_payment
 
     @user.update!(user_params) && (payment ?
-                                   payment.update!(payment_params) : true)
+                                       payment.update!(payment_params) : true)
 
     render partial: 'member_payment_status', locals: { user: @user }
 
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved
     render partial: 'member_payment_status',
-           locals: { user: @user, error:  t('users.update.error') }
+           locals: { user: @user, error: t('users.update.error') }
   end
+
 
   private
 
@@ -69,6 +79,7 @@ class UsersController < ApplicationController
     params.require(:user).permit(:name, :email, :member, :password,
                                  :password_confirmation)
   end
+
 
   def payment_params
     params.require(:payment).permit(:expire_date, :notes)

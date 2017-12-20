@@ -19,17 +19,22 @@ class ShfApplicationsController < ApplicationController
     session[:shf_application_items_selection] ||= 'All' if current_user.admin?
 
     action_params, @items_count, items_per_page =
-      process_pagination_params('shf_application')
+        process_pagination_params('shf_application')
 
-    @search_params = ShfApplication.includes(:user).ransack(action_params)
+    begin
+      @search_params = ShfApplication.includes(:user).ransack(action_params)
+    rescue
+      recover_from_bad_search_params(shf_applications_path, t('activerecord.models.shf_application.other'))
+    else
+      @shf_applications = @search_params
+                              .result
+                              .includes(:business_categories)
+                              .includes(:user)
+                              .page(params[:page]).per_page(items_per_page)
 
-    @shf_applications = @search_params
-                                 .result
-                                 .includes(:business_categories)
-                                 .includes(:user)
-                                 .page(params[:page]).per_page(items_per_page)
+      render partial: 'shf_applications_list' if request.xhr?
+    end
 
-    render partial: 'shf_applications_list' if request.xhr?
   end
 
 
@@ -49,7 +54,7 @@ class ShfApplicationsController < ApplicationController
 
     if @shf_application.save
 
-      file_uploads_successful =   new_file_uploaded(params)
+      file_uploads_successful = new_file_uploaded(params)
 
       send_new_app_emails(@shf_application)
 
@@ -252,6 +257,7 @@ class ShfApplicationsController < ApplicationController
     end
 
   end
+
 
   def send_new_app_emails(new_shf_app)
 
