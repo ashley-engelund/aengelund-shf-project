@@ -77,4 +77,10 @@ class ApplicationController < ActionController::Base
   end
 
 
+  def recover_from_bad_search_params(redirect_to_path, search_item_plural)
+    helpers.flash_message(:alert, t('errors.bad_search_params', search_item: search_item_plural ))
+    params = []  # clear out the parameters
+    redirect_to redirect_to_path
+  end
+
 end
