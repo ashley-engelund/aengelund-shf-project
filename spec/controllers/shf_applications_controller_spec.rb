@@ -11,14 +11,6 @@ RSpec.describe ShfApplicationsController, type: :controller do
 
   context 'bad search parameters' do
 
-    good_params = { "utf8" => "✓",
-                    "q" => { "user_membership_number_in" => ["", "101"],
-                             "user_last_name_in" => ["", "Claesson"],
-                             "company_number_in" => ["", "1536355801"],
-                             "state_in" => ["", "under_review"] },
-                    "commit" => "Search",
-                    "locale" => "en" }
-
     bad_params_and_test_desc = [
         { bad_params: { "utf8" => "✓",
                         "q" => { "user_membership_number_in" => { '0' => nil },

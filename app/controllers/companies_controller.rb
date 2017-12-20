@@ -13,7 +13,7 @@ class CompaniesController < ApplicationController
 
     begin
       @search_params = Company.ransack(action_params)
-    rescue => e
+    rescue
       recover_from_bad_search_params(companies_path, t('activerecord.models.company.other'))
     else
 
