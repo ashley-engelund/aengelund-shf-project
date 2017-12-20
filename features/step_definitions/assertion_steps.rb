@@ -12,7 +12,7 @@ module PathHelpers
       when 'landing'
         path = root_path
       when 'new application'
-        path = new_membership_application_path
+        path = new_shf_application_path
       when 'edit application', 'edit my application'
         user.shf_applications.reload
         path = edit_shf_application_path(user.shf_application)

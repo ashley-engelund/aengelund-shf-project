@@ -174,18 +174,18 @@ Feature: Create a new membership application
     And I am logged in as "member@random.com"
     And I am on the "new application" page
     And I fill in the translated form with data:
-      | membership_applications.new.first_name | membership_applications.new.last_name | membership_applications.new.company_number | membership_applications.new.phone_number | membership_applications.new.contact_email |
+      | shf_applications.new.first_name | shf_applications.new.last_name | shf_applications.new.company_number | shf_applications.new.phone_number | shf_applications.new.contact_email |
       | Lars                                   | IsaMember                             | 5562252998                                 | 031-1234567                              | member@random.com                         |
     And I select "Groomer" Category
-    And I click on t("membership_applications.new.submit_button_label")
+    And I click on t("shf_applications.new.submit_button_label")
     Then I should be on the "landing" page
-    And I should see t("membership_applications.create.success", email_address: member@random.com  )
+    And I should see t("shf_applications.create.success", email_address: member@random.com  )
     When I click on t("menus.nav.users.my_application")
-    Then the t("membership_applications.new.first_name") field should be set to "Lars"
-    And the t("membership_applications.new.last_name") field should be set to "IsaMember"
+    Then the t("shf_applications.new.first_name") field should be set to "Lars"
+    And the t("shf_applications.new.last_name") field should be set to "IsaMember"
     Then "member@random.com" should receive an email
     And I open the email
-    And I should see t("application_mailer.membership_application.acknowledge_received.subject") in the email subject
+    And I should see t("application_mailer.shf_application.acknowledge_received.subject") in the email subject
     And I am logged in as "admin@shf.se"
     Then "admin@shf.se" should receive an email
     And I open the email

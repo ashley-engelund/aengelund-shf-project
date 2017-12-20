@@ -56,7 +56,7 @@ class ShfApplicationPolicy < ApplicationPolicy
 
 
   def create?
-    record.is_a?(MembershipApplication) ? owner? : !user.admin? && not_a_visitor
+    record.is_a?(ShfApplication) ? owner? : !user.admin? && not_a_visitor
   end
 
 
