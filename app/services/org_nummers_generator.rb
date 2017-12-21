@@ -20,13 +20,14 @@ class OrgNummersGenerator
     results = Set.new
 
     num_tries = 0
-    all_possible = MAX_NUM - MIN_NUM
+    max_tries = MAX_NUM - MIN_NUM
 
     # num_tries keeps use from trying forever.
+    # The maxium number of times we try to get a valid org_number is max_tries.
     # It is a somewhat arbitrary limit on how many times we can try.
     # Even though each try is a Random number, so it is possible to get the same number more than once,
     # this is a reasonable (if clunky) limit.
-    while results.count < number_to_generate && (num_tries < all_possible) do
+    while results.count < number_to_generate && (num_tries < max_tries) do
       number_to_generate.times do
         org_num = generate_one
         num_tries += 1 if results.add?(org_num)
