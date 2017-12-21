@@ -4,17 +4,17 @@ class ShfApplicationPolicy < ApplicationPolicy
 
 
   def permitted_attributes
-    allowed_changable_attribs_for_current_user
+    allowed_changeable_attribs_for_current_user
   end
 
 
   def permitted_attributes_for_new
-    allowed_changable_attribs_for_current_user
+    allowed_changeable_attribs_for_current_user
   end
 
 
   def permitted_attributes_for_create
-    allowed_changable_attribs_for_current_user
+    allowed_changeable_attribs_for_current_user
   end
 
 
@@ -24,12 +24,12 @@ class ShfApplicationPolicy < ApplicationPolicy
 
 
   def permitted_attributes_for_edit
-    allowed_changable_attribs_for_current_user
+    allowed_changeable_attribs_for_current_user
   end
 
 
   def permitted_attributes_for_update
-    allowed_changable_attribs_for_current_user
+    allowed_changeable_attribs_for_current_user
   end
 
 
@@ -132,7 +132,7 @@ class ShfApplicationPolicy < ApplicationPolicy
   end
 
 
-  def allowed_changable_attribs_for_current_user
+  def allowed_changeable_attribs_for_current_user
     if user.admin?
       all_attributes
     elsif owner?
