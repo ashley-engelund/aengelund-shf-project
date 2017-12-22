@@ -1,6 +1,5 @@
 require 'rails_helper'
 
-require_relative 'controller_shared_examples'
 
 
 RSpec.describe ShfApplicationsController, type: :controller do
