@@ -45,13 +45,13 @@ RSpec.describe UsersController, type: :controller do
                             "q" => {
                                 "first_name_in" => { "0" => "A", "1" => "B", "2" => "C" },
                                 "addresses_region_id_in" => { "0" => "6" },
-                                "addresses_kommun_id_in" => { "0" => "" },
-                                "name_in" => { "0" => "" } },
+                                "addresses_kommun_id_in" => { "0" => nil, "1" => "" },
+                                "name_in" => { "0" => nil } },
                             "commit" => "Sök" }
 
       expected_fixed_q = { "first_name_in" => ["A", "B", "C"],
                            "addresses_region_id_in" => ["6"],
-                           "addresses_kommun_id_in" => [""],
+                           "addresses_kommun_id_in" => ["", ""],
                            "name_in" => [""] }
 
 

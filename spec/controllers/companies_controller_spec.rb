@@ -25,11 +25,11 @@ RSpec.describe CompaniesController, type: :controller do
 
       fb_mangled_params = { "utf8" => "✓",
                             "q" => {
-                                "business_categories_id_in" => { "0" => "2", "1" => "2", "2" => "2" }
+                                "business_categories_id_in" => { "0" => "1", "1" => "2", "2" => "3" }
                             }
       }
 
-      expected_fixed_q = { "business_categories_id_in" => ["2", "2", "2"] }
+      expected_fixed_q = { "business_categories_id_in" => ["1", "2", "3"] }
 
       get :index, params: fb_mangled_params
       expect(subject.params.to_unsafe_h['q']).to eq expected_fixed_q
@@ -39,15 +39,15 @@ RSpec.describe CompaniesController, type: :controller do
 
       fb_mangled_params = { "utf8" => "✓",
                             "q" => {
-                                "business_categories_id_in" => { "0" => "2", "1" => "2", "2" => "2" },
+                                "business_categories_id_in" => { "0" => "1", "1" => "2", "2" => "3" },
                                 "addresses_region_id_in" => { "0" => "6" },
-                                "addresses_kommun_id_in" => { "0" => "" },
-                                "name_in" => { "0" => "" } },
+                                "addresses_kommun_id_in" => { "0" => nil, "1" => "" },
+                                "name_in" => { "0" => nil } },
                             "commit" => "Sök" }
 
-      expected_fixed_q = { "business_categories_id_in" => ["2", "2", "2"],
+      expected_fixed_q = { "business_categories_id_in" => ["1", "2", "3"],
                            "addresses_region_id_in" => ["6"],
-                           "addresses_kommun_id_in" => [""],
+                           "addresses_kommun_id_in" => ["", ""],
                            "name_in" => [""] }
 
 
