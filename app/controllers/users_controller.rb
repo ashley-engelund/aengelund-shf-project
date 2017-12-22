@@ -7,6 +7,8 @@ class UsersController < ApplicationController
 
   def index
     authorize User
+    self.params = fix_FB_changed_q_params(self.params)
+
     action_params, @items_count, items_per_page = process_pagination_params('user')
 
     if action_params then
@@ -18,16 +20,11 @@ class UsersController < ApplicationController
     membership_filter = 'member = true' if @filter_are_members
     membership_filter = 'member = false' if @filter_are_not_members
 
-    begin
-      @q = User.ransack(action_params)
-    rescue
-      recover_from_bad_search_params(users_path, t('activerecord.models.company.other'))
+    @q = User.ransack(action_params)
 
-    else
-      @users = @q.result.includes(:shf_applications).where(membership_filter).page(params[:page]).per_page(items_per_page)
+    @users = @q.result.includes(:shf_applications).where(membership_filter).page(params[:page]).per_page(items_per_page)
 
-      render partial: 'users_list', locals: { q: @q, users: @users, items_count: @items_count } if request.xhr?
-    end
+    render partial: 'users_list', locals: { q: @q, users: @users, items_count: @items_count } if request.xhr?
 
   end
 

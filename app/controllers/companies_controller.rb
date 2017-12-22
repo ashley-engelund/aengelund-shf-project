@@ -8,40 +8,35 @@ class CompaniesController < ApplicationController
   def index
     authorize Company
 
+    self.params = fix_FB_changed_q_params(self.params)
 
     action_params, @items_count, items_per_page = process_pagination_params('company')
 
-    begin
-      @search_params = Company.ransack(action_params)
-    rescue
-      recover_from_bad_search_params(companies_path, t('activerecord.models.company.other'))
-    else
+    @search_params = Company.ransack(action_params)
 
-      # only select companies that are 'complete'; see the Company.complete scope
+    # only select companies that are 'complete'; see the Company.complete scope
 
-      @all_companies = @search_params.result(distinct: true)
-                           .complete
-                           .includes(:business_categories)
-                           .includes(addresses: [:region, :kommun])
-                           .joins(addresses: [:region, :kommun])
-      # The last qualifier ("joins") on above statement ("addresses: :region") is
-      # to get around a problem with DISTINCT queries used with ransack when also
-      # allowing sorting on an associated table column ("region" in this case)
-      # https://github.com/activerecord-hackery/ransack#problem-with-distinct-selects
+    @all_companies = @search_params.result(distinct: true)
+                         .complete
+                         .includes(:business_categories)
+                         .includes(addresses: [:region, :kommun])
+                         .joins(addresses: [:region, :kommun])
+    # The last qualifier ("joins") on above statement ("addresses: :region") is
+    # to get around a problem with DISTINCT queries used with ransack when also
+    # allowing sorting on an associated table column ("region" in this case)
+    # https://github.com/activerecord-hackery/ransack#problem-with-distinct-selects
 
-      unless current_user.admin?
-        @all_companies = @all_companies.branding_licensed.with_members
-      end
-
-      @all_visible_companies = @all_companies.address_visible
-
-      @all_visible_companies.each { |co| geocode_if_needed co }
-
-      @companies = @all_companies.page(params[:page]).per_page(items_per_page)
-
-      render partial: 'companies_list' if request.xhr?
+    unless current_user.admin?
+      @all_companies = @all_companies.branding_licensed.with_members
     end
 
+    @all_visible_companies = @all_companies.address_visible
+
+    @all_visible_companies.each { |co| geocode_if_needed co }
+
+    @companies = @all_companies.page(params[:page]).per_page(items_per_page)
+
+    render partial: 'companies_list' if request.xhr?
   end
 
 

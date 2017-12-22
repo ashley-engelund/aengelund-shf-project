@@ -5,34 +5,55 @@ require_relative 'controller_shared_examples'
 
 RSpec.describe CompaniesController, type: :controller do
 
+  describe '#index will fix_FB_changed_params' do
 
-  context 'bad search parameters' do
+    it "does not change URL if there are no query ('q') parameters" do
+      no_query_params = { "utf8" => "✓" }
 
-    bad_params_and_test_desc = [
-        { bad_params: { "utf8" => "✓", "q" => { "business_categories_id_in" => { "0" => nil, },
-                                                "addresses_region_id_in" => { "0" => nil, },
-                                                "addresses_kommun_id_in" => { "0" => nil },
-                                                "name_in" => { "0" => nil } },
-                        "commit" => "Sök" },
-          test_desc: 'empty search parameters (like Facebook might create when it sanitizes/processes a pasted URL)'
-        },
-        {
-            bad_params: { "utf8" => "✓", "q" => { "business_categories_id_in" => { "0" => nil, "1" => "7", "2" => "6", "3" => "4", "4" => "2" },
-                                                  "addresses_region_id_in" => { "0" => nil, "1" => "6" },
-                                                  "addresses_kommun_id_in" => { "0" => nil },
-                                                  "name_in" => { "0" => nil } } },
-            test_desc: 'some empty search parameters, some with data'
-        }
-    ]
+      expected_fixed = { "utf8" => "✓",
+                         "controller" => "companies",
+                         "action" => "index",
+      }
 
-    bad_params_and_test_desc.each do |bad_param_test|
+      get :index, params: no_query_params
 
-      it_behaves_like 'it gracefully handles bad search parameters',
-                      bad_param_test[:test_desc],
-                      bad_param_test[:bad_params],
-                      {action: 'index'},
-                      I18n.t('activerecord.models.company.other')
+      expect(subject.params.to_unsafe_h).to eq expected_fixed
 
+    end
+
+    it 'q parameters that are a Hash are converted to Array with the Hash values' do
+
+      fb_mangled_params = { "utf8" => "✓",
+                            "q" => {
+                                "business_categories_id_in" => { "0" => "2", "1" => "2", "2" => "2" }
+                            }
+      }
+
+      expected_fixed_q = { "business_categories_id_in" => ["2", "2", "2"] }
+
+      get :index, params: fb_mangled_params
+      expect(subject.params.to_unsafe_h['q']).to eq expected_fixed_q
+    end
+
+    it 'empty values do not need to be retained)' do
+
+      fb_mangled_params = { "utf8" => "✓",
+                            "q" => {
+                                "business_categories_id_in" => { "0" => "2", "1" => "2", "2" => "2" },
+                                "addresses_region_id_in" => { "0" => "6" },
+                                "addresses_kommun_id_in" => { "0" => "" },
+                                "name_in" => { "0" => "" } },
+                            "commit" => "Sök" }
+
+      expected_fixed_q = { "business_categories_id_in" => ["2", "2", "2"],
+                           "addresses_region_id_in" => ["6"],
+                           "addresses_kommun_id_in" => [""],
+                           "name_in" => [""] }
+
+
+      get :index, params: fb_mangled_params
+
+      expect(subject.params.to_unsafe_h['q']).to match expected_fixed_q
     end
 
   end
