@@ -83,13 +83,6 @@ class ApplicationController < ActionController::Base
   end
 
 
-  def recover_from_bad_search_params(redirect_to_path, search_item_plural)
-    helpers.flash_message(:alert, t('errors.bad_search_params', search_item: search_item_plural))
-    params = [] # clear out the parameters
-    redirect_to redirect_to_path
-  end
-
-
   # When one of our URLS is cut and pasted in Facebook (FB), FB will actually
   # _change_ the URL.  Then anyone in FB clicking on the URL will be taken
   # to our system with a (possibly) invalid URL.
