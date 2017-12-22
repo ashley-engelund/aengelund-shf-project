@@ -86,7 +86,7 @@ class ApplicationController < ActionController::Base
   # When one of our URLS is cut and pasted in Facebook (FB), FB will actually
   # _change_ the URL.  Then anyone in FB clicking on the URL will be taken
   # to our system with a (possibly) invalid URL.
-  # Ex:  I want to share the list of dog groomers in Skäne (a region) with someone.
+  # Ex:  I want to share the list of dog groomers in Skåne (a region) with someone.
   #   I do a search for all companies in Skäne with dog groomers.  I copy that resulting URL
   #   and share it with my friends in FB.  One of my friends clicks on it but
   #   because FB has mangled the URL, it no longer works and causes a 500 or 404 error.
