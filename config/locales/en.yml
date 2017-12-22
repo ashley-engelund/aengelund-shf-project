@@ -835,7 +835,7 @@ en:
         subject: Your application to Sveriges Hundföretagare is approved
         message_text:
           app_approved_and_next: "Your application is now approved. What is left before you are registered as a member in the system is to pay your membership fee.  Log in to the website and then pay at this link: "
-          h_branding_not_paid: "När detta är gjort behöver du göra färdigt din företagssida och betala din H-märkningsvagift. Mer information om hur du gör det kommer i ett mail efter att du betalt din medlemsavgift."
+          h_branding_not_paid: "When this is done you will need to finish your company page and pay your H-branding fee. More information about how to do that will come after you paid your membership fee."
           thanks:  "Thank you for wanting to be a member and contributing to a Sweden with an ethical dog industry."
 
 
