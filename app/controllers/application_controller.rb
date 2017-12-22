@@ -91,7 +91,11 @@ class ApplicationController < ActionController::Base
   #   and share it with my friends in FB.  One of my friends clicks on it but
   #   because FB has mangled the URL, it no longer works and causes a 500 or 404 error.
   #
-  # Specifically, FB may change  a value that should be an Array to a Hash.  this changes it back.
+  # Specifically, FB may change  a value that should be an Array to a Hash.
+  # It's pretty clear that FB is converting our params to JSON,
+  # and then just serving that JSON right back to us without backing out the conversion.
+  #
+  # This method 'undoes' the changes that Facebook makes.
   # This is important for the Ransack gem, which we use for searching and sorting in some views.
   # (Search for the `.ransack` method in controllers.)
   # Ransack expects the parameters with the 'q' key to have values that are Arrays, not Hashes.
