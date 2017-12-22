@@ -844,7 +844,7 @@ sv:
         greeting: *email_greeting
         message_text:
           welcome:  *subject_welcome
-          youre_active: "Ditt företag är nu H-märkt och du har aktiverats som medlem i systemet. Du kan logga in och hantera din profil och bygga upp din företagssida. När du är inloggad kan du redigera din företagssida här: "
+          youre_active: "Ditt företag är nu H-märkt och du har aktiverats som medlem i systemet. Du kan logga in och hantera din profil och bygga upp din företagssida. När du är inloggad kan du redigera din företagssida och betala din H-märkesavgift här: "
           access_fb_group: "Som medlem får du även tillgång till vår slutna Facebookgrupp: "
           and_member_pages: "samt dolda sidor i vårt medlemssystem: "
 
