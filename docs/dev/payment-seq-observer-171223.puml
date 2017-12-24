@@ -41,7 +41,7 @@ deactivate Payment
 MembershipStatusUpdater -> MembershipStatusUpdater: update_membership_status(payment.user)
 
 note right of MembershipStatusUpdater #lightYellow
- MembershipStatusUpdater is responsible for knowing if membership requirements have been met
+ MembershipRequirements is responsible for knowing if membership requirements have been met
 end note
 
 MembershipStatusUpdater -> MembershipRequirements: satisfied?(user)
