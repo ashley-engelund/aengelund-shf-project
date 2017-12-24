@@ -5,28 +5,28 @@ RSpec.describe Payment, type: :model do
   let(:created) { Payment::ORDER_PAYMENT_STATUS[nil] }
 
   let(:member_pymt1) do
-    create(:payment, status: success, expire_date: Time.zone.today + 1.day)
+    create(:payment, :successful, expire_date: Time.zone.today + 1.day)
   end
-  let(:member_pymt2) do
-    create(:payment, status: created, expire_date: Time.zone.today + 1.year)
+  let(:member_payment_created_exp_nextyear) do
+    create(:payment, :created, expire_date: Time.zone.today + 1.year)
   end
   let(:member_pymt3) do
-    create(:payment, status: success, expire_date: Time.zone.today + 1.year)
+    create(:payment, :successful, expire_date: Time.zone.today + 1.year)
   end
   let(:member_pymt4) do
-    create(:payment, status: success, expire_date: Time.zone.today - 1.day)
+    create(:payment, :successful, expire_date: Time.zone.today - 1.day)
   end
 
   let(:brand_pymt1) do
-    create(:payment, status: success, expire_date: Time.zone.today + 1.day,
+    create(:payment, :successful, expire_date: Time.zone.today + 1.day,
            payment_type: Payment::PAYMENT_TYPE_BRANDING)
   end
   let(:brand_pymt2) do
-    create(:payment, status: created, expire_date: Time.zone.today + 1.year,
+    create(:payment, :created, expire_date: Time.zone.today + 1.year,
            payment_type: Payment::PAYMENT_TYPE_BRANDING)
   end
   let(:brand_pymt3) do
-    create(:payment, status: success, expire_date: Time.zone.today + 1.year,
+    create(:payment, :successful, expire_date: Time.zone.today + 1.year,
            payment_type: Payment::PAYMENT_TYPE_BRANDING)
   end
 
@@ -96,7 +96,7 @@ RSpec.describe Payment, type: :model do
 
     it 'returns all member fee payments' do
       expect(Payment.send(Payment::PAYMENT_TYPE_MEMBER))
-        .to contain_exactly(member_pymt3, member_pymt2, member_pymt1)
+        .to contain_exactly(member_pymt3, member_payment_created_exp_nextyear, member_pymt1)
     end
   end
 
@@ -111,7 +111,7 @@ RSpec.describe Payment, type: :model do
   describe 'scope: unexpired' do
     it 'returns all unexpired payments' do
       expect(Payment.unexpired)
-        .to contain_exactly(member_pymt1, member_pymt2, member_pymt3,
+        .to contain_exactly(member_pymt1, member_payment_created_exp_nextyear, member_pymt3,
                             brand_pymt1, brand_pymt2, brand_pymt3)
     end
   end
