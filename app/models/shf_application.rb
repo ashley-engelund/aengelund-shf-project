@@ -1,10 +1,18 @@
 require_relative File.join('..', 'services', 'address_exporter')
 
+require 'observer'
+
 
 class ShfApplication < ApplicationRecord
 
+  include Observable
+  include AASM
+
+
   before_destroy :before_destroy_checks
-  after_destroy  :after_destroy_checks
+  after_destroy :after_destroy_checks
+
+  after_initialize :add_observers
 
   belongs_to :user
 
@@ -45,7 +53,12 @@ class ShfApplication < ApplicationRecord
   delegate :full_name, to: :user, prefix: true
   delegate :membership_number, :membership_number=, to: :user, prefix: false
 
-  include AASM
+
+
+  def add_observers
+    add_observer MembershipStatusUpdater.instance, :shf_application_updated
+  end
+
 
   aasm :column => 'state' do
 
@@ -55,6 +68,9 @@ class ShfApplication < ApplicationRecord
     state :ready_for_review
     state :accepted
     state :rejected
+
+    # after all of our state changes (transitions), call :tell_observers
+    after_all_transitions :state_transitioned
 
 
     event :start_review do
@@ -136,6 +152,7 @@ class ShfApplication < ApplicationRecord
 
   end
 
+
   def after_destroy_checks
     # if this was the only application associated with a company, destroy the company
     unless company.nil?
@@ -144,8 +161,9 @@ class ShfApplication < ApplicationRecord
     end
   end
 
+
   def se_mailing_csv_str
-     company.nil? ?  AddressExporter.se_mailing_csv_str(nil) : company.se_mailing_csv_str
+    company.nil? ? AddressExporter.se_mailing_csv_str(nil) : company.se_mailing_csv_str
   end
 
 
@@ -160,6 +178,15 @@ class ShfApplication < ApplicationRecord
 
     save
   end
+
+
+
+  # let all of our observers know our state changed
+  def state_transitioned
+    changed(true)
+    notify_observers(self)
+  end
+
 
 
 end
