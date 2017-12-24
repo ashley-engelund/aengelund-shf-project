@@ -115,4 +115,31 @@ RSpec.describe Payment, type: :model do
                             brand_pymt1, brand_pymt2, brand_pymt3)
     end
   end
+
+
+  describe '#successful?' do
+
+    it "true if status == SUCCESSFUL" do
+      member_payment_created_exp_nextyear.status = Payment::SUCCESSFUL
+      expect(member_payment_created_exp_nextyear.successful?).to be_truthy
+    end
+
+    other_statuses = Payment::ORDER_PAYMENT_STATUS.reject{|k, _v| k == 'successful'}.freeze
+    other_statuses.keys.each do | status |
+      it "false for status #{status}" do
+        member_payment_created_exp_nextyear.status = status
+        expect(member_payment_created_exp_nextyear.successful?).to be_falsey
+      end
+    end
+
+  end
+
+  describe '#successfully_completed' do
+
+    it 'status is set to successful' do
+      member_payment_created_exp_nextyear.successfully_completed
+      expect(member_payment_created_exp_nextyear.successful?).to be_truthy
+    end
+
+  end
 end
