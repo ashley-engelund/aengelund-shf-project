@@ -118,12 +118,13 @@ class User < ApplicationRecord
     Arel.sql("lpad(membership_number, 20, '0')")
   end
 
-  private
 
+  # The fact that this can no longer be private is a smell that it should be refactored out into a separate class
   def issue_membership_number
     self.membership_number = self.membership_number.blank? ? get_next_membership_number : self.membership_number
   end
 
+  private
 
   def get_next_membership_number
     self.class.connection.execute("SELECT nextval('membership_number_seq')").getvalue(0,0).to_s
