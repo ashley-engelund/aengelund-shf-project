@@ -26,9 +26,21 @@ class Payment < ApplicationRecord
     'awaiting_payments' => 'Väntar på betalning' # awaiting payment
   }.freeze
 
+  CREATED = ORDER_PAYMENT_STATUS['created']
+  PENDING = ORDER_PAYMENT_STATUS['pending']
+  SUCCESSFUL = ORDER_PAYMENT_STATUS['successful']
+  EXPIRED = ORDER_PAYMENT_STATUS['expired']
+  AWAITING_PAYMENTS = ORDER_PAYMENT_STATUS['awaiting_payments']
+
+
+  NO_HIPS_ID = 'none'
+
+  UNKNOWN_ORDER_STATUS = 'unknown'
+
+
   validates :status, inclusion: ORDER_PAYMENT_STATUS.values
 
-  scope :completed, -> { where(status: ORDER_PAYMENT_STATUS['successful']) }
+  scope :completed, -> { where(status: SUCCESSFUL) }
 
   scope :unexpired, -> { where('expire_date >= ?', Time.zone.today ) }
 
