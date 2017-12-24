@@ -1,0 +1,81 @@
+@startuml
+
+!include plantuml-ae-style.iuml
+
+'skinparam ActivityDiamondBackgroundColor white
+
+title Make a Payment and Update Membership Status\n\nbefore refactoring 23 Dec. 2017\n(+ changes from PR 441)\n
+
+
+HipsService -> PaymentsController: webhook
+
+
+PaymentsController -> Payment: find(payment.id)
+Payment -> PaymentsController: payment
+PaymentsController -> Payment: order_to_payment_status
+Payment -> PaymentsController: status
+
+...
+
+HipsService -> PaymentsController: success
+activate PaymentsController
+
+PaymentsController -> Payment: payment_type == PAYMENT_TYPE_MEMBER ?
+
+
+
+== grant membership ==
+
+note right of PaymentsController  #lightYellow
+
+  PaymentsController is responsible for knowing if membership should be granted
+     It needs to know the type of payment
+     so it can grant membership or not
+
+end note
+
+note right of PaymentsController
+  if payment.payment_type == Payment::PAYMENT_TYPE_MEMBER
+      payment.user.grant_membership
+end note
+
+
+note over User: When fee is paid, user is granted membership\n (is there check for dates or other conditions?)
+
+PaymentsController -> User: grant_membership
+
+note right of User #lightYellow
+  User is responsible for knowing if membership should be granted
+end note
+
+User -> User: member
+User -> User: membership_number.present?
+
+note right of User: return if self.member && self.membership_number.present?
+
+User -> User: issue_membership_number
+User -> User: update(member: true, membership_number:...)
+User -> MembershipMailer: membership_granted
+
+== end grant membership ==
+
+PaymentsController -> HipsService: head :ok
+
+deactivate PaymentsController
+
+...
+
+HipsService -> PaymentsController: response.parsed_response
+deactivate HipsService
+
+PaymentsController -> Payment: order_to_payment_status(hips_order['status'])
+Payment -> PaymentsController: status
+
+PaymentsController -> Payment: save!
+
+...
+HipsService -> PaymentsController: success
+
+
+
+@enduml
