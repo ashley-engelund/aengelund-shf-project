@@ -63,7 +63,7 @@ class Payment < ApplicationRecord
 
 
   def self.order_to_payment_status(order_status)
-    ORDER_PAYMENT_STATUS.fetch(order_status, 'unknown')
+    ORDER_PAYMENT_STATUS.fetch(order_status, UNKNOWN_ORDER_STATUS)
   end
 
 
