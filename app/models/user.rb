@@ -50,6 +50,12 @@ class User < ApplicationRecord
     shf_applications.any?
   end
 
+
+  def has_approved_shf_application?
+    shf_applications.where(state: :accepted).any?
+  end
+
+
   def check_member_status
     # Called from Warden after user authentication - see after_sign_in.rb
     # If member payment has expired, revoke membership status.

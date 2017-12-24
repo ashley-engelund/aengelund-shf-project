@@ -100,6 +100,76 @@ RSpec.describe User, type: :model do
 
   end
 
+  describe '#has_approved_shf_application?' do
+
+    before(:each) do
+      # mock the MemberMailer so we don't try to send emails
+      allow(MemberMailer).to receive(:membership_granted).and_return(double('MemberMailer', deliver: true))
+    end
+
+    describe 'user: no application' do
+      subject { create(:user) }
+      it { expect(subject.has_approved_shf_application?).to be_falsey }
+    end
+
+    describe 'user: has application but it is not approved' do
+
+      (ShfApplication.aasm.states.map(&:name) - [:accepted]).each do |app_state|
+        it "app state: #{app_state}" do
+          u = create(:user)
+          create(:shf_application, state: app_state, user: u)
+          expect(u.has_approved_shf_application?).to be_falsey
+        end
+      end
+
+    end
+
+    it 'user: 1 approved application' do
+      u = create(:user)
+      create(:shf_application, :accepted, user: u)
+      expect(u.has_approved_shf_application?).to be_truthy
+    end
+
+    it 'user: multiple approved applications' do
+      u = create(:user)
+      create(:shf_application, :accepted, user: u)
+      app_2 = create(:shf_application, user: u, company_number: '0000000000')
+      app_2.start_review
+      app_2.accept!
+      app_3 = create(:shf_application, user: u, company_number: '2120000142')
+      app_3.start_review
+      app_3.accept!
+      expect(u.has_approved_shf_application?).to be_truthy
+    end
+
+    it 'member: 1 approved application' do
+      member = create(:member_with_membership_app)
+      create(:shf_application, :accepted, user: member)
+      expect(member.has_approved_shf_application?).to be_truthy
+    end
+
+    it 'member: multiple approved applications' do
+      member = create(:member_with_membership_app)
+      create(:shf_application, :accepted, user: member)
+      app_2 = create(:shf_application, user: member, company_number: '0000000000')
+      app_2.start_review
+      app_2.accept!
+      app_3 = create(:shf_application, user: member, company_number: '2120000142')
+      app_3.start_review
+      app_3.accept!
+
+      expect(member.has_approved_shf_application?).to be_truthy
+    end
+
+    describe 'member: has at least 1 approved application, but the latest application is rejected' do
+      xit 'test needed here!' do
+      end
+    end
+
+
+  end
+
+
   describe '#has_company?' do
 
     after(:each) {
