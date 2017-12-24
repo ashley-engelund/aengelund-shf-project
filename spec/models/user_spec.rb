@@ -28,7 +28,7 @@ RSpec.describe User, type: :model do
   describe 'Associations' do
     it { is_expected.to have_many :shf_applications }
     it { is_expected.to have_many :payments }
-    it { is_expected.to accept_nested_attributes_for(:payments)}
+    it { is_expected.to accept_nested_attributes_for(:payments) }
   end
 
   describe 'Admin' do
@@ -56,7 +56,7 @@ RSpec.describe User, type: :model do
 
         all_admins = described_class.admins
 
-        expect(all_admins.count ).to eq 2
+        expect(all_admins.count).to eq 2
         expect(all_admins).to include admin1
         expect(all_admins).to include admin2
         expect(all_admins).not_to include user1
@@ -220,6 +220,7 @@ RSpec.describe User, type: :model do
       subject { create(:user_with_membership_app) }
       it { expect(subject.shf_application).not_to be_nil }
     end
+
     describe 'user: 2 application' do
       subject { create(:user_with_2_membership_apps) }
       it { expect(subject.shf_application).not_to be_nil }
@@ -471,6 +472,10 @@ RSpec.describe User, type: :model do
   end
 
 
+=begin
+
+  This is now the responsibility of the MembershipStatusUpdater class
+
   describe '#grant_membership' do
 
     it 'sets the member field for the user' do
@@ -502,7 +507,7 @@ RSpec.describe User, type: :model do
       subject.grant_membership
       second_number = subject.membership_number.to_i
 
-      expect(second_number).to eq(first_number+1)
+      expect(second_number).to eq(first_number + 1)
     end
 
     it 'sends emails out by default' do
@@ -521,6 +526,40 @@ RSpec.describe User, type: :model do
     end
 
   end
+=end
+
+=begin
+# TODO refactor this out of the User class and write new tests:
+  describe 'generates membership number' do
+
+    it 'does not overwrite an existing membership_number' do
+      # mock the MemberMailer so we don't try to send emails
+      expect(MemberMailer).to receive(:membership_granted).with(subject).and_return( double('MemberMailer', deliver: true))
+
+      existing_number = 'SHF00042'
+      subject.membership_number = existing_number
+      #subject.grant_membership
+      expect(subject.membership_number).to eq(existing_number)
+    end
+
+    it 'generates sequential membership_numbers' do
+      # mock the MemberMailer so we don't try to send emails
+      expect(MemberMailer).to receive(:membership_granted).with(subject).twice.and_return( double('MemberMailer', deliver: true))
+
+      expect(MembershipStatusUpdater.instance).to receive(grant_membership).with(subject).and_return()
+
+      #subject.grant_membership
+      first_number = subject.membership_number.to_i
+
+      subject.membership_number = nil
+      #subject.grant_membership
+      second_number = subject.membership_number.to_i
+
+      expect(second_number).to eq(first_number + 1)
+    end
+
+  end
+=end
 
   context 'payment and membership period' do
     let(:user) { create(:user) }
@@ -589,24 +628,24 @@ RSpec.describe User, type: :model do
 
         it "returns today's date for first payment start date" do
           expect(User.next_membership_payment_dates(user.id)[0])
-            .to eq Time.zone.today
+              .to eq Time.zone.today
         end
 
         it 'returns Dec 31, 2018 for first payment expire date' do
           expect(User.next_membership_payment_dates(user.id)[1])
-            .to eq Time.zone.local(2018, 12, 31)
+              .to eq Time.zone.local(2018, 12, 31)
         end
 
         it 'returns Jan 1, 2019 for second payment start date' do
           payment1
           expect(User.next_membership_payment_dates(user.id)[0])
-            .to eq Time.zone.local(2019, 1, 1)
+              .to eq Time.zone.local(2019, 1, 1)
         end
 
         it 'returns Dec 31, 2019 for second payment expire date' do
           payment1
           expect(User.next_membership_payment_dates(user.id)[1])
-            .to eq Time.zone.local(2019, 12, 31)
+              .to eq Time.zone.local(2019, 12, 31)
         end
       end
 
@@ -624,19 +663,19 @@ RSpec.describe User, type: :model do
 
         it 'returns one year later for first payment expire date' do
           expect(User.next_membership_payment_dates(user.id)[1])
-            .to eq Time.zone.today + 1.year - 1.day
+              .to eq Time.zone.today + 1.year - 1.day
         end
 
         it 'returns date-after-expiration for second payment start date' do
           payment1
           expect(User.next_membership_payment_dates(user.id)[0])
-            .to eq Time.zone.today + 1.year
+              .to eq Time.zone.today + 1.year
         end
 
         it 'returns one year later for second payment expire date' do
           payment1
           expect(User.next_membership_payment_dates(user.id)[1])
-            .to eq Time.zone.today + 1.year + 1.year - 1.day
+              .to eq Time.zone.today + 1.year + 1.year - 1.day
         end
       end
     end
@@ -654,7 +693,11 @@ RSpec.describe User, type: :model do
       end
     end
 
-    describe '#check_member_status' do
+=begin
+
+This is now the responsibility of the MembershipStatusUpdater class
+
+    describe '#check_memberstatus' do
       it 'does nothing if not a member' do
         user.check_member_status
         expect(user.member).to be false
@@ -673,7 +716,7 @@ RSpec.describe User, type: :model do
 
         payment1
         user.update(member: true)
-        
+
         Timecop.freeze(Time.zone.today + 1.year)
 
         user.check_member_status
@@ -682,5 +725,8 @@ RSpec.describe User, type: :model do
         Timecop.return
       end
     end
+
+=end
   end
+
 end

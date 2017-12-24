@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+
   include PaymentUtility
 
   # Include default devise modules. Others available are:
@@ -11,7 +12,7 @@ class User < ApplicationRecord
   has_many :payments
   accepts_nested_attributes_for :payments
 
-  validates_presence_of :first_name, :last_name, unless: Proc.new {!new_record? && !(first_name_changed? || last_name_changed?)}
+  validates_presence_of :first_name, :last_name, unless: Proc.new { !new_record? && !(first_name_changed? || last_name_changed?) }
   validates_uniqueness_of :membership_number, allow_blank: true
 
   scope :admins, -> { where(admin: true) }
@@ -22,22 +23,28 @@ class User < ApplicationRecord
     most_recent_payment(Payment::PAYMENT_TYPE_MEMBER)
   end
 
+  # TODO this should not be the responsiblity of the User class.
   def membership_expire_date
     payment_expire_date(Payment::PAYMENT_TYPE_MEMBER)
   end
 
+  # TODO this should not be the responsiblity of the User class.
   def membership_payment_notes
     payment_notes(Payment::PAYMENT_TYPE_MEMBER)
   end
 
+  # TODO this should not be the responsiblity of the User class.
   def membership_current?
     membership_expire_date&.future?
   end
 
+  # TODO this should not be the responsiblity of the User class.
   def self.next_membership_payment_dates(user_id)
     next_payment_dates(user_id, Payment::PAYMENT_TYPE_MEMBER)
   end
 
+
+  # TODO this should not be the responsiblity of the User class.
   def allow_pay_member_fee?
     # Business rule: user can pay membership fee if:
     # 1. user == member, or
@@ -45,6 +52,7 @@ class User < ApplicationRecord
 
     member? || shf_applications.where(state: :accepted).any?
   end
+
 
   def has_shf_application?
     shf_applications.any?
@@ -56,14 +64,16 @@ class User < ApplicationRecord
   end
 
 
+=begin
+   User is no long responsible for determining membership status
   def check_member_status
     # Called from Warden after user authentication - see after_sign_in.rb
     # If member payment has expired, revoke membership status.
-    if member? && ! membership_current?
+    if member? && !membership_current?
       update(member: false)
     end
   end
-
+=end
 
   def has_company?
     shf_applications.where.not(company_id: nil).count > 0
@@ -80,11 +90,13 @@ class User < ApplicationRecord
   end
 
 
+  # TODO change to member_or_admin?
   def is_member_or_admin?
     admin? || member?
   end
 
 
+  # TODO change the method to better show the intent that the user must be a member ex: member_in_company_nr?(...)
   def is_in_company_numbered?(company_num)
     member? && !(companies.detect { |c| c.company_number == company_num }).nil?
   end
@@ -107,27 +119,30 @@ class User < ApplicationRecord
   end
 
 
+=begin
+  This is no longer the responsbility of the User class
   # Need to be able to turn off 'sending email' during seeding
   def grant_membership(send_email: true)
     update(member: true, membership_number: issue_membership_number)
     MemberMailer.membership_granted(self).deliver if send_email
   end
-
+=end
 
   ransacker :padded_membership_number do
     Arel.sql("lpad(membership_number, 20, '0')")
   end
 
-
-  # The fact that this can no longer be private is a smell that it should be refactored out into a separate class
+  # TODO this should not be the responsiblity of the User class.
   def issue_membership_number
     self.membership_number = self.membership_number.blank? ? get_next_membership_number : self.membership_number
   end
 
+
   private
 
+  # TODO this should not be the responsiblity of the User class.
   def get_next_membership_number
-    self.class.connection.execute("SELECT nextval('membership_number_seq')").getvalue(0,0).to_s
+    self.class.connection.execute("SELECT nextval('membership_number_seq')").getvalue(0, 0).to_s
   end
 
 
