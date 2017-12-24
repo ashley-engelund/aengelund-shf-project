@@ -1,4 +1,11 @@
+require 'observer'
+
 class Payment < ApplicationRecord
+
+  include Observable
+
+  after_initialize :add_observers
+
   belongs_to :user
   belongs_to :company, optional: true # used for branding_fee
 
@@ -19,11 +26,12 @@ class Payment < ApplicationRecord
   # order status 'successful'.  On the SHF side, that translates to a
   # completed payment ('paid') for the user fee (e.g. a membership fee).
   ORDER_PAYMENT_STATUS = {
-    nil          => 'skapad',  # created
-    'pending'    => 'avvaktan',
-    'successful' => 'betald',   # paid
-    'expired'    => 'utgånget',
-    'awaiting_payments' => 'Väntar på betalning' # awaiting payment
+      nil => 'skapad', # created
+      'created' => 'skapad', # created -- should not have a nil key.  what does that even mean??
+      'pending' => 'avvaktan',
+      'successful' => 'betald', # paid
+      'expired' => 'utgånget',
+      'awaiting_payments' => 'Väntar på betalning' # awaiting payment
   }.freeze
 
   CREATED = ORDER_PAYMENT_STATUS['created']
@@ -42,13 +50,48 @@ class Payment < ApplicationRecord
 
   scope :completed, -> { where(status: SUCCESSFUL) }
 
-  scope :unexpired, -> { where('expire_date >= ?', Time.zone.today ) }
+  scope :unexpired, -> { where('expire_date >= ?', Time.zone.today) }
 
   scope PAYMENT_TYPE_MEMBER.to_sym, -> { where(payment_type: PAYMENT_TYPE_MEMBER) }
 
   scope PAYMENT_TYPE_BRANDING.to_sym, -> { where(payment_type: PAYMENT_TYPE_BRANDING) }
 
+
+  def add_observers
+    add_observer MembershipStatusUpdater.instance, :payment_made
+  end
+
+
   def self.order_to_payment_status(order_status)
     ORDER_PAYMENT_STATUS.fetch(order_status, 'unknown')
   end
+
+
+  # The transaction was successful.  The transaction might depend on an external system (e.g. HIPS).
+  # This method is called so we can do whatever it is we need to do (e.g. set the status, etc).
+  def successfully_completed
+    self.update(status: SUCCESSFUL)
+
+    changed
+    notify_observers(self)
+
+  end
+
+
+  def successful?
+    status == SUCCESSFUL
+  end
+
+
+  # this is here until this is refactored to make this a Factory for the right class
+  def membership_fee?
+    payment_type == PAYMENT_TYPE_MEMBER
+  end
+
+
+  # this is here until this is refactored to make this a Factory for the right class
+  def branding_fee?
+    payment_type == PAYMENT_TYPE_BRANDING
+  end
+
 end
