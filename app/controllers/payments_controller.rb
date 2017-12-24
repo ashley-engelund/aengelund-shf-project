@@ -8,6 +8,7 @@ class PaymentsController < ApplicationController
 
   protect_from_forgery except: :webhook
 
+
   def create
     # The user wants to pay a fee (e.g. membership fee or branding fee)
     payment_type = params[:type]
@@ -85,10 +86,6 @@ class PaymentsController < ApplicationController
     payment = Payment.find(payment_id)
     payment.update(status: Payment.order_to_payment_status(resource['status']))
 
-    # When fee is paid, user is granted membership
-    user = payment.user
-    user.grant_membership
-
     log_hips_activity('Webhook', 'info', payment_id, hips_id)
 
   rescue RuntimeError, JWT::IncorrectAlgorithm => exc
@@ -98,10 +95,17 @@ class PaymentsController < ApplicationController
     head :ok
   end
 
+
   def success
+    # When we know the payment was truly successfuly made through the payment system,
+    # send the message (so whatever needs to happen because of it, can.)
+    payment = Payment.find(params[:id])
+    payment.successfully_completed  # Let the payment be responsible for doing whatever it needs to do.  The controller should know nothing about it.
+
     helpers.flash_message(:notice, t('.success'))
     redirect_on_payment_success_or_error
   end
+
 
   def error
     helpers.flash_message(:alert, t('.error'))
@@ -112,8 +116,8 @@ class PaymentsController < ApplicationController
 
   def redirect_on_payment_success_or_error
     payment = Payment.find(params[:id])
-    if payment.payment_type == Payment::PAYMENT_TYPE_MEMBER
-      redirect_to user_path(params[:user_id])
+    if payment.membership_fee?          # TODO should really let polymorphism take care of this. Until then, use a method to encapsulate logic in the Payment and not couple the controller to this knowledge
+      redirect_to user_path(params[:user_id])  # why not payment.user_id?
     else
       redirect_to company_path(payment.company_id)
     end
