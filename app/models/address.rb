@@ -1,4 +1,9 @@
 class Address < ApplicationRecord
+  # An address only exists within an owning object, called "addressable".
+  # (right now this only exists as a Company address - user (member address
+  #  possibly to be added later).
+  # Thus the model behavior is consistent with the business rules of the
+  # Company model.  This is manifest in some of the Address controller actions.
 
   belongs_to :addressable, polymorphic: true
 
@@ -9,19 +14,36 @@ class Address < ApplicationRecord
   belongs_to :kommun, optional: true
 
   validates_presence_of :addressable
-
   validates_presence_of :country
+  validates_presence_of :street_address
+  validates_presence_of :post_code
+  validates_presence_of :city
 
+  # Business rule: addressable (business, member) can have only one mailing address
+  validates_uniqueness_of :mail, scope: :addressable_id,
+                          conditions: -> { where(mail: true) },
+                          if: proc { :mail }
+
+  ADDRESS_VISIBILITY = %w(street_address post_code city kommun none)
+
+  validates :visibility, inclusion: ADDRESS_VISIBILITY
 
   scope :has_region, -> { where('region_id IS NOT NULL') }
 
   scope :lacking_region, -> { where('region_id IS NULL') }
 
+  scope :visible, -> { where.not(visibility: 'none') }
+
+  scope :mail_address, -> { where(mail: true) }
 
   geocoded_by :entire_address
 
+  GEO_FIELDS = %w(street_address post_code city kommun_id
+                  region_id visibility country).freeze
+
   after_validation :geocode_best_possible,
-                   :if => lambda { |obj| obj.changed? }
+                   :if => lambda { |obj| obj.new_record? ||
+                                         (obj.changed & GEO_FIELDS).any? }
 
   # geocode all of the addresses that need it
   #
@@ -46,19 +68,17 @@ class Address < ApplicationRecord
 
 
   def address_array
-    # This should only be called for address associated with a company
+    # This should only be called for an address associated with a company
 
-    # Returns an array of address field values (strings) that starts with
-    # with address_visibility level set for the associated company.
-
-    visibility_level = addressable.address_visibility
+    # Returns an array of address field values (strings) that starts with the
+    # attribute associated with the  visibility level set for this address.
 
     address_pattern = %w(street_address post_code city kommun)
 
     pattern_length = address_pattern.length
 
     start_index = address_pattern.find_index do |field|
-      field == visibility_level
+      field == visibility
     end
 
     return [] unless start_index
@@ -74,8 +94,17 @@ class Address < ApplicationRecord
   end
 
 
-  def entire_address
-    address_array.compact.join(', ')
+  def entire_address(full_visibility: false)
+    return address_array.compact.join(', ') if (!full_visibility ||
+                                                visibility == 'street_address')
+
+    saved_visibility = visibility
+    self.visibility = 'street_address'
+
+    addr_str = address_array.compact.join(', ')
+    self.visibility = saved_visibility
+
+    addr_str
   end
 
 

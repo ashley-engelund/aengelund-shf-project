@@ -2,6 +2,25 @@ require 'rails_helper'
 
 RSpec.describe Address, type: :model do
 
+  let(:co_has_region) { create(:company, name: 'Has Region', company_number: '4268582063', city: 'HasRegionBorg') }
+  let(:co_missing_region) { create(:company, name: 'Missing Region', company_number: '6112107039', city: 'NoRegionBorg') }
+
+  let(:addr_has_region) { co_has_region.main_address }
+
+  let(:no_region) do
+    addr_no_region = co_missing_region.main_address
+    addr_no_region.update_columns(region_id: nil)
+    addr_no_region
+  end
+
+  let(:not_visible_addr) do
+    create(:address, visibility: 'none', addressable: co_has_region)
+  end
+
+  let(:visible_addr) do
+    create(:address, visibility: 'city', addressable: co_has_region)
+  end
+
   describe 'Factory' do
     it 'has a valid factory' do
       expect(create(:company_address)).to be_valid
@@ -18,11 +37,25 @@ RSpec.describe Address, type: :model do
     it { is_expected.to have_db_column :addressable_type }
     it { is_expected.to have_db_column :latitude }
     it { is_expected.to have_db_column :longitude }
+    it { is_expected.to have_db_column :visibility }
   end
 
   describe 'Validations' do
     it { is_expected.to validate_presence_of :country }
     it { is_expected.to validate_presence_of :addressable }
+    it { is_expected.to validate_inclusion_of(:visibility)
+                            .in_array(Address::ADDRESS_VISIBILITY) }
+
+    it 'validates only one mailing address' do
+      visible_addr.mail = true
+      expect(visible_addr).to be_valid
+
+      visible_addr.save!
+      not_visible_addr.mail = true
+      not_visible_addr.valid?
+      expect(not_visible_addr).to_not be_valid
+      expect(not_visible_addr.errors.full_messages).to include('Post används redan')
+    end
   end
 
   describe 'Associations' do
@@ -33,20 +66,15 @@ RSpec.describe Address, type: :model do
 
 
   describe 'scopes' do
-
-    let(:co_has_regions) { create(:company, name: 'Has Region', company_number: '4268582063', city: 'HasRegionBorg') }
-    let(:co_missing_region) { create(:company, name: 'Missing Region', company_number: '6112107039', city: 'NoRegionBorg') }
-
-    let(:addr_has_region) { co_has_regions.main_address }
-
-    let(:no_region) { addr_no_region = co_missing_region.main_address
-                      addr_no_region.update_columns(region_id: nil)
-                      addr_no_region
-    }
-
     let!(:has_regions) { [addr_has_region] }
     let!(:lacking_regions) { [no_region] }
 
+    describe 'visible' do
+      it 'only returns addresses that are visible' do
+        expect(co_has_region.addresses.visible).
+          to contain_exactly(addr_has_region, visible_addr)
+      end
+    end
 
     describe 'has_region' do
 
@@ -78,8 +106,35 @@ RSpec.describe Address, type: :model do
 
     end
 
+    describe 'mail_address' do
+      it 'returns mail address if present' do
+        mail_addr = create(:address, mail: true, addressable: co_has_region)
+        expect(co_has_region.addresses.mail_address[0]).to eq mail_addr
+      end
+      it 'returns nil if mail address not present' do
+        create(:address, addressable: co_has_region)
+        expect(co_has_region.addresses.mail_address[0]).to be_nil
+      end
+    end
+
   end
 
+  describe '#entire_address' do
+    it 'returns all data if visibility == street_address' do
+      visible_addr.visibility = 'street_address'
+      addr_str = visible_addr.entire_address
+      confirm_full_address_str(addr_str, visible_addr)
+    end
+    it 'returns empty string if visibility == none' do
+      visible_addr.visibility = 'none'
+      expect(visible_addr.entire_address).to be_empty
+    end
+    it 'returns all data if visibility == none but full_visibility specified' do
+      visible_addr.visibility = 'none'
+      addr_str = visible_addr.entire_address(full_visibility: true)
+      confirm_full_address_str(addr_str, visible_addr)
+    end
+  end
 
   describe 'geocoding' do
 
@@ -102,25 +157,23 @@ RSpec.describe Address, type: :model do
     end
 
     context '#address_array' do
-
-      let!(:company)         { create(:company, num_addresses: 1) }
+      let(:company) { FactoryGirl.create(:company) }
+      let(:address) { FactoryGirl.create(:address, addressable: company) }
       let(:address_pattern) do
-        address = company.main_address
         [ address.street_address, address.post_code,
           address.city, address.kommun.name, 'Sverige' ]
       end
 
-      it 'returns array consistent with address visibility for associated company' do
+      it 'returns array consistent with address visibility' do
 
-        (0..Company::ADDRESS_VISIBILITY.length-1).each do |idx|
+        (0..Address::ADDRESS_VISIBILITY.length-1).each do |idx|
 
-          company.address_visibility = Company::ADDRESS_VISIBILITY[idx]
-          company.save
-          company.main_address.reload
+          address.visibility = Address::ADDRESS_VISIBILITY[idx]
+          address.save
 
-          address_fields = company.main_address.address_array
+          address_fields = address.address_array
 
-          case company.address_visibility
+          case address.visibility
           when 'none'
             expect(address_fields).to be_empty
           else
@@ -307,7 +360,7 @@ RSpec.describe Address, type: :model do
       end
     end
 
-    describe '#self.geocode_all_needed(sleep_between: 0.5, num_per_batch: 50)' do
+    context 'gecode only if needed' do
 
       let(:a_company) { create(:company, num_addresses: 0) }
 
@@ -316,105 +369,158 @@ RSpec.describe Address, type: :model do
 
       # These are real addresses in  Övertorneå Municipality in Norrbotten County:
 
-      let(:valid_address1) { addr1 = create(:address,
-                                    street_address: 'Matarengivägen 24',
-                                    post_code: '957 31',
-                                    city: 'Övertorneå',
-                                    kommun: overtornea_kommun,
-                                    region: norbotten_region,
-                                    addressable: a_company )
-                            addr1.validate
-                            addr1
-       }
+      let(:valid_address1) do
+        addr1 = create(:address,
+                      street_address: 'Matarengivägen 24',
+                      post_code: '957 31',
+                      city: 'Övertorneå',
+                      kommun: overtornea_kommun,
+                      region: norbotten_region,
+                      addressable: a_company,
+                      mail: false )
+        addr1.validate
+        addr1
+      end
 
-      let(:valid_address2) { addr2 = create(:address,
-                                    street_address: 'Skolvägen 12',
-                                    post_code: '957 31',
-                                    city: 'Övertorneå',
-                                    kommun: overtornea_kommun,
-                                    region: norbotten_region,
-                                    addressable: a_company )
-                            addr2.validate
-                            addr2
-       }
+      let(:valid_address2) do
+        addr2 = create(:address,
+                       street_address: 'Skolvägen 12',
+                       post_code: '957 31',
+                       city: 'Övertorneå',
+                       kommun: overtornea_kommun,
+                       region: norbotten_region,
+                       addressable: a_company )
+        addr2.validate
+        addr2
+      end
 
-      let(:valid_address3) { addr3 = create(:address,
-                                            street_address: 'Matarengivägen 30',
-                                            post_code: '957 31',
-                                            city: 'Övertorneå',
-                                            kommun: overtornea_kommun,
-                                            region: norbotten_region,
-                                            addressable: a_company )
-                              addr3.validate
-                              addr3
-       }
-
-      it 'nothing geocoded if all have latitude and longitude' do
-        valid_address1
-        valid_address2
-        valid_address3
-
-        need_geocoding = Address.not_geocoded
-        needed_geocoding = need_geocoding.count
-
-        Address.geocode_all_needed
-
-        after_run_need_geocoding = Address.not_geocoded.count
-
-        expect(needed_geocoding).to eq 0
-        expect(after_run_need_geocoding).to eq 0
+      let(:valid_address3) do
+        addr3 = create(:address,
+                       street_address: 'Matarengivägen 30',
+                       post_code: '957 31',
+                       city: 'Övertorneå',
+                       kommun: overtornea_kommun,
+                       region: norbotten_region,
+                       addressable: a_company )
+        addr3.validate
+        addr3
       end
 
 
-      it 'will geocode 1 that needs it' do
+      describe '#self.geocode_all_needed(sleep_between: 0.5, num_per_batch: 50)' do
 
-        valid_address1
-        valid_address2
-        valid_address3
+        it 'nothing geocoded if all have latitude and longitude' do
+          valid_address1
+          valid_address2
+          valid_address3
 
-        query = <<-SQL
-          UPDATE addresses SET latitude=NULL, longitude=NULL
-           WHERE street_address = 'Matarengivägen 24'
-        SQL
+          need_geocoding = Address.not_geocoded
+          needed_geocoding = need_geocoding.count
 
-        Address.connection.execute(query)
+          Address.geocode_all_needed
 
-        need_geocoding = Address.not_geocoded
-        needed_geocoding = need_geocoding.count
+          after_run_need_geocoding = Address.not_geocoded.count
 
-        Address.geocode_all_needed
+          expect(needed_geocoding).to eq 0
+          expect(after_run_need_geocoding).to eq 0
+        end
 
-        after_run_need_geocoding = Address.not_geocoded.count
 
-        expect(needed_geocoding).to eq 1
-        expect(after_run_need_geocoding).to eq 0
+        it 'will geocode 1 that needs it' do
+
+          valid_address1
+          valid_address2
+          valid_address3
+
+          query = <<-SQL
+            UPDATE addresses SET latitude=NULL, longitude=NULL
+             WHERE street_address = 'Matarengivägen 24'
+          SQL
+
+          Address.connection.execute(query)
+
+          need_geocoding = Address.not_geocoded
+          needed_geocoding = need_geocoding.count
+
+          Address.geocode_all_needed
+
+          after_run_need_geocoding = Address.not_geocoded.count
+
+          expect(needed_geocoding).to eq 1
+          expect(after_run_need_geocoding).to eq 0
+        end
+
+
+        it 'will geocode 3 that need it' do
+          valid_address1
+          valid_address2
+          valid_address3
+
+          query = <<-SQL
+            UPDATE addresses SET latitude=NULL, longitude=NULL
+          SQL
+
+          Address.connection.execute(query)
+
+          need_geocoding = Address.not_geocoded
+          needed_geocoding = need_geocoding.count
+
+          Address.geocode_all_needed
+
+          after_run_need_geocoding = Address.not_geocoded.count
+
+          expect(needed_geocoding).to eq 3
+          expect(after_run_need_geocoding).to eq 0
+        end
+
       end
 
+      context 'geocodes only if location field has change' do
 
-      it 'will geocode 3 that need it' do
-        valid_address1
-        valid_address2
-        valid_address3
+        it 'geocodes for changed street, post code, city, kommun, region, country' do
+          valid_address1.street_address = 'new street'
+          expect(valid_address1).to receive(:geocode_best_possible)
+          valid_address1.validate
 
-        query = <<-SQL
-          UPDATE addresses SET latitude=NULL, longitude=NULL
-        SQL
+          valid_address1.post_code = '999 99'
+          expect(valid_address1).to receive(:geocode_best_possible)
+          valid_address1.validate
 
-        Address.connection.execute(query)
+          valid_address1.city = 'new city'
+          expect(valid_address1).to receive(:geocode_best_possible)
+          valid_address1.validate
 
-        need_geocoding = Address.not_geocoded
-        needed_geocoding = need_geocoding.count
+          valid_address1.kommun = create(:kommun, name: 'New Kommun')
+          expect(valid_address1).to receive(:geocode_best_possible)
+          valid_address1.validate
 
-        Address.geocode_all_needed
+          valid_address1.region = create(:region, name: 'New Region')
+          expect(valid_address1).to receive(:geocode_best_possible)
+          valid_address1.validate
 
-        after_run_need_geocoding = Address.not_geocoded.count
+          valid_address1.country = 'new country'
+          expect(valid_address1).to receive(:geocode_best_possible)
+          valid_address1.validate
+        end
 
-        expect(needed_geocoding).to eq 3
-        expect(after_run_need_geocoding).to eq 0
+        it 'does not geocode for changed mail' do
+          valid_address1.mail = true
+          expect(valid_address1).not_to receive(:geocode_best_possible)
+          valid_address1.validate
+        end
+
       end
-
 
     end
 
+  end
+
+  def confirm_full_address_str(addr_str, addr)
+    kommun = Kommun.find(addr.kommun_id)
+    expect(addr_str.include?(addr.street_address)).to be true
+    expect(addr_str.include?(addr.post_code)).to be true
+    expect(addr_str.include?(addr.city)).to be true
+    expect(addr_str.include?(kommun.name)).to be true
+    expect(addr_str.include?(addr.country)).to be true
   end
 end

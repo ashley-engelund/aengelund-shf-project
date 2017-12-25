@@ -10,11 +10,11 @@ RSpec.describe AdminController, type: :controller do
   let(:user) { create(:user) }
 
   let(:csv_header) { out_str = ''
-  out_str << "'#{I18n.t('activerecord.attributes.membership_application.contact_email').strip}',"
-  out_str << "'#{I18n.t('activerecord.attributes.membership_application.first_name').strip}',"
-  out_str << "'#{I18n.t('activerecord.attributes.membership_application.last_name').strip}',"
-  out_str << "'#{I18n.t('activerecord.attributes.membership_application.membership_number').strip}',"
-  out_str << "'#{I18n.t('activerecord.attributes.membership_application.state').strip}',"
+  out_str << "'#{I18n.t('activerecord.attributes.shf_application.contact_email').strip}',"
+  out_str << "'#{I18n.t('activerecord.attributes.shf_application.first_name').strip}',"
+  out_str << "'#{I18n.t('activerecord.attributes.shf_application.last_name').strip}',"
+  out_str << "'#{I18n.t('activerecord.attributes.user.membership_number').strip}',"
+  out_str << "'#{I18n.t('activerecord.attributes.shf_application.state').strip}',"
   out_str << "'#{I18n.t('activerecord.models.business_category.other').strip}',"
   out_str << "'#{I18n.t('activerecord.models.company.one').strip}',"
   out_str << "'#{I18n.t('activerecord.attributes.address.street').strip}',"
@@ -38,6 +38,13 @@ RSpec.describe AdminController, type: :controller do
 
         expect(response.content_type).to eq 'text/plain'
 
+      end
+
+      it 'filename is Ansokningar-<datetime>.csv' do
+
+        post :export_ansokan_csv
+
+        expect(response.header['Content-Disposition']).to match(/filename=\"Ansokningar-\d\d\d\d-\d\d-\d\d--\d\d-\d\d-\d\d\.csv\"/)
       end
 
 
@@ -70,19 +77,19 @@ RSpec.describe AdminController, type: :controller do
           result_str = csv_header
 
           # create 1 application in each state
-          MembershipApplication.aasm.states.each do |app_state|
+          ShfApplication.aasm.states.each do |app_state|
 
             u = FactoryGirl.create(:user,
                                    first_name:    "First#{app_state.name}",
                                    last_name:     "Last#{app_state.name}",
                                    email: "#{app_state.name}@example.com")
 
-            m = FactoryGirl.create :membership_application,
+            m = FactoryGirl.create :shf_application,
                                    contact_email: "#{app_state.name}@example.com",
                                    state:         app_state.name,
                                    user:          u
 
-            member1_info = "#{m.contact_email},#{u.first_name},#{u.last_name},#{m.membership_number},"+ I18n.t("membership_applications.state.#{app_state.name}")
+            member1_info = "#{m.contact_email},#{u.first_name},#{u.last_name},#{u.membership_number},"+ I18n.t("shf_applications.state.#{app_state.name}")
 
             result_str << member1_info + ','
             result_str << '"",'  # no business categories
@@ -112,19 +119,18 @@ RSpec.describe AdminController, type: :controller do
 
         let(:u1) { FactoryGirl.create(:user,
                                       first_name:     "u1",
-                                      email: "user1@example.com") }
+                                      email: "user1@example.com",
+                                      membership_number: '1234567890')
+        }
 
         let(:c1) { FactoryGirl.create(:company) }
 
-        let(:member1) { m1 = FactoryGirl.create :membership_application,
+        let(:member1) { m1 = FactoryGirl.create :shf_application,
                                                       contact_email:  "u1@example.com",
                                                       state:          :accepted,
                                                       company_number: c1.company_number,
                                                       user:           u1
-
-                        m1.update(membership_number: '1234567890')
-                        m1
-                      }
+        }
 
 
         let(:csv_response) { post :export_ansokan_csv
@@ -136,7 +142,7 @@ RSpec.describe AdminController, type: :controller do
 
           result_str = csv_header
 
-          member1_info = "#{member1.contact_email},#{u1.first_name},#{u1.last_name},#{member1.membership_number},"+ I18n.t("membership_applications.state.#{member1.state}")
+          member1_info = "#{member1.contact_email},#{u1.first_name},#{u1.last_name},#{u1.membership_number},"+ I18n.t("shf_applications.state.#{member1.state}")
 
           result_str << member1_info + ','
           result_str << '"",'  # no business categories
@@ -156,25 +162,24 @@ RSpec.describe AdminController, type: :controller do
 
         let(:u1) { FactoryGirl.create(:user,
                                       first_name:     "u1",
-                                      email: "user1@example.com") }
+                                      email: "user1@example.com",
+                                      membership_number: '1234567890')
+        }
 
         let(:c1) { FactoryGirl.create(:company) }
 
-        let(:member1) { m1 = FactoryGirl.create :membership_application,
+        let(:member1) { m1 = FactoryGirl.create :shf_application,
                                                 contact_email:  "u1@example.com",
                                                 state:          :accepted,
                                                 company_number: c1.company_number,
                                                 user:           u1
-
-                        m1.update(membership_number: '1234567890')
-                        m1
                       }
 
         let(:csv_response) { post :export_ansokan_csv
                              response.body
                            }
 
-        let(:member1_info) {  "#{member1.contact_email},#{u1.first_name},#{u1.last_name},#{member1.membership_number},"+ I18n.t("membership_applications.state.#{member1.state}") }
+        let(:member1_info) {  "#{member1.contact_email},#{u1.first_name},#{u1.last_name},#{u1.membership_number},"+ I18n.t("shf_applications.state.#{member1.state}") }
 
 
         it 'zero/nil business categories' do

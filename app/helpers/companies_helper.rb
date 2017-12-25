@@ -2,7 +2,7 @@ module CompaniesHelper
 
   def list_categories company, separator=' '
     if company.business_categories.any?
-      company.business_categories.includes(:membership_applications).map(&:name).sort.join(separator)
+      company.business_categories.includes(:shf_applications).map(&:name).sort.join(separator)
     end
   end
 
@@ -26,9 +26,12 @@ module CompaniesHelper
 
     companies.each do |company|
       link_name ? name_html = nil : name_html = company.name
-      results << {latitude: company.main_address.latitude,
-                  longitude: company.main_address.longitude,
-                  text: html_marker_text(company, name_html: name_html) }
+
+      company.addresses.visible.includes(:kommun).each do |address|
+        results << {latitude: address.latitude,
+                    longitude: address.longitude,
+                    text: html_marker_text(company, address, name_html: name_html) }
+      end
     end
 
     results
@@ -38,17 +41,14 @@ module CompaniesHelper
   # html to display for a company when showing a marker on a map
   #  if no name_html is given (== nil), it will be linked to the company,
   #  else the name_html string will be used
-  def html_marker_text company, name_html:  nil
+  def html_marker_text company, address, name_html:  nil
     text = "<div class='map-marker'>"
     text <<  "<p class='name'>"
     text << (name_html.nil? ? link_to(company.name, company, target: '_blank') : name_html)
     text <<  "</p>"
     text << "<p class='categories'>#{list_categories company, ', '}</p>"
     text << "<br>"
-    company.addresses.each do |addr|
-      text << "<p class='entire-address'>#{addr.entire_address}</p>"
-    end
-
+    text << "<p class='entire-address'>#{address.entire_address}</p>"
     text << "</div>"
 
     text
@@ -57,51 +57,18 @@ module CompaniesHelper
   # Creates an array which contains an array of [text, value]
   #  for each company address_visibility level (for selection in form)
   def address_visibility_array
-    Company::ADDRESS_VISIBILITY.map do |visibility_level|
+    Address::ADDRESS_VISIBILITY.map do |visibility_level|
       [ I18n.t("address_visibility.#{visibility_level}"), visibility_level ]
     end
   end
 
-  # `show_address_fields` returns an array used in company show view to
-  # loop through and display all address fields for a company,
-  # consistent with:
-  #  1) type of user, and,
-  #  2) `address_visibility` set for the company
-  #
-  # If user == company member || user == admin, show all fields
-  # else show all fields consistent with address_visibility.
-  # Two return values:
-  #  Return value one:
-  #    - array of fields to be shown
-  #      - Array contains a hash - one for each field - with three keys:
-  #        - name: name of field (Address) attribute
-  #        - label: label of field (for I18n lookup)
-  #        - method: name of value method to call on attribute (non-nil for association)
-  #    - nil if no fields are to be shown
-  #  Return value two:
-  #    - true if address_visibility value is to be shown
-  #    - false otherwise
-  def show_address_fields(user, company)
+  def pay_branding_fee_link(company_id, user_id)
+    # Returns link styled as a button
 
-    all_fields = [ { name: 'street_address', label: 'street', method: nil },
-                   { name: 'post_code', label: 'post_code', method: nil },
-                   { name: 'city', label: 'city', method: nil },
-                   { name: 'kommun', label: 'kommun', method: 'name' },
-                   { name: 'region', label: 'region', method: 'name' } ]
-
-    if user.admin? || user.is_in_company_numbered?(company.company_number)
-      return all_fields, true
-    else
-      start_index = all_fields.find_index do |field|
-        field[:name] == company.address_visibility
-      end
-
-      if start_index
-        return all_fields[start_index..4], false
-      else
-        return nil, false
-      end
-    end
+    link_to("#{t('menus.nav.company.pay_branding_fee')}",
+            payments_path(user_id: user_id,
+                          company_id: company_id,
+                          type: Payment::PAYMENT_TYPE_BRANDING),
+            { method: :post, class: 'btn btn-primary btn-xs' })
   end
-
 end

@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe CompaniesHelper, type: :helper do
   let!(:company) { create(:company) }
+  let(:user) { create(:user) }
 
   describe 'companies' do
     let(:employee1) { create(:user) }
@@ -9,31 +10,25 @@ RSpec.describe CompaniesHelper, type: :helper do
     let(:employee3) { create(:user) }
 
     let!(:ma1) do
-      ma = create(:membership_application, :accepted,
+      ma = create(:shf_application, :accepted,
                   user: employee1,
                   company_number: company.company_number)
       ma.business_categories << create(:business_category, name: 'cat1')
       ma
     end
     let!(:ma2) do
-      ma = create(:membership_application, :accepted,
+      ma = create(:shf_application, :accepted,
                   user: employee2,
                   company_number: company.company_number)
       ma.business_categories << create(:business_category, name: 'cat2')
       ma
     end
     let!(:ma3) do
-      ma = create(:membership_application, :accepted,
+      ma = create(:shf_application, :accepted,
                   user: employee3,
                   company_number: company.company_number)
       ma.business_categories << create(:business_category, name: 'cat3')
       ma
-    end
-
-    before(:all) do
-      expect(Company.count).to eq(0)
-      expect(MembershipApplication.count).to eq(0)
-      expect(User.count).to eq(0)
     end
 
     it '#list_categories' do
@@ -71,19 +66,41 @@ RSpec.describe CompaniesHelper, type: :helper do
     end
 
     it 'one company (name is linked to the company)' do
-      co = build(:company)
-      markers = helper.location_and_markers_for([co])
+      markers = helper.location_and_markers_for([company])
       expect(markers.count).to eq 1
-      expect(markers.first[:latitude]).to eq co.main_address.latitude
-      expect(markers.first[:longitude]).to eq co.main_address.longitude
-      expect(markers.first[:text]).to eq(helper.html_marker_text(co))
-      expect(markers.first[:text]).to include("#{link_to(co.name, co,target: '_blank')}")
+      expect(markers.first[:latitude]).to eq company.addresses[0].latitude
+      expect(markers.first[:longitude]).to eq company.addresses[0].longitude
+      expect(markers.first[:text]).
+        to eq(helper.html_marker_text(company, company.addresses[0]))
+      expect(markers.first[:text]).
+        to include("#{link_to(company.name, company, target: '_blank')}")
+    end
+
+    it 'one company, two addresses' do
+      create(:address, addressable: company)
+      company.reload
+      markers = helper.location_and_markers_for([company])
+      expect(markers.count).to eq 2
+
+      expect(markers.first[:latitude]).to eq company.addresses[0].latitude
+      expect(markers.first[:longitude]).to eq company.addresses[0].longitude
+      expect(markers.first[:text]).
+        to eq(helper.html_marker_text(company, company.addresses[0]))
+      expect(markers.first[:text]).
+        to include("#{link_to(company.name, company, target: '_blank')}")
+
+      expect(markers.second[:latitude]).to eq company.addresses[1].latitude
+      expect(markers.second[:longitude]).to eq company.addresses[1].longitude
+      expect(markers.second[:text]).
+        to eq(helper.html_marker_text(company, company.addresses[1]))
+      expect(markers.second[:text]).
+        to include("#{link_to(company.name, company, target: '_blank')}")
     end
 
     it 'just show company name with no link for it' do
-      co = build(:company)
-      markers = helper.location_and_markers_for([co], link_name: false)
-      expect(markers.first[:text]).not_to include("#{link_to(co.name, co,target: '_blank')}")
+      markers = helper.location_and_markers_for([company], link_name: false)
+      expect(markers.first[:text]).
+        not_to include("#{link_to(company.name, company, target: '_blank')}")
     end
 
   end
@@ -94,13 +111,13 @@ RSpec.describe CompaniesHelper, type: :helper do
     let(:co) { create(:company, company_number: '8776682406')}
 
     it 'default links name to the company' do
-      marker_text = helper.html_marker_text(co)
+      marker_text = helper.html_marker_text(co, co.addresses[0])
       expect(marker_text).to include( "#{link_to(co.name, co, target: '_blank')}" )
     end
 
 
     it 'name text = just the name (no link)' do
-      marker_text = helper.html_marker_text(co, name_html: co.name)
+      marker_text = helper.html_marker_text(co, co.addresses[0], name_html: co.name)
       expect(marker_text).not_to include( "#{link_to(co.name, co, target: '_blank')}" )
     end
 
@@ -130,49 +147,15 @@ RSpec.describe CompaniesHelper, type: :helper do
     end
   end
 
-  describe '#show_address_fields' do
-    let(:admin)   { create(:user, admin: true) }
-    let(:member)  { create(:member_with_membership_app) }
-    let(:visitor) { build(:visitor) }
-    let(:company) { create(:company) }
-
-    let(:all_fields) do
-      [ { name: 'street_address', label: 'street', method: nil },
-        { name: 'post_code', label: 'post_code', method: nil },
-        { name: 'city', label: 'city', method: nil },
-        { name: 'kommun', label: 'kommun', method: 'name' },
-        { name: 'region', label: 'region', method: 'name' } ]
+  describe '#pay_branding_fee_link' do
+    let(:expected_path) do
+      payments_path(user_id: user.id, company_id: company.id,
+                    type: Payment::PAYMENT_TYPE_BRANDING)
     end
 
-    it 'returns all fields for admin user' do
-      # The helper method returns two values, so these will be in an array
-      expect(show_address_fields(admin, nil)).to match_array [ all_fields, true ]
-    end
-
-    it 'returns all fields for member associated with company' do
-      company = member.membership_applications[0].company
-      expect(show_address_fields(member, company))
-        .to match_array [ all_fields, true ]
-    end
-
-    it 'for visitor, returns fields consistent with address visibility' do
-
-      (0..Company::ADDRESS_VISIBILITY.length-1).each do |idx|
-
-        company.address_visibility = Company::ADDRESS_VISIBILITY[idx]
-
-        fields, visibility = show_address_fields(visitor, company)
-
-        expect(visibility).to be false
-
-        case company.address_visibility
-        when 'none'
-          expect(fields).to be nil
-        else
-          expect(fields).to match_array all_fields[idx, 5]
-        end
-      end
+    it 'returns pay-fee link with company and user id' do
+      expect(pay_branding_fee_link(company.id, user.id))
+        .to match Regexp.new(Regexp.escape(expected_path))
     end
   end
-
 end

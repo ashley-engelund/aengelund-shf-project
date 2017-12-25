@@ -1,0 +1,17 @@
+%tr
+  %td.membership_number= user.membership_number
+  %td.email{ id: "user-#{user.id}" }= link_to user.email, user
+  %td.created-at
+    %small= i18n_time_ago_in_words(user.created_at)
+  %td.sign-in-count= user.sign_in_count
+  %td.applications-open= user.shf_applications.open.count
+  %td.is-member
+    - if user.member?
+      %span.yes= t('.yes')
+    - else
+      %span.maybe= t('.no')
+  %td.expire_date
+    - expire_date = user.most_recent_membership_payment&.expire_date
+    - if expire_date
+      %span{ class: expire_date_css_class(expire_date) }
+        = expire_date

@@ -4,9 +4,23 @@ require 'simplecov'
 require 'pundit/rspec'
 require 'paperclip/matchers'
 
+require 'vcr'
+
+
 # Coveralls.wear_merged!('rails')
 
 # CodeClimate::TestReporter.start
+
+# helper to be used in specs for services
+SERVICES_PATH = File.absolute_path(File.join(__dir__, '..', 'app','services'))
+
+
+VCR.configure do |c|
+  c.cassette_library_dir = 'spec/vcr_cassettes'
+  c.hook_into :webmock
+  c.configure_rspec_metadata!
+end
+
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|

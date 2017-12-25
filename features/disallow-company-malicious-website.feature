@@ -7,9 +7,13 @@ Feature: Don't allow malicious code in Company website value
 
   Background:
     Given the following users exists
-      | email               | admin |
-      | emma@happymutts.com |       |
-      | admin@shf.se        | true  |
+      | email          | admin | member |
+      | emma@mutts.com |       | true   |
+      | admin@shf.se   | true  |        |
+
+    Given the following payments exist
+      | user_email     | start_date | expire_date | payment_type | status | hips_id |
+      | emma@mutts.com | 2017-10-1  | 2017-12-31  | member_fee   | betald | none    |
 
     And the following regions exist:
       | name         |
@@ -27,13 +31,13 @@ Feature: Don't allow malicious code in Company website value
 
 
     And the following applications exist:
-      | user_email          | company_number | state    |
-      | emma@happymutts.com | 5560360793     | accepted |
+      | user_email     | company_number | state    |
+      | emma@mutts.com | 5560360793     | accepted |
 
-
-
+  @time_adjust
   Scenario Outline: Malicious website entry not accepted
-    Given I am logged in as "emma@happymutts.com"
+    Given the date is set to "2017-10-01"
+    Given I am logged in as "emma@mutts.com"
     And I am on the edit company page for "5560360793"
     And I fill in t("companies.website_include_http") with "<malicious_entry>"
     And I click on t("submit") button
@@ -54,10 +58,8 @@ Feature: Don't allow malicious code in Company website value
     Given I am logged in as "admin@shf.se"
     And I am on the "create a new company" page
     And I fill in the translated form with data:
-      | companies.company_name | companies.show.company_number | companies.show.street | companies.show.post_code | companies.show.city | companies.show.email |
-      | Happy Mutts            | 5569467466                    | Ålstensgatan 4        | 123 45                   | Bromma              | kicki@gladajyckar.se |
-    And I select "Stockholm" in select list t("companies.operations_region")
-    And I select "Bromölla" in select list t("companies.show.kommun")
+      | companies.company_name | companies.show.company_number | companies.show.email |
+      | Happy Mutts            | 5569467466                    | kicki@gladajyckar.se |
     And I fill in t("companies.website_include_http") with "<malicious_entry>"
     And I click on t("submit") button
     Then I should not see "<malicious_part>"
@@ -70,5 +72,3 @@ Feature: Don't allow malicious code in Company website value
       | <meta%20http-equiv='refresh'%20content='0;'>       | <meta%20http-equiv='refresh'%20content='0;'> |               |
       | >'><script>alert('XSS)</script>&                   | <script>                                     |               |
       | '><STYLE>@import'javascript:alert('XSS')';</STYLE> | javascript                                   | alert('XSS')  |
-
-

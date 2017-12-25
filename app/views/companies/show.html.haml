@@ -27,47 +27,35 @@
 
         = field_or_none t('.website'), link_to(@company.website, sanitize(full_uri(@company)), target: '_blank'), tag_options: {class: 'website'}
 
+        - if current_user.is_in_company_numbered?(@company.company_number) || |
+            current_user.admin?                                               |
 
-        .address
-          - fields, visibility = show_address_fields(current_user, @company)
-          - if fields
-
-            %h2 #{t('.address')}:
-
-            - fields.each do |field|
-
-              -# value could be an address attribute or an association object
-              - val = @company.main_address.method(field[:name]).call
-
-              - if field[:method]
-
-                -# if the latter, call value method on that object
-                - val = val&.method(field[:method])&.call
-
-              = field_or_none t(".#{field[:label]}"), val,
-                              tag_options: { class: field[:name] }
-
-            - if visibility
-
-              - value_class = (@company.address_visibility == 'none' ? 'no' : 'yes')
-
-              = field_or_none t('companies.address_visibility'),
-                              t("address_visibility.#{@company.address_visibility}"),
-                              tag_options: { class: 'address_visibility' },
-                              value_class: value_class
+          = render partial: 'branding_payment_status', locals: { company: @company }
 
       .col-md-7
-        - if fields
+        - if @company.addresses.visible
           = render partial: 'map_companies',
                    locals: { markers: location_and_markers_for([@company],
                    link_name: false )}
 
+    - user_can_edit = policy(@company).update?
 
+    = render partial: 'company_members', locals: { company: @company }
+
+    = render partial: 'company_addresses',
+                      locals: { company: @company, user_can_edit: user_can_edit }
 
     .row.center.item-nav-buttons#item-nav-buttons
-      - if policy(@company).update?
+
+      - if user_can_edit
+
+        = link_to "#{t('.add_address')}",
+                  new_company_address_path(@company),
+                  class: 'btn btn-primary add-company-address'
+
         = link_to "#{t('companies.edit_company')}",
                   edit_company_path(@company), class: 'btn btn-default edit-company'
+
         = link_to "#{t('companies.all_companies')}",
                   companies_path, class: 'btn btn-default all-companies'
 
@@ -75,3 +63,5 @@
         = link_to "#{t('.delete')}", @company, method: :delete,
                   class:'btn btn-danger delete-company',
                   data: { confirm: "#{t('.confirm_are_you_sure')}" }
+
+= render partial: 'edit_branding_modal', locals: { company: @company }

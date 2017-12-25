@@ -1,6 +1,20 @@
 Given(/^I am on the "([^"]*)" page(?: for "([^"]*)")?$/) do |page, email|
   user = email == nil ? @user :  User.find_by(email: email)
-  visit path_with_locale(get_path(page, user))
+
+  begin
+    visit path_with_locale(get_path(page, user))
+  rescue => exception
+    warn exception.message
+    begin
+      path_components = page.split(/\s+/)
+      visit self.send(path_components.push('path').join('_').to_sym)
+    rescue NoMethodError, ArgumentError
+      raise "Can't find mapping from \"#{page}\" to a path.\n" +
+        "Now, go and add a mapping in #{__FILE__} or assertion_steps.rb"
+    end
+  end
+
+
 end
 
 
@@ -37,4 +51,13 @@ Then(/^(?:I|they) click the browser back button and "([^"]*)" the prompt$/) do |
   else
     raise 'invalid modal_action specified'
   end
+end
+
+When(/^I am in (.*) browser$/) do |user_email|
+  Capybara.session_name = user_email
+  @user = User.find_by_email user_email
+end
+
+When(/^I reload the page$/) do
+  visit current_path
 end

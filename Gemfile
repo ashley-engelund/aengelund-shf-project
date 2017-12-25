@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.4.1'
+ruby '2.4.2'
 gem 'dotenv-rails'
 gem 'rails', '5.1'
 gem 'pg', '~> 0.18'
@@ -58,7 +58,15 @@ gem 'geocoder'
 
 gem 'sanitize'
 
-gem 'mailgun_rails'
+gem 'mailgun-ruby'
+gem 'premailer-rails'  # converts css to inline; required for html emails to look ok
+gem 'nokogiri'         # must explicity require this gem for premailer-rails
+
+gem 'httparty'
+gem 'jwt'
+
+gem 'exception_notification' # send notifications if there are errors
+gem 'slack-notifier'  # send notifications to Slack
 
 group :development, :test do
   gem 'rspec-rails'
@@ -96,12 +104,6 @@ group :development do
   gem 'bullet'
   gem 'rb-readline'
 
-  # to generate state machine diagrams
-  # ex: for membership_application state machine:
-  #   bundle exec aasm_statecharts -i ./app/models membership_application -t -d ./doc
-  gem 'aasm_statecharts',  github: 'weedySeaDragon/aasm_statecharts'
-
-
 end
 
 group :test do
@@ -112,4 +114,10 @@ group :test do
   gem 'email_spec'
   gem 'selenium-webdriver'
   gem 'chromedriver-helper'
+
+  gem 'webmock'  # to mock web (HTTP) interactions.  Required by the vcr gem
+  gem 'vcr'      # to record and 'playback' (mock) http requests
+
+  gem 'timecop'
+
 end

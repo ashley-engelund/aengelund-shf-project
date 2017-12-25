@@ -1,4 +1,5 @@
 require 'rails_helper'
+include PoliciesHelper
 
 RSpec.describe CompanyPolicy do
 
@@ -17,6 +18,7 @@ RSpec.describe CompanyPolicy do
     it { is_expected.to permit_action :update }
     it { is_expected.to permit_action :new }
     it { is_expected.to permit_action :create }
+    it { is_expected.to permit_action :edit_payment }
   end
 
   describe 'For a member that is a part of a company' do
@@ -29,6 +31,7 @@ RSpec.describe CompanyPolicy do
     it { is_expected.to permit_action :update }
     it { is_expected.to forbid_action :new }
     it { is_expected.to forbid_action :create }
+    it { is_expected.to forbid_action :edit_payment }
   end
 
   describe 'For a member that is not part of a company' do
@@ -40,6 +43,7 @@ RSpec.describe CompanyPolicy do
     it { is_expected.to forbid_action :update }
     it { is_expected.to forbid_action :new }
     it { is_expected.to forbid_action :create }
+    it { is_expected.to forbid_action :edit_payment }
   end
 
   describe 'For a user (logged in)' do
@@ -51,6 +55,7 @@ RSpec.describe CompanyPolicy do
     it { is_expected.to forbid_action :update }
     it { is_expected.to forbid_action :new }
     it { is_expected.to forbid_action :create }
+    it { is_expected.to forbid_action :edit_payment }
   end
 
   describe 'For a visitor (not logged in)' do
@@ -62,5 +67,6 @@ RSpec.describe CompanyPolicy do
     it { is_expected.to forbid_action :update }
     it { is_expected.to forbid_action :new }
     it { is_expected.to forbid_action :create }
+    it { is_expected.to forbid_action :edit_payment }
   end
 end

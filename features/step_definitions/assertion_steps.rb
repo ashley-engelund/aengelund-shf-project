@@ -11,11 +11,13 @@ module PathHelpers
         path = new_user_session_path
       when 'landing'
         path = root_path
+      when 'new application'
+        path = new_shf_application_path
       when 'edit application', 'edit my application'
-        user.membership_applications.reload
-        path = edit_membership_application_path(user.membership_application)
+        user.shf_applications.reload
+        path = edit_shf_application_path(user.shf_application)
       when 'application', 'show my application'
-        path = membership_application_path(user.membership_application)
+        path = shf_application_path(user.shf_application)
       when 'user instructions'
         path = information_path
       when 'member instructions'
@@ -35,26 +37,29 @@ module PathHelpers
       when 'business categories'
         path = business_categories_path
       when 'membership applications'
-        path = membership_applications_path
+        path = shf_applications_path
       when 'all companies'
         path = companies_path
       when 'create a new company'
         path = new_company_path
       when 'submit new membership application'
-        path = new_membership_application_path
+        path = new_shf_application_path
       when 'edit my company'
-        path = edit_company_path(user.membership_application.company)
+        path = edit_company_path(user.shf_application.company)
       when 'all users'
         path = users_path
       when 'all shf documents'
         path = shf_documents_path
       when 'new shf document'
         path = new_shf_document_path
-      when 'user details'
+      when 'user details', 'user profile'
         path = user_path(user)
-      else
-        fail("no path defined for \"#{pagename}\"")
+      when 'test exception notifications'
+        path = test_exception_notifications_path
     end
+
+    expect(path).not_to be_empty, "A step was called with path= '#{pagename}', but that path is not defined in #{__method__} \n    (which is in #{__FILE__}"
+
     path
   end
 end
@@ -82,7 +87,7 @@ Then(/^I should( not)? see #{CAPTURE_STRING} link$/) do |negate, link_label|
 end
 
 
-Then(/^I should( not)? see the checkbox with id "([^"]*)" unchecked$/) do |negate, checkbox_id|
+Then(/^I should( not)? see the (?:checkbox|radio button) with id "([^"]*)" unchecked$/) do |negate, checkbox_id|
   expect(page).send (negate ? :not_to : :to),  have_unchecked_field(checkbox_id)
 end
 
@@ -112,6 +117,10 @@ end
 
 Then(/^I should see "([^"]*)" business categories/) do |number|
   expect(page).to have_selector('tr.business_category', count: number)
+end
+
+Then(/^I should see "([^"]*)" address(?:es)?/) do |number|
+  expect(page).to have_selector('tr.address', count: number)
 end
 
 
@@ -251,4 +260,20 @@ Then /^"([^"]*)" should( not)? have #{CAPTURE_STRING} as an option/ do | select_
                 end
   expect(select_options.map(&:text)).send( (negate ? :not_to : :to),  include( expected_string) )
 
+end
+
+
+And(/^the url "([^"]*)" should( not)? be a valid route$/) do |url, negate |
+
+  if negate
+    expect{ visit url }.to  raise_error(ActionController::RoutingError, "No route matches [GET] \"/#{url}\"")
+  else
+    visit url
+  end
+
+end
+
+
+And(/^the page should( not)? be blank$/) do | negate |
+  expect(page.body).send( (negate ? :not_to : :to), be_empty )
 end

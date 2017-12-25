@@ -3,6 +3,8 @@ sv:
 
   title: 'Medlemmar i Sveriges Hundföretagare'
 
+  SHF_name: &SHF_name Sveriges Hundföretagare
+
   home: Hem
   about: Om
   more: Mer
@@ -35,6 +37,8 @@ sv:
   search: &search Sök
   'yes': &yes Ja
   'no': &no Nej
+  'Yes': *yes
+  'No': *no
   applications: &applications Ansökningar
   user_activity: Användaraktivitet
   none: &none Ingen
@@ -44,6 +48,13 @@ sv:
   confirm_are_you_sure: &are_you_sure_confirm Är du säker
 
   hello: Hallå, %{name}
+
+  shf_home_url: &shf_home_url http://www.sverigeshundforetagare.se
+  shf_medlemssystem_url: &shf_medlemssystem_url http://hitta.sverigeshundforetagare.se
+  shf_facebook_url: &shf_facebook_url http://www.facebook.com/sverigeshundforetagare
+  shf_facebook_group_url: &shf_facebook_group_url https://www.facebook.com/groups/sverigeshundforetagare/
+  shf_instagram_url: &shf_instagram_url http://instagram.com/sverigeshundforetagare
+
 
   info:
     logged_in_as_admin: Du är inloggad som admin
@@ -90,7 +101,7 @@ sv:
   # Automatisk och manuell sökning för Active Records
   activerecord:
     models:
-      membership_application:
+      shf_application:
         one: Medlemskap
         other: Medlemskap
 
@@ -106,6 +117,14 @@ sv:
         one: Dokument
         other: Dokument
 
+      payment:
+        one: Betalning
+        other: Betalningar
+
+      user:
+        one: Användaren
+        other: Användare
+
 
     attributes:
 
@@ -115,6 +134,7 @@ sv:
         email: &email Profil E-post
         password: *password
         password_confirmation: Lösenordsbekräftelse
+        membership_number: &membership_number Medlemsnummer
         created: &created Skapad
         current_sign_in_at: &user_current_signed_in_time Inloggad
         current_sign_in_ip: &user_current_ip Inloggad med IP
@@ -123,16 +143,25 @@ sv:
         sign_in_count: &sign_in_count Inloggningar
         created: *created
         reset_password_sent_at: &user_reset_password_sent_at Information angående återställning av lösenord sändes
+        member: &member Medlem
 
+      payment:
+        payment_type: Betalningstyp
+        start_date: Startdatum
+        expire_date: &expire_date Utgångsdatum
+        notes: Anteckningar
 
-      membership_application:
+      shf_application:
         company_number: &company_number Organisationsnummer
         first_name: *first_name
         last_name: *last_name
         contact_email: &contact_email Kontakt e-post
         state: &state Status
         phone_number: Telefonnummer
-        membership_number: &membership_number Medlemsnummer
+        uploaded_files:
+          one: Uppladdad fil
+          many: Uppladdade filer
+
 
       address:
         street: &street Gata
@@ -142,6 +171,7 @@ sv:
         region: &region Verksamhetslän
         region_short: &region_short Län
         country: Land
+        mail: Post
 
       company:
         company_number: *org_nr
@@ -204,7 +234,7 @@ sv:
             actual_file:
               file_too_large: 'Filen måste vara mindre än %{max}. (Filen är %{value} byte.)'
 
-        membership_application:
+        shf_application:
           attributes:
             company_number:
               invalid: "%{company_number} är inte ett svenskt organisationsnummer"
@@ -222,8 +252,13 @@ sv:
     kommun: *kommun
     none: *none
 
+  payment:
+    payment_type:
+      member_fee: Medlemsavgift
+      branding_fee: H-märkesavgift
+
   # Automatisk och manuell sökning för views:
-  membership_applications:
+  shf_applications:
     new:
       title: Ansök om medlemskap
       instructions: 'För att kunna hantera din ansökan behöver vi ha information om dig, vilka kategorier du ansöker som samt dokument som styrker din kompetens i dessa kategorier.'
@@ -253,7 +288,7 @@ sv:
       submit_button_label: *submit
 
     create:
-      success: Tack, din ansökan har skickats.
+      success: "Tack, din ansökan har skickats. Du borde få en bekräftelse inom kort till %{email_address}."
       error: Ett eller flera problem hindrade din ansökan från att skickas.
 
     edit:
@@ -265,7 +300,7 @@ sv:
     update:
       success: Ansökan har uppdaterats.
       error: Ett eller flera problem hindrade din ansökan från att sparas.
-      enter_member_number: Var god ange medlemsnummer och spara.
+      enter_member_number: Var god granska medlemsnummer och spara.
 
     show:
       title: Ansökan från %{user_full_name}
@@ -281,12 +316,12 @@ sv:
       with_categories: Ansöker som
       delete: *delete
       confirm_are_you_sure: *are_you_sure_confirm
-      waiting_for_payment: 'Väntar på betalning (Det går inte att godkänna ansökan till dess att betalning har mottagits.)'
       ready_for_review_instructions: "När du är redo för att vi ska hantera din ansökan igen, kryssa i rutan nedan. När du trycker på knappen Skicka och kryssrutan är markerad, vet vi att vi måste se över den igen. \nDu kan göra ändringar utan att kryssa i rutan. Du kan om du vill spara en förändring och komma tillbaka och göra fler ändringar innan du skickar in den för granskning."
 
     index:
       title: Alla inkomna ansökningar
       name: Namn
+      membership_number: Nr.
       org_nr: *org_nr
       manage: *manage
       state: *state
@@ -308,14 +343,15 @@ sv:
 
       user:
         title: Hej, kul att du är intresserad
-        how_to_apply: "För att skicka in din medlemsansökan går du
-                       %{link} och fyller i alla nödvändiga uppgifter,
-                        markerar vilken eller vilka
+        how_to_apply: "För att skicka in din medlemsansökan klickar du på länken nedan
+                        och fyller i alla nödvändiga uppgifter.
+                        Glöm inte markera vilken eller vilka
                         kategorier du vill ansöka om medlemskap i."
-        once_it_is_submitted: "När din ansökan är inskickat hamnar den hos oss för behandling, detta
+        once_it_is_submitted: "När din ansökan är inskickad hamnar den hos oss för behandling, detta
                                tar en stund, så var inte orolig om du inte hör något från oss."
-        when_we_decide: "När din ansökan sedan är godkänd får du ett mail, med en länk till
-                         att skapa din företagssida här."
+        when_we_decide: "När din ansökan sedan är godkänd får du ett mail, med betalningsinformation. När
+                         du betalt får du ett nytt mail med information om hur
+                         du skapar din sökbara företagssida."
 
 
     start_review:
@@ -363,7 +399,6 @@ sv:
       new: &status_new Ny
       under_review: &status_under_review Behandlas
       waiting_for_applicant: &status_waiting_for_applicant  Väntar på sökande
-      waiting_for_payment: &status_waiting_for_payment Väntar på betalning
       ready_for_review: &status_ready_for_review Redo för granskning
       accepted: &status_accepted Godkänd
       rejected: &status_rejected Avböjd
@@ -380,18 +415,15 @@ sv:
     waiting_for_applicant: *status_waiting_for_applicant
     applicant_updated_info: &event_applicant_updated_info Sökanden har kompletterat sin ansökan
     ask_applicant_for_payment_btn: Behöver betalning
-    cancel_waiting_for_payment_btn: Ångra Behöver betalning
-    received_payment_btn: Betalning inkommen
-    waiting_for_payment: *status_waiting_for_payment
     ready_for_review: *status_ready_for_review
     start_review_btn: Påbörja granskning
 
     awaiting_payment: Inväntar betalning
 
-    all_membership_applications: Alla ansökningar
-    edit_membership_application: Redigera ansökan
-    view_membership_application: Visa ansökan
-    list_all_membership_applications: Lista alla ansökningar
+    all_shf_applications: Alla ansökningar
+    edit_shf_application: Redigera ansökan
+    view_shf_application: Visa ansökan
+    list_all_shf_applications: Lista alla ansökningar
 
     uploads:
       no_files: Inga filer är uppladdade för denna ansökan.
@@ -437,6 +469,7 @@ sv:
       address: &address Adress
       main_address: Huvudadress
       other_addresses: Andra adresser
+      mailing_address: Post
       street: *street
       post_code: *post_code
       city: *city
@@ -446,6 +479,14 @@ sv:
       org_nr: *org_nr
       delete: Radera företaget
       confirm_are_you_sure: *are_you_sure_confirm
+      add_address: 'Lägg till adress'
+      click_to_edit: 'klicka för att redigera'
+      edit_branding_status: Redigera Status
+      branding_license: Accepterar policy
+      pay_branding_fee_tooltip: Betald avgift förlänger H-märkningen i ett år.
+      branding_fee_expire_date_tooltip: Efter detta datum går perioden för din H-märkning ut.
+      members: Företagsmedlemmar
+
     index:
       title:  Hitta H-märkt företag
       admin_title: Redigera medlemsföretag
@@ -469,12 +510,15 @@ sv:
       visibility_tooltip: Hur detaljerat din adress visas för besökare (inkl kartor). Välj 'Ingen' för att inte visa din adress för besökare alls.
       org_nr_tooltip: Endast siffror (ej bindestreck)
 
+    company:
+      submit_button_label: Uppdatera status
+
     company_name: Företagsnamn
     telephone_number: Telefonnummer
     operations_region: *region
     website_include_http: Företagets webbplats
     description: Beskrivning av företaget
-    address_visibility: Adressens synlighet
+    address_visibility: Synlighet
 
     all_companies: Alla företag
     edit_company: Redigera detta företag
@@ -482,6 +526,27 @@ sv:
     list_all_companies: Lista alla företag
     new_company: Skapa nytt företag
 
+  addresses:
+    edit:
+      title: 'Redigera adress för: %{company_name}'
+      delete: 'Ta bort den här adressen'
+      delete_confirm: Är du säker på att du vill radera den här adressen?
+      cannot_delete_address: (Företagets mailadress - kan inte raderas)
+      delete_address_tooltip: Om du vill radera den här adressen anger du en
+                              annan adress som företagets mailadress.
+    update:
+      error: Det gick inte att uppdatera adressen.
+      success: Adressen uppdaterades.
+    new:
+      title: 'Ny adress för: %{company_name}'
+    create:
+      error: Ett eller flera problem hindrade adressen från att skapas.
+      success: Adressen skapades framgångsrikt.
+      success_sole_address: "Adressen skapades med framgång
+                            (och är standardadressen för företaget)."
+    destroy:
+      success: Adressen raderad.
+      error: Det gick inte att ta bort adressen.
 
   business_categories:
 
@@ -532,19 +597,10 @@ sv:
   users:
     index:
       title: Alla Användare
-      first_name: *first_name
-      last_name: *last_name
-      email: *email
-      created: *created
-      last_login: *user_last_login
-      logged_in_count: *sign_in_count
-      member: Medlem
-      applications: *applications
-      applications_tooltip: Antal öppna ansökningar
-      'yes': *yes  # https://coderwall.com/p/ld65tq/rails-i18n-yes-no-translation
-      'no': *no
+      no_search_results: Din sökning gav inget resultat, prova att ta bort något av dina val.
 
     show:
+      membership_number: *membership_number
       email: *email
       current_sign_in_at: *user_current_signed_in_time
       current_sign_in_ip: *user_current_ip
@@ -564,14 +620,54 @@ sv:
       re_enter_new_password: Skriv in lösenordet igen
       please_note_new_password: Spara detta på ett säkert ställe. När du klickar på spara nedan kommer du inte att kunna se lösenordet igen och det finns ingen möjlighet att åter visa det.
       submit_new_password: Spara det nya lösenordet
+      member: *member
+      pay_membership_tooltip: När du betalar din medlemsavgift förlängs ditt medlemskap i ett år.
+      membership_expire_date_tooltip: Efter detta datum går perioden för ditt medlemskap ut.
 
     update:
       passwords_dont_match: De två lösenord du angivit matchar inte.
       success: Användarens information uppdaterad.
       error: Ett problem hindrade användarinformationen från att uppdateras.
 
+    search_form:
+      membership_number: &membership_number_short Nr.
+      profile_email: Profil e-post
+      search: Sök
+      are_members: Är medlemmar
+      are_not_members: Är inte medlemmar
+      all_users: Alla användare
 
+    user:
+      user_has_never_signed_in: har aldrig loggat in.
+      'yes': *yes # https://coderwall.com/p/ld65tq/rails-i18n-yes-no-translation
+      'no': *no
+      edit_member_status: Redigera medlemsstatus
+      submit_button_label: Uppdatera status
 
+    users_list:
+      membership_number: *membership_number_short
+      first_name: *first_name
+      last_name: *last_name
+      email: *email
+      created: *created
+      last_login: *user_last_login
+      logged_in_count: *sign_in_count
+      member: Medlem
+      applications: *applications
+      applications_tooltip: Antal öppna ansökningar
+      expire_date: *expire_date
+
+  payments:
+    create:
+      page_title: &page_title '%{payment_type} betalning av: %{user_name}'
+      title: *page_title
+      something_wrong: 'Något gick fel - kontakta systemadministratören på %{admin_email}'
+
+    success:
+      success: Betalning framgångsrikt genomförd - tack!
+
+    error:
+      error: Det uppstod ett fel vid behandlingen av din betalning
 
   admin:
     index:
@@ -699,6 +795,60 @@ sv:
 
       delete_confirm: "Är du säker på att du vill radera orsaken: %{name_sv} (%{name_en})?"
 
+  mailers:
+    application_mailer:
+      greeting: &email_greeting "Hej %{greeting_name}"
+
+      email_us: "Om du har några frågor eller förslag, maila oss på "
+
+      signoff: "Med vänliga hälsningar,"
+      signature: &medlemsansvarig Medlemsansvarig
+      signature_url: "http://sverigeshundforetagare.se"
+
+      footer:
+        text:
+          shf_name: *SHF_name
+          shf_motto: KOMPETENS – GLÄDJE – OMTANKE
+          email_sent_to: Det här mailet skickades till %{email_sent_to}
+          why_you_are_receiving: Du får detta e-postmeddelande eftersom du är intresserad av medlemsskap i SVERIGES HUNDFÖRETAGARE eller du är medlem.
+
+
+    admin_mailer:
+      signoff: Tack
+
+      new_application_received:
+        subject: Ny ansökan i systemet Hej
+        message_text:
+          new_app_arrived: "En ny ansökan har inkommit som du borde kika på. "
+          from: Från
+          view_app_here: "Du kan se medlemskapsansökan här: "
+          must_be_logged_in: "(Du måste vara inloggad som en administratör för att se det.)"
+
+
+    shf_application_mailer:
+      acknowledge_received:
+        subject: Din ansökan till Sveriges Hundföretagare är mottagen
+        message_text: "Din ansökan är mottagen, på grund av hög arbetsbelastning tar det en stund innan vi kommer till den. Så var inte orolig om det tar en stund innan du hör från oss."
+
+      app_approved:
+        subject: Din ansökan till Sveriges Hundföretagare är godkänd.
+        message_text:
+          app_approved_and_next: "Din ansökan har nu blivit godkänd. Det som är kvar innan du är medlem i systemet är att betala din medlemsavgift. Det gör du via "
+          h_branding_not_paid: "När detta är gjort behöver du göra färdigt din företagssida och betala din H-märkesavgift. Mer information om hur du gör det kommer i ett mail efter att du betalt din medlemsavgift."
+          thanks:  "Tack för att du vill vara medlem och bidrar till ett kvalitetssäkrat hundsverige."
+
+
+    member_mailer:
+      membership_granted:
+        subject: &subject_welcome "Välkommen som medlem i Sveriges Hundföretagare"
+        greeting: *email_greeting
+        message_text:
+          welcome:  *subject_welcome
+          youre_active: "Ditt företag är nu H-märkt och du har aktiverats som medlem i systemet. Du kan logga in och hantera din profil och bygga upp din företagssida. När du är inloggad kan du redigera din företagssida och betala din H-märkesavgift här: "
+          access_fb_group: "Som medlem får du även tillgång till vår slutna Facebookgrupp: "
+          and_member_pages: "samt dolda sidor i vårt medlemssystem: "
+
+
 
   devise:
     min_length: '(minst %{minimum_length} tecken)'
@@ -721,7 +871,7 @@ sv:
         submit_button_label: *update
         delete_my_account: Ta bort mitt konto
         unregister: Avregistrera dig
-        confirm_are_you_sure: *are_you_sure_confirm
+        confirm_are_you_sure: Är du säker på att du vill radera ditt konto?
         back: *back
         success: Ditt konto har uppdaterats
     sessions:
@@ -800,6 +950,7 @@ sv:
       users:
         my_application: &my_application Min ansökan
         apply_for_membership: Ansök om medlemsskap
+        your_account: Mitt konto
 
       members:
         shf_companies: SHF-företag
@@ -810,6 +961,10 @@ sv:
           view_company: Visa företagssida
           edit_company: Redigera företag
         my_application: *my_application
+        pay_membership: Betala medlemsavgift
+
+      company:
+        pay_branding_fee: Betala H-märkesavgift
 
       admin:
         shf_main_site: *shf_main_site
