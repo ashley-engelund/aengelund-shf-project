@@ -43,37 +43,37 @@ RSpec.describe MembershipStatusUpdater, type: :model do
 
 
   it '#shf_application_updated' do
-    expect(subject).to receive(:update_membership_status).with(shf_app.user)
+    expect(subject).to receive(:check_requirements_and_act).with({user: shf_app.user})
 
     subject.shf_application_updated(shf_app)
   end
 
 
   it '#payment_made' do
-    expect(subject).to receive(:update_membership_status).with(payment_not_expired_paid_member.user)
+    expect(subject).to receive(:check_requirements_and_act).with({user: payment_not_expired_paid_member.user})
 
     subject.payment_made(payment_not_expired_paid_member)
   end
 
 
   it '#user_updated' do
-    expect(subject).to receive(:update_membership_status).with(user)
+    expect(subject).to receive(:check_requirements_and_act).with({user: user})
 
     subject.user_updated(user)
   end
 
 
-  describe '#update_membership_status' do
+  describe '#check_requirements_and_act' do
 
     it 'does nothing if not a member' do
-      subject.update_membership_status(user)
+      subject.check_requirements_and_act({user: user})
       expect(user.member?).to be_falsey
     end
 
     it 'does nothing if a member and payment not expired' do
       payment_not_expired_paid_member
 
-      subject.update_membership_status(paid_member)
+      subject.check_requirements_and_act({user: paid_member})
       expect(paid_member.member?).to be_truthy
     end
 
@@ -82,9 +82,9 @@ RSpec.describe MembershipStatusUpdater, type: :model do
 
       payment_not_expired_paid_member
 
-      Timecop.freeze(Time.zone.today + 1.year)
+      Timecop.freeze(Time.zone.today + 1.year)  # move past the expiration date for the membership term to make it expired
 
-      subject.update_membership_status(paid_member)
+      subject.check_requirements_and_act({user: paid_member})
       expect(paid_member.member?).to be_falsey
 
       Timecop.return
@@ -103,28 +103,28 @@ RSpec.describe MembershipStatusUpdater, type: :model do
 
 
       it 'sends emails by default' do
-        expect(subject).to receive(:grant_membership).with(user_app_approved, { send_email: true })
+        expect(subject).to receive(:update_action).with({user: user_app_approved})
         payment_user_approved_app
-        subject.update_membership_status user_app_approved
+        subject.check_requirements_and_act({user: user_app_approved})
       end
 
       it 'send_email: true will send emails' do
-        expect(subject).to receive(:grant_membership).with(user_app_approved, { send_email: true })
+        expect(subject).to receive(:update_action).with({user: user_app_approved, send_email: true } )
         payment_user_approved_app
-        subject.update_membership_status(user_app_approved, send_email: true)
+        subject.check_requirements_and_act({user: user_app_approved, send_email: true} )
       end
 
       it 'send_email: false will not send emails' do
-        expect(subject).to receive(:grant_membership).with(user_app_approved, { send_email: false })
+        expect(subject).to receive(:update_action).with({user: user_app_approved, send_email: false } )
         payment_user_approved_app
-        subject.update_membership_status(user_app_approved, send_email: false)
+        subject.check_requirements_and_act({user: user_app_approved, send_email: false} )
       end
     end
 
   end
 
 
-  describe '#grant_membership' do
+  describe '#update_action' do
 
     # Note - since this is a private method, we can only do unit testing of it
     # with RSpec if we explicitly :send the message to the subject
@@ -133,35 +133,35 @@ RSpec.describe MembershipStatusUpdater, type: :model do
       # mock the MemberMailer so we don't try to send emails
       expect(MemberMailer).to receive(:membership_granted).with(user).and_return(double('MemberMailer', deliver: true))
 
-      subject.send(:grant_membership, user) # this is equivalent to subject.grant_membership(user)
+      subject.send(:update_action, {user: user}) # this is equivalent to subject.update_action(user)
       expect(user.member?).to be_truthy
     end
 
     it 'sends emails out by default' do
       expect_any_instance_of(MemberMailer).to receive(:membership_granted).with(user)
-      subject.send(:grant_membership, user) # this is equivalent to subject.grant_membership(user)
+      subject.send(:update_action, {user: user}) # this is equivalent to subject.update_action(user)
     end
 
     it 'send_email: true sends email to the member to let them know they are now a member' do
       expect_any_instance_of(MemberMailer).to receive(:membership_granted).with(user)
-      subject.send(:grant_membership, user, { send_email: true }) # this is equivalent to subject.grant_membership(user, send_email: true )
+      subject.send(:update_action, {user: user, send_email: true}) # this is equivalent to subject.update_action([]user, send_email: true ])
     end
 
     it 'send_email: false does not send email to the member to let them know they are now a member' do
       expect_any_instance_of(MemberMailer).not_to receive(:membership_granted).with(user)
-      subject.send(:grant_membership, user, { send_email: false }) # this is equivalent to subject.grant_membership(user, send_email: false )
+      subject.send(:update_action, {user: user, send_email: false}) # this is equivalent to subject.update_action([user, send_email: false ])
     end
 
   end
 
 
-  describe '#revoke_membership' do
+  describe '#revoke_update_action' do
 
     # Note - since this is a private method, we can only do unit testing of it
     # with RSpec if we explicitly :send the message to the subject
 
     it 'user.member? is false' do
-      subject.send(:revoke_membership, user) # this is equivalent to subject.revoke_membership(user)
+      subject.send(:revoke_update_action, {user: user}) # this is equivalent to subject.revoke_update_action({user: user})
       expect(user.member?).to be_falsey
     end
 

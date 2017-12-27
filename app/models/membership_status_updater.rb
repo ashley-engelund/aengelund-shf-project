@@ -1,6 +1,6 @@
 #--------------------------
 #
-# @file membership_status_updater.rb
+# @class MembershipStatusUpdater
 #
 # @desc Responsibility:  Keep membership status up-to-date based the current business rules and requirements.
 #  - gets notifications from events in the system and does what is needed with them to
@@ -11,6 +11,7 @@
 #
 # @author Ashley Engelund (ashley@ashleycaroline.com  weedySeaDragon @ github)
 # @date   12/21/17
+# @file membership_status_updater.rb
 #
 # Goals with this PR:
 #   - show how the Observer pattern can and should be used to keep Membership status up to date
@@ -42,27 +43,43 @@
 #
 #--------------------------
 
-# is this require_relative statement really necessary?
-require_relative 'abstract_updater'
-
-require_relative 'activity_logger' # just here for demo purposes so we can see things that happen
-
 
 class MembershipStatusUpdater < AbstractUpdater
+
+  SEND_EMAIL_DEFAULT = true
+
+
+  def self.update_requirements_checker
+    RequirementsForMembership
+  end
+
+
+  def self.revoke_requirements_checker
+    RequirementsForRevokingMembership
+  end
+
+
+  #--------------------------
+  # Notifications received from observed classes:
+  # - - -
+  # Could set up some more generalized meta-code to get information from notifications sent,
+  # but for now this is simple to maintain because it is explicit.
+  #
 
   def shf_application_updated(shf_app)
     ActivityLogger.open(log_filename, self.class.to_s, 'shf_application updated', false) do |log|
 
-      update_membership_status shf_app.user
+      check_requirements_and_act({ user: shf_app.user })
 
       log.record(:info, "membership checked because this shf_application was updated: #{shf_app.inspect}")
     end
   end
 
+
   def payment_made(payment)
     ActivityLogger.open(log_filename, self.class.to_s, 'payment made', false) do |log|
 
-      update_membership_status payment.user
+      check_requirements_and_act({ user: payment.user })
 
       log.record(:info, "finished checking membership status because this payment was  made: #{payment.inspect}")
     end
@@ -73,7 +90,7 @@ class MembershipStatusUpdater < AbstractUpdater
 
     ActivityLogger.open(log_filename, self.class.to_s, 'user updated', false) do |log|
 
-      update_membership_status user
+      check_requirements_and_act({ user: user })
 
       log.record(:info, "User updated: #{user.inspect}")
     end
@@ -81,26 +98,12 @@ class MembershipStatusUpdater < AbstractUpdater
   end
 
 
-  def update_membership_status(user, send_email: true)
-    ActivityLogger.open(log_filename, self.class.to_s, "#{__method__}", false) do |log|
-      log.record(:info, "checking membership status for #{user.inspect}")
-    end
-
-    # meets the requirements but not yet a member
-    meets_membership_requirements = RequirementsForMembership.satisfied?(user)
-    if meets_membership_requirements && !user.member?
-      grant_membership(user, send_email: send_email)
-    else
-      revoke_membership(user) if user.member? && !meets_membership_requirements
-    end
-
-  end
-
-
   private
 
-  # This is a private method so that membership can ONLY be granted when this class deems it valid and appropriate?
-  def grant_membership(user, send_email: true)
+  def update_action(args)
+    user = args[:user]
+    send_email = args.fetch(:send_email, SEND_EMAIL_DEFAULT)
+
     ActivityLogger.open(log_filename, self.class.to_s, "membership granted", false) do |log|
 
       user.update(member: true, membership_number: user.issue_membership_number) # I don't think a User should be responsible for figuring out the next membership number
@@ -112,8 +115,8 @@ class MembershipStatusUpdater < AbstractUpdater
   end
 
 
-  # This is a private method so that membership can ONLY be revoked when this class deems it valid and appropriate?
-  def revoke_membership(user)
+  def revoke_update_action(args = {})
+    user = args[:user]
     ActivityLogger.open(log_filename, self.class.to_s, "membership revoked", false) do |log|
       user.update(member: false)
       log.record(:info, "Membership revoked for #{user.inspect}")
