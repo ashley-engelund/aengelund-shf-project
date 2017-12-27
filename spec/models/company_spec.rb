@@ -548,4 +548,12 @@ RSpec.describe Company, type: :model do
     end
 
   end
+
+  describe '#branding_license?' do
+
+    xit 'must return true or false (not nil)' do
+
+    end
+
+  end
 end
