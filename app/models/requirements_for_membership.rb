@@ -10,7 +10,6 @@
 #       IT IS THE ONLY PLACE THAT CODE NEEDS TO BE TOUCHED IF MEMBERSHIP REQUIREMENTS ARE CHANGED.
 #
 #  Only 1 is needed for the system.
-#  This is implemented as a Class instead of a Singleton, but either approach is valid.
 #
 # @author Ashley Engelund (ashley@ashleycaroline.com  weedySeaDragon @ github)
 # @date   12/23/17
@@ -20,9 +19,15 @@
 #--------------------------
 
 
-class RequirementsForMembership
+class RequirementsForMembership < AbstractRequirements
 
-  def self.satisfied?(user)
+  def self.has_expected_keys?(args)
+    args && args.key?(:user)
+  end
+
+
+  def self.requirements_met?(args)
+    user = args[:user]
     user.membership_current? && user.has_approved_shf_application?
   end
 
