@@ -1,6 +1,6 @@
 Warden::Manager.after_authentication do |user, _auth, _opts|
-  #user.update_membership_status
-  MembershipStatusUpdater.instance.update_membership_status user unless user.admin?
+  #user.check_requirements_and_act
+  MembershipStatusUpdater.instance.check_requirements_and_act user unless user.admin?
 end
 
 # https://github.com/hassox/warden/blob/

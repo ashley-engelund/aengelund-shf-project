@@ -106,8 +106,8 @@ module SeedHelper
                                       expire_date: expire_date)
 
       # do not send emails
-      MembershipStatusUpdater.instance.update_membership_status(user, send_email: false)
-      #user.grant_membership(send_email: false)
+      MembershipStatusUpdater.instance.check_requirements_and_act({user: user, send_email: false})
+      #user.update_action(send_email: false)
 
       start_date, expire_date = Company.next_branding_payment_dates(ma.company.id)
 
