@@ -7,6 +7,7 @@
 #
 #
 #       Each subclass MUST define the following methods:
+#
 #        'self.has_expected_keys?(args)'  verifies that the arguments (a Hash) has the keys expected so that requirements can be checked
 #           Must return true or false (*not* nil) per the convention of a method that ends with "?"
 #
@@ -24,6 +25,7 @@
 
 class AbstractRequirements
 
+  # this is the public interface for all Requirements classes:
   def self.satisfied?(args = {})
     has_expected_keys?(args) && requirements_met?(args)
   end
