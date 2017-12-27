@@ -87,7 +87,7 @@ class MembershipStatusUpdater < AbstractUpdater
     end
 
     # meets the requirements but not yet a member
-    meets_membership_requirements = MembershipRequirements.satisfied?(user)
+    meets_membership_requirements = RequirementsForMembership.satisfied?(user)
     if meets_membership_requirements && !user.member?
       grant_membership(user, send_email: send_email)
     else

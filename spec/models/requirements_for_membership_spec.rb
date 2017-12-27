@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe MembershipRequirements, type: :model do
+RSpec.describe RequirementsForMembership, type: :model do
 
-  let(:subject) { MembershipRequirements }
+  let(:subject) { RequirementsForMembership }
 
   let(:user) { create(:user) }
 
