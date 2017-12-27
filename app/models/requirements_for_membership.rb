@@ -1,6 +1,6 @@
 #--------------------------
 #
-# @class MembershipRequirements
+# @class RequirementsForMembership
 #
 # @desc Responsibility: Knows what the membership requirements are for a User
 #       - Given a user, it can respond true or false if membership requirements are met.
@@ -13,8 +13,7 @@
 #
 # @author Ashley Engelund (ashley@ashleycaroline.com  weedySeaDragon @ github)
 # @date   12/23/17
-# @file membership_requirements.rb
-#
+# @file requirements_for_membership.rb
 #
 #--------------------------
 
@@ -31,4 +30,4 @@ class RequirementsForMembership < AbstractRequirements
     user.membership_current? && user.has_approved_shf_application?
   end
 
-end # MembershipRequirements
+end # RequirementsForMembership
