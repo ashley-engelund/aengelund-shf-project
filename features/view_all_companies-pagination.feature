@@ -6,20 +6,9 @@ Feature: Visitor sets number of companies to show (pagination for 'all companies
 
 
   Note that the interaction with the 'show/hide search form' UI item and the
-  pagination select list ('items_count') can be very delicate when running the tests
-  via Capybara.  Thus the order of the items clicked and selected in the scenarios below
-  is important:
-    - the 'show/hide search form' must be hidden, else the list of companies contained in
-      one of the search fields sometimes show up as false-positives (e.g. when a company
-      should _not_ be visible, it is reported as visible if the search field for
-      company names is visible)
-    - must first select the pagniation select list ('items_count') by doing a
-      Then I select "10" in select list "items_count" step.  Then you can 'really'
-      select the number of items you want ( = you can really select the option
-      you're interested in for that select list)
-      This seems related to the previous interactions in the scenario.  It seems that
-      this is required due to some combination of states and events that the
-      browser + page are in.
+  pagination select list ('items_count') both are XHR requests.  You must be sure
+  to wait until they are complete.  Capybara may proceed before things are
+  actually returned and updated, which leads to unpredictable results.
 
 
 
@@ -33,6 +22,12 @@ Feature: Visitor sets number of companies to show (pagination for 'all companies
       | name     |
       | Alingsås |
       | Bromölla |
+
+    And the following users exists
+      | email              | admin | member |
+      | accepted@mutts.com |       | true   |
+      | admin@shf.se       | true  |        |
+
 
     Given the following companies exist:
       | name      | company_number | email                  | region       | kommun   |
@@ -64,40 +59,67 @@ Feature: Visitor sets number of companies to show (pagination for 'all companies
       | Company26 | 9360289459     | cmpy13@mail.com        | Stockholm    | Alingsås |
       | Company27 | 9475077674     | cmpy13@mail.com        | Stockholm    | Alingsås |
 
-    And the following users exists
-      | email        | admin |
-      | a@mutts.com  |       |
-      | admin@shf.se | true  |
+
+    And the following applications exist:
+      | user_email         | company_number | state    |
+      | accepted@mutts.com | 5560360793     | accepted |
+      | accepted@mutts.com | 2120000142     | accepted |
+      | accepted@mutts.com | 6613265393     | accepted |
+      | accepted@mutts.com | 6222279082     | accepted |
+      | accepted@mutts.com | 8025085252     | accepted |
+      | accepted@mutts.com | 6914762726     | accepted |
+      | accepted@mutts.com | 7661057765     | accepted |
+      | accepted@mutts.com | 7736362901     | accepted |
+      | accepted@mutts.com | 6112107039     | accepted |
+      | accepted@mutts.com | 3609340140     | accepted |
+      | accepted@mutts.com | 2965790286     | accepted |
+      | accepted@mutts.com | 4268582063     | accepted |
+      | accepted@mutts.com | 8028973322     | accepted |
+      | accepted@mutts.com | 8356502446     | accepted |
+      | accepted@mutts.com | 8394317054     | accepted |
+      | accepted@mutts.com | 8423893877     | accepted |
+      | accepted@mutts.com | 8589182768     | accepted |
+      | accepted@mutts.com | 8616006592     | accepted |
+      | accepted@mutts.com | 8764985894     | accepted |
+      | accepted@mutts.com | 8822107739     | accepted |
+      | accepted@mutts.com | 8853655168     | accepted |
+      | accepted@mutts.com | 8909248752     | accepted |
+      | accepted@mutts.com | 9074668568     | accepted |
+      | accepted@mutts.com | 9243957975     | accepted |
+      | accepted@mutts.com | 9267816362     | accepted |
+      | accepted@mutts.com | 9360289459     | accepted |
+      | accepted@mutts.com | 9475077674     | accepted |
+
 
     And the following payments exist
-      | user_email  | start_date | expire_date | payment_type | status | hips_id | company_number |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 5560360793     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 2120000142     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 6613265393     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 6222279082     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 8025085252     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 6914762726     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 7661057765     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 7736362901     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 6112107039     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 3609340140     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 2965790286     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 4268582063     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 8028973322     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 8356502446     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 8394317054     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 8423893877     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 8589182768     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 8616006592     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 8764985894     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 8822107739     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 8853655168     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 8909248752     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 9074668568     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 9243957975     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 9267816362     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 9360289459     |
-      | a@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 9475077674     |
+      | user_email         | start_date | expire_date | payment_type | status | hips_id | company_number |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 5560360793     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 2120000142     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 6613265393     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 6222279082     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 8025085252     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 6914762726     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 7661057765     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 7736362901     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 6112107039     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 3609340140     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 2965790286     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 4268582063     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 8028973322     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 8356502446     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 8394317054     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 8423893877     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 8589182768     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 8616006592     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 8764985894     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 8822107739     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 8853655168     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 8909248752     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 9074668568     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 9243957975     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 9267816362     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 9360289459     |
+      | accepted@mutts.com | 2017-01-01 | 2017-12-31  | branding_fee | betald | none    | 9475077674     |
 
 
   @selenium @time_adjust
@@ -118,6 +140,7 @@ Feature: Visitor sets number of companies to show (pagination for 'all companies
     Then I click on t("will_paginate.next_label") link
     And I should see "Company11"
     And I should not see "Company10"
+    And I should not see "Company27"
 
 
   @selenium @time_adjust
@@ -128,35 +151,12 @@ Feature: Visitor sets number of companies to show (pagination for 'all companies
     Then I should see t("companies.index.h_companies_listed_below")
     And I click on t("toggle.company_search_form.hide")
     And I click on t("activerecord.attributes.company.name") link
-    Then I select "10" in select list "items_count"
     And I wait for all ajax requests to complete
     And "items_count" should have "10" selected
     And I should see "Company01"
     And I should see "Company02"
-    And I should see "Company03"
-    And I should see "Company04"
-    And I should see "Company05"
-    And I should see "Company06"
-    And I should see "Company07"
-    And I should see "Company08"
-    And I should see "Company09"
-    And I should see "Company10"
-    And I should not see "Company11"
-    And I should not see "Company12"
-    And I should not see "Company13"
-    And I should not see "Company14"
-    And I should not see "Company15"
-    And I should not see "Company16"
-    And I should not see "Company17"
-    And I should not see "Company18"
-    And I should not see "Company19"
-    And I should not see "Company20"
-    And I should not see "Company21"
-    And I should not see "Company22"
-    And I should not see "Company23"
-    And I should not see "Company24"
-    And I should not see "Company25"
     And I should not see "Company26"
+    And I should not see "Company27"
 
 
   @selenium @time_adjust
@@ -167,36 +167,16 @@ Feature: Visitor sets number of companies to show (pagination for 'all companies
     Then I should see t("companies.index.h_companies_listed_below")
     And I click on t("toggle.company_search_form.hide")
     And I click on t("activerecord.attributes.company.name") link
-    Then I select "10" in select list "items_count"
+    And I wait for all ajax requests to complete
     Then I select "25" in select list "items_count"
     And I wait for all ajax requests to complete
     And "items_count" should have "25" selected
     And I should see "Company01"
     And I should see "Company02"
-    And I should see "Company03"
-    And I should see "Company04"
-    And I should see "Company05"
-    And I should see "Company06"
-    And I should see "Company07"
-    And I should see "Company08"
-    And I should see "Company09"
-    And I should see "Company10"
-    And I should see "Company11"
-    And I should see "Company12"
-    And I should see "Company13"
-    And I should see "Company14"
-    And I should see "Company15"
-    And I should see "Company16"
-    And I should see "Company17"
-    And I should see "Company18"
-    And I should see "Company19"
-    And I should see "Company20"
-    And I should see "Company21"
-    And I should see "Company22"
-    And I should see "Company23"
     And I should see "Company24"
     And I should see "Company25"
     And I should not see "Company26"
+    And I should not see "Company27"
 
 
   @selenium @time_adjust
@@ -207,36 +187,13 @@ Feature: Visitor sets number of companies to show (pagination for 'all companies
     Then I should see t("companies.index.h_companies_listed_below")
     And I click on t("toggle.company_search_form.hide")
     And I click on t("activerecord.attributes.company.name") link
-    Then I select "10" in select list "items_count"
+    And I wait for all ajax requests to complete
     Then I select "All" in select list "items_count"
     And I wait for all ajax requests to complete
     Then I should see "27" companies
     And "items_count" should have "All" selected
     And I should see "Company01"
     And I should see "Company02"
-    And I should see "Company03"
-    And I should see "Company04"
-    And I should see "Company05"
-    And I should see "Company06"
-    And I should see "Company07"
-    And I should see "Company08"
-    And I should see "Company09"
-    And I should see "Company10"
-    And I should see "Company11"
-    And I should see "Company12"
-    And I should see "Company13"
-    And I should see "Company14"
-    And I should see "Company15"
-    And I should see "Company16"
-    And I should see "Company17"
-    And I should see "Company18"
-    And I should see "Company19"
-    And I should see "Company20"
-    And I should see "Company21"
-    And I should see "Company22"
-    And I should see "Company23"
-    And I should see "Company24"
-    And I should see "Company25"
     And I should see "Company26"
     And I should see "Company27"
 
@@ -249,6 +206,7 @@ Feature: Visitor sets number of companies to show (pagination for 'all companies
     Then I should see t("companies.index.h_companies_listed_below")
     And I click on t("toggle.company_search_form.hide")
     And I click on t("activerecord.attributes.company.name") link
+    And I wait for all ajax requests to complete
     And "items_count" should have "10" selected
     And I should see "10" companies
     And I should see "Company10"
@@ -260,27 +218,6 @@ Feature: Visitor sets number of companies to show (pagination for 'all companies
     Then I should see "25" companies
     And I should see "Company01"
     And I should see "Company02"
-    And I should see "Company03"
-    And I should see "Company04"
-    And I should see "Company05"
-    And I should see "Company06"
-    And I should see "Company07"
-    And I should see "Company08"
-    And I should see "Company09"
-    And I should see "Company10"
-    And I should see "Company11"
-    And I should see "Company12"
-    And I should see "Company13"
-    And I should see "Company14"
-    And I should see "Company15"
-    And I should see "Company16"
-    And I should see "Company17"
-    And I should see "Company18"
-    And I should see "Company19"
-    And I should see "Company20"
-    And I should see "Company21"
-    And I should see "Company22"
-    And I should see "Company23"
     And I should see "Company24"
     And I should see "Company25"
     And I should not see "9360289459"
