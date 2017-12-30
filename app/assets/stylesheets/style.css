@@ -4229,7 +4229,7 @@ figure:hover img + .wp-caption-text {
 }
 
 .mfp-content {
-    padding:15px auto !important;
+    padding:15px !important;
 }
 
 .mfp-figure::after {
