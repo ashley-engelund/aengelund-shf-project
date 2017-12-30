@@ -349,7 +349,7 @@ img {
 
 figure {
     position:relative;
-    margin:0em 0em 1.5em;
+    margin:0 0 1.5em;
     overflow:hidden;
     max-width:100%;
 }
@@ -3238,7 +3238,7 @@ Post footer
 }
 
 .social-share a:hover:before {
-    top:0%;
+    top:0;
 }
 
 /*--------------
@@ -3407,7 +3407,7 @@ Author area
 }
 
 #author-area .author-social-profiles a:hover:before {
-    top:0%;
+    top:0;
 }
 
 #author-area .author-social-profiles a:first-child {
