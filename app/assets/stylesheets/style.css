@@ -219,8 +219,6 @@ b, strong {
     font-weight:bold;
 }
 
-dfn, cite, em, i {
-}
 
 blockquote {
     margin:25px 0;
@@ -1107,8 +1105,8 @@ body.admin-bar #site-navigation.fixed-nav ~ .search-toggle-container {
 /*--------------------------------------------------------------
 5.1 Links
 --------------------------------------------------------------*/
-a {
-}
+
+
 
 /*----------------------
 Logo
@@ -1447,7 +1445,6 @@ Arrows
     width:40px;
     height:40px;
     margin-top:-20px;
-    text-align:center;
     border:none !important;
     background-color:transparent !important;
     z-index:2;
@@ -1484,12 +1481,12 @@ Arrows
 /*--------------------------------------------------------------
 6.1 Featured pages
 --------------------------------------------------------------*/
-.featured-pages-container {
-}
 
-#featured-pages {
 
-}
+
+
+
+
 
 .featured-page {
     margin-bottom:30px;
@@ -2088,8 +2085,8 @@ Pages Widget
 /*---------------------
 RSS Widget
 ---------------------*/
-.widget_rss {
-}
+
+
 
 .widget_rss li {
     padding:15px 0;
@@ -2168,8 +2165,8 @@ Text Widget
 /*---------------------
 Wordchef recent posts
 ---------------------*/
-.wordchef_widget_recent_entries {
-}
+
+
 
 .wordchef-recent-post {
     padding:15px 0;
@@ -2380,9 +2377,9 @@ Wordchef Image Banner
 /*---------------------
 MailChimp Widget
 ---------------------*/
-.widget_mc4wp_widget {
 
-}
+
+
 
 .mc4wp-form {
     text-align:center;
@@ -2471,8 +2468,8 @@ fixed nav padding
     padding-bottom: 100px;
 }
 
-#primary {
-}
+
+
 
 article {
     background-color:#fff;
@@ -2704,8 +2701,8 @@ Grid item
     margin:40px 0 5px;
 }
 
-.grid-item .post-social {
-}
+
+
 
 /*--------------------------------------------------------------
 11.1 Posts and pages
@@ -2725,9 +2722,9 @@ Grid item
 /*----------
 Type page
 ----------*/
-.type-page {
 
-}
+
+
 
 .page-header {
     margin-bottom:30px;
@@ -2858,8 +2855,8 @@ Archive title
 /*--------
 comments
 --------*/
-.post-meta .post-comments {
-}
+
+
 
 /*-------------
 Featured image
@@ -3117,9 +3114,9 @@ post entry content
     text-decoration:underline;
 }
 
-.post-excerpt {
 
-}
+
+
 
 .more-link {
     display:none;
@@ -3551,11 +3548,11 @@ Featured video
 /*--------------------------------------------------------------
 11.3 Asides
 --------------------------------------------------------------*/
-#secondary {
-}
 
-aside {
-}
+
+
+
+
 
 .blog .format-aside .entry-title,
 .archive .format-aside .entry-title {
@@ -3853,8 +3850,8 @@ Comment avatar
 /*---------------
 Comment metadata
 ---------------*/
-#comments .comment-meta {
-}
+
+
 
 #comments .comment-author {
     display:inline-block;
@@ -3948,12 +3945,12 @@ Comment navigation
 /*--------------------------------------------------------------
 11.6 Footer
 --------------------------------------------------------------*/
-.site-footer {
 
-}
 
-#footer-logo {
-}
+
+
+
+
 
 #footer-logo:after {
     content:'';
@@ -4135,8 +4132,8 @@ figure:hover img + .wp-caption-text {
     }
 }
 
-.wp-caption, .gallery-caption {
-}
+
+
 
 /*--------------------------------------------------------------
 12.2 Galleries
