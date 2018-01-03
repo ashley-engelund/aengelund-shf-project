@@ -118,7 +118,7 @@ Then /^(?:I|they) should see #{CAPTURE_STRING} in the email body$/ do |text|
 end
 
 Then /^(?:I|they) should not see #{CAPTURE_STRING} in the email body$/ do |text|
-  expect(current_email.default_part_body.to_s).not_to include(text)
+  expect(current_email.default_part_body.to_s).not_to include(text), "Should not see #{text}\n but did.  \n\nfull text:\n#{current_email.default_part_body.to_s}"
 end
 
 Then /^(?:I|they) should see \/([^"]*?)\/ in the email body$/ do |text|
