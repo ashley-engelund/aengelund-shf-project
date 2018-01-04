@@ -4,8 +4,11 @@ class CompaniesController < ApplicationController
   before_action :set_company, only: [:show, :edit, :update, :destroy, :edit_payment, :get_dinkurs_events]
   before_action :authorize_company, only: [:update, :show, :edit, :destroy, :get_dinkurs_events]
 
+
   def index
     authorize Company
+
+    self.params = fix_FB_changed_q_params(self.params)
 
     action_params, @items_count, items_per_page = process_pagination_params('company')
 
@@ -13,18 +16,19 @@ class CompaniesController < ApplicationController
 
     # only select companies that are 'complete'; see the Company.complete scope
 
-    @all_companies =  @search_params.result(distinct: true)
-                          .complete
-                          .includes(:business_categories)
-                          .includes(addresses: [ :region, :kommun ])
-                          .joins(addresses: [ :region, :kommun ])
-
-    @all_companies = @all_companies.branding_licensed unless current_user.admin?
-
+    @all_companies = @search_params.result(distinct: true)
+                         .complete
+                         .includes(:business_categories)
+                         .includes(addresses: [:region, :kommun])
+                         .joins(addresses: [:region, :kommun])
     # The last qualifier ("joins") on above statement ("addresses: :region") is
     # to get around a problem with DISTINCT queries used with ransack when also
     # allowing sorting on an associated table column ("region" in this case)
     # https://github.com/activerecord-hackery/ransack#problem-with-distinct-selects
+
+    unless current_user.admin?
+      @all_companies = @all_companies.branding_licensed.with_members
+    end
 
     @all_visible_companies = @all_companies.address_visible
 
@@ -92,6 +96,7 @@ class CompaniesController < ApplicationController
       redirect_to @company
     end
   end
+
 
   def edit_payment
     raise 'Unsupported request' unless request.xhr?
@@ -177,6 +182,7 @@ class CompaniesController < ApplicationController
                                 :country,
                                 :visibility])
   end
+
 
   def payment_params
     params.require(:payment).permit(:expire_date, :notes)

@@ -111,21 +111,21 @@ ALTER SEQUENCE business_categories_id_seq OWNED BY business_categories.id;
 
 
 --
--- Name: business_categories_membership_applications; Type: TABLE; Schema: public; Owner: -
+-- Name: business_categories_shf_applications; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE business_categories_membership_applications (
+CREATE TABLE business_categories_shf_applications (
     id bigint NOT NULL,
-    membership_application_id bigint,
+    shf_application_id bigint,
     business_category_id bigint
 );
 
 
 --
--- Name: business_categories_membership_applications_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: business_categories_shf_applications_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE business_categories_membership_applications_id_seq
+CREATE SEQUENCE business_categories_shf_applications_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -134,10 +134,10 @@ CREATE SEQUENCE business_categories_membership_applications_id_seq
 
 
 --
--- Name: business_categories_membership_applications_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: business_categories_shf_applications_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE business_categories_membership_applications_id_seq OWNED BY business_categories_membership_applications.id;
+ALTER SEQUENCE business_categories_shf_applications_id_seq OWNED BY business_categories_shf_applications.id;
 
 
 --
@@ -542,44 +542,6 @@ ALTER SEQUENCE member_pages_id_seq OWNED BY member_pages.id;
 
 
 --
--- Name: membership_applications; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE membership_applications (
-    id bigint NOT NULL,
-    company_number character varying,
-    phone_number character varying,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    user_id bigint,
-    contact_email character varying,
-    company_id bigint,
-    state character varying DEFAULT 'new'::character varying,
-    member_app_waiting_reasons_id integer,
-    custom_reason_text character varying
-);
-
-
---
--- Name: membership_applications_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE membership_applications_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: membership_applications_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE membership_applications_id_seq OWNED BY membership_applications.id;
-
-
---
 -- Name: membership_number_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -671,6 +633,44 @@ CREATE TABLE schema_migrations (
 
 
 --
+-- Name: shf_applications; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE shf_applications (
+    id bigint NOT NULL,
+    company_number character varying,
+    phone_number character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    user_id bigint,
+    contact_email character varying,
+    company_id bigint,
+    state character varying DEFAULT 'new'::character varying,
+    member_app_waiting_reasons_id integer,
+    custom_reason_text character varying
+);
+
+
+--
+-- Name: shf_applications_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE shf_applications_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: shf_applications_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE shf_applications_id_seq OWNED BY shf_applications.id;
+
+
+--
 -- Name: shf_documents; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -719,7 +719,7 @@ CREATE TABLE uploaded_files (
     actual_file_content_type character varying,
     actual_file_file_size integer,
     actual_file_updated_at timestamp without time zone,
-    membership_application_id bigint
+    shf_application_id bigint
 );
 
 
@@ -802,21 +802,21 @@ ALTER TABLE ONLY business_categories ALTER COLUMN id SET DEFAULT nextval('busine
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: business_categories_shf_applications id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY business_categories_membership_applications ALTER COLUMN id SET DEFAULT nextval('business_categories_membership_applications_id_seq'::regclass);
+ALTER TABLE ONLY business_categories_shf_applications ALTER COLUMN id SET DEFAULT nextval('business_categories_shf_applications_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: ckeditor_assets id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY ckeditor_assets ALTER COLUMN id SET DEFAULT nextval('ckeditor_assets_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: companies id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY companies ALTER COLUMN id SET DEFAULT nextval('companies_id_seq'::regclass);
@@ -837,63 +837,63 @@ ALTER TABLE ONLY kommuns ALTER COLUMN id SET DEFAULT nextval('kommuns_id_seq'::r
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: member_app_waiting_reasons id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY member_app_waiting_reasons ALTER COLUMN id SET DEFAULT nextval('member_app_waiting_reasons_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: member_pages id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY member_pages ALTER COLUMN id SET DEFAULT nextval('member_pages_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY membership_applications ALTER COLUMN id SET DEFAULT nextval('membership_applications_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: payments id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY payments ALTER COLUMN id SET DEFAULT nextval('payments_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: regions id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY regions ALTER COLUMN id SET DEFAULT nextval('regions_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: shf_applications id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY shf_applications ALTER COLUMN id SET DEFAULT nextval('shf_applications_id_seq'::regclass);
+
+
+--
+-- Name: shf_documents id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY shf_documents ALTER COLUMN id SET DEFAULT nextval('shf_documents_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: uploaded_files id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY uploaded_files ALTER COLUMN id SET DEFAULT nextval('uploaded_files_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
 
 
 --
--- Name: addresses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: addresses addresses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY addresses
@@ -901,7 +901,7 @@ ALTER TABLE ONLY addresses
 
 
 --
--- Name: ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY ar_internal_metadata
@@ -909,15 +909,7 @@ ALTER TABLE ONLY ar_internal_metadata
 
 
 --
--- Name: business_categories_membership_applications_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY business_categories_membership_applications
-    ADD CONSTRAINT business_categories_membership_applications_pkey PRIMARY KEY (id);
-
-
---
--- Name: business_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: business_categories business_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY business_categories
@@ -925,7 +917,15 @@ ALTER TABLE ONLY business_categories
 
 
 --
--- Name: ckeditor_assets_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: business_categories_shf_applications business_categories_shf_applications_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY business_categories_shf_applications
+    ADD CONSTRAINT business_categories_shf_applications_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: ckeditor_assets ckeditor_assets_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY ckeditor_assets
@@ -933,7 +933,7 @@ ALTER TABLE ONLY ckeditor_assets
 
 
 --
--- Name: companies_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: companies companies_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY companies
@@ -957,7 +957,7 @@ ALTER TABLE ONLY kommuns
 
 
 --
--- Name: member_app_waiting_reasons_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: member_app_waiting_reasons member_app_waiting_reasons_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY member_app_waiting_reasons
@@ -965,7 +965,7 @@ ALTER TABLE ONLY member_app_waiting_reasons
 
 
 --
--- Name: member_pages_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: member_pages member_pages_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY member_pages
@@ -973,15 +973,7 @@ ALTER TABLE ONLY member_pages
 
 
 --
--- Name: membership_applications_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY membership_applications
-    ADD CONSTRAINT membership_applications_pkey PRIMARY KEY (id);
-
-
---
--- Name: payments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: payments payments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY payments
@@ -989,7 +981,7 @@ ALTER TABLE ONLY payments
 
 
 --
--- Name: regions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: regions regions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY regions
@@ -997,7 +989,7 @@ ALTER TABLE ONLY regions
 
 
 --
--- Name: schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY schema_migrations
@@ -1005,7 +997,15 @@ ALTER TABLE ONLY schema_migrations
 
 
 --
--- Name: shf_documents_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: shf_applications shf_applications_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY shf_applications
+    ADD CONSTRAINT shf_applications_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: shf_documents shf_documents_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY shf_documents
@@ -1013,7 +1013,7 @@ ALTER TABLE ONLY shf_documents
 
 
 --
--- Name: uploaded_files_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: uploaded_files uploaded_files_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY uploaded_files
@@ -1021,7 +1021,7 @@ ALTER TABLE ONLY uploaded_files
 
 
 --
--- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY users
@@ -1076,7 +1076,6 @@ CREATE INDEX index_ckeditor_assets_on_type ON ckeditor_assets USING btree (type)
 
 CREATE UNIQUE INDEX index_companies_on_company_number ON companies USING btree (company_number);
 
-
 --
 -- Name: index_dinkurs_events_on_company_id; Type: INDEX; Schema: public; Owner: -
 --
@@ -1085,38 +1084,17 @@ CREATE INDEX index_dinkurs_events_on_company_id ON dinkurs_events USING btree (c
 
 
 --
--- Name: index_membership_applications_on_company_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_membership_applications_on_company_id ON membership_applications USING btree (company_id);
-
-
---
--- Name: index_membership_applications_on_member_app_waiting_reasons_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_membership_applications_on_member_app_waiting_reasons_id ON membership_applications USING btree (member_app_waiting_reasons_id);
-
-
---
--- Name: index_membership_applications_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_membership_applications_on_user_id ON membership_applications USING btree (user_id);
-
-
---
 -- Name: index_on_applications; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_on_applications ON business_categories_membership_applications USING btree (membership_application_id);
+CREATE INDEX index_on_applications ON business_categories_shf_applications USING btree (shf_application_id);
 
 
 --
 -- Name: index_on_categories; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_on_categories ON business_categories_membership_applications USING btree (business_category_id);
+CREATE INDEX index_on_categories ON business_categories_shf_applications USING btree (business_category_id);
 
 
 --
@@ -1134,6 +1112,27 @@ CREATE INDEX index_payments_on_user_id ON payments USING btree (user_id);
 
 
 --
+-- Name: index_shf_applications_on_company_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_shf_applications_on_company_id ON shf_applications USING btree (company_id);
+
+
+--
+-- Name: index_shf_applications_on_member_app_waiting_reasons_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_shf_applications_on_member_app_waiting_reasons_id ON shf_applications USING btree (member_app_waiting_reasons_id);
+
+
+--
+-- Name: index_shf_applications_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_shf_applications_on_user_id ON shf_applications USING btree (user_id);
+
+
+--
 -- Name: index_shf_documents_on_uploader_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1141,10 +1140,10 @@ CREATE INDEX index_shf_documents_on_uploader_id ON shf_documents USING btree (up
 
 
 --
--- Name: index_uploaded_files_on_membership_application_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_uploaded_files_on_shf_application_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_uploaded_files_on_membership_application_id ON uploaded_files USING btree (membership_application_id);
+CREATE INDEX index_uploaded_files_on_shf_application_id ON uploaded_files USING btree (shf_application_id);
 
 
 --
@@ -1169,7 +1168,7 @@ CREATE UNIQUE INDEX index_users_on_reset_password_token ON users USING btree (re
 
 
 --
--- Name: fk_rails_081dc04a02; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: payments fk_rails_081dc04a02; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY payments
@@ -1177,7 +1176,7 @@ ALTER TABLE ONLY payments
 
 
 --
--- Name: fk_rails_0fc68a9316; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: payments fk_rails_0fc68a9316; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY payments
@@ -1185,7 +1184,7 @@ ALTER TABLE ONLY payments
 
 
 --
--- Name: fk_rails_1b8d2a3863; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: ckeditor_assets fk_rails_1b8d2a3863; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY ckeditor_assets
@@ -1193,23 +1192,23 @@ ALTER TABLE ONLY ckeditor_assets
 
 
 --
--- Name: fk_rails_2224289299; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: uploaded_files fk_rails_2224289299; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY uploaded_files
-    ADD CONSTRAINT fk_rails_2224289299 FOREIGN KEY (membership_application_id) REFERENCES membership_applications(id);
+    ADD CONSTRAINT fk_rails_2224289299 FOREIGN KEY (shf_application_id) REFERENCES shf_applications(id);
 
 
 --
--- Name: fk_rails_3ee395b045; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: shf_applications fk_rails_3ee395b045; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY membership_applications
+ALTER TABLE ONLY shf_applications
     ADD CONSTRAINT fk_rails_3ee395b045 FOREIGN KEY (member_app_waiting_reasons_id) REFERENCES member_app_waiting_reasons(id);
 
 
 --
--- Name: fk_rails_76a66052a5; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: addresses fk_rails_76a66052a5; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY addresses
@@ -1217,7 +1216,7 @@ ALTER TABLE ONLY addresses
 
 
 --
--- Name: fk_rails_bb6df17516; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: shf_documents fk_rails_bb6df17516; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY shf_documents
@@ -1225,10 +1224,10 @@ ALTER TABLE ONLY shf_documents
 
 
 --
--- Name: fk_rails_be394644c4; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: shf_applications fk_rails_be394644c4; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY membership_applications
+ALTER TABLE ONLY shf_applications
     ADD CONSTRAINT fk_rails_be394644c4 FOREIGN KEY (user_id) REFERENCES users(id);
 
 
@@ -1310,7 +1309,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20171026103648'),
 ('20171109142139'),
 ('20171120170441'),
-('20171129011045');
-
+('20171129011045'),
+('20171213174816');
 
 

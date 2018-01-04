@@ -27,37 +27,37 @@ Feature: When a new application is received, all admins get an email notificatio
     And I am on the "landing" page
     And I click on t("menus.nav.users.apply_for_membership")
     And I fill in the translated form with data:
-      | membership_applications.new.first_name | membership_applications.new.last_name | membership_applications.new.company_number | membership_applications.new.phone_number | membership_applications.new.contact_email |
-      | Emma                                   | HappyMutts                            | 5562252998                                 | 031-1234567                              | emma@happymutts.com                       |
+      | shf_applications.new.first_name | shf_applications.new.last_name | shf_applications.new.company_number | shf_applications.new.phone_number | shf_applications.new.contact_email |
+      | Emma                            | HappyMutts                     | 5562252998                          | 031-1234567                       | emma@happymutts.com                |
     And I select "Groomer" Category
-    And I click on t("membership_applications.new.submit_button_label")
+    And I click on t("shf_applications.new.submit_button_label")
     Then I should be on the "landing" page
-    And I should see t("membership_applications.create.success", email_address: 'emma@happymutts.com')
+    And I should see t("shf_applications.create.success", email_address: 'emma@happymutts.com')
     And I am logged out
     And I am logged in as "admin1@shf.se"
     Then "admin1@shf.se" should receive an email
     And I open the email
-    And I should see t("application_mailer.admin.new_application_received.subject") in the email subject
-    And I should see t("application_mailer.admin.new_application_received.message_text.new_app_arrived") in the email body
-    And I should see t("application_mailer.admin.new_application_received.message_text.from") in the email body
-    And I should see t("application_mailer.admin.new_application_received.message_text.view_app_here") in the email body
-    And I should see t("application_mailer.admin.new_application_received.message_text.must_be_logged_in") in the email body
+    And I should see t("mailers.admin_mailer.new_application_received.subject") in the email subject
+    And I should see t("mailers.admin_mailer.new_application_received.message_text.new_app_arrived") in the email body
+    And I should see t("mailers.admin_mailer.new_application_received.message_text.from") in the email body
+    And I should see t("mailers.admin_mailer.new_application_received.message_text.view_app_here") in the email body
+    And I should see t("mailers.admin_mailer.new_application_received.message_text.must_be_logged_in") in the email body
     And I am logged out
     And I am logged in as "admin2@shf.se"
     Then "admin2@shf.se" should receive an email
     And I open the email
-    And I should see t("application_mailer.admin.new_application_received.subject") in the email subject
-    And I should see t("application_mailer.admin.new_application_received.message_text.new_app_arrived") in the email body
-    And I should see t("application_mailer.admin.new_application_received.message_text.from") in the email body
-    And I should see t("application_mailer.admin.new_application_received.message_text.view_app_here") in the email body
-    And I should see t("application_mailer.admin.new_application_received.message_text.must_be_logged_in") in the email body
+    And I should see t("mailers.admin_mailer.new_application_received.subject") in the email subject
+    And I should see t("mailers.admin_mailer.new_application_received.message_text.new_app_arrived") in the email body
+    And I should see t("mailers.admin_mailer.new_application_received.message_text.from") in the email body
+    And I should see t("mailers.admin_mailer.new_application_received.message_text.view_app_here") in the email body
+    And I should see t("mailers.admin_mailer.new_application_received.message_text.must_be_logged_in") in the email body
     Then "admin3@shf.se" should receive an email
     And I open the email
-    And I should see t("application_mailer.admin.new_application_received.subject") in the email subject
-    And I should see t("application_mailer.admin.new_application_received.message_text.new_app_arrived") in the email body
-    And I should see t("application_mailer.admin.new_application_received.message_text.from") in the email body
-    And I should see t("application_mailer.admin.new_application_received.message_text.view_app_here") in the email body
-    And I should see t("application_mailer.admin.new_application_received.message_text.must_be_logged_in") in the email body
+    And I should see t("mailers.admin_mailer.new_application_received.subject") in the email subject
+    And I should see t("mailers.admin_mailer.new_application_received.message_text.new_app_arrived") in the email body
+    And I should see t("mailers.admin_mailer.new_application_received.message_text.from") in the email body
+    And I should see t("mailers.admin_mailer.new_application_received.message_text.view_app_here") in the email body
+    And I should see t("mailers.admin_mailer.new_application_received.message_text.must_be_logged_in") in the email body
 
 
   Scenario: User submits a new application app with bad info so it is not created, so no email sent [SAD PATH]
@@ -65,10 +65,10 @@ Feature: When a new application is received, all admins get an email notificatio
     And I am on the "landing" page
     And I click on t("menus.nav.users.apply_for_membership")
     And I fill in the translated form with data:
-      | membership_applications.new.first_name | membership_applications.new.phone_number | membership_applications.new.contact_email |
-      | Emma                                   | 031-1234567                              | emma@happymutts.com                       |
+      | shf_applications.new.first_name | shf_applications.new.phone_number | shf_applications.new.contact_email |
+      | Emma                            | 031-1234567                       | emma@happymutts.com                |
     And I select "Groomer" Category
-    And I click on t("membership_applications.new.submit_button_label")
-    And I should see t("membership_applications.create.error")
+    And I click on t("shf_applications.new.submit_button_label")
+    And I should see t("shf_applications.create.error")
     Then "admin1@shf.se" should receive 0 email
     Then "admin2@shf.se" should receive 0 email

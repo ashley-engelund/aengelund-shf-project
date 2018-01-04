@@ -8,7 +8,8 @@ namespace :shf do
 
   desc 'recreate db (current env): drop, setup, migrate, seed the db.'
   task :db_recreate => [:environment] do
-    tasks = ['db:drop', 'db:create', 'db:migrate',
+    Rake::Task['db:drop'].invoke if database_exists?
+    tasks = ['db:create', 'db:migrate',
              'shf:load_regions', 'shf:load_kommuns', 'db:seed']
     tasks.each { |t| Rake::Task["#{t}"].invoke }
   end
@@ -237,6 +238,15 @@ namespace :shf do
 
   # -------------------------------------------------
 
+  def database_exists?
+    ActiveRecord::Base.connection
+  rescue ActiveRecord::NoDatabaseError
+    false
+  else
+    true
+  end
+
+
   def import_a_member_app_csv(row, log)
 
     log.record('info', "Importing row: #{row.inspect}")
@@ -259,17 +269,17 @@ namespace :shf do
                                      phone_number: row[:phone_number],
                                      website: row[:website])
 
-    if (membership = MembershipApplication.find_by(user: user.id))
+    if (membership = ShfApplication.find_by(user: user.id))
       puts_already_exists('Membership application', " org number: #{row[:company_number]}")
     else
-      membership = MembershipApplication.create!(company_number: row[:company_number],
-                                                 first_name: row[:first_name],
-                                                 last_name: row[:last_name],
-                                                 contact_email: user.email,
-                                                 state: ACCEPTED_STATE,
-                                                 membership_number: row[:membership_number],
-                                                 user: user,
-                                                 company: company
+      membership = ShfApplication.create!(company_number: row[:company_number],
+                                          first_name: row[:first_name],
+                                          last_name: row[:last_name],
+                                          contact_email: user.email,
+                                          state: ACCEPTED_STATE,
+                                          membership_number: row[:membership_number],
+                                          user: user,
+                                          company: company
       )
 
       puts_created('Membership application', " org number: #{row[:company_number]}")

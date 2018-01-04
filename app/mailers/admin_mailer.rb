@@ -1,13 +1,13 @@
 class AdminMailer < ApplicationMailer
 
 
-  def new_member_application_received(new_member_app, admin)
+  def new_shf_application_received(new_shf_app, admin)
 
-    @member_app = new_member_app
+    @shf_app = new_shf_app
 
     set_mail_info __method__, admin
 
-    mail to: @recipient_email, subject: t('application_mailer.admin.new_application_received.subject')
+    mail to: @recipient_email, subject: t('mailers.admin_mailer.new_application_received.subject')
 
   end
 

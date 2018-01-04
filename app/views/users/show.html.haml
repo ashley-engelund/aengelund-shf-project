@@ -18,15 +18,13 @@
                     label_class: 'standard-label')
   .clearfix
 
-  - if current_user.admin? || beta_user?(@user)
-
-    = render partial: 'member_payment_status', locals: { user: @user }
+  = render partial: 'member_payment_status', locals: { user: @user }
 
   .clearfix
 
   .col-sm-12
 
-    - unless @user.membership_applications.exists?
+    - unless @user.shf_applications.exists?
       = field_or_none("#{t('applications')}", t('none'), label_class: 'standard-label')
     - else
       -# .col-sm-3{ style: 'margin-left: -15px;' }
@@ -37,23 +35,24 @@
         %thead
           %tr
             %th
-              = t('activerecord.attributes.membership_application.contact_email')
+              = t('activerecord.attributes.shf_application.contact_email')
             %th
-              = t('activerecord.attributes.membership_application.state')
+              = t('activerecord.attributes.shf_application.state')
             %th
-              = t('activerecord.attributes.membership_application.company_number')
+              = t('activerecord.attributes.shf_application.company_number')
             %th
               = t('activerecord.attributes.company.name')
         %tbody
-          - @user.membership_applications.includes(:company).each do |app|
-            %tr.membership_application
+          - @user.shf_applications.includes(:company).each do |app|
+            %tr.shf_application
               %td= mail_to(app.contact_email)
               %td
+                - i18n_state = t("shf_applications.state.#{app.state}")
                 - if app.accepted?
-                  %span.yes= app.state
+                  %span.yes= i18n_state
                 - else
-                  %span.maybe= app.state
-              %td= link_to(app.company_number, membership_application_path(app))
+                  %span.maybe= i18n_state
+              %td= link_to(app.company_number, shf_application_path(app))
               %td= app.company&.name
 
   .col-sm-12
