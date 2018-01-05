@@ -277,3 +277,10 @@ end
 And(/^the page should( not)? be blank$/) do | negate |
   expect(page.body).send( (negate ? :not_to : :to), be_empty )
 end
+
+
+# use xpath to check for <script > elements in the <head> section that have
+# a src attribute that contains js_name_portion
+And(/^the page source should( not)? have "([^"]*)" javascript in the header$/) do | negated, js_name_portion |
+  expect(page).send( (negated ? :not_to : :to),  have_xpath("//head/script[contains(@src,'#{js_name_portion}')]", visible: false) )
+end
