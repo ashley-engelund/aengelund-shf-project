@@ -9,19 +9,20 @@
     %title Medlemmar i Sveriges Hundföretagare
     = csrf_meta_tags
 
+    = yield :meta_for_view  # meta markup specific to a view
+
     = stylesheet_link_tag 'https://cdnjs.cloudflare.com/ajax/libs/' + |
                           'select2/4.0.2/css/select2.min.css'         |
     = stylesheet_link_tag 'application', media: 'all'
 
+    = yield :stylesheet_for_view  # stylesheet markup specific to a view
+
+
     = javascript_include_tag 'application'
     = javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.full.min.js'
     = javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/i18n/sv.js'
-    = javascript_include_tag Ckeditor.cdn_url
-    = javascript_include_tag "https://maps.googleapis.com/maps/api/js?key=" + |
-                             "#{Geocoder.config[:api_key]}&language=#{I18n.locale}" + |
-                             "&region=SE" |
-    = javascript_include_tag HIPS_JS_CDN
 
+    = yield :javascript_for_view  # javascript markup specific to a view
 
     - if Rails.env.test?
       -#
@@ -35,6 +36,8 @@
       :javascript
         $.fx.off = true;
 
+
+    = yield :final_header_info_for_view  # markup specific to a view that must come last
 
 
   %body{class: "#{controller_name} #{action_name} page page-template page-template-page-sidebar-none"}
