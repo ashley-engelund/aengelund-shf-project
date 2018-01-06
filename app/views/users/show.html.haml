@@ -1,3 +1,6 @@
+- content_for :javascript_for_view do
+  = javascript_include_tag HIPS_JS_CDN
+
 %header.entry-header
   - user_name = @user.full_name
   - if @user.admin?

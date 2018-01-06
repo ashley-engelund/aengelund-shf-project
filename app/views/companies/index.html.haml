@@ -1,3 +1,6 @@
+- content_for :javascript_for_view do
+  = javascript_include_tag "https://maps.googleapis.com/maps/api/js?key=#{Geocoder.config[:api_key]}&language=#{I18n.locale}&region=SE"
+
 %header.entry-header
   - unless current_user.admin?
     %h1.entry-title= t('.title')
