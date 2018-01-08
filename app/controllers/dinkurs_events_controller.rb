@@ -1,8 +1,9 @@
+# Standard Rails controller
 class DinkursEventsController < ApplicationController
 
   before_action :set_dinkurs_event, only: [:show, :edit, :update, :destroy]
   before_action :authorize_dinkurs_event, only: [:show, :edit, :update, :destroy]
-  before_action :authorize_dinkurs_class, only: [:index, :new, :create, :get_dinkurs_events]
+  before_action :authorize_dinkurs_class, only: [:index, :new, :create]
 
 
   def index
@@ -29,11 +30,11 @@ class DinkursEventsController < ApplicationController
 
     respond_to do |format|
       if @dinkurs_event.save
-        format.html { redirect_to @dinkurs_event, notice: 'Dinkurs event was successfully created.' }
-        format.json { render :show, status: :created, location: @dinkurs_event }
+        format.html { redirect_to_show_with_notice 'Dinkurs event was successfully created.' }
+        format.json { render_json_show_with_status :created }
       else
         format.html { render :new }
-        format.json { render json: @dinkurs_event.errors, status: :unprocessable_entity }
+        format.json { render_json_errors }
       end
     end
   end
@@ -43,20 +44,24 @@ class DinkursEventsController < ApplicationController
     respond_to do |format|
       if @dinkurs_event.update(dinkurs_event_params)
         format.html { redirect_to @dinkurs_event, notice: 'Dinkurs event was successfully updated.' }
-        format.json { render :show, status: :ok, location: @dinkurs_event }
+        format.json { render_json_show_with_status :ok }
       else
         format.html { render :edit }
-        format.json { render json: @dinkurs_event.errors, status: :unprocessable_entity }
+        format.json { render_json_errors }
       end
     end
   end
 
 
   def destroy
-    @dinkurs_event.destroy
     respond_to do |format|
-      format.html { redirect_to dinkurs_events_url, notice: 'Dinkurs event was successfully destroyed.' }
-      format.json { head :no_content }
+      if @dinkurs_event.destroy
+        format.html { redirect_to dinkurs_events_url, notice: 'Dinkurs event was successfully destroyed.' }
+        format.json { head :no_content }
+      else
+        format.html { redirect_to_show_with_notice 'Dinkurs event could not be destroyed.' }
+        format.json { render_json_errors }
+      end
     end
   end
 
@@ -111,6 +116,23 @@ class DinkursEventsController < ApplicationController
                                           :event_aftertext,
                                           :event_event_dates,
                                           :company_id)
+  end
+
+
+  # Render the @dinkurs_event with the show view and set the flash message
+  def redirect_to_show_with_notice(message)
+    redirect_to @dinkurs_event, notice: message
+  end
+
+
+  # Render the @dinkurs_event with the json format with the given status 'stat'
+  def render_json_show_with_status(stat)
+    render :show, status: stat, location: @dinkurs_event
+  end
+
+
+  def render_json_errors(stat = :unprocessable_entity)
+    render json: @dinkurs_event.errors, status: stat
   end
 
 end
