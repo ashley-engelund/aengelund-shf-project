@@ -17,6 +17,7 @@ RSpec.describe DinkursService, vcr: {record: :none } do
 
 
   VALID_COMPANY_ID = 'yFKGQJ'
+  VALID_COMPANY_ID2 = 'AJdjHi'
 
 
   describe '.get_events' do

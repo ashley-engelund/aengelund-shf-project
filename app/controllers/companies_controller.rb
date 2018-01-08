@@ -112,6 +112,7 @@ class CompaniesController < ApplicationController
            locals: { company: @company, error: t('companies.update.error') }
   end
 
+
   def get_dinkurs_events
 
     raise 'Unsupported request' unless request.xhr?

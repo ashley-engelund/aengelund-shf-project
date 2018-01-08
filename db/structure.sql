@@ -802,21 +802,21 @@ ALTER TABLE ONLY business_categories ALTER COLUMN id SET DEFAULT nextval('busine
 
 
 --
--- Name: business_categories_shf_applications id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY business_categories_shf_applications ALTER COLUMN id SET DEFAULT nextval('business_categories_shf_applications_id_seq'::regclass);
 
 
 --
--- Name: ckeditor_assets id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY ckeditor_assets ALTER COLUMN id SET DEFAULT nextval('ckeditor_assets_id_seq'::regclass);
 
 
 --
--- Name: companies id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY companies ALTER COLUMN id SET DEFAULT nextval('companies_id_seq'::regclass);
@@ -837,63 +837,63 @@ ALTER TABLE ONLY kommuns ALTER COLUMN id SET DEFAULT nextval('kommuns_id_seq'::r
 
 
 --
--- Name: member_app_waiting_reasons id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY member_app_waiting_reasons ALTER COLUMN id SET DEFAULT nextval('member_app_waiting_reasons_id_seq'::regclass);
 
 
 --
--- Name: member_pages id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY member_pages ALTER COLUMN id SET DEFAULT nextval('member_pages_id_seq'::regclass);
 
 
 --
--- Name: payments id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY payments ALTER COLUMN id SET DEFAULT nextval('payments_id_seq'::regclass);
 
 
 --
--- Name: regions id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY regions ALTER COLUMN id SET DEFAULT nextval('regions_id_seq'::regclass);
 
 
 --
--- Name: shf_applications id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY shf_applications ALTER COLUMN id SET DEFAULT nextval('shf_applications_id_seq'::regclass);
 
 
 --
--- Name: shf_documents id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY shf_documents ALTER COLUMN id SET DEFAULT nextval('shf_documents_id_seq'::regclass);
 
 
 --
--- Name: uploaded_files id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY uploaded_files ALTER COLUMN id SET DEFAULT nextval('uploaded_files_id_seq'::regclass);
 
 
 --
--- Name: users id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
 
 
 --
--- Name: addresses addresses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: addresses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY addresses
@@ -901,7 +901,7 @@ ALTER TABLE ONLY addresses
 
 
 --
--- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY ar_internal_metadata
@@ -909,7 +909,7 @@ ALTER TABLE ONLY ar_internal_metadata
 
 
 --
--- Name: business_categories business_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: business_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY business_categories
@@ -917,7 +917,7 @@ ALTER TABLE ONLY business_categories
 
 
 --
--- Name: business_categories_shf_applications business_categories_shf_applications_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: business_categories_shf_applications_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY business_categories_shf_applications
@@ -925,7 +925,7 @@ ALTER TABLE ONLY business_categories_shf_applications
 
 
 --
--- Name: ckeditor_assets ckeditor_assets_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: ckeditor_assets_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY ckeditor_assets
@@ -933,7 +933,7 @@ ALTER TABLE ONLY ckeditor_assets
 
 
 --
--- Name: companies companies_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: companies_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY companies
@@ -957,7 +957,7 @@ ALTER TABLE ONLY kommuns
 
 
 --
--- Name: member_app_waiting_reasons member_app_waiting_reasons_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: member_app_waiting_reasons_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY member_app_waiting_reasons
@@ -965,7 +965,7 @@ ALTER TABLE ONLY member_app_waiting_reasons
 
 
 --
--- Name: member_pages member_pages_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: member_pages_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY member_pages
@@ -973,7 +973,7 @@ ALTER TABLE ONLY member_pages
 
 
 --
--- Name: payments payments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: payments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY payments
@@ -981,7 +981,7 @@ ALTER TABLE ONLY payments
 
 
 --
--- Name: regions regions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: regions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY regions
@@ -989,7 +989,7 @@ ALTER TABLE ONLY regions
 
 
 --
--- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY schema_migrations
@@ -997,7 +997,7 @@ ALTER TABLE ONLY schema_migrations
 
 
 --
--- Name: shf_applications shf_applications_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: shf_applications_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY shf_applications
@@ -1005,7 +1005,7 @@ ALTER TABLE ONLY shf_applications
 
 
 --
--- Name: shf_documents shf_documents_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: shf_documents_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY shf_documents
@@ -1013,7 +1013,7 @@ ALTER TABLE ONLY shf_documents
 
 
 --
--- Name: uploaded_files uploaded_files_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: uploaded_files_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY uploaded_files
@@ -1021,7 +1021,7 @@ ALTER TABLE ONLY uploaded_files
 
 
 --
--- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY users
@@ -1075,6 +1075,7 @@ CREATE INDEX index_ckeditor_assets_on_type ON ckeditor_assets USING btree (type)
 --
 
 CREATE UNIQUE INDEX index_companies_on_company_number ON companies USING btree (company_number);
+
 
 --
 -- Name: index_dinkurs_events_on_company_id; Type: INDEX; Schema: public; Owner: -
@@ -1168,7 +1169,7 @@ CREATE UNIQUE INDEX index_users_on_reset_password_token ON users USING btree (re
 
 
 --
--- Name: payments fk_rails_081dc04a02; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_rails_081dc04a02; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY payments
@@ -1176,7 +1177,7 @@ ALTER TABLE ONLY payments
 
 
 --
--- Name: payments fk_rails_0fc68a9316; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_rails_0fc68a9316; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY payments
@@ -1184,7 +1185,7 @@ ALTER TABLE ONLY payments
 
 
 --
--- Name: ckeditor_assets fk_rails_1b8d2a3863; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_rails_1b8d2a3863; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY ckeditor_assets
@@ -1192,7 +1193,7 @@ ALTER TABLE ONLY ckeditor_assets
 
 
 --
--- Name: uploaded_files fk_rails_2224289299; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_rails_2224289299; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY uploaded_files
@@ -1200,7 +1201,7 @@ ALTER TABLE ONLY uploaded_files
 
 
 --
--- Name: shf_applications fk_rails_3ee395b045; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_rails_3ee395b045; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY shf_applications
@@ -1208,7 +1209,7 @@ ALTER TABLE ONLY shf_applications
 
 
 --
--- Name: addresses fk_rails_76a66052a5; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_rails_76a66052a5; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY addresses
@@ -1216,7 +1217,7 @@ ALTER TABLE ONLY addresses
 
 
 --
--- Name: shf_documents fk_rails_bb6df17516; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_rails_bb6df17516; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY shf_documents
@@ -1224,7 +1225,7 @@ ALTER TABLE ONLY shf_documents
 
 
 --
--- Name: shf_applications fk_rails_be394644c4; Type: FK CONSTRAINT; Schema: public; Owner: -
+-- Name: fk_rails_be394644c4; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY shf_applications
