@@ -46,36 +46,52 @@ Feature: Pages load only the javascript needed
 
 
   @visitor
-  Scenario: Hips.js is not loaded on the landing page for visitors but Google maps is
+  Scenario: Google maps is loaded on the landing page, but not Hips.js or ckeditor
     Given I am on the "landing" page
     And I am Logged out
     Then I should see t("companies.index.h_companies_listed_below")
     And the page source should not have "hips.js" javascript in the header
     And the page source should have "maps.googleapis.com" javascript in the header
+    And the page source should not have "ckeditor.js" javascript in the header
 
 
-  @user
-  Scenario: Hips.js is not loaded on the landing page for users but Google maps is
+  @user, @member, @admin
+  Scenario Outline: Google maps is loaded on the landing page, but not Hips.js or ckeditor
     Given I am on the "landing" page
-    And I am logged in as "applicant@bowwow.se"
+    And I am logged in as "<user_email>"
     Then the page source should not have "hips.js" javascript in the header
     And the page source should have "maps.googleapis.com" javascript in the header
+    And the page source should not have "ckeditor.js" javascript in the header
+
+    Scenarios:
+      | user_email          |
+      | applicant@bowwow.se |
+      | emma@happymutts.se  |
+      | admin@shf.se        |
 
 
-  @member
-  Scenario: Hips.js is not loaded on the landing page for members but Google maps is
-    Given I am on the "landing" page
-    And I am logged in as "emma@happymutts.se"
+
+  @visitor
+  Scenario: Visitor: Google maps is loaded on the page for a company, but not Hips.js or ckeditor
+    Given I am on the page for company number "5560360793"
+    And I am logged out
     Then the page source should not have "hips.js" javascript in the header
     And the page source should have "maps.googleapis.com" javascript in the header
+    And the page source should not have "ckeditor.js" javascript in the header
 
-
-  @admin
-  Scenario: Hips.js is not loaded on the landing page for admin but Google maps is
-    Given I am on the "landing" page
-    And I am logged in as "admin@shf.se"
+  @user, @member, @admin
+  Scenario Outline: User, Member, Admin: Google maps is loaded on the page for a company, but not Hips.js or ckeditor
+    Given I am on the page for company number "5560360793"
+    And I am logged in as "<user_email>"
     Then the page source should not have "hips.js" javascript in the header
     And the page source should have "maps.googleapis.com" javascript in the header
+    And the page source should not have "ckeditor.js" javascript in the header
+
+    Scenarios:
+      | user_email          |
+      | applicant@bowwow.se |
+      | emma@happymutts.se  |
+      | admin@shf.se        |
 
 
   @user
@@ -133,14 +149,3 @@ Feature: Pages load only the javascript needed
     Then the page source should not have "hips.js" javascript in the header
     And the page source should not have "maps.googleapis.com" javascript in the header
     And the page source should have "ckeditor.js" javascript in the header
-
-
-  @visitor
-  Scenario: CKEditor javascript is not loaded on landing page or company view pages for a visitor (just to check a few)
-    Given I am logged out
-    And I am on the "landing" page
-    Then the page source should not have "ckeditor.js" javascript in the header
-    And I am on the page for company number "5560360793"
-    Then the page source should not have "ckeditor.js" javascript in the header
-
-
