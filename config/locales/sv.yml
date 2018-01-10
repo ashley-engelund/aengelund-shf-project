@@ -489,6 +489,7 @@ sv:
       pay_branding_fee_tooltip: Betald avgift förlänger H-märkningen i ett år.
       branding_fee_expire_date_tooltip: Efter detta datum går perioden för din H-märkning ut.
       members: Företagsmedlemmar
+      pay_branding_fee: &pay_branding_fee "Betala H-märkesavgift"
 
     index:
       title:  Hitta H-märkt företag
@@ -670,8 +671,10 @@ sv:
 
   payments:
     create:
-      page_title: &page_title '%{payment_type} betalning av: %{user_name}'
-      title: *page_title
+      page_title: &payments_create_page_title '%{payment_type} betalning av: %{user_name}'
+      title: *payments_create_page_title
+      pay_membership: &pay_membership "Betala medlemsavgift"
+
       something_wrong: 'Något gick fel - kontakta systemadministratören på %{admin_email}'
 
     success:
@@ -972,10 +975,10 @@ sv:
           view_company: Visa företagssida
           edit_company: Redigera företag
         my_application: *my_application
-        pay_membership: Betala medlemsavgift
+        pay_membership: *pay_membership
 
       company:
-        pay_branding_fee: Betala H-märkesavgift
+        pay_branding_fee: *pay_branding_fee
 
       admin:
         shf_main_site: *shf_main_site

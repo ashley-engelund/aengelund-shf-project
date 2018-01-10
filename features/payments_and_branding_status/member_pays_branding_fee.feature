@@ -1,4 +1,6 @@
-Feature: As a member
+Feature:  Member pays company branding fee
+
+  As a member
   So that my company can maintain my H-branding license rights
   I need to be able to pay my branding fee
 
@@ -30,7 +32,7 @@ Feature: As a member
     Given I am logged in as "emma@mutts.com"
     Then I am the page for company number "2120000142"
     And I should see "HappyMutts"
-    Then I click on t("menus.nav.company.pay_branding_fee")
+    Then I click on t("companies.show.pay_branding_fee")
     And I complete the branding payment for "HappyMutts"
     And I should see t("payments.success.success")
     And I should see "2018-12-31"
@@ -41,7 +43,7 @@ Feature: As a member
     Given I am logged in as "emma@mutts.com"
     Then I am the page for company number "2120000142"
     And I should see "HAPPYMUTTS"
-    Then I click on t("menus.nav.company.pay_branding_fee")
+    Then I click on t("companies.show.pay_branding_fee")
     And I abandon the payment
     And I should see "2017-12-31"
     And I should not see t("payments.success.success")
@@ -53,7 +55,7 @@ Feature: As a member
     Given I am logged in as "emma@mutts.com"
     Then I am the page for company number "2120000142"
     And I should see "HappyMutts"
-    Then I click on t("menus.nav.company.pay_branding_fee")
+    Then I click on t("companies.show.pay_branding_fee")
     And I incur an error in branding payment processing for "HappyMutts"
     And I should see t("payments.error.error")
     And I should see "2017-12-31"

@@ -8,7 +8,7 @@ module UsersHelper
     # Returns link styled as a button
     return nil unless user.allow_pay_member_fee?
 
-    link_to("#{t('menus.nav.members.pay_membership')}",
+    link_to("#{t('payments.create.pay_membership')}",
             payments_path(user_id: user.id,
                           type: Payment::PAYMENT_TYPE_MEMBER),
             { method: :post, class: 'btn btn-primary btn-xs' })

@@ -66,7 +66,7 @@ Feature: As an admin
     Then I am in "anna@nosnarkybarky.se" browser
     And I am logged in as "anna@nosnarkybarky.se"
     And I am on the "user details" page for "anna@nosnarkybarky.se"
-    Then I click on t("menus.nav.members.pay_membership")
+    Then I click on t("payments.create.pay_membership")
     And I complete the payment
     And I should see t("payments.success.success")
     Then I should see t("menus.nav.members.manage_company.submenu_title")
@@ -98,7 +98,7 @@ Feature: As an admin
     Then I am in "emma@happymutts.se" browser
     And I am logged in as "emma@happymutts.se"
     And I am on the "user details" page for "emma@happymutts.se"
-    Then I click on t("menus.nav.members.pay_membership")
+    Then I click on t("payments.create.pay_membership")
     And I complete the payment
     And I should see t("payments.success.success")
 

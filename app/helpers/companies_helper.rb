@@ -65,7 +65,7 @@ module CompaniesHelper
   def pay_branding_fee_link(company_id, user_id)
     # Returns link styled as a button
 
-    link_to("#{t('menus.nav.company.pay_branding_fee')}",
+    link_to("#{t('companies.show.pay_branding_fee')}",
             payments_path(user_id: user_id,
                           company_id: company_id,
                           type: Payment::PAYMENT_TYPE_BRANDING),

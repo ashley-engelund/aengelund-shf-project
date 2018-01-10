@@ -1,4 +1,6 @@
-Feature: As a user
+Feature:  User pays membership fee
+
+  As a user
   So that I can be approved for membership
   I need to be able to pay my membership fee
 
@@ -23,7 +25,7 @@ Feature: As a user
     When I am in "emma@mutts.com" browser
     And I am logged in as "emma@mutts.com"
     And I am on the "user details" page for "emma@mutts.com"
-    Then I should not see t("menus.nav.members.pay_membership")
+    Then I should not see t("payments.create.pay_membership")
 
     Then I am in "admin@shf.se" browser
     And I am logged in as "admin@shf.se"
@@ -32,8 +34,8 @@ Feature: As a user
 
     Then I am in "emma@mutts.com" browser
     And I reload the page
-    And I should see t("menus.nav.members.pay_membership")
-    Then I click on t("menus.nav.members.pay_membership")
+    And I should see t("payments.create.pay_membership")
+    Then I click on t("payments.create.pay_membership")
     And I complete the payment
     And I should see t("payments.success.success")
     And I should see "2018-12-31"
@@ -45,7 +47,7 @@ Feature: As a user
     When I am in "emma@mutts.com" browser
     And I am logged in as "emma@mutts.com"
     And I am on the "user details" page for "emma@mutts.com"
-    Then I should not see t("menus.nav.members.pay_membership")
+    Then I should not see t("payments.create.pay_membership")
 
     Then I am in "admin@shf.se" browser
     And I am logged in as "admin@shf.se"
@@ -54,8 +56,8 @@ Feature: As a user
 
     Then I am in "emma@mutts.com" browser
     And I reload the page
-    And I should see t("menus.nav.members.pay_membership")
-    Then I click on t("menus.nav.members.pay_membership")
+    And I should see t("payments.create.pay_membership")
+    Then I click on t("payments.create.pay_membership")
     And I complete the payment
     And I should see t("payments.success.success")
     And I should see "2019-06-30"

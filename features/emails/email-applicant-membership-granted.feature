@@ -39,8 +39,8 @@ Feature: Applicant gets an email when membership has been granted. (They are now
     When I am in "emma@happymutts.se" browser
     And I am logged in as "emma@happymutts.se"
     And I am on the "user details" page for "emma@happymutts.se"
-    And I should see t("menus.nav.members.pay_membership")
-    Then I click on t("menus.nav.members.pay_membership")
+    And I should see t("payments.create.pay_membership")
+    Then I click on t("payments.create.pay_membership")
     And I complete the payment
     And I should see t("payments.success.success")
     And I should see "2018-12-31"
@@ -63,8 +63,8 @@ Feature: Applicant gets an email when membership has been granted. (They are now
     When I am in "emma@happymutts.se" browser
     And I am logged in as "emma@happymutts.se"
     And I am on the "user details" page for "emma@happymutts.se"
-    And I should see t("menus.nav.members.pay_membership")
-    Then I click on t("menus.nav.members.pay_membership")
+    And I should see t("payments.create.pay_membership")
+    Then I click on t("payments.create.pay_membership")
     And I abandon the payment
     And I should not see t("payments.success.success")
     Then "emma@happymutts.se" should receive no emails
@@ -76,8 +76,8 @@ Feature: Applicant gets an email when membership has been granted. (They are now
     When I am in "emma@happymutts.se" browser
     And I am logged in as "emma@happymutts.se"
     And I am on the "user details" page for "emma@happymutts.se"
-    And I should see t("menus.nav.members.pay_membership")
-    Then I click on t("menus.nav.members.pay_membership")
+    And I should see t("payments.create.pay_membership")
+    Then I click on t("payments.create.pay_membership")
     And I abandon the payment
     And I should not see t("payments.success.success")
     Then "emma@happymutts.se" should receive no emails
