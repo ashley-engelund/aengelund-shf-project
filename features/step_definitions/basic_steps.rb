@@ -110,3 +110,18 @@ end
 Given(/^the date is set to "([^"]*)"$/) do |date|
   Timecop.freeze(Time.zone.parse(date))
 end
+
+# Hide (or show) the search form by clicking on the button
+#  This is frequently used to hide the search form on a page so that
+#  items in the select lists are not included in counts.
+#
+#  assumes that the hide/show button has id = "toggle_search_form"
+#
+And(/^I (hide|show) the search form$/) do | _hide_or_show |
+  click_link_or_button "toggle_search_form"  # click on "toggle_search_form"
+end
+
+
+And(/^I scroll to the top$/) do
+  page.evaluate_script("scroll(0, 0)")
+end
