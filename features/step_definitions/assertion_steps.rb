@@ -67,8 +67,9 @@ end
 World(PathHelpers)
 
 
-Then(/^I should( not)? see #{CAPTURE_STRING}$/) do |negate, content|
-  expect(page).send (negate ? :not_to : :to), have_content(content)
+Then(/^I should( not)? see( case insensitive)? #{CAPTURE_STRING}$/) do |negate, case_insensitive, content|
+  expected_content = case_insensitive ? /content/i : content
+  expect(page).send (negate ? :not_to : :to), have_content(expected_content)
 end
 
 
