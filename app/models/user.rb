@@ -46,22 +46,28 @@ class User < ApplicationRecord
     most_recent_payment(Payment::PAYMENT_TYPE_MEMBER)
   end
 
+  # TODO this should not be the responsiblity of the User class.
   def membership_expire_date
     payment_expire_date(Payment::PAYMENT_TYPE_MEMBER)
   end
 
+  # TODO this should not be the responsiblity of the User class.
   def membership_payment_notes
     payment_notes(Payment::PAYMENT_TYPE_MEMBER)
   end
 
+  # TODO this should not be the responsiblity of the User class.
   def membership_current?
     membership_expire_date&.future?
   end
 
+  # TODO this should not be the responsiblity of the User class.
   def self.next_membership_payment_dates(user_id)
     next_payment_dates(user_id, Payment::PAYMENT_TYPE_MEMBER)
   end
 
+
+  # TODO this should not be the responsiblity of the User class.
   def allow_pay_member_fee?
     # Business rule: user can pay membership fee if:
     # 1. user == member, or
@@ -80,6 +86,13 @@ class User < ApplicationRecord
   def has_shf_application?
     shf_application&.valid?
   end
+
+
+  def has_approved_shf_application?
+    shf_application&.accepted?
+  end
+
+
 
   def check_member_status
     # Called from Warden after user authentication - see after_sign_in.rb
@@ -133,13 +146,16 @@ class User < ApplicationRecord
     end
   end
 
-  private
-
+  # The fact that this can no longer be private is a smell that it should be refactored out into a separate class
   def issue_membership_number
     self.membership_number = self.membership_number.blank? ? get_next_membership_number : self.membership_number
   end
 
 
+  private
+
+
+  # TODO this should not be the responsiblity of the User class.
   def get_next_membership_number
     self.class.connection.execute("SELECT nextval('membership_number_seq')").getvalue(0,0).to_s
   end
