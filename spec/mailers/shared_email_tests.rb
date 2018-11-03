@@ -5,7 +5,7 @@ require 'email_spec/rspec'
 # Assumes that 'email_created' exists e.g. via a let(:..) (which might be within a block)
 RSpec.shared_examples 'a successfully created email to a member' do |subject, recipient, greeting|
 
-  it "email us with questions shows membership email address from ENV['SHF_REPLY_TO_EMAIL']" do
+  it "email us with questions reply to email address is ENV['SHF_REPLY_TO_EMAIL']" do
     expect(email_created).to have_body_text(ENV['SHF_REPLY_TO_EMAIL'])
   end
 
