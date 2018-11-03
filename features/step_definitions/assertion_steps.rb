@@ -83,6 +83,11 @@ Then "I should{negate} see {capture_string}" do |negate, content|
 end
 
 
+Then "I should see raw HTML {capture_string}" do |html|
+  expect(page.body).to match html
+end
+
+
 Then "I should{negate} see {capture_string} image" do |negate, alt_text|
   expect(page).send (negate ? :not_to : :to),  have_xpath("//img[contains(@alt,'#{alt_text}')]")
 end
@@ -219,11 +224,12 @@ end
 
 Then(/^I should( not)? see "([^"]*)" before "([^"]*)"$/) do |not_see, toSearch, last|
   assert_text toSearch
-  regex = /#{Regexp.quote("#{toSearch}")}.+#{Regexp.quote("#{last}")}/
+  regex = /#{Regexp.quote("#{toSearch}")}.+#{Regexp.quote("#{last}")}/m
+
   if not_see
-    assert_no_text regex
+    assert_no_text :visible, regex
   else
-    assert_text regex
+    assert_text :visible, regex
   end
 end
 

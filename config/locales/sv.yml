@@ -327,8 +327,9 @@ sv:
       upload_button: Välj dina filer...
       will_be_uploaded: 'Dessa filer kommer att laddas upp när du skickar in din ansökan:'
       upload_multiple_files: ctrl-tangenten (Windows) eller command/cmd på (Mac) för att välja flera.
-
       submit_button_label: *submit
+      need_to_enter_name_html: Du måste ha angett ditt för- och efternamn
+                          för att skapa en medlemsansökan. %{edit_profile}.
 
     rendering:
       success: Aktion utfördes framgångsrikt
@@ -687,6 +688,8 @@ sv:
       title: Alla Användare
       no_search_results: Din sökning gav inget resultat, prova att ta bort något av dina val.
 
+    delete_user: Radera %{user}
+
     show:
       membership_number: *membership_number
       email: *email
@@ -775,6 +778,9 @@ sv:
       application: *application
       applications_tooltip: Användaren har en öppen ansökan
       expire_date: *expire_date
+
+    destroy:
+      success: Användaren raderades framgångsrikt.
 
   payments:
     create:
