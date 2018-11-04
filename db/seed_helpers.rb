@@ -103,7 +103,9 @@ module SeedHelper
     # Create payment records for accepted app and associated company
     if ma.state == MA_ACCEPTED_STATE_STR
 
-      user.grant_membership(send_email: false)
+      # do not send emails
+      MembershipStatusUpdater.instance.update_membership_status(user, send_email: false)
+      #user.grant_membership(send_email: false)
 
       start_date, expire_date = User.next_membership_payment_dates(user.id)
 
@@ -115,6 +117,10 @@ module SeedHelper
                                       expire_date: expire_date)
 
       start_date, expire_date = Company.next_branding_payment_dates(ma.companies[0].id)
+
+      # do not send emails
+      MembershipStatusUpdater.instance.check_requirements_and_act({user: user, send_email: false})
+      #user.update_action(send_email: false)
 
       ma.companies[0].payments << Payment.create(payment_type: Payment::PAYMENT_TYPE_BRANDING,
                                       user_id: user.id,
