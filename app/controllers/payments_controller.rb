@@ -98,9 +98,9 @@ class PaymentsController < ApplicationController
 
     payment = Payment.find(params[:id])
 
-    if payment.payment_type == Payment::PAYMENT_TYPE_MEMBER
-      payment.user.grant_membership
-    end
+   # if payment.payment_type == Payment::PAYMENT_TYPE_MEMBER
+   #   payment.user.grant_membership
+   # end
 
     redirect_on_payment_success_or_error(payment)
   end

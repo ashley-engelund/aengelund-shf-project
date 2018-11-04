@@ -72,7 +72,7 @@ RSpec.describe PaymentsController, type: :controller do
 
   describe 'GET #success' do
 
-    it 'calls User#grant_membership if membership payment' do
+    it 'membership status is updated via Observer' do
       application
 
       expect(payment.user.member).to be false
