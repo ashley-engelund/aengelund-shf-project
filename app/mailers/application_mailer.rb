@@ -21,8 +21,12 @@ class ApplicationMailer < ActionMailer::Base
   from_address.address =  ENV['SHF_FROM_EMAIL']
   from_address.display_name = ENV['SHF_EMAIL_DISPLAY_NAME']
 
+  reply_to_address = Mail::Address.new
+  reply_to_address.address = ENV['SHF_REPLY_TO_EMAIL']
+  reply_to_address.display_name = ENV['SHF_EMAIL_DISPLAY_NAME']
+
   default from: from_address.format,
-    reply_to: ENV['SHF_REPLY_TO_EMAIL']
+    reply_to: reply_to_address.format
 
   layout 'mailer'
 
