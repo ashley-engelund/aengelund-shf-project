@@ -76,7 +76,8 @@ class Payment < ApplicationRecord
 
 
   # The transaction was successful.  The transaction might depend on an external system (e.g. HIPS).
-  # This method is called so we can do whatever it is we need to do (e.g. set the status, etc).
+  # This method is called so we can do whatever it is we need to do
+  # (e.g. set the status, notify observers, etc.).
   def successfully_completed
     self.update(status: SUCCESSFUL)
 
