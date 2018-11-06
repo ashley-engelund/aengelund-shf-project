@@ -95,4 +95,11 @@ class Payment < ApplicationRecord
   def membership_fee?
     payment_type == PAYMENT_TYPE_MEMBER
   end
+
+
+  # this is here until this is refactored to make this a Factory for the right class
+  def branding_fee?
+    payment_type == PAYMENT_TYPE_BRANDING
+  end
+
 end
