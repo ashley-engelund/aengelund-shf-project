@@ -53,6 +53,36 @@ RSpec.describe PaymentsController, type: :controller do
       expect(response.redirect_url).to eq root_url
       expect(flash[:alert]).to eq "#{I18n.t('errors.not_permitted')}"
     end
+
+    let(:valid_order) do
+      payment_data = { id: 1, type: Payment::PAYMENT_TYPE_MEMBER, currency: 'SEK' }
+      HipsService.create_order(1, 1, payment_data, nil_urls)
+    end
+
+    it 'successful payment updates membership status via Observer' do
+
+      mock_hips_order = {'id' => 1234,  'status' => 'successful'}
+
+      allow(HipsService).to receive(:create_order).and_return(mock_hips_order)
+
+      user_accepted_app = create(:user)
+      accepted_app = create(:shf_application, :accepted, user: user_accepted_app, companies: [company])
+      successful_payment = create(:payment, user: user_accepted_app, company: company)
+
+      sign_in user_accepted_app
+
+      expect(user1.member).to be false
+      expect(user1.membership_number).to be_nil
+
+      post :create, params: { user_id: user_accepted_app.id, type: Payment::PAYMENT_TYPE_MEMBER }
+
+      # reload user_accepted_app
+      user_accepted_app.reload
+
+      expect(user_accepted_app.member).to be true
+      expect(user_accepted_app.membership_number).not_to be_nil
+    end
+
   end
 
   describe 'POST #webhook' do
@@ -70,18 +100,4 @@ RSpec.describe PaymentsController, type: :controller do
     end
   end
 
-  describe 'GET #success' do
-
-    it 'membership status is updated via Observer' do
-      application
-
-      expect(payment.user.member).to be false
-      expect(payment.user.membership_number).to be_nil
-
-      get :success, params: { id: payment, user_id: payment.user.id }
-
-      expect(payment.reload.user.member).to be true
-      expect(payment.user.membership_number).not_to be_nil
-    end
-  end
 end
