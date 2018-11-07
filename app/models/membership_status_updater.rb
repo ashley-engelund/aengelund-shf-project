@@ -82,7 +82,7 @@ class MembershipStatusUpdater < AbstractUpdater
   #
 
   def shf_application_updated(shf_app)
-    check_user_and_log(user, shf_app, LOGMSG_USER_UPDATED, LOGMSG_USER_UPDATED_CHECKREASON)
+    check_user_and_log(shf_app.user, shf_app, LOGMSG_USER_UPDATED, LOGMSG_USER_UPDATED_CHECKREASON)
   end
 
 
@@ -149,7 +149,7 @@ class MembershipStatusUpdater < AbstractUpdater
 
     ActivityLogger.open(log_filename, self.class.to_s, LOGMSG_MEMBERSHIP_RENEWED, false) do |log|
 
-      MemberMailer.membership_renewed(user).deliver if send_email
+     # MemberMailer.membership_renewed(user).deliver if send_email
 
       log.record(:info, "#{LOGMSG_MEMBERSHIP_RENEWED}: #{user.inspect}")
     end
