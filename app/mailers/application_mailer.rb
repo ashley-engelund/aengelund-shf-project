@@ -38,7 +38,7 @@ class ApplicationMailer < ActionMailer::Base
   reply_to_address.display_name = ENV['SHF_EMAIL_DISPLAY_NAME']
 
   default from: from_address.format,
-          reply_to: reply_to_address
+    reply_to: reply_to_address.format
 
   layout 'mailer'
 
@@ -54,7 +54,6 @@ class ApplicationMailer < ActionMailer::Base
   # Do not raise the error.  Do not want to show anything to the user
   def self.deliver_mail(mail)
 
-    mail
     super
 
   rescue  Mailgun::CommunicationError => mailgun_error
