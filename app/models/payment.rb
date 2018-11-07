@@ -35,7 +35,7 @@ class Payment < ApplicationRecord
     'awaiting_payments' => 'Väntar på betalning' # awaiting payment
   }.freeze
 
-  CREATED = ORDER_PAYMENT_STATUS['created']
+  CREATED = ORDER_PAYMENT_STATUS[nil]
   PENDING = ORDER_PAYMENT_STATUS['pending']
   SUCCESSFUL = ORDER_PAYMENT_STATUS['successful']
   EXPIRED = ORDER_PAYMENT_STATUS['expired']
@@ -80,27 +80,8 @@ class Payment < ApplicationRecord
   # (e.g. set the status, notify observers, etc.).
   def successfully_completed
     self.update(status: SUCCESSFUL)
-
     changed
     notify_observers(self)
-
-  end
-
-
-  def successful?
-    status == SUCCESSFUL
-  end
-
-
-  # this is here until this is refactored to make this a Factory for the right class
-  def membership_fee?
-    payment_type == PAYMENT_TYPE_MEMBER
-  end
-
-
-  # this is here until this is refactored to make this a Factory for the right class
-  def branding_fee?
-    payment_type == PAYMENT_TYPE_BRANDING
   end
 
 end
