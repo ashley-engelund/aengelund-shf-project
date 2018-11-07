@@ -55,7 +55,7 @@ RSpec.describe MemberMailer, type: :mailer do
     end
 
     it_behaves_like 'reply-to address is correct' do
-      let(:mail_address) { email_sent.header['reply-to'] }
+      let(:email_created) { email_sent }
     end
 
   end

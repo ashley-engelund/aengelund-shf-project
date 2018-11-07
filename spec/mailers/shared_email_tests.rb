@@ -28,8 +28,15 @@ RSpec.shared_examples 'from address is correct' do
 end
 
 
-# Assumes that 'mail_address' exists e.g. via a let(:..) (which might be within a block)
+# Assumes that 'email_created' exists e.g. via a let(:..) (which might be within a block)
 RSpec.shared_examples 'reply-to address is correct' do
+
+  let(:mail_address) { email_created.header['reply-to'] }
+
+  it 'only 1 reply_to address' do
+    actual_reply_to =  email_created.reply_to
+    expect(actual_reply_to.size).to eq 1
+  end
 
   it "is a Mail::Field" do
     expect(mail_address).to be_a Mail::Field
