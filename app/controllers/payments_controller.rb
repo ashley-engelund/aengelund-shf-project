@@ -50,7 +50,6 @@ class PaymentsController < ApplicationController
     @payment.hips_id = @hips_id
     @payment.status = Payment.order_to_payment_status(hips_order['status'])
     @payment.save!
-    @payment.successfully_completed
 
   rescue RuntimeError, HTTParty::Error, ActiveRecord::RecordInvalid  => exc
     @payment.destroy if @payment.persisted?
@@ -95,20 +94,22 @@ class PaymentsController < ApplicationController
   end
 
   def success
+    payment = Payment.find(params[:id])
+    payment.successfully_completed
     helpers.flash_message(:notice, t('.success'))
-    find_and_redirect(params[:id])
+    redirect_on_payment_success_or_error(payment)
   end
 
   def error
     helpers.flash_message(:alert, t('.error'))
-    find_and_redirect(params[:id])
+    payment = Payment.find(params[:id])
+    redirect_on_payment_success_or_error(payment)
   end
 
   private
 
-  def find_and_redirect(payment_id)
+  def redirect_on_payment_success_or_error(payment)
 
-    payment = Payment.find(payment_id)
     if payment.payment_type == Payment::PAYMENT_TYPE_MEMBER
       redirect_to user_path(params[:user_id])
     else
