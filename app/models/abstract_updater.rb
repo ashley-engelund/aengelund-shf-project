@@ -1,3 +1,5 @@
+require 'singleton'
+
 #--------------------------
 #
 # @class AbstractUpdater
@@ -63,14 +65,12 @@
 #
 #--------------------------
 
-require 'singleton'
-
 
 class AbstractUpdater
 
   include Singleton
 
-  LOG_DIR = File.join(__dir__, '..', '..', 'log') # just here for demo purposes
+  LOG_DIR = File.join(__dir__, '..', '..', 'log')
 
 
   # This is just a reminder that subclasses must implement this method.
@@ -103,14 +103,16 @@ class AbstractUpdater
   #
   def check_requirements_and_act(args = {})
 
-    ActivityLogger.open(log_filename, self.class.to_s, "#{__method__}", false) do |log|
+    updater_class = self.class
+
+    ActivityLogger.open(log_filename, updater_class.to_s, "#{__method__}", false) do |log|
       log.record(:info, "checking check_requirements_and_act for #{args.inspect}")
     end
 
-    if self.class.update_requirements_checker.satisfied? args
+    if updater_class.update_requirements_checker.satisfied? args
       update_action args
     else
-      revoke_update_action(args) if self.class.revoke_requirements_checker.satisfied? args
+      revoke_update_action(args) if updater_class.revoke_requirements_checker.satisfied? args
     end
 
   end
@@ -143,7 +145,7 @@ class AbstractUpdater
   # end
 
 
-  # The following logging it entirely optional:
+  # The following logging is optional:
   def log_filename
     File.join(LOG_DIR, "#{Rails.env}_#{self.class}.log")
   end
