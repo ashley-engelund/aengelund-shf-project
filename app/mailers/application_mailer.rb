@@ -12,10 +12,22 @@ class ApplicationMailer < ActionMailer::Base
   #
   #  @url http://www.simonnordberg.com/creating-robust-email-templates-in-action-mailer/
   #
+  # Note: Railgun  does not handle 'reply_to:' properly.  Railgun does not recognize it as
+  # a standard field; 'reply_to' is not in Railgun::Mailer::IGNORED_HEADERS
+  # Railgun will create an upper case version of it ('Reply-to') *and* the (original)
+  # lower-case version 'reply-to', which will ultimately and incorrectly create
+  # two 'Reply-To' entries in the delivered mail. (Railgun does this in
+  # Railgun::Mailer#transform_for_mailgun)
+  #
+  # Thus we have to add 'reply-to' to Railgun::Mailer::IGNORED_HEADERS
+  #
 
   include MailgunConfig
 
   include CommonMailUtils
+
+  Railgun::Mailer::IGNORED_HEADERS << 'reply-to' # have to add this so that Railgun
+  # treats the reply-to as a 'standard' header field and does not duplicate it
 
   from_address = Mail::Address.new
   from_address.address =  ENV['SHF_FROM_EMAIL']
@@ -26,7 +38,7 @@ class ApplicationMailer < ActionMailer::Base
   reply_to_address.display_name = ENV['SHF_EMAIL_DISPLAY_NAME']
 
   default from: from_address.format,
-    reply_to: reply_to_address.format
+          reply_to: reply_to_address
 
   layout 'mailer'
 
@@ -42,6 +54,7 @@ class ApplicationMailer < ActionMailer::Base
   # Do not raise the error.  Do not want to show anything to the user
   def self.deliver_mail(mail)
 
+    mail
     super
 
   rescue  Mailgun::CommunicationError => mailgun_error
