@@ -70,8 +70,6 @@ class AbstractUpdater
 
   include Singleton
 
-  LOG_DIR = File.join(__dir__, '..', '..', 'log')
-
 
   # This is just a reminder that subclasses must implement this method.
   # It is purposefully not defined here so that an error will be raised
@@ -145,9 +143,8 @@ class AbstractUpdater
   # end
 
 
-  # The following logging is optional:
   def log_filename
-    File.join(LOG_DIR, "#{Rails.env}_#{self.class}.log")
+    File.join(Rails.configuration.paths['log'].absolute_current, "#{Rails.env}_#{self.class.name}.log")
   end
 
 
