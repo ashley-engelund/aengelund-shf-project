@@ -43,6 +43,10 @@ class AdminController < ApplicationController
       out_str << (m_app.updated_at.strftime('%F'))
       out_str << ','
 
+       # expiry date
+      out_str << ( empty_str_if_blank(m_app.user.membership_expire_date ) )
+      out_str << ','
+
       # add the business categories, all surrounded by double-quotes
       out_str << '"' + m_app.business_categories.map(&:name).join(', ') + '"'
       out_str << ','
@@ -75,6 +79,7 @@ class AdminController < ApplicationController
                           t('activerecord.attributes.user.membership_number'),
                           t('activerecord.attributes.shf_application.state'),
                           'date of state',
+                          t('activerecord.attributes.payment.expire_date'),
                           t('activerecord.models.business_category.other'),
                           t('activerecord.models.company.one'),
                           'Member fee',
@@ -113,5 +118,10 @@ class AdminController < ApplicationController
     # say betals if member fee is paid, otherwise make link to where it is paid
     out_str << (arg.user.membership_current? ? 'Betald' : 'Betalas som inloggad via: http://hitta.sverigeshundforetagare.se' + user_path(arg.user))
     out_str << ','
+  end
+
+  #return an empty string if arg isNil else the arg.to_s
+  def empty_str_if_blank(arg)
+    arg.blank? ? '' : arg.to_s
   end
 end
