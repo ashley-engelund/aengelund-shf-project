@@ -16,10 +16,11 @@ RSpec.describe AdminController, type: :controller do
   out_str << "'#{I18n.t('activerecord.attributes.user.membership_number').strip}',"
   out_str << "'#{I18n.t('activerecord.attributes.shf_application.state').strip}',"
   out_str << "'date of state',"
+  out_str << "'#{I18n.t('activerecord.attributes.payment.expire_date')}',"
   out_str << "'#{I18n.t('activerecord.models.business_category.other').strip}',"
   out_str << "'#{I18n.t('activerecord.models.company.one').strip}',"
-  out_str << "'Member fee',"
-  out_str << "'H-branding',"
+  out_str << "'Member fee'," # should use I18n.t ? Check with Susanna L.
+  out_str << "'H-branding'," # should use I18n.t ? Check with Susanna L.
   out_str << "'#{I18n.t('activerecord.attributes.address.street').strip}',"
   out_str << "'#{I18n.t('activerecord.attributes.address.post_code').strip}',"
   out_str << "'#{I18n.t('activerecord.attributes.address.city').strip}',"
@@ -27,7 +28,7 @@ RSpec.describe AdminController, type: :controller do
   out_str << "'#{I18n.t('activerecord.attributes.address.region').strip}',"
   out_str << "'#{I18n.t('activerecord.attributes.address.country').strip}'"
   out_str << "\n"
-  out_str}
+  out_str }
 
 
   describe '#export_ankosan_csv' do
@@ -83,16 +84,16 @@ RSpec.describe AdminController, type: :controller do
           ShfApplication.aasm.states.each do |app_state|
 
             u = FactoryBot.create(:user,
-                                   first_name:    "First#{app_state.name}",
-                                   last_name:     "Last#{app_state.name}",
-                                   email: "#{app_state.name}@example.com")
+                                  first_name: "First#{app_state.name}",
+                                  last_name:  "Last#{app_state.name}",
+                                  email:      "#{app_state.name}@example.com")
 
             m = FactoryBot.create :shf_application,
-                                   contact_email: "#{app_state.name}@example.com",
-                                   state:         app_state.name,
-                                   user:          u
+                                  contact_email: "#{app_state.name}@example.com",
+                                  state:         app_state.name,
+                                  user:          u
 
-            member1_info = "#{m.contact_email},#{u.first_name},#{u.last_name},#{u.membership_number},"+ I18n.t("shf_applications.state.#{app_state.name}")
+            member1_info = "#{m.contact_email},#{u.first_name},#{u.last_name},#{u.membership_number}," + I18n.t("shf_applications.state.#{app_state.name}")
 
 
             result_str << member1_info + ','
@@ -100,6 +101,8 @@ RSpec.describe AdminController, type: :controller do
             # state date
             result_str << (m.updated_at.strftime('%F'))
             result_str << ','
+
+            result_str << "," # placeholder for expiry date
 
             result_str << "\"#{m.business_categories[0].name}\","
 
@@ -142,39 +145,42 @@ RSpec.describe AdminController, type: :controller do
 
 
         let(:u1) { FactoryBot.create(:user,
-                                      first_name:     "u1",
-                                      email: "user1@example.com",
-                                      membership_number: '1234567890')
+                                     first_name:        "u1",
+                                     email:             "user1@example.com",
+                                     membership_number: '1234567890')
         }
 
         let(:c1) { FactoryBot.create(:company) }
 
         let(:member1) { FactoryBot.create :shf_application,
-                                           contact_email:  "u1@example.com",
-                                           state:          :accepted,
-                                           user:           u1
+                                          contact_email: "u1@example.com",
+                                          state:         :accepted,
+                                          user:          u1
         }
 
 
         let(:csv_response) { post :export_ansokan_csv
-                             response.body
+        response.body
         }
 
         it 'uses the company name and  address for each member' do
 
           result_str = csv_header
 
-          member1_info = "#{member1.contact_email},#{u1.first_name},#{u1.last_name},#{u1.membership_number},"+ I18n.t("shf_applications.state.#{member1.state}")
+          member1_info = "#{member1.contact_email},#{u1.first_name},#{u1.last_name},#{u1.membership_number}," + I18n.t("shf_applications.state.#{member1.state}")
 
           result_str << member1_info + ','
+
           # state date
           result_str << (member1.updated_at.strftime('%F'))
           result_str << ','
 
+          result_str << "," # placeholder for expiry date
+
           result_str << "\"#{member1.business_categories[0].name}\","
 
           #result_str << '"' + c1.name + '"' +','
-          result_str << (member1.companies.empty? ?  '' : "\"#{member1.companies.last.name}\"") +','
+          result_str << (member1.companies.empty? ? '' : "\"#{member1.companies.last.name}\"") + ','
 
 
           # say betals if member fee is paid, otherwise make link to where it is paid
@@ -202,27 +208,27 @@ RSpec.describe AdminController, type: :controller do
 
 
         let(:u1) { FactoryBot.create(:user,
-                                      first_name:     "u1",
-                                      email: "user1@example.com",
-                                      membership_number: '1234567890')
+                                     first_name:        "u1",
+                                     email:             "user1@example.com",
+                                     membership_number: '1234567890')
         }
 
         let(:c1) { FactoryBot.create(:company) }
 
         let(:member1) { FactoryBot.create :shf_application,
-                                           contact_email:  "u1@example.com",
-                                           state:          :accepted,
-                                           user:           u1
-                      }
+                                          contact_email: "u1@example.com",
+                                          state:         :accepted,
+                                          user:          u1
+        }
 
         let(:csv_response) { post :export_ansokan_csv
-                             response.body
-                           }
-
-        let(:csv_response_reg) {  post :export_ansokan_csv
-                                  response.body
+        response.body
         }
-        let(:member1_info) {  "#{member1.contact_email},#{u1.first_name},#{u1.last_name},#{u1.membership_number},"+ I18n.t("shf_applications.state.#{member1.state}") }
+
+        let(:csv_response_reg) { post :export_ansokan_csv
+        response.body
+        }
+        let(:member1_info) { "#{member1.contact_email},#{u1.first_name},#{u1.last_name},#{u1.membership_number}," + I18n.t("shf_applications.state.#{member1.state}") }
 
 
         it 'zero/nil business categories' do
@@ -230,12 +236,16 @@ RSpec.describe AdminController, type: :controller do
           result_str = csv_header
 
           result_str << member1_info + ','
+
           # state date
           result_str << (member1.updated_at.strftime('%F'))
           result_str << ','
+
+          result_str << "," # placeholder for expiry date
+
           result_str << "\"#{member1.business_categories[0].name}\","
 
-          result_str << (member1.companies.empty? ?  '' : "\"#{member1.companies.last.name}\"") +','
+          result_str << (member1.companies.empty? ? '' : "\"#{member1.companies.last.name}\"") + ','
           # say betals if member fee is paid, otherwise make link to where it is paid
           result_str << (u1.membership_current? ? 'Betald' : 'Betalas som inloggad via: http://hitta.sverigeshundforetagare.se' + user_path(u1))
           result_str << ','
@@ -261,13 +271,16 @@ RSpec.describe AdminController, type: :controller do
           result_str = csv_header
 
           result_str << member1_info + ','
+
           # state date
           result_str << (member1.updated_at.strftime('%F'))
           result_str << ','
 
+          result_str << "," # placeholder for expiry date
+
           result_str << "\"#{member1.business_categories[0].name}\","
 
-          result_str << (member1.companies.empty? ?  '' : "\"#{member1.companies.last.name}\"") +','
+          result_str << (member1.companies.empty? ? '' : "\"#{member1.companies.last.name}\"") + ','
           # say betals if member fee is paid, otherwise make link to where it is paid
           result_str << (u1.membership_current? ? 'Betald' : 'Betalas som inloggad via: http://hitta.sverigeshundforetagare.se' + user_path(u1))
           result_str << ','
@@ -297,10 +310,13 @@ RSpec.describe AdminController, type: :controller do
 
           result_str_start = csv_header
           result_str_start << member1_info + ','
+
           # state date
           result_str_start << (member1.updated_at.strftime('%F'))
 
-          result_str_end = (member1.companies.empty? ?  '' : "\"#{member1.companies.last.name}\"") +','
+          result_str_start << "," # placeholder for expiry date
+
+          result_str_end = (member1.companies.empty? ? '' : "\"#{member1.companies.last.name}\"") + ','
 
           # say betals if member fee is paid, otherwise make link to where it is paid
           result_str_end << (u1.membership_current? ? 'Betald' : 'Betalas som inloggad via: http://hitta.sverigeshundforetagare.se' + user_path(u1))
@@ -332,13 +348,15 @@ RSpec.describe AdminController, type: :controller do
           expect(categories).to match_array(['Category1', 'Category 2', 'Category the third'])
         end
       end
+
+
       describe 'error from send_data is rescued' do
 
         # status, location, response_body
 
-        let(:error_message) {'Error. Error. Warning Will Robinson'}
+        let(:error_message) { 'Error. Error. Warning Will Robinson' }
 
-        subject {allow(@controller).to receive(:send_data) {raise StandardError.new(error_message)}
+        subject { allow(@controller).to receive(:send_data) { raise StandardError.new(error_message) }
 
         post :export_ansokan_csv
         }
@@ -362,6 +380,96 @@ RSpec.describe AdminController, type: :controller do
 
       end
 
+
+      describe 'includes expiry date' do
+
+        # helper to construct the start of the csv string for a user (before the expiry date)
+        def csv_start(shf_app)
+
+          a_user = shf_app.user
+
+          "#{shf_app.contact_email},#{a_user.first_name},#{a_user.last_name},#{a_user.membership_number}," +
+              I18n.t("shf_applications.state.#{shf_app.state}") + ",#{shf_app.updated_at.strftime('%F')},"
+
+        end
+
+
+        # helper to construct the end of the csv string for a user (after the expiry date)
+        def csv_end(shf_app)
+
+          # add the business categories, all surrounded by double-quotes
+          end_str = '"' + shf_app.business_categories.map(&:name).join(', ') + '"'
+          end_str << ','
+
+          end_str << (shf_app.companies.empty? ? '' : "\"#{shf_app.companies.last.name}\"") + ','
+          end_str << (shf_app.user.membership_current? ? 'Betald' : 'Betalas som inloggad via: http://hitta.sverigeshundforetagare.se' + user_path(shf_app.user))
+          end_str << ','
+
+          if shf_app.companies.empty?
+            end_str << '-'
+            end_str << ','
+          else
+            end_str << (shf_app.companies.last.branding_license? ? 'Betald' : 'Betalas som inloggad via: http://hitta.sverigeshundforetagare.se' + company_path(shf_app.companies.last))
+            end_str << ','
+          end
+
+          member_co = shf_app.companies.last
+          end_str << member_co.se_mailing_csv_str + "\n"
+
+          end_str
+        end
+
+
+        it 'shows expiry date for a member' do
+
+          member1 = FactoryBot.create(:member_with_membership_app)
+
+          FactoryBot.create(:payment,
+                            status:      'betald',
+                            user:        member1,
+                            expire_date: Time.zone.parse("2019-11-08"))
+
+          member_app = member1.shf_application
+
+
+          result_str = csv_header
+
+          result_str << csv_start(member_app)
+
+          # expiry date
+          result_str << '2019-11-08,'
+
+          result_str << csv_end(member_app)
+
+          post :export_ansokan_csv
+          print "\nresponse.body = ", response.body
+
+          expect(response.body).to match result_str
+
+        end
+
+
+        it 'no entry (just a comma) if expiry date is nil' do
+
+          user_with_app = FactoryBot.create(:user_with_membership_app)
+
+          user_app = user_with_app.shf_application
+
+          result_str = csv_header
+          result_str << csv_start(user_app)
+
+          # expiry date
+          result_str << ','
+
+          result_str << csv_end(user_app)
+
+          post :export_ansokan_csv
+
+          expect(response.body).to match result_str
+
+        end
+
+      end
     end
 
   end
