@@ -313,7 +313,7 @@ RSpec.describe AdminController, type: :controller do
                                                                         user: user_no_categories)
           shf_app_no_categories.business_categories = []
 
-          expect(csv_response).to match /(.*)\n([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^"^,]*),"",(.*),(.*),(.*),(.*),(.*),#{c1.se_mailing_csv_str}/
+          expect(csv_response).to match(/(.*)\n([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),([^"^,]*),"",(.*),(.*),(.*),(.*),(.*),#{c1.se_mailing_csv_str}/)
 
         end
 
@@ -322,7 +322,7 @@ RSpec.describe AdminController, type: :controller do
           member1.save
 
           #expect(csv_response).to match result_str
-          expect(csv_response).to match /(.*),(.*),(.*),(.*),(.*),(.*),\"#{member1.business_categories[0].name}\",(.*),(.*),(.*),(.*),(.*),#{c1.se_mailing_csv_str}/
+          expect(csv_response).to match(/(.*),(.*),(.*),(.*),(.*),(.*),\"#{member1.business_categories[0].name}\",(.*),(.*),(.*),(.*),(.*),#{c1.se_mailing_csv_str}/)
 
         end
 
