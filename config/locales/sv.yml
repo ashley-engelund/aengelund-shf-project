@@ -297,6 +297,15 @@ sv:
       member_fee: Medlemsavgift
       branding_fee: H-märkesavgift
 
+
+  company_locator:
+    error:
+      search_name_blank: 'Ange ett ställenamn (det kan inte vara tomt).'
+      search_distance_negative: 'Avståndet kan inte vara negativt'
+      latitude_blank: "Latitude cannot be blank."
+      longitude_blank: "Longitude cannot be blank."
+
+
   # Automatisk och manuell sökning för views:
   shf_applications:
     new:
