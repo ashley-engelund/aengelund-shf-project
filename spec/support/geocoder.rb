@@ -330,6 +330,36 @@ Geocoder::Lookup::Test.add_stub(
 
 Geocoder::Lookup::Test.add_stub(
 
+    "Bodalsvägen 15, 181 36, Lidingö, Ale, Sverige",
+    [
+        {
+            'latitude'     => 59.3498151,
+            'longitude'    => 18.1398528,
+            'address'      => 'Bodalsvägen 15, 181 36, Lidingö, Ale, Sverige',
+            'city'         => 'Stockholm',
+            'country'      => 'Sverige',
+            'country_code' => 'SE'
+        }
+    ]
+)
+
+Geocoder::Lookup::Test.add_stub(
+
+    "Ulvsundavägen 146, 167 68, Bromma, Ale, Sverige",
+    [
+        {
+            'latitude'     => 59.3414953,
+            'longitude'    => 17.9613089,
+            'address'      => 'Ulvsundavägen 146, 167 68, Bromma, Ale, Sverige',
+            'city'         => 'Stockholm',
+            'country'      => 'Sverige',
+            'country_code' => 'SE'
+        }
+    ]
+)
+
+Geocoder::Lookup::Test.add_stub(
+
     "Svärdlångsvägen 11 C, 120 60, Årsta, Ale, Sverige",
     [
         {
