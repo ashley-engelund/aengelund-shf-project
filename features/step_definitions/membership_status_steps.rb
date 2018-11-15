@@ -2,7 +2,7 @@
 
 Then(/I should be a member/) do
   @user.reload  # ensure the info is up to date
-  expect(@user.member).to be_truthy
+  expect(@user.member).to be_truthy, "Expected user ''#{@user.full_name}'' to be a member, but is not. Membership expiration date is #{@user.membership_expire_date}"
 end
 
 Then(/I should not be a member/) do
