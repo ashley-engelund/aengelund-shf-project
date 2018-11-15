@@ -45,7 +45,8 @@ Feature: Membership status updated due to payments or expiration
 
   @time_adjust
   Scenario: Membership payment made before membership expires
-    Given I am logged in as "emma@mutts.com"
+    Given the date is set to "2018-11-01"
+    And I am logged in as "emma@mutts.com"
     And I am on the "user details" page for "emma@mutts.com"
     Then I should be a member
     And My membership expiration date is 2018-12-31
