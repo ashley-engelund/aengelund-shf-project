@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe PaymentsController, type: :controller do
+
   let(:user1) { create(:user) }
   let(:user2) { create(:user) }
   let(:company) { create(:company) }
@@ -54,10 +55,6 @@ RSpec.describe PaymentsController, type: :controller do
       expect(flash[:alert]).to eq "#{I18n.t('errors.not_permitted')}"
     end
 
-    let(:valid_order) do
-      payment_data = { id: 1, type: Payment::PAYMENT_TYPE_MEMBER, currency: 'SEK' }
-      HipsService.create_order(1, 1, payment_data, nil_urls)
-    end
   end
 
   describe 'POST #webhook' do
@@ -75,4 +72,21 @@ RSpec.describe PaymentsController, type: :controller do
     end
   end
 
+
+  describe '#success' do
+
+    let(:payment_made) { instance_double(Payment, save: true) }
+
+    it 'calls payment.successfully_completed on success', :vcr do
+
+      allow(Payment).to receive(:find).and_return(payment_made)
+      allow(payment_made).to receive(:payment_type).and_return( Payment::PAYMENT_TYPE_MEMBER )
+
+      sign_in user1
+      expect(payment_made).to receive(:successfully_completed)
+
+      get :success, params: {user_id: user1.id, id: payment.id }
+
+    end
+  end
 end
