@@ -13,7 +13,7 @@ RSpec.describe CompaniesController, type: :controller do
 
       expected_fixed = { "utf8"       => "✓",
                          "controller" => "companies",
-                         "action"     => "index",
+                         "action"     => "index"
       }
 
       get :index, params: no_query_params

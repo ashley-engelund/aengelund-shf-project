@@ -22,28 +22,6 @@ class CompanyLocator
 
   DEFAULT_DISTANCE = 10
 
-  attr_accessor :location_name, :distance, :country
-
-
-  def distance
-    @distance ||= DEFAULT_DISTANCE
-  end
-
-
-  def country
-    @country ||= DEFAULT_COUNTRY
-  end
-
-
-  def location_name
-    @location_name ||= ''
-  end
-
-
-  def self.locate_companies
-    self.find_near_name(location_name, distance, country)
-  end
-
 
   # Find all companies with 'distance_km' kilometers of the latitude and longitude
   #
@@ -82,7 +60,6 @@ class CompanyLocator
 
   end
 
-  private
 
   def self.fix_nil_distance(possibly_nil_distance)
     possibly_nil_distance.nil? ?  DEFAULT_DISTANCE : possibly_nil_distance

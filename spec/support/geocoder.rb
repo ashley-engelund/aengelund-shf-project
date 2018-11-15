@@ -199,7 +199,7 @@ Geocoder::Lookup::Test.add_stub(
             'latitude'  => 60.47202399999999,
             'longitude' => 8.468945999999999,
             'address'   => 'Norway',
-            'country'   => 'Norway',
+            'country'   => 'Norway'
         }
     ]
 )
