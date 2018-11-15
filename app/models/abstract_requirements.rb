@@ -10,7 +10,7 @@
 #
 #       Each subclass MUST define the following methods:
 #
-#        'self.has_expected_arguments??(args)' verifies that the all the arguments (a Hash)
+#        'self.has_expected_arguments?(args)' verifies that the all the arguments (a Hash)
 #           expected are provided so that requirements can be checked
 #           Must return true or false (*not* nil) per the convention of a method that ends with "?"
 #

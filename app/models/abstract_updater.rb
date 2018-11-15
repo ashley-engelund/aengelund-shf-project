@@ -96,7 +96,7 @@ class AbstractUpdater
 
 
   # It is the responsibility of each subclass to parse the arguments as needed.
-  # They are an array here to allow for variation in the number and type(s) of
+  # They are a Hash to allow for variation in the number and type(s) of
   # arguments that are needed by subclasses.
   #
   def check_requirements_and_act(args = {})
