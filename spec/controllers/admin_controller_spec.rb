@@ -229,7 +229,7 @@ RSpec.describe AdminController, type: :controller do
         end
 
         it 'date of state (application status last update)' do
-          expect(pattern_matches[7]).to eq '2018-11-10' # Date.today
+          expect(pattern_matches[7]).to eq  Date.today.to_s
         end
 
         it 'company name' do
