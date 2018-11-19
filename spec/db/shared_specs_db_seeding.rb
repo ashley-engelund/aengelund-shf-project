@@ -44,7 +44,7 @@ RSpec.shared_examples 'admin, business categories, kommuns, and regions are seed
       expect(admin_in_db.email).to eq(admin_email)
     end
 
-    it "admin email is = ENV['SHF_ADMIN_PWD']" do
+    it "admin password is in the db" do
       expect(admin_in_db.valid_password?(admin_pwd)).to be_truthy
     end
 
