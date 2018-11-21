@@ -10,6 +10,7 @@ Feature: Membership status updated due to payments or expiration
   These all need to accurately change membership status.
 
   Background:
+
     Given the following users exist
       | email               | admin | member | membership_number |
       | emma@mutts.com      |       | true   | 1001              |
@@ -52,7 +53,7 @@ Feature: Membership status updated due to payments or expiration
     And My membership expiration date is 2018-12-31
     And I should see "1001"
     Then I click on t("menus.nav.members.pay_membership")
-    And I complete the payment
+    And I complete the membership payment
     And I should see t("payments.success.success")
     And I should be a member
     And My membership expiration date is 2019-12-31
@@ -66,7 +67,7 @@ Feature: Membership status updated due to payments or expiration
     And I am on the "user details" page for "emma@mutts.com"
     And I should not be a member
     Then I click on t("menus.nav.members.pay_membership")
-    And I complete the payment
+    And I complete the membership payment
     And I should see t("payments.success.success")
     And I should be a member
     And My membership expiration date is 2019-12-31
@@ -80,11 +81,11 @@ Feature: Membership status updated due to payments or expiration
     And I am on the "user details" page for "emma@mutts.com"
     And I should not be a member
     Then I click on t("menus.nav.members.pay_membership")
-    And I complete the payment
+    And I complete the membership payment
     And I should see t("payments.success.success")
-    And I should see "2019-12-31"
+    And I should see "2019-12-30"
     And I should be a member
-    And My membership expiration date is 2019-12-31
+    And My membership expiration date is 2019-12-30
 
 
 
