@@ -3,7 +3,7 @@ require 'rails_helper'
 require_relative File.join('..', '..', 'app', 'services', 'address_exporter')
 
 
-RSpec.describe Company, type: :model do
+RSpec.describe Company, type: :model, focus: true do
 
   let(:with_short_h_brand_url) do
     create(:company, short_h_brand_url: 'http://www.tinyurl.com/hbrand')
@@ -690,7 +690,7 @@ RSpec.describe Company, type: :model do
     end
 
 
-    context '.at_addresses(addresses)'do
+    context '.at_addresses(addresses)' do
 
       before(:all) do
         create(:company,
@@ -716,7 +716,7 @@ RSpec.describe Company, type: :model do
         expect(Company.at_addresses([]).size).to eq 0
       end
 
-    end
+    end # end context '.at_addresses(addresses)' do
 
   end #scopes
 
