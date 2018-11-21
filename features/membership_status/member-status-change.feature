@@ -31,6 +31,8 @@ Feature: Membership status updated due to payments or expiration
       | lars@newapp.com     | 5562252998     | rehab         | new      |
 
 
+    Given the date is set to "2017-12-31"
+
     Given the following payments exist
       | user_email          | start_date | expire_date | payment_type | status | hips_id | company_number |
       | emma@mutts.com      | 2017-12-31 | 2018-12-31  | member_fee   | betald | none    | 2120000142     |
