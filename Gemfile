@@ -136,7 +136,6 @@ group :test do
   gem 'timecop'
   gem 'rubocop-rspec'
 
-  gem 'rails-controller-testing'
 end
 
 group :production do
