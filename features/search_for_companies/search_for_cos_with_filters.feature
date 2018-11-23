@@ -1,4 +1,4 @@
-Feature: Search Companies
+Feature: Search for Companies with Filters
 
 As a visitor to the site
 In order to find companies that I might want to work with
