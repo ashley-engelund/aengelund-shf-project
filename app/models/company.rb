@@ -128,10 +128,18 @@ class Company < ApplicationRecord
     joins(:addresses).where.not('addresses.visibility = ?', 'none').distinct
   end
 
+  # FIXME - go back to original before final commit; make this separate task
+  # this is a more efficient but UNTESTED equivalent query: Company.where(id: CompanyApplication.where(shf_application_id: ShfApplication.where(user_id: User.members.pluck(:id)).pluck(:id) ).pluck(:company_id))
   def self.with_members
-    joins(:shf_applications)
-      .where('shf_applications.state = ?', :accepted)
-      .joins(:users).where('users.member = ?', true).distinct
+    where(id: CompanyApplication
+                  .where(shf_application_id: ShfApplication
+                                                 .where(user_id: User.members.pluck(:id))
+                                                 .pluck(:id) )
+                  .pluck(:company_id))
+
+ #   joins(:shf_applications)
+ #     .where('shf_applications.state = ?', :accepted)
+ #     .joins(:users).where('users.member = ?', true).distinct
   end
 
   def self.searchable
