@@ -97,7 +97,7 @@ function addMarkersToMap(map, markers, bounds, icon, optimize) {
 // get the text from element with id = element_id
 //  if there is no element_id in the document, return an empty string
 function getMarkerText(elementId) {
-    var text = "";
+    var text = '';
 
     if (document.getElementById(elementId) !== null) {
         text = document.getElementById(elementId).childNodes[0].nodeValue;
@@ -132,8 +132,8 @@ function addMarker(coordinates, map, text, icon, optimize) {
     });
 
     // don't create a pop-up box if there's no text to display
-    if (text !== "") {
-        google.maps.event.addListener(marker, "click", function () {
+    if (text !== '') {
+        google.maps.event.addListener(marker, 'click', function () {
             createInfoWindow(text).open(map, marker);
         });
     }
@@ -173,25 +173,23 @@ function createInfoWindow(text) {
  */
 function SearchNearMeCheckbox(controlDiv, isChecked) {
 
-    var nearParams = "";
-
     // outer box that holds the checkbox
-    var searchNearMeDiv = document.createElement("DIV");
-    searchNearMeDiv.id = "search-near-me";
+    var searchNearMeDiv = document.createElement('DIV');
+    searchNearMeDiv.id = 'search-near-me';
 
-    var searchNearMeCheckbox = document.createElement("INPUT");
-    searchNearMeCheckbox.setAttribute("type", "checkbox");
+    var searchNearMeCheckbox = document.createElement('INPUT');
+    searchNearMeCheckbox.setAttribute('type', 'checkbox');
     searchNearMeCheckbox.id = 'search-near-me-checkbox';
     searchNearMeCheckbox.className = 'search-near-me';
-    searchNearMeCheckbox.title = I18n.t("companies.index.search_near_me_title");
+    searchNearMeCheckbox.title = I18n.t('companies.index.search_near_me_title');
 
     searchNearMeCheckbox.checked = isChecked;
 
     // text for the checkbox
-    var checkboxLabel = document.createElement("LABEL");
+    var checkboxLabel = document.createElement('LABEL');
     checkboxLabel.control = searchNearMeCheckbox;
-    checkboxLabel.id = "checkbox-label";
-    checkboxLabel.innerText = I18n.t("companies.index.search_near_me");
+    checkboxLabel.id = 'checkbox-label';
+    checkboxLabel.innerText = I18n.t('companies.index.search_near_me');
 
     searchNearMeDiv.appendChild(searchNearMeCheckbox);
     searchNearMeDiv.appendChild(checkboxLabel);
@@ -199,17 +197,17 @@ function SearchNearMeCheckbox(controlDiv, isChecked) {
 
     // Setup the click event listeners: simply set the map to Stockholm.
     searchNearMeCheckbox.addEventListener('click', function () {
-
-        let parsedUrl = new URL(window.location.href);
-        let searchParams = parsedUrl.searchParams.toString();
+        var nearParams = '';
+        var parsedUrl = new URL(window.location.href);
+        var searchParams = parsedUrl.searchParams.toString();
 
         if ( this.checked ) {
-            nearParams = "&near=lat=59.3293235,long=18.0685808,dist=100";
+            nearParams = '&near=lat=59.3293235,long=18.0685808,dist=100';
         }
 
         $.ajax({
-            url: "hundforetag",
-            type: "GET",
+            url: 'hundforetag',
+            type: 'GET',
             data: searchParams + nearParams
         });
 
