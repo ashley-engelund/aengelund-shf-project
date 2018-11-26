@@ -1,0 +1,3 @@
+// update the companies list and the map
+$("#map").replaceWith("<%= j(render('map_companies',  markers: location_and_markers_for(@companies), nearMeChecked: @search_near_me)) %>");
+$("#companies_list").replaceWith("<%= j(render('companies_list', companies: @companies, search_params: @search_params )) %>");
