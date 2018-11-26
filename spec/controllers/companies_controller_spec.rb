@@ -131,24 +131,23 @@ RSpec.describe CompaniesController, type: :controller do
 
       get :index, params: no_query_params
 
-      all_visible_cos = @controller.view_assigns['all_visible_companies']
-      expect(all_visible_cos.map { |co| co.name }).to match_array(['Stockholms Hundforum',
-                                                                                   'HundKurs',
-                                                                                   'Hundelska',
-                                                                                   'Hundens Hus'])
+      all_cos = @controller.view_assigns['all_companies']
+      expect(all_cos.map(&:name)).to match_array(['Stockholms Hundforum',
+                                                  'HundKurs',
+                                                  'Hundelska',
+                                                  'Hundens Hus'])
     end
 
 
     context 'search for locations near coordinates' do
 
-      it "near: {latitude: '59.3251172, longitude: 18.0710935}" do
+      it "near: 'lat=59.3251172,long=18.0710935' " do
         member_hundforum.save
         member_hundelska.save
         member_hundenshus.save
         member_hundkurs.save
 
-        near_coords_params = { "utf8" => "✓", near: {latitude: '59.3251172',
-                                                     longitude: '18.0710935'} }
+        near_coords_params = { "utf8" => "✓", near: 'lat=59.3251172,long=18.0710935' }
 
         get :index, params: near_coords_params
 
@@ -158,15 +157,13 @@ RSpec.describe CompaniesController, type: :controller do
                                                       'Hundens Hus'])
       end
 
-      it "near: {latitude: '59.3251172, longitude: 18.0710935, distance: 3}" do
+      it "near: 'dist=3,lat=59.3251172,long=18.0710935' " do
         member_hundforum.save
         member_hundelska.save
         member_hundenshus.save
         member_hundkurs.save
 
-        near_coords_params = { "utf8" => "✓", near: {latitude: '59.3251172',
-                                                     longitude: '18.0710935',
-                                                     distance: 3} }
+        near_coords_params = { "utf8" => "✓", near: 'dist=3,lat=59.3251172,long=18.0710935' }
 
         get :index, params: near_coords_params
 
@@ -175,19 +172,32 @@ RSpec.describe CompaniesController, type: :controller do
                                                       'Hundelska'])
       end
 
-
-    end
-
-
-    context 'search for locations :near' do
-
-      it "near: {name: 'Stockholm'}" do
+      it "near: 'lat=59.3251172,long=18.0710935,dist=3' " do
         member_hundforum.save
         member_hundelska.save
         member_hundenshus.save
         member_hundkurs.save
 
-        near_stockholm_params = { "utf8" => "✓", near: {name: 'Stockholm' } }
+        near_coords_params = { "utf8" => "✓", near: 'lat=59.3251172,long=18.0710935,dist=3' }
+
+        get :index, params: near_coords_params
+
+        all_cos = @controller.view_assigns['all_companies']
+        expect((all_cos).map(&:name)).to match_array(['Stockholms Hundforum',
+                                                      'Hundelska'])
+      end
+    end
+
+
+    context 'search for locations :near' do
+
+      it "near:'name=Stockholm' " do
+        member_hundforum.save
+        member_hundelska.save
+        member_hundenshus.save
+        member_hundkurs.save
+
+        near_stockholm_params = { "utf8" => "✓", near:'name=Stockholm' }
 
         get :index, params: near_stockholm_params
 
@@ -197,13 +207,13 @@ RSpec.describe CompaniesController, type: :controller do
                                                       'Hundens Hus'])
       end
 
-      it "near: {name: 'Stockholm', distance: 2}" do
+      it "near: 'name=Stockholm,dist=3' " do
         member_hundforum.save
         member_hundelska.save
         member_hundenshus.save
         member_hundkurs.save
 
-        near_stockholm_params = { "utf8" => "✓", near: {name: 'Stockholm', distance: 3 } }
+        near_stockholm_params = { "utf8" => "✓", near: 'name=Stockholm,dist=3' }
 
         get :index, params: near_stockholm_params
 

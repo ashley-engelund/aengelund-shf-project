@@ -3,6 +3,7 @@ require 'company_locator'
 class CompaniesController < ApplicationController
   include PaginationUtility
   include ImagesUtility
+  include ConvertArgsToHashUtility
 
   before_action :set_company, only: [:show, :edit, :update, :destroy,
                                      :edit_payment, :fetch_from_dinkurs,
@@ -14,38 +15,12 @@ class CompaniesController < ApplicationController
   def index
     authorize Company
 
-    self.params = fix_FB_changed_q_params(self.params)
+    set_ransack_and_base_list
 
-    action_params, @items_count, items_per_page = process_pagination_params('company')
-
-    @search_params = Company.ransack(action_params)
-
-    # only select companies that are 'complete'; see the Company.complete scope
-
-    @all_companies = @search_params.result(distinct: true)
-                         .includes(:business_categories)
-                         .includes(addresses: [:region, :kommun])
-                         .joins(addresses: [:region, :kommun])
-    # The last qualifier ("joins") on above statement ("addresses: :region") is
-    # to get around a problem with DISTINCT queries used with ransack when also
-    # allowing sorting on an associated table column ("region" in this case)
-    # https://github.com/activerecord-hackery/ransack#problem-with-distinct-selects
-
-    @all_companies = @all_companies.searchable unless current_user.admin?
-
-    @all_visible_companies = @all_companies.address_visible
-
-    @all_visible_companies.each { |co| geocode_if_needed co }
-
-    if params.include? :near
-      addresses = get_addresses_near(params[:near])
-      @all_companies = @all_companies.at_addresses( addresses)
+    if request.xhr?
+      render partial: 'list_and_map'
     end
 
-    @companies = @all_companies.page(params[:page]).per_page(items_per_page)
-
-    render partial: 'companies_list', locals: { companies: @companies,
-                    search_params: @search_params } if request.xhr?
   end
 
 
@@ -191,13 +166,12 @@ class CompaniesController < ApplicationController
            locals: { company: @company, error: t('companies.update.error') }
   end
 
-  def show_companies_list
 
-    render partial: 'companies_list', locals: { companies: @companies,
-                                                search_params: @search_params } if request.xhr?
-  end
+  # =================================================================================
 
   private
+
+
   # Use callbacks to share common setup or constraints between actions.
   def set_company
     @company = Company.includes(:addresses).find(params[:id])
@@ -247,33 +221,87 @@ class CompaniesController < ApplicationController
   end
 
 
+  # examples of valid near_params strings:
+  #  "dist=10,lat=59.3293235,long=59.3293235"   # distance = 10km, latitude = 59.3293235, longitude = 59.3293235
+  #  "lat=59.3293235,long=59.3293235"           # latitude = 59.3293235, longitude = 59.3293235
+  #  "name=Stockholm"                  # name = Stockholm
+  #  "name=Stockholm,dist=10"          # distance = 10km, name = Stockholm
   def get_addresses_near(near_params)
 
+    args_hash = hash_from_argstring(near_params)
+
     # It might be necessary to Sanitize the distance argument, depending on how the interface is handled
-    if near_params.fetch(:distance,false)
-      distance_f = near_params[:distance].to_f
+    if args_hash.fetch(:dist,false)
+      distance_f = args_hash[:dist].to_f
     else
       distance_f = nil # CompanyLocator can handle this
     end
 
     # have to be searching either near a :name OR near coordinates (:latitude and :longitude)
-    if near_params.include? :name
-      addresses_near_name(near_params, distance_f)
+    if args_hash.include? :name
+      addresses_near_name(args_hash, distance_f)
     else
-      addresses_near_coordinates(near_params, distance_f)
+      addresses_near_coordinates(args_hash, distance_f)
     end
 
   end
 
-  def addresses_near_name(near_params, distance)
-    santized_name =  InputSanitizer.sanitize_string(near_params.fetch(:name, ''))
+  def addresses_near_name(args_hash, distance)
+    santized_name =  InputSanitizer.sanitize_string(args_hash.fetch(:name, ''))
     CompanyLocator.find_near_name( santized_name, distance)
   end
 
-  def addresses_near_coordinates(near_params, distance)
-    lat = near_params.fetch(:latitude, nil)
-    long = near_params.fetch(:longitude, nil)
+  def addresses_near_coordinates(args_hash, distance)
+    args_hash_nums = args_hash.transform_values(&:to_f)
+    lat = args_hash_nums.fetch(:lat, nil)
+    long = args_hash_nums.fetch(:long, nil)
     CompanyLocator.find_near_coordinates(lat, long, distance)
+  end
+
+
+  # set up the ransack search and get the companies to search in based on the
+  # request parameters
+  def set_ransack_and_base_list
+
+    @search_near_me = false
+
+    self.params = fix_FB_changed_q_params(self.params)
+
+    action_params, @items_count, items_per_page = process_pagination_params('company')
+
+    @search_params = Company.ransack(action_params)
+    @all_companies = @search_params.result(distinct: true)
+                         .includes(:business_categories)
+                         .includes(addresses: [:region, :kommun])
+                         .joins(addresses: [:region, :kommun])
+    # The last qualifier ("joins") on above statement ("addresses: :region") is
+    # to get around a problem with DISTINCT queries used with ransack when also
+    # allowing sorting on an associated table column ("region" in this case)
+    # https://github.com/activerecord-hackery/ransack#problem-with-distinct-selects
+
+    @all_companies = @all_companies.searchable unless current_user.admin?
+
+    geocode_all_visible(@all_companies.address_visible)
+
+    if params.include? :near
+      addresses = get_addresses_near(params[:near])
+      @all_companies = @all_companies.at_addresses( addresses)
+      @search_near_me = true
+    end
+
+    @companies = @all_companies.page(params[:page]).per_page(items_per_page)
+  end
+
+
+  def set_companies_for_index_page
+    _, _, items_per_page = process_pagination_params('company')
+    @companies = @all_companies.page(params[:page]).per_page(items_per_page)
+  end
+
+
+  # ensure all companies with visible addresses are geocoded
+  def geocode_all_visible(visible_addr_cos)
+    visible_addr_cos.each(&method(:geocode_if_needed))
   end
 
 end
