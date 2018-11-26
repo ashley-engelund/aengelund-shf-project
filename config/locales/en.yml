@@ -580,6 +580,8 @@ en:
       confirm_are_you_sure: *are_you_sure_confirm
       no_search_results: No records matched your search criteria.
       delete: *delete
+      search_near_me: Search Near Me (Stockholm)
+      search_near_me_title: Click the box to search near you
 
     destroy:
       success: Company deleted.

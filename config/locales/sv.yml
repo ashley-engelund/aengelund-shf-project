@@ -586,6 +586,8 @@ sv:
       confirm_are_you_sure: *are_you_sure_confirm
       no_search_results: Din sökning gav inget resultat, prova att ta bort något av dina val.
       delete: *delete
+      search_near_me: Sök nära mig (Stockholm)
+      search_near_me_title: Markera rutan för att söka i närheten av dig
 
     destroy:
       success: Företaget raderat.
