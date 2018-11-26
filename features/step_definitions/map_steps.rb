@@ -2,8 +2,8 @@
 
 MAP_ID = 'map'
 MAP_XP = "//*[@id='#{MAP_ID}']"
-SEARCH_NEAR_ME_DIV_ID = 'searchNearMe'
-SEARCH_NEAR_ME_CHECKBOX_ID = 'searchNearMeCheckbox'
+SEARCH_NEAR_ME_DIV_ID = 'search-near-me'
+SEARCH_NEAR_ME_CHECKBOX_ID = 'search-near-me-checkbox'
 SEARCH_NEAR_ME_CHECKBOX_XP = MAP_XP + "//*[@id='#{SEARCH_NEAR_ME_DIV_ID}']/*[@id='#{SEARCH_NEAR_ME_CHECKBOX_ID}']"
 
 
@@ -25,7 +25,7 @@ end
 
 # FIXME is this possible given that GoogleMaps does not provide IDs for the map control elements?
 And "I {action} the search near me checkbox on the map" do | action |
-  page.send(action,  id: 'searchNearMeCheckbox')
+  page.send(action,  id: SEARCH_NEAR_ME_CHECKBOX_ID)
 end
 
 

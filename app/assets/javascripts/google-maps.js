@@ -173,14 +173,16 @@ function createInfoWindow(text) {
  */
 function SearchNearMeCheckbox(controlDiv, isChecked) {
 
+    var nearParams = "";
+
     // outer box that holds the checkbox
     var searchNearMeDiv = document.createElement("DIV");
-    searchNearMeDiv.id = "searchNearMe";
+    searchNearMeDiv.id = "search-near-me";
 
     var searchNearMeCheckbox = document.createElement("INPUT");
     searchNearMeCheckbox.setAttribute("type", "checkbox");
-    searchNearMeCheckbox.id = 'searchNearMeCheckbox';
-    searchNearMeCheckbox.className = 'searchNearMe';
+    searchNearMeCheckbox.id = 'search-near-me-checkbox';
+    searchNearMeCheckbox.className = 'search-near-me';
     searchNearMeCheckbox.title = I18n.t("companies.index.search_near_me_title");
 
     searchNearMeCheckbox.checked = isChecked;
@@ -188,7 +190,7 @@ function SearchNearMeCheckbox(controlDiv, isChecked) {
     // text for the checkbox
     var checkboxLabel = document.createElement("LABEL");
     checkboxLabel.control = searchNearMeCheckbox;
-    checkboxLabel.id = "checkboxLabel";
+    checkboxLabel.id = "checkbox-label";
     checkboxLabel.innerText = I18n.t("companies.index.search_near_me");
 
     searchNearMeDiv.appendChild(searchNearMeCheckbox);
@@ -203,8 +205,6 @@ function SearchNearMeCheckbox(controlDiv, isChecked) {
 
         if ( this.checked ) {
             nearParams = "&near=lat=59.3293235,long=18.0685808,dist=100";
-        } else {
-            nearParams = "";
         }
 
         $.ajax({
