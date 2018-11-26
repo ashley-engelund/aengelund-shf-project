@@ -38,7 +38,8 @@
         - if @company.any_visible_addresses?
           = render partial: 'map_companies',
                    locals: { markers: location_and_markers_for([@company],
-                   link_name: false )}
+                   link_name: false ),
+                   nearMeChecked: false}
 
     - user_can_edit = policy(@company).update?
 
