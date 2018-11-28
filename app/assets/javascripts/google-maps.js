@@ -1,19 +1,21 @@
 // Don't load until after the code in the window has loaded.
-//  because we have to be sure that jquery, google maps etc. javascripts have been loaded
+//  because we have to be sure that jquery, google maps etc.
+//  javascripts have been loaded
 
-SEARCH_NEAR_ME_IMG = 'assets/near-location-25x.jpg';
+//const SEARCH_NEAR_ME_IMG = 'assets/near-location-25x.jpg';
 
-STOCKHOLM_LAT = 59.3293235;
-STOCKHOLM_LONG = 18.068580;
-GOTHENBURG_LAT = 57.7089;
-GOTHENBURG_LONG = 11.9746;
+const STOCKHOLM_LAT = 59.3293235;
+const STOCKHOLM_LONG = 18.068580;
+const GOTHENBURG_LAT = 57.7089;
+const GOTHENBURG_LONG = 11.9746;
 
-DEFAULT_LAT = STOCKHOLM_LAT;
-DEFAULT_LONG = STOCKHOLM_LONG;
+const DEFAULT_LAT = STOCKHOLM_LAT;
+const DEFAULT_LONG = STOCKHOLM_LONG;
 
-DEFAULT_DIST_KM = 20;
+const DEFAULT_DIST_KM = 20;
 
-// FIXME: display a helpful message on the map if none were found. do not change the center of the map
+// FIXME: display a helpful message on the map if none were found.
+//  do not change the center of the map
 
 // TODO: refactor and clean up!
 // TODO: retain the distance from the previous search
@@ -29,14 +31,17 @@ DEFAULT_DIST_KM = 20;
 //   determined by the center of all of them.
 //
 //  We need to tell GoogleMaps whether or not we want it to be optimized or not.
-//  If it _is_ optimized, then the map is just a canvas and we will not be able to
+//  If it _is_ optimized, then the map is just a canvas and we will
+//  not be able to
 //  test for specific marker or other elements on it.
-//  If it is _not_ optimized, then we will be able to test for specific elements;
+//  If it is _not_ optimized, then we will be able to test for
+//  specific elements;
 //  we need to do this if we are developing or testing.
 //
 //  @url https://mixandgo.com/learn/how-to-write-a-cucumber-test-for-google-maps
 //
-function initCenteredMap(centerCoordinates, markers, icon, nearMeCheckvalue, isProduction) {
+function initCenteredMap(centerCoordinates, markers, icon, nearMeCheckvalue,
+                         isProduction) {
 
     if (markers.length === 0) {
         alert('Sorry.  No companies found.');
@@ -75,11 +80,13 @@ function initCenteredMap(centerCoordinates, markers, icon, nearMeCheckvalue, isP
         fakeCurrentLocationDiv.id = 'fake-current-location';
         FakeCurrentLocationInputs(fakeCurrentLocationDiv);
         fakeCurrentLocationDiv.index = 1;
-        map.controls[google.maps.ControlPosition.LEFT_BOTTOM].push(fakeCurrentLocationDiv);
+        map.controls[google.maps.ControlPosition.LEFT_BOTTOM]
+            .push(fakeCurrentLocationDiv);
 
     }
 
-    // Create the DIV to hold the search near me button and call the SearchNearMeCheckbox()
+    // Create the DIV to hold the search near me button and call
+    // the SearchNearMeCheckbox()
     // constructor passing in this DIV.
     var searchNearMeDiv = document.createElement('DIV');
     SearchNearMeButton(searchNearMeDiv, isProduction);
@@ -173,20 +180,25 @@ function createInfoWindow(text) {
 
 
 /**
- * The SearchNearMeCheckbox adds a checkbox to the given DIV (which should be in a map)
+ * The SearchNearMeCheckbox adds a checkbox to the given DIV (which should be
+ * in a map)
  * that will
  * 1) geolocate the user and then
  * 2) send an AJAX request to the server to search near the user's location.
  *
- * If the user can not be geolocated (perhaps they have that option turned off in
+ * If the user can not be geolocated (perhaps they have that option turned
+ * off in
  * their browser), then....?
  *
  * When the checkbox is checked:
- * 1. The companies displayed on the map will be XXX km. from the user's location
- * 2. Any futher filters (e.g. categories) will use that limited group of companies
+ * 1. The companies displayed on the map will be XXX km. from the user's
+ * location
+ * 2. Any futher filters (e.g. categories) will use that limited group of
+ * companies
  *
  * When the checkbox is unchecked:
- * 1. The companies displayed on the map will not be limited by distance.  They may
+ * 1. The companies displayed on the map will not be limited by distance.
+ * They may
  * still be limited/filtered by other conditions (e.g. categories, etc.)
  *
  * @param controlDiv - a DIV that the checkbox gets appended to
@@ -222,7 +234,8 @@ function SearchNearMeCheckbox(controlDiv, isChecked, isProduction) {
     var withinDistanceLabel = document.createElement('LABEL');
     withinDistanceLabel.control = distanceKM;
     withinDistanceLabel.id = 'within-label';
-    withinDistanceLabel.innerText = I18n.t('companies.index.search_near_me_within');
+    withinDistanceLabel.innerText = I18n
+        .t('companies.index.search_near_me_within');
 
     searchNearMeDiv.appendChild(searchNearMeCheckbox);
     searchNearMeDiv.appendChild(checkboxLabel);
@@ -239,8 +252,10 @@ function SearchNearMeCheckbox(controlDiv, isChecked, isProduction) {
         if (this.checked) {
             nearCoords = getUserLocation(isProduction);
             distance = document.getElementById('distance-in-km').value;
-            console.log('searching near lat:' + nearCoords.lat + ' long:' + nearCoords.lng + ' within: ' + distance);
-            nearParams = '&near=lat=' + nearCoords.lat + ',long=' + nearCoords.lng + ',dist=' + distance;
+
+            console_log_search(nearCoords.lat, nearCoords.lng, distance);
+            nearParams = '&near=lat=' + nearCoords.lat + ',long=' +
+                nearCoords.lng + ',dist=' + distance;
         }
 
         $.ajax({
@@ -254,20 +269,25 @@ function SearchNearMeCheckbox(controlDiv, isChecked, isProduction) {
 
 
 /**
- * The SearchNearMeButton adds a checkbox to the given DIV (which should be in a map)
+ * The SearchNearMeButton adds a checkbox to the given DIV (which should
+ * be in a map)
  * that will
  * 1) geolocate the user and then
  * 2) send an AJAX request to the server to search near the user's location.
  *
- * If the user can not be geolocated (perhaps they have that option turned off in
+ * If the user can not be geolocated (perhaps they have that option turned
+ * off in
  * their browser), then....?
  *
  * When the checkbox is checked:
- * 1. The companies displayed on the map will be XXX km. from the user's location
- * 2. Any futher filters (e.g. categories) will use that limited group of companies
+ * 1. The companies displayed on the map will be XXX km. from the user's
+ * location
+ * 2. Any futher filters (e.g. categories) will use that limited group of
+ * companies
  *
  * When the checkbox is unchecked:
- * 1. The companies displayed on the map will not be limited by distance.  They may
+ * 1. The companies displayed on the map will not be limited by distance.
+ * They may
  * still be limited/filtered by other conditions (e.g. categories, etc.)
  *
  * @param controlDiv - a DIV that the checkbox gets appended to
@@ -300,12 +320,14 @@ function SearchNearMeButton(controlDiv, isProduction) {
     kmText.innerText = 'km';
 
     var searchNearMeButton = document.createElement('INPUT');
-    searchNearMeButton.setAttribute('type', 'image');
+    searchNearMeButton.setAttribute('type', 'submit');
     searchNearMeButton.id = 'search-near-me-button';
     searchNearMeButton.className = searchNearMeButton.id;
     searchNearMeButton.alt = 'Submit';
     searchNearMeButton.name = 'submit';
-    searchNearMeButton.src = SEARCH_NEAR_ME_IMG; // would be better as a FontAwesome icon!
+    // would be better as a FontAwesome icon!
+    // searchNearMeButton.src = SEARCH_NEAR_ME_IMG;
+    searchNearMeButton.innerText = I18n.t('search');
     searchNearMeButton.title = I18n.t('companies.index.search_near_me_title');
 
 
@@ -324,8 +346,10 @@ function SearchNearMeButton(controlDiv, isProduction) {
 
         nearCoords = getUserLocation(isProduction);
         distance = document.getElementById('distance-in-km').value;
-        console.log('searching near lat:' + nearCoords.lat + ' long:' + nearCoords.lng + ' within: ' + distance);
-        nearParams = '&near=lat=' + nearCoords.lat + ',long=' + nearCoords.lng + ',dist=' + distance;
+
+        console_log_search(nearCoords.lat, nearCoords.lng, distance)
+        nearParams = '&near=lat=' + nearCoords.lat + ',long=' +
+            nearCoords.lng + ',dist=' + distance;
 
         $.ajax({
             url: 'hundforetag',
@@ -338,7 +362,8 @@ function SearchNearMeButton(controlDiv, isProduction) {
 
 
 /**
- * @return boolean whether or not we can get the user's current location from their browser
+ * @return boolean whether or not we can get the user's
+ * current location from their browser
  */
 function canGetUserLocation(isProduction) {
     var canGetIt = false;
@@ -346,8 +371,9 @@ function canGetUserLocation(isProduction) {
     if (isProduction) {
         canGetIt = navigator.geolocation;
     } else {
-        // get the location from the additional controls showing only during development & test
-
+        // get the location from the additional controls
+        // shown only during development & test
+        canGetIt = true;
     }
 
     return canGetIt;
@@ -382,7 +408,8 @@ function getUserLocation(isProduction) {
         if (canGetUserLocation(isProduction)) {
 
             navigator.geolocation.getCurrentPosition(function (position) {
-                currentCoordinates = new google.maps.LatLng(position.coords.latitude,
+                currentCoordinates = new google.maps.LatLng(position.coords
+                        .latitude,
                     position.coords.longitude);
             });
         } else {
@@ -390,8 +417,12 @@ function getUserLocation(isProduction) {
         }
 
     } else { // is not Production so get the value from the UI
-        currentCoordinates.lat = document.getElementById('fake-latitude-number').value;
-        currentCoordinates.lng = document.getElementById('fake-longitude-number').value;
+        currentCoordinates.lat = document
+            .getElementById('fake-latitude-number')
+            .value;
+        currentCoordinates.lng = document
+            .getElementById('fake-longitude-number')
+            .value;
         console.log('fake latitude used:' + currentCoordinates.lat);
         console.log('fake longitude used:' + currentCoordinates.lng);
     }
@@ -400,7 +431,8 @@ function getUserLocation(isProduction) {
 }
 
 /**
- * Create elements for use in development and testing to enter a faked current user location
+ * Create elements for use in development and testing to enter a
+ * faked current user location
  *
  * @param controlDiv - a DIV all of this gets appended to
  * @constructor
@@ -415,7 +447,8 @@ function FakeCurrentLocationInputs(controlDiv) {
     fakeLocationTitle.className = 'fake-location-title';
     fakeLocationTitle.innerText = I18n.t('companies.index.fake-location-title');
 
-    // radio buttons to automatically enter coords for either Stockholm or Gothenburg
+    // radio buttons to automatically enter coords
+    // for either Stockholm or Gothenburg
     var stockholmRadioButton = document.createElement('INPUT');
     stockholmRadioButton.setAttribute('type', 'radio');
     stockholmRadioButton.id = 'radio-button-stockholm';
@@ -442,7 +475,7 @@ function FakeCurrentLocationInputs(controlDiv) {
     fakeLatitudeInput.id = 'fake-latitude-number';
     fakeLatitudeInput.name = fakeLatitudeInput.id;
     fakeLatitudeInput.className = 'fake-coordinate';
-    fakeLatitudeInput.default_value = DEFAULT_LAT;
+    fakeLatitudeInput.defaultValue = DEFAULT_LAT;
     fakeLatitudeInput.value = DEFAULT_LAT;
 
     var fakeLatitudeTitle = document.createElement('LABEL');
@@ -457,7 +490,7 @@ function FakeCurrentLocationInputs(controlDiv) {
     fakeLongitudeInput.id = 'fake-longitude-number';
     fakeLongitudeInput.name = fakeLongitudeInput.id;
     fakeLongitudeInput.className = 'fake-coordinate';
-    fakeLongitudeInput.default_value = DEFAULT_LONG;
+    fakeLongitudeInput.defaultValue = DEFAULT_LONG;
     fakeLongitudeInput.value = DEFAULT_LONG;
 
     var fakeLongitudeTitle = document.createElement('LABEL');
@@ -465,7 +498,8 @@ function FakeCurrentLocationInputs(controlDiv) {
     fakeLongitudeTitle.id = 'fake-longitude-title';
     fakeLongitudeTitle.className = 'fake-title';
     fakeLongitudeTitle.name = fakeLongitudeTitle.id;
-    fakeLongitudeTitle.innerText = I18n.t('companies.index.fake-longitude-title');
+    fakeLongitudeTitle.innerText = I18n
+        .t('companies.index.fake-longitude-title');
 
     fakeLocInputsDiv.appendChild(fakeLocationTitle);
     fakeLocInputsDiv.appendChild(stockholmLabel);
@@ -481,7 +515,8 @@ function FakeCurrentLocationInputs(controlDiv) {
     fakeLocInputsDiv.appendChild(fakeLongitudeInput);
     controlDiv.appendChild(fakeLocInputsDiv);
 
-    // Setup the click event for the radio buttons so they automatically enter coordinates
+    // Setup the click event for the radio buttons so they automatically enter
+    // coordinates
     // when clicked
 
     stockholmRadioButton.addEventListener('click', function () {
@@ -493,4 +528,11 @@ function FakeCurrentLocationInputs(controlDiv) {
         fakeLatitudeInput.value = GOTHENBURG_LAT;
         fakeLongitudeInput.value = GOTHENBURG_LONG;
     });
+}
+
+
+function console_log_search(latitude, longitude, distance) {
+    console.log('searching near lat:' + latitude +
+        ' long:' + longitude +
+        ' within: ' + distance);
 }
