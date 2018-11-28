@@ -1,6 +1,12 @@
 $checkbox-border-color: #5692ce;
 $gray-shadow: #b1b1b1;
 
+$fake-loc-border: hotpink;
+$fake-loc-background: #ffdcf4;
+$fake-coord-input-border: red;
+$fake-coord-input-background: white;
+
+
 $checkbox-shadow: rgba(0, 0, 0, 0.3);
 
 #map {
@@ -12,6 +18,32 @@ $checkbox-shadow: rgba(0, 0, 0, 0.3);
     border: 1.5pt solid $checkbox-border-color;
     padding-bottom: 3px;
     padding-left: 4px;
+
+    font-size: larger;
+    font-weight: bold;
+
+    .search-near-me-text {
+      color: black;
+    }
+
+    input.distance-in-km {
+      width: 50px;
+      line-height: 1em !important;
+      margin-left: 4px;
+      margin-right: 4px;
+      padding: 2px 2px 2px 4px;
+      font-weight: bold;
+      text-align: right;
+      color: blue;
+    }
+
+    input.search-near-me-button {
+      height: 20px;
+      color: black;
+      vertical-align: bottom;
+      margin-left: 6px;
+    }
+
 
     #search-near-me-checkbox {
       border: 1px solid gray;
@@ -30,7 +62,46 @@ $checkbox-shadow: rgba(0, 0, 0, 0.3);
       padding-right: 4px;
     }
 
+
   }
+
+
+  #fake-current-location {
+
+    border: 1pt $fake-loc-border solid !important;
+
+    line-height: 1em !important;
+    margin: 1px;
+    padding: 2px;
+    background-color: $fake-loc-background;
+
+    font-weight: bold;
+
+    p {
+      margin-bottom: 2px;
+    }
+
+    label {
+      margin-right: 2px;
+    }
+
+    input {
+      margin-right: 4px;
+    }
+
+    #fake-inputs {
+
+      .fake-coordinate {
+        line-height: 1em;
+        width: 80px;
+        padding: 2px;
+        border: 1px $fake-coord-input-border solid !important;
+        color: black;
+        background-color: $fake-coord-input-background;
+      }
+    }
+  }
+
 }
 
 .map-marker p {
