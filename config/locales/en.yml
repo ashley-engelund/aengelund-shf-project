@@ -581,6 +581,7 @@ en:
       no_search_results: No records matched your search criteria.
       delete: *delete
       search_near_me: Search near me within
+      search_near_me_within: within
       search_near_me_title: Click the button to search near you within the number of kilometers that you set.
       search_button: Search
       cannot_get_location: Cannot get your location.  (You can allow this website to get your location by changing your browser settings.)
