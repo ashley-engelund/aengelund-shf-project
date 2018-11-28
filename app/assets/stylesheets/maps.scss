@@ -72,15 +72,13 @@ $checkbox-color: gray;
 
 
   #fake-current-location {
-
+    background-color: $fake-loc-background;
     border: 1pt $fake-loc-border solid !important;
-
+    font-weight: bold;
     line-height: 1em !important;
     margin: 1px;
     padding: 2px;
-    background-color: $fake-loc-background;
 
-    font-weight: bold;
 
     p {
       margin-bottom: 2px;
