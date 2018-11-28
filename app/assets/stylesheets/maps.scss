@@ -45,15 +45,15 @@ $checkbox-color: #808080; // gray;
 
     input.search-near-me-button {
       color: $search-near-me-text-color;
-      background-color: #a8d9ff;
-      border-color: darkgray;
-      height: 20px;
+      background: #ffffff image-url('near-location-25x.jpg') no-repeat;
+      border: none;
+      height: 25px;
+      width: 25px;
       margin-left: 6px;
       vertical-align: bottom;
       padding: 2px;
       font-weight: bold;
       letter-spacing: normal;
-
     }
 
 

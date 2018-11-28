@@ -2,17 +2,17 @@
 //  because we have to be sure that jquery, google maps etc.
 //  javascripts have been loaded
 
-//const SEARCH_NEAR_ME_IMG = 'assets/near-location-25x.jpg';
+//var SEARCH_NEAR_ME_IMG = 'assets/near-location-25x.jpg';
 
-const STOCKHOLM_LAT = 59.3293235;
-const STOCKHOLM_LONG = 18.068580;
-const GOTHENBURG_LAT = 57.7089;
-const GOTHENBURG_LONG = 11.9746;
+var STOCKHOLM_LAT = 59.3293235;
+var STOCKHOLM_LONG = 18.068580;
+var GOTHENBURG_LAT = 57.7089;
+var GOTHENBURG_LONG = 11.9746;
 
-const DEFAULT_LAT = STOCKHOLM_LAT;
-const DEFAULT_LONG = STOCKHOLM_LONG;
+var DEFAULT_LAT = STOCKHOLM_LAT;
+var DEFAULT_LONG = STOCKHOLM_LONG;
 
-const DEFAULT_DIST_KM = 20;
+var DEFAULT_DIST_KM = 20;
 
 // FIXME: display a helpful message on the map if none were found.
 //  do not change the center of the map
@@ -48,7 +48,9 @@ function initCenteredMap(centerCoordinates, markers, icon, nearMeCheckvalue,
         return;
     }
 
-    var mapCenter = {lat: DEFAULT_LAT, lng: DEFAULT_LONG};
+    var mapCenter  = new google.maps.LatLngBounds();
+    mapCenter.lat = DEFAULT_LAT;
+    mapCenter.lng = DEFAULT_LONG;
 
     var marks = markers === null ? [] : markers;
     var optimize = isProduction === null ? false : isProduction;
@@ -78,7 +80,7 @@ function initCenteredMap(centerCoordinates, markers, icon, nearMeCheckvalue,
         // add input boxes for setting the current location latitude & longitude
         var fakeCurrentLocationDiv = document.createElement('DIV');
         fakeCurrentLocationDiv.id = 'fake-current-location';
-        FakeCurrentLocationInputs(fakeCurrentLocationDiv);
+        new FakeCurrentLocationInputs(fakeCurrentLocationDiv);
         fakeCurrentLocationDiv.index = 1;
         map.controls[google.maps.ControlPosition.LEFT_BOTTOM]
             .push(fakeCurrentLocationDiv);
@@ -89,7 +91,7 @@ function initCenteredMap(centerCoordinates, markers, icon, nearMeCheckvalue,
     // the SearchNearMeCheckbox()
     // constructor passing in this DIV.
     var searchNearMeDiv = document.createElement('DIV');
-    SearchNearMeButton(searchNearMeDiv, isProduction);
+    new SearchNearMeButton(searchNearMeDiv, isProduction);
     searchNearMeDiv.index = 1;
 
     map.controls[google.maps.ControlPosition.TOP_LEFT].push(searchNearMeDiv);
@@ -193,7 +195,7 @@ function createInfoWindow(text) {
  * When the checkbox is checked:
  * 1. The companies displayed on the map will be XXX km. from the user's
  * location
- * 2. Any futher filters (e.g. categories) will use that limited group of
+ * 2. Any further filters (e.g. categories) will use that limited group of
  * companies
  *
  * When the checkbox is unchecked:
@@ -248,12 +250,14 @@ function SearchNearMeCheckbox(controlDiv, isChecked, isProduction) {
         var nearParams = '';
         var parsedUrl = new URL(window.location.href);
         var searchParams = parsedUrl.searchParams.toString();
+        var nearCoords;
+        var distance;
 
         if (this.checked) {
             nearCoords = getUserLocation(isProduction);
             distance = document.getElementById('distance-in-km').value;
 
-            console_log_search(nearCoords.lat, nearCoords.lng, distance);
+            logSearchToConsole(nearCoords.lat, nearCoords.lng, distance);
             nearParams = '&near=lat=' + nearCoords.lat + ',long=' +
                 nearCoords.lng + ',dist=' + distance;
         }
@@ -278,17 +282,6 @@ function SearchNearMeCheckbox(controlDiv, isChecked, isProduction) {
  * If the user can not be geolocated (perhaps they have that option turned
  * off in
  * their browser), then....?
- *
- * When the checkbox is checked:
- * 1. The companies displayed on the map will be XXX km. from the user's
- * location
- * 2. Any futher filters (e.g. categories) will use that limited group of
- * companies
- *
- * When the checkbox is unchecked:
- * 1. The companies displayed on the map will not be limited by distance.
- * They may
- * still be limited/filtered by other conditions (e.g. categories, etc.)
  *
  * @param controlDiv - a DIV that the checkbox gets appended to
  * @package isProduction [Boolean] - whether or not the system is in production
@@ -320,17 +313,11 @@ function SearchNearMeButton(controlDiv, isProduction) {
     kmText.innerText = 'km';
 
     var searchNearMeButton = document.createElement('INPUT');
-    searchNearMeButton.setAttribute('type', 'submit');
+    searchNearMeButton.setAttribute('type', 'button');
     searchNearMeButton.id = 'search-near-me-button';
     searchNearMeButton.className = searchNearMeButton.id;
-    searchNearMeButton.alt = 'Submit';
+    searchNearMeButton.alt = I18n.t('search');
     searchNearMeButton.name = 'submit';
-    // would be better as a FontAwesome icon!
-    // searchNearMeButton.src = SEARCH_NEAR_ME_IMG;
-    searchNearMeButton.innerText = I18n.t('search');
-    searchNearMeButton.title = I18n.t('companies.index.search_near_me_title');
-
-
 
     searchNearMeDiv.appendChild(searchNearMeText);
     searchNearMeDiv.appendChild(distanceKM);
@@ -340,15 +327,17 @@ function SearchNearMeButton(controlDiv, isProduction) {
 
     // Setup the click event listeners: simply set the map to Stockholm.
     searchNearMeButton.addEventListener('click', function () {
-        var nearParams = '';
+
         var parsedUrl = new URL(window.location.href);
         var searchParams = parsedUrl.searchParams.toString();
+        var nearCoords;
+        var distance;
 
         nearCoords = getUserLocation(isProduction);
         distance = document.getElementById('distance-in-km').value;
 
-        console_log_search(nearCoords.lat, nearCoords.lng, distance)
-        nearParams = '&near=lat=' + nearCoords.lat + ',long=' +
+        logSearchToConsole(nearCoords.lat, nearCoords.lng, distance);
+        var nearParams = '&near=lat=' + nearCoords.lat + ',long=' +
             nearCoords.lng + ',dist=' + distance;
 
         $.ajax({
@@ -531,7 +520,7 @@ function FakeCurrentLocationInputs(controlDiv) {
 }
 
 
-function console_log_search(latitude, longitude, distance) {
+function logSearchToConsole(latitude, longitude, distance) {
     console.log('searching near lat:' + latitude +
         ' long:' + longitude +
         ' within: ' + distance);
