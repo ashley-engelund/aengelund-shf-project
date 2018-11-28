@@ -4,16 +4,16 @@
 
    $(function() {
 
-      let markers = #{raw markers.to_json};
-      let nearMeCheckvalue = #{ defined?(nearMeChecked) && (nearMeChecked.is_a?(TrueClass) || nearMeChecked.is_a?(FalseClass)) ? nearMeChecked : false };
-      let optimize = #{  Rails.env.production? };
+      var markers = #{raw markers.to_json};
+      var nearMeCheckvalue = #{ defined?(nearMeChecked) && (nearMeChecked.is_a?(TrueClass) || nearMeChecked.is_a?(FalseClass)) ? nearMeChecked : false };
+      var isProduction = #{  Rails.env.production? };
 
-      let mapCenter = {lat: 59.3293235, lng: 18.0685808}; // default center = Stockholm
+      var mapCenter = {lat: 59.3293235, lng: 18.0685808}; // default center = Stockholm
 
       if (markers.length === 1) {
         mapCenter = {lat: markers[0].latitude, lng: markers[0].longitude};
         }
 
-      initCenteredMap(mapCenter, markers, null, nearMeCheckvalue, optimize);
+      initCenteredMap(mapCenter, markers, null, nearMeCheckvalue, isProduction);
 
     });
