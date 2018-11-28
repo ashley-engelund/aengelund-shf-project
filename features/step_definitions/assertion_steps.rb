@@ -199,10 +199,16 @@ end
 
 
 Then "I should see {digits} {capture_string}" do |n, content |
-  n = n.to_i
   expect(page).to have_text("#{content}", count: n)
   expect(page).not_to have_text("#{content}", count: n+1)
 end
+
+# Restated the above step for readability:
+Then "I should see {capture_string} {digits} times" do | content, n |
+  expect(page).to have_text("#{content}", count: n)
+  expect(page).not_to have_text("#{content}", count: n+1)
+end
+
 
 Then "{capture_string} should{negate} be visible" do |string, negate|
   expect(has_text?(:visible, "#{string}")).to be negate == nil
