@@ -1,21 +1,22 @@
 $checkbox-border-color: #5692ce;
 $gray-shadow: #b1b1b1;
 
-$fake-loc-border: hotpink;
+$fake-loc-border: ff69b4; // hotpink;
 $fake-loc-background: #ffdcf4;
-$fake-coord-input-border: red;
-$fake-coord-input-background: white;
+$fake-coord-input-border: #FF0000; // red;
+$fake-coord-input-background: #FFFFFF; // white;
 
-$search-near-me-background: white;
-$search-near-me-text-color: black;
-$search-near-distance-text-color: blue;
+$search-near-me-background: #FFFFFF; // white;
+$search-near-me-text-color: #000000; // black;
+$search-near-distance-text-color: #FF00FF; // blue;
 
 $checkbox-shadow: rgba(0, 0, 0, 0.3);
-$checkbox-color: gray;
+$checkbox-color: #808080; // gray;
 
 
 #map {
-  height: 405px; // doesn't work with 100% TODO: how does this look on small screens? may need to fix for those
+  height: 405px; // doesn't work with 100% TODO: how does this look on small
+                // screens? may need to fix for those
   width: 100%;
 
   #search-near-me {
@@ -44,9 +45,15 @@ $checkbox-color: gray;
 
     input.search-near-me-button {
       color: $search-near-me-text-color;
+      background-color: #a8d9ff;
+      border-color: darkgray;
       height: 20px;
       margin-left: 6px;
       vertical-align: bottom;
+      padding: 2px;
+      font-weight: bold;
+      letter-spacing: normal;
+
     }
 
 
