@@ -19,7 +19,7 @@ class CompaniesController < ApplicationController
 
     if request.xhr?
       if @all_companies.empty?
-        helpers.flash_message(:alert, 'Sorry. No companies found') #  TODO: I18n, improve this message
+        render partial: 'none_found_alert'
       else
         render partial: 'list_and_map'
       end
