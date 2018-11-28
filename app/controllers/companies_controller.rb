@@ -18,7 +18,12 @@ class CompaniesController < ApplicationController
     set_ransack_and_base_list
 
     if request.xhr?
-      render partial: 'list_and_map'
+      if @all_companies.empty?
+        helpers.flash_message(:alert, 'Sorry. No companies found') #  TODO: I18n, improve this message
+      else
+        render partial: 'list_and_map'
+      end
+
     end
 
   end
