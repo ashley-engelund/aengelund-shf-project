@@ -44,11 +44,11 @@ function initCenteredMap(centerCoordinates, markers, icon, nearMeCheckvalue,
                          isProduction) {
 
     if (markers.length === 0) {
-        alert('Sorry.  No companies found.');
+        alert(I18n.t('companies.index.no_companies_found'));
         return;
     }
 
-    var mapCenter  = new google.maps.LatLngBounds();
+    var mapCenter = new google.maps.LatLngBounds();
     mapCenter.lat = DEFAULT_LAT;
     mapCenter.lng = DEFAULT_LONG;
 
@@ -351,30 +351,35 @@ function SearchNearMeButton(controlDiv, isProduction) {
 
 
 /**
- * @return boolean whether or not we can get the user's
- * current location from their browser
- */
-function canGetUserLocation(isProduction) {
-    var canGetIt = false;
-
-    if (isProduction) {
-        canGetIt = navigator.geolocation;
-    } else {
-        // get the location from the additional controls
-        // shown only during development & test
-        canGetIt = true;
-    }
-
-    return canGetIt;
-}
-
-/**
  * Show alert to the user saying we cannot get their location with a reminder
  * that they can allow us by changing their browser settings.
  */
 function showAlertCantGetLocation() {
     alert(I18n.t('companies.index.cannot_get_location'));
 }
+
+
+// error.code can be:
+//   0: unknown error
+//   1: permission denied
+//   2: position unavailable (error response from location provider)
+//   3: timed out
+var geoError = function (error) {
+    switch (error.code) {
+        case error.PERMISSION_DENIED:
+            showAlertCantGetLocation();
+            break;
+        case error.TIMEOUT:
+            // The user didn't accept the callout
+            //  showNudgeBanner();
+            showAlertCantGetLocation();
+            break;
+        case error.POSITION_UNAVAILABLE:
+            showAlertCantGetLocation();
+            break;
+    }
+    console.log('geolocation Error occurred. Error code: ' + error.code);
+};
 
 
 /**
@@ -394,16 +399,13 @@ function getUserLocation(isProduction) {
     var currentCoordinates = new google.maps.LatLng(DEFAULT_LAT, DEFAULT_LONG);
 
     if (isProduction) {
-        if (canGetUserLocation(isProduction)) {
 
-            navigator.geolocation.getCurrentPosition(function (position) {
+        navigator.geolocation.getCurrentPosition(function (position) {
                 currentCoordinates = new google.maps.LatLng(position.coords
                         .latitude,
                     position.coords.longitude);
-            });
-        } else {
-            showAlertCantGetLocation();
-        }
+            },
+            geoError);
 
     } else { // is not Production so get the value from the UI
         currentCoordinates.lat = document
@@ -418,6 +420,7 @@ function getUserLocation(isProduction) {
 
     return currentCoordinates;
 }
+
 
 /**
  * Create elements for use in development and testing to enter a
