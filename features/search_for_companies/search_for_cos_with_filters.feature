@@ -164,6 +164,7 @@ Scenario: Search by kommun and region
   Then I select "Norrbotten" in select list t("activerecord.attributes.company.region")
   And I click on t("search")
  # Then I click on t("toggle.company_search_form.hide")
+  And I accept the alert
   And I should not see "HappyMutts" in the companies list
  # Then I click on t("toggle.company_search_form.show")
   Then I select "Stockholm" in select list t("activerecord.attributes.company.region")
@@ -178,6 +179,7 @@ Scenario: Search by category and region
   Then I select "Västerbotten" in select list t("activerecord.attributes.company.region")
   And I click on t("search")
  # Then I click on t("toggle.company_search_form.hide")
+  And I accept the alert
   And I should not see "HappyMutts" in the companies list
   And I should not see "We Luv Dogs" in the companies list
   And I should not see "Barky Boys" in the companies list
@@ -245,6 +247,7 @@ Scenario: Search by category and region 2
   Then I select "Västerbotten" in select list t("activerecord.attributes.company.region")
   And I click on t("search")
 #Then I click on t("toggle.company_search_form.hide")
+  And I accept the alert
   And I should not see "HappyMutts" in the companies list
   And I should not see "We Luv Dogs" in the companies list
   And I should not see "Barky Boys" in the companies list
