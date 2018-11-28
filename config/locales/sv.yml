@@ -586,8 +586,14 @@ sv:
       confirm_are_you_sure: *are_you_sure_confirm
       no_search_results: Din sökning gav inget resultat, prova att ta bort något av dina val.
       delete: *delete
-      search_near_me: Sök nära mig (Stockholm)
-      search_near_me_title: Markera rutan för att söka i närheten av dig
+      search_near_me: Sök nära mig inom
+      search_near_me_title: Klicka på rutan för att söka nära dig inom det antal kilometer du ställt in.
+      search_near_me_within: inom
+      search_button: Sök
+      cannot_get_location: Kan inte få din plats. (Du kan tillåta att webbplatsen får din plats genom att ändra inställningarna för din webbläsare.)
+      fake-location-title: Fake Nuvarande Plats
+      fake-latitude-title: "lat:"
+      fake-longitude-title: "long:"
 
     destroy:
       success: Företaget raderat.

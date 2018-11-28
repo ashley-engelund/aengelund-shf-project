@@ -580,8 +580,13 @@ en:
       confirm_are_you_sure: *are_you_sure_confirm
       no_search_results: No records matched your search criteria.
       delete: *delete
-      search_near_me: Search Near Me (Stockholm)
-      search_near_me_title: Click the box to search near you
+      search_near_me: Search near me within
+      search_near_me_title: Click the button to search near you within the number of kilometers that you set.
+      search_button: Search
+      cannot_get_location: Cannot get your location.  (You can allow this website to get your location by changing your browser settings.)
+      fake-location-title: Fake Current Location
+      fake-latitude-title: "lat:"
+      fake-longitude-title: "long:"
 
     destroy:
       success: Company deleted.
