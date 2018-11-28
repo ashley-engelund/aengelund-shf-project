@@ -11,7 +11,7 @@ RSpec.describe "company maps partial: _map_companies.html.haml" do
     test_cos << create(:company)
   end
 
-  EXPECTED_MARKERS = "let markers = [{\"latitude\":56.7422437,\"longitude\":12.7206453,"
+  EXPECTED_MARKERS = "var markers = [{\"latitude\":56.7422437,\"longitude\":12.7206453,"
 
   it "map markers are raw json (not escaped)" do
 
@@ -25,6 +25,7 @@ RSpec.describe "company maps partial: _map_companies.html.haml" do
   end
 
 
+=begin
   describe 'nearMeChecked' do
 
     it 'nearMeChecked can be undefined' do
@@ -73,5 +74,6 @@ RSpec.describe "company maps partial: _map_companies.html.haml" do
     end
 
   end # nearMeChecked
+=end
 
 end
