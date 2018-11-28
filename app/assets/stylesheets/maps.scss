@@ -6,15 +6,20 @@ $fake-loc-background: #ffdcf4;
 $fake-coord-input-border: red;
 $fake-coord-input-background: white;
 
+$search-near-me-background: white;
+$search-near-me-text-color: black;
+$search-near-distance-text-color: blue;
 
 $checkbox-shadow: rgba(0, 0, 0, 0.3);
+$checkbox-color: gray;
+
 
 #map {
   height: 405px; // doesn't work with 100% TODO: how does this look on small screens? may need to fix for those
   width: 100%;
 
   #search-near-me {
-    background-color: white;
+    background-color: $search-near-me-background;
     border: 1.5pt solid $checkbox-border-color;
     padding-bottom: 3px;
     padding-left: 4px;
@@ -23,7 +28,7 @@ $checkbox-shadow: rgba(0, 0, 0, 0.3);
     font-weight: bold;
 
     .search-near-me-text {
-      color: black;
+      color: $search-near-me-text-color;
     }
 
     input.distance-in-km {
@@ -34,19 +39,19 @@ $checkbox-shadow: rgba(0, 0, 0, 0.3);
       padding: 2px 2px 2px 4px;
       font-weight: bold;
       text-align: right;
-      color: blue;
+      color: $search-near-distance-text-color;
     }
 
     input.search-near-me-button {
+      color: $search-near-me-text-color;
       height: 20px;
-      color: black;
-      vertical-align: bottom;
       margin-left: 6px;
+      vertical-align: bottom;
     }
 
 
     #search-near-me-checkbox {
-      border: 1px solid gray;
+      border: 1px solid $checkbox-color;
       border-radius: 3px;
       box-shadow: 0 1px 3px $checkbox-shadow;
       cursor: pointer;
@@ -92,12 +97,12 @@ $checkbox-shadow: rgba(0, 0, 0, 0.3);
     #fake-inputs {
 
       .fake-coordinate {
-        line-height: 1em;
-        width: 80px;
-        padding: 2px;
-        border: 1px $fake-coord-input-border solid !important;
-        color: black;
         background-color: $fake-coord-input-background;
+        border: 1px $fake-coord-input-border solid !important;
+        color: $search-near-me-text-color;
+        line-height: 1em;
+        padding: 2px;
+        width: 80px;
       }
     }
   }
