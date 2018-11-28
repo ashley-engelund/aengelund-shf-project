@@ -579,6 +579,8 @@ en:
       how_to_search: Search for companies using the search form.
       confirm_are_you_sure: *are_you_sure_confirm
       no_search_results: No records matched your search criteria.
+      no_companies_found: Sorry.  No companies were found for those search criteria.
+      no_companies_near_you: Sorry. No companies were found near you.
       delete: *delete
       search_near_me: Search near me within
       search_near_me_within: within

@@ -585,6 +585,8 @@ sv:
       how_to_search: Sök efter företag genom att använda sökfunktionen.
       confirm_are_you_sure: *are_you_sure_confirm
       no_search_results: Din sökning gav inget resultat, prova att ta bort något av dina val.
+      no_companies_found: Förlåt. Inga företag hittades för dessa sökkriterier.
+      no_companies_near_you: Förlåt. Inga företag hittades nära dig.
       delete: *delete
       search_near_me: Sök nära mig inom
       search_near_me_title: Klicka på rutan för att söka nära dig inom det antal kilometer du ställt in.
