@@ -126,7 +126,7 @@ class ActivityLogger
     unverified_dir = File.dirname unverified_filename
 
     begin
-      verified_output = unverified_filename if dir_verfied?(unverified_dir)
+      verified_output = unverified_filename if dir_verified?(unverified_dir)
     rescue => _err
       # If we can't create or write to the directory, then this
       # directory is not verified.  Use the fallback output ($stdout)
@@ -143,7 +143,7 @@ class ActivityLogger
   end
 
 
-  def self.dir_verfied?(unverified_dir)
+  def self.dir_verified?(unverified_dir)
     is_verified = false
 
     # if it exists and we can write to it, it's fine to use.
