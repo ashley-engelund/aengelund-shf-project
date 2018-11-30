@@ -21,18 +21,21 @@ RSpec.describe ActivityLogger do
   LOGDIR_PREFIX = 'alspec'
   LOGNAME = 'testlog.log'
 
+  CONFIG_KEY_TO_STDOUT = 'ACTIVELOG_TO_STDOUT'
+  
+  
   # If everything is written to stdout, we can't test writing to log files.
-  # So be sure we don't have ENV['RAILS_LOG_TO_STDOUT'] defined during the tests.
+  # So be sure we don't have ENV[CONFIG_KEY_TO_STDOUT] defined during the tests.
   before(:all) do
-    if ENV.has_key? 'RAILS_LOG_TO_STDOUT'
+    if ENV.has_key? CONFIG_KEY_TO_STDOUT
       @env_has_r_to_stdout = true
-      @env_r_to_stdout_value = ENV.delete('RAILS_LOG_TO_STDOUT')
+      @env_r_to_stdout_value = ENV.delete(CONFIG_KEY_TO_STDOUT)
     end
   end
 
   after(:all) do
     if @env_has_r_to_stdout
-      ENV['RAILS_LOG_TO_STDOUT'] = @env_r_to_stdout_value
+      ENV[CONFIG_KEY_TO_STDOUT] = @env_r_to_stdout_value
     end
   end
 
@@ -197,7 +200,7 @@ RSpec.describe ActivityLogger do
 
   describe '#verified_output_stream' do
 
-    context "always writes to $stdout if ENV.has_key? 'RAILS_LOG_TO_STDOUT' " do
+    context "always writes to $stdout if ENV.has_key? CONFIG_KEY_TO_STDOUT " do
 
       let(:filepath) { File.join( Dir.mktmpdir(LOGDIR_PREFIX), LOGNAME) }
       let(:log) { ActivityLogger.open(filepath, 'TEST', 'open', false) }
@@ -208,12 +211,12 @@ RSpec.describe ActivityLogger do
       end
 
 
-      it "ENV['RAILS_LOG_TO_STDOUT'] is present" do
+      it "ENV[CONFIG_KEY_TO_STDOUT] is present" do
         orig_has_r_to_stdout = true
 
-        unless ENV.has_key? 'RAILS_LOG_TO_STDOUT'
+        unless ENV.has_key? CONFIG_KEY_TO_STDOUT
           orig_has_r_to_stdout = false
-          ENV['RAILS_LOG_TO_STDOUT'] = '1'
+          ENV[CONFIG_KEY_TO_STDOUT] = '1'
         end
 
         # expect info to write to stdout
@@ -226,17 +229,17 @@ RSpec.describe ActivityLogger do
         expect(File).not_to exist(filepath)
 
         unless orig_has_r_to_stdout
-          ENV.delete('RAILS_LOG_TO_STDOUT')
+          ENV.delete(CONFIG_KEY_TO_STDOUT)
         end
       end
 
 
-      it "ENV['RAILS_LOG_TO_STDOUT'] is not present" do
+      it "ENV[CONFIG_KEY_TO_STDOUT] is not present" do
         orig_has_r_to_stdout = false
 
-        if ENV.has_key? 'RAILS_LOG_TO_STDOUT'
+        if ENV.has_key? CONFIG_KEY_TO_STDOUT
           orig_has_r_to_stdout = true
-          orig_r_to_stdout_value = ENV.delete('RAILS_LOG_TO_STDOUT')
+          orig_r_to_stdout_value = ENV.delete(CONFIG_KEY_TO_STDOUT)
         end
 
         # expect nothing to be written to stdout
@@ -249,12 +252,12 @@ RSpec.describe ActivityLogger do
         expect(File).to exist(filepath)
 
         if orig_has_r_to_stdout
-          ENV['RAILS_LOG_TO_STDOUT'] = orig_r_to_stdout_value
+          ENV[CONFIG_KEY_TO_STDOUT] = orig_r_to_stdout_value
         end
       end
 
 
-    end # context "always writes to $stdout if ENV['RAILS_LOG_TO_STDOUT'].present?" do
+    end # context "always writes to $stdout if ENV[CONFIG_KEY_TO_STDOUT].present?" do
 
     context 'directory does not exist' do
 

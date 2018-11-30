@@ -6,7 +6,7 @@ class ActivityLogger
   # This allows for output to $stdout of logged messages.
   #
   # This will write to $stdout *instead of a file* if:
-  #   ENV['RAILS_LOG_TO_STDOUT'] exists (the value doesn't matter)
+  #   ENV['ACTIVELOG_TO_STDOUT'] exists (the value doesn't matter)
   # or
   #   if the directory for the log is not writeable or cannot be created
   #
@@ -35,6 +35,11 @@ class ActivityLogger
   #    -- call log.close
   #
   # NOTE: this requires ActiveSupport.  It can only be run with Rails
+
+
+  # key to check for sending all output to $stdout
+  CONFIG_KEY_TO_STDOUT = 'ACTIVELOG_TO_STDOUT'
+
 
   def self.open(filename, facility, activity, show=true)
 
@@ -111,7 +116,7 @@ class ActivityLogger
     @is_system_outstream = true
 
     # always log to stdout no matter what unverified_filename is
-    if ENV.has_key?('RAILS_LOG_TO_STDOUT')
+    if ENV.has_key?(CONFIG_KEY_TO_STDOUT)
       return $stdout
     end
 
