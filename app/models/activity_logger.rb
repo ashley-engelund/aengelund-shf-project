@@ -125,34 +125,40 @@ class ActivityLogger
 
     unverified_dir = File.dirname unverified_filename
 
-    # if it exists and we can write to it, it's fine to use.
-    if File.exist?(unverified_dir) && File.writable?(unverified_dir)
-      verified_output = unverified_filename
-
-    else  # try to verify it
-      begin
-        Dir.mkdir(unverified_dir) unless File.exist? unverified_dir
-        raise IOError unless File.writable? unverified_dir
-        verified_output = unverified_filename # if we got this far it's fine
-      rescue => _error
-        # Swallow this error; don't raise it.
-        # If we can't create or write to the directory, then this
-        # directory is not verified.  Use the fallback output ($stdout)
-      end
+    begin
+      verified_output = unverified_filename if dir_verfied?(unverified_dir)
+    rescue => _err
+      # If we can't create or write to the directory, then this
+      # directory is not verified.  Use the fallback output ($stdout)
     end
 
     verified_output
   end
 
 
-  # ========================================
-
-  private
-
   def self.is_system_stream?(stream)
     (stream == $stdout || stream == $stderr || stream.class.name == 'IO')
     # sometimes a stdout will not have the same address as $stdout depending on
     # how it was created. Hence we also test the class name
-
   end
+
+
+  def self.dir_verfied?(unverified_dir)
+    is_verified = false
+
+    # if it exists and we can write to it, it's fine to use.
+    if File.exist?(unverified_dir) && File.writable?(unverified_dir)
+      is_verified = true
+
+    else  # try to verify it
+      begin
+        Dir.mkdir(unverified_dir) unless File.exist? unverified_dir
+        raise IOError unless File.writable? unverified_dir
+        is_verified = true # if we got this far it's fine
+      end
+    end
+
+    is_verified
+  end
+
 end
