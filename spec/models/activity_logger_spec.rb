@@ -263,7 +263,7 @@ RSpec.describe ActivityLogger do
         nonexistant_dirname = Dir::Tmpname.create(LOGDIR_PREFIX) { |dirname| dirname }
         unverified_filename = File.join(nonexistant_dirname, LOGNAME)
 
-        expect(File.exists?(nonexistant_dirname)).to be_falsey
+        expect(File.exist?(nonexistant_dirname)).to be_falsey
 
         allow(Dir).to receive(:mkdir).and_raise(IOError)
 
@@ -277,7 +277,7 @@ RSpec.describe ActivityLogger do
         nonexistant_dirname = Dir::Tmpname.create(LOGDIR_PREFIX) { |dirname| dirname }
         unverified_filename = File.join(nonexistant_dirname, LOGNAME)
 
-        expect(File.exists?(nonexistant_dirname)).to be_falsey
+        expect(File.exist?(nonexistant_dirname)).to be_falsey
 
         original_mkdir = Dir.method(:mkdir)
 
@@ -297,13 +297,13 @@ RSpec.describe ActivityLogger do
         nonexistant_dirname = Dir::Tmpname.create(LOGDIR_PREFIX) { |dirname| dirname }
         unverified_filename = File.join(nonexistant_dirname, LOGNAME)
 
-        expect(File.exists? nonexistant_dirname).to be_falsey
+        expect(File.exist? nonexistant_dirname).to be_falsey
 
         verified_output = ActivityLogger.verified_output_stream(unverified_filename)
         expect(verified_output).to eq unverified_filename
 
         verified_dir = File.dirname(verified_output)
-        expect(File.exists?(verified_dir)).to be_truthy
+        expect(File.exist?(verified_dir)).to be_truthy
         expect(File.writable?(verified_dir)).to be_truthy
 
       end
@@ -320,7 +320,7 @@ RSpec.describe ActivityLogger do
 
         unverified_filename = File.join(readonly_dir, LOGNAME)
 
-        expect(File.exists? readonly_dir).to be_truthy
+        expect(File.exist? readonly_dir).to be_truthy
         expect(File.writable? readonly_dir).to be_falsey
 
         verified_output = ActivityLogger.verified_output_stream(unverified_filename)
@@ -336,7 +336,7 @@ RSpec.describe ActivityLogger do
 
       unverified_filename = File.join(readonly_dir, LOGNAME)
 
-      expect(File.exists? readonly_dir).to be_truthy
+      expect(File.exist? readonly_dir).to be_truthy
       expect(File.writable? readonly_dir).to be_truthy
 
       verified_output = ActivityLogger.verified_output_stream(unverified_filename)

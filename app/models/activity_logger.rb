@@ -115,12 +115,8 @@ class ActivityLogger
       return $stdout
     end
 
-    # quick gating conditions:
-    return unverified_filename if unverified_filename == $stdout
-    return unverified_filename if unverified_filename == $stderr
-    return unverified_filename if unverified_filename.class.name == 'IO'
-      # sometimes a stdout will not have the same address as $stdout depending on
-      # how it was created
+    # gating condition:
+    return unverified_filename if is_system_stream?(unverified_filename)
 
     # if we're here, we didn't explicitly use a system output stream
     @is_system_outstream = false
@@ -130,12 +126,12 @@ class ActivityLogger
     unverified_dir = File.dirname unverified_filename
 
     # if it exists and we can write to it, it's fine to use.
-    if File.exists?(unverified_dir) && File.writable?(unverified_dir)
+    if File.exist?(unverified_dir) && File.writable?(unverified_dir)
       verified_output = unverified_filename
 
     else  # try to verify it
       begin
-        Dir.mkdir(unverified_dir) unless File.exists? unverified_dir
+        Dir.mkdir(unverified_dir) unless File.exist? unverified_dir
         raise IOError unless File.writable? unverified_dir
         verified_output = unverified_filename # if we got this far it's fine
       rescue => _error
@@ -149,4 +145,14 @@ class ActivityLogger
   end
 
 
+  # ========================================
+
+  private
+
+  def self.is_system_stream?(stream)
+    (stream == $stdout || stream == $stderr || stream.class.name == 'IO')
+    # sometimes a stdout will not have the same address as $stdout depending on
+    # how it was created. Hence we also test the class name
+
+  end
 end
