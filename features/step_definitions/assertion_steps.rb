@@ -83,6 +83,27 @@ Then "I should{negate} see {capture_string}" do |negate, content|
 end
 
 
+Then "I should{negate} see {capture_string} in the companies list" do |negate, capture_string|
+    expect(page).send (negate ? :not_to : :to), have_xpath(text_in_companies_list_xpath(capture_string))
+end
+
+
+Then "I should{negate} see {capture_string} in the companies list {digits} times" do |negate, capture_string, n |
+  expect(page).send (negate ? :not_to : :to), have_xpath(text_in_companies_list_xpath(capture_string),
+                                                          count: n)
+end
+
+Then "I should{negate} see {capture_string} in the companies list once" do |negate, capture_string |
+  expect(page).send (negate ? :not_to : :to), have_xpath(text_in_companies_list_xpath(capture_string),
+                                                         count: 1)
+end
+
+
+def text_in_companies_list_xpath(some_text)
+  "//*[@id='companies_list']//tr[td//text()[contains(., '#{some_text}')]]"
+end
+
+
 Then "I should see raw HTML {capture_string}" do |html|
   expect(page.body).to match html
 end
@@ -178,7 +199,12 @@ end
 
 
 Then "I should see {digits} {capture_string}" do |n, content |
-  n = n.to_i
+  expect(page).to have_text("#{content}", count: n)
+  expect(page).not_to have_text("#{content}", count: n+1)
+end
+
+# Restated the above step for readability:
+Then "I should see {capture_string} {digits} times" do | content, n |
   expect(page).to have_text("#{content}", count: n)
   expect(page).not_to have_text("#{content}", count: n+1)
 end
