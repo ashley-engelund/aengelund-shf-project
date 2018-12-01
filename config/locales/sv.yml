@@ -575,8 +575,14 @@ sv:
       h_companies_listed_below: Nedan listas anslutna företag.
       how_to_search: Sök efter företag genom att använda sökfunktionen.
       confirm_are_you_sure: *are_you_sure_confirm
-      no_search_results: Din sökning gav inget resultat, prova att ta bort något av dina val.
+      no_search_results: Din sökning matchade inte några företag, prova att ta bort något av dina val.
       delete: *delete
+      show_near_me: Visa företag nära mig
+      cannot_get_location: Kan inte få din plats. Du kan behöva ändra dina webbläsarinställningar.
+      fake_location_title:  Fake nuvarande plats
+      fake_latitude_title:  Lat
+      fake_longitude_title: Lng
+
 
     destroy:
       success: Företaget raderat.
