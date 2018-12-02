@@ -25,6 +25,8 @@ FactoryBot.define do
       city { nil }
       post_code { nil }
       country { 'Sverige' }
+      latitude { 59.6749712 }
+      longitude { 14.5208584 }
     end
 
     after(:build) do |company, evaluator|
