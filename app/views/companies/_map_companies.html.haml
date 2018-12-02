@@ -3,15 +3,18 @@
 
 :javascript
 
-  $(function() {
+   $(function() {
 
-      var markers = #{raw markers.to_json}
-      mapCenter = {lat: 59.3293235, lng: 18.0685808}; // default center: Stockholm: [59.32932349999999, 18.0685808]
+      var markers = #{raw markers.to_json};
+      var showTheNearMeControl = true;
+      var isProduction = #{  Rails.env.production? };
 
-      if (markers.length == 1) {
+      var mapCenter = {lat: 59.6749712, lng: 14.5208584}; // center of Sweden
+
+      if (markers.length === 1) {
         mapCenter = {lat: markers[0].latitude, lng: markers[0].longitude};
         }
 
-      initCenteredMap(mapCenter, markers, null);
+      initCenteredMap(mapCenter, markers, null, showTheNearMeControl, isProduction);
 
     });
