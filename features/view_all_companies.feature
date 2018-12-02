@@ -204,19 +204,19 @@ Feature: Visitor sees all companies
     Given I am Logged out
     And I am on the "landing" page
     Then I should see t("companies.index.h_companies_listed_below")
-    And I click on t("toggle.company_search_form.hide")
+    #And I click on t("toggle.company_search_form.hide")
     # Ensure the list is sorted by name so we will see Company02
     And I click on t("activerecord.attributes.company.name")
-    And I should see "Company02"
-    And I should not see "2120000142"
-    And I should see "Company01"
-    And I should not see "5560360793"
-    And I should see "Company10"
-    And I should not see "3609340140"
-    And I should not see "Company11"
+    And I should see "Company02" in the companies list
+    And I should not see "2120000142" in the companies list
+    And I should see "Company01" in the companies list
+    And I should not see "5560360793" in the companies list
+    And I should see "Company10" in the companies list
+    And I should not see "3609340140" in the companies list
+    And I should not see "Company11" in the companies list
     Then I click on t("will_paginate.next_label") link
-    And I should see "Company11"
-    And I should not see "Company10"
+    And I should see "Company11" in the companies list
+    And I should not see "Company10" in the companies list
 
   @selenium @time_adjust
   Scenario: I18n translations
@@ -225,17 +225,17 @@ Feature: Visitor sees all companies
     And I set the locale to "sv"
     And I am on the "landing" page
     Then I should see t("companies.index.h_companies_listed_below")
-    Then I click on t("toggle.company_search_form.hide") button
-    And I should see "Verksamhetslän"
-    And I should see "Kategori"
+    #Then I click on t("toggle.company_search_form.hide") button
+    And I should see "Verksamhetslän" 2 times
+    And I should see "Kategori" 2 times
     And I should not see "Region"
     And I should not see "Category"
     Then I click on "change-lang-to-english"
     And I set the locale to "en"
-    Then I click on t("toggle.company_search_form.hide") button
+    #Then I click on t("toggle.company_search_form.hide") button
     And I wait 1 second
-    And I should see "Region"
-    And I should see "Category"
+    And I should see "Region" 2 times
+    And I should see "Category" 2 times
     And I should not see "Verksamhetslän"
     And I should not see "Kategori"
 
@@ -245,25 +245,26 @@ Feature: Visitor sees all companies
     Given I am Logged out
     And I am on the "landing" page
     Then I should see t("companies.index.h_companies_listed_below")
-    And I click on t("toggle.company_search_form.hide")
+    #And I click on t("toggle.company_search_form.hide")
     And "items_count" should have "10" selected
     And I should see "10" companies
     # Ensure the list is sorted by name so we will see Company02
     And I click on t("activerecord.attributes.company.name")
-    And I should see "Company10"
-    And I should not see "Company11"
-    And I should not see "Company26"
+    And I should see "Company10" in the companies list
+    And I should not see "Company11" in the companies list
+    And I should not see "Company26" in the companies list
     Then I select "25" in select list "items_count"
     And I wait for all ajax requests to complete
     Then I should see "25" companies
     And "items_count" should have "25" selected
-    And I should see "Company01"
-    And I should see "Company02"
-    And I should see "Company11"
-    And I should see "Company12"
-    And I should see "Company24"
-    And I should see "Company25"
-    And I should not see "Company26"
+    And I should see "Company01" in the companies list
+    And I should see "Company02" in the companies list
+    And I should see "Company11" in the companies list
+    And I should see "Company12" in the companies list
+    And I should see "Company24" in the companies list
+    And I should see "Company25" in the companies list
+    And I should not see "Company26" in the companies list
+    And I should not see "Company27" in the companies list
 
   @selenium @time_adjust
   Scenario: Companies lacking branding payment or members not shown
@@ -271,15 +272,15 @@ Feature: Visitor sees all companies
     Given I am Logged out
     And I am on the "landing" page
     Then I should see t("companies.index.h_companies_listed_below")
-    And I click on t("toggle.company_search_form.hide")
+    #And I click on t("toggle.company_search_form.hide")
     And "items_count" should have "10" selected
     Then I select "All" in select list "items_count"
     And I wait for all ajax requests to complete
     And I should see "27" companies
-    And I should see "Company10"
-    And I should see "Company27"
-    And I should not see "Company28"
-    And I should not see "Company29"
+    And I should see "Company10" in the companies list
+    And I should see "Company27" in the companies list
+    And I should not see "Company28" in the companies list
+    And I should not see "Company29" in the companies list
 
   @selenium @time_adjust
   Scenario: Admin can see all companies even if lacking branding payment or members
@@ -290,7 +291,7 @@ Feature: Visitor sees all companies
     Then I select "All" in select list "items_count"
     And I wait for all ajax requests to complete
     And I should see "29" companies
-    And I should see "Company10"
-    And I should see "Company27"
-    And I should see "Company28"
-    And I should see "Company29"
+    And I should see "Company10" in the companies list
+    And I should see "Company27" in the companies list
+    And I should see "Company28" in the companies list
+    And I should see "Company29" in the companies list

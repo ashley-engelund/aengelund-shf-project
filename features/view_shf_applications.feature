@@ -74,7 +74,7 @@ Feature: Admin sees as many or few SHF Applications as they want (pagination)
   Scenario: Pagination: default is All, can set to just 10 items
     Given I am logged in as "admin@shf.se"
     And I am on the "membership applications" page
-    And I hide the search form
+    #And I hide the search form
     Then "items_count" should have "All" selected
     And I select "10" in select list "items_count"
     Then "items_count" should have "10" selected
@@ -84,29 +84,29 @@ Feature: Admin sees as many or few SHF Applications as they want (pagination)
     And I should see "6222279082" before "6613265393"
     And I should see "6613265393" before "6914762726"
     Then I click on t("will_paginate.next_label") link
-    And I should see "7661057765"
-    And I should see "8728875504"
-    And I should not see "6914762726"
-    And I should not see "8764985894"
+    And I should see 2 "7661057765"
+    And I should see 2 "8728875504"
+    And I should see 1 "6914762726"
+    And I should see 1 "8764985894"
     Then I click on t("will_paginate.next_label") link
-    And I should see "8764985894"
-    And I should not see "8728875504"
+    And I should see 2 "8764985894"
+    And I should see 1 "8728875504"
 
   @selenium
   Scenario: Pagination: Set number of items per page to various choices
     Given I am logged in as "admin@shf.se"
     And I am on the "membership applications" page
-    And I hide the search form
+    #And I hide the search form
     Then "items_count" should have "All" selected
     And I should see "28" applications
-    And I should see "2120000142"
-    And I should see "9475077674"
+    And I should see 2 "2120000142"
+    And I should see 2 "9475077674"
     Then I select "25" in select list "items_count"
     And I should see "25" applications
     And "items_count" should have "25" selected
-    And I should see "9243957975"
-    And I should not see "9267816362"
+    And I should see 2 "9243957975"
+    And I should see 1 "9267816362"
     Then I select "10" in select list "items_count"
     And I should see "10" applications
-    And I should see "6914762726"
-    And I should not see "7661057765"
+    And I should see 2 "6914762726"
+    And I should see 1 "7661057765"

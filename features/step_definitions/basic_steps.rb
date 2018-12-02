@@ -48,6 +48,10 @@ When /^I dismiss popup$/ do
   page.driver.dismiss_modal(:confirm)
 end
 
+When /^I accept the alert$/ do
+  page.driver.browser.switch_to.alert.accept
+end
+
 When "I fill in {capture_string} with {capture_string}" do |field, value|
   fill_in field, with: value
 end

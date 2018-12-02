@@ -66,12 +66,12 @@ Background:
 Scenario: View all searchable companies, sort by columns
   Given I am Logged out
   And I am on the "landing" page
-  And I should see "Barky Boys"
-  And I should see "HappyMutts"
-  And I should see "Dogs R Us"
-  And I should see "We Luv Dogs"
-  And I should not see "NoPayment"
-  And I should not see "NoMember"
+  And I should see "Barky Boys" in the companies list
+  And I should see "HappyMutts" in the companies list
+  And I should see "Dogs R Us" in the companies list
+  And I should see "We Luv Dogs" in the companies list
+  And I should not see "NoPayment" in the companies list
+  And I should not see "NoMember" in the companies list
   And I click on t("activerecord.attributes.company.region") link
   And I should see "Norrbotten" before "Stockholm"
   And I should see "Stockholm" before "Sweden"
@@ -89,20 +89,20 @@ Scenario: View all searchable companies, sort by columns
 Scenario: Search by category
   Given I am Logged out
   And I am on the "landing" page
-  And I should see "Barky Boys"
-  And I should see "HappyMutts"
-  And I should see "Dogs R Us"
-  And I should see "We Luv Dogs"
+  And I should see "Barky Boys" in the companies list
+  And I should see "HappyMutts" in the companies list
+  And I should see "Dogs R Us" in the companies list
+  And I should see "We Luv Dogs" in the companies list
   Then I select "Groomer" in select list t("activerecord.models.business_category.one")
   And I click on t("search")
-  Then I click on t("toggle.company_search_form.hide")
-  And I should see "Barky Boys"
-  And I should see "We Luv Dogs"
-  And I should not see "HappyMutts"
-  And I should not see "Dogs R Us"
-  And I should see "Trainer"
-  And I should see "Walker"
-  And I should not see "Psychologist"
+  #Then I click on t("toggle.company_search_form.hide")
+  And I should see "Barky Boys" in the companies list
+  And I should see "We Luv Dogs" in the companies list
+  And I should not see "HappyMutts" in the companies list
+  And I should not see "Dogs R Us" in the companies list
+  And I should see "Trainer" in the companies list
+  And I should see "Walker" in the companies list
+  And I should not see "Psychologist" in the companies list
 
 @selenium @time_adjust
 Scenario: Search by region
@@ -110,11 +110,11 @@ Scenario: Search by region
   And I am on the "landing" page
   Then I select "Västerbotten" in select list t("activerecord.attributes.company.region")
   And I click on t("search")
-  Then I click on t("toggle.company_search_form.hide")
-  Then I should see "HappyMutts"
-  And I should not see "Barky Boys"
-  And I should not see "Dogs R Us"
-  And I should not see "We Luv Dogs"
+  #Then I click on t("toggle.company_search_form.hide")
+  Then I should see "HappyMutts" in the companies list
+  And I should not see "Barky Boys" in the companies list
+  And I should not see "Dogs R Us" in the companies list
+  And I should not see "We Luv Dogs" in the companies list
 
 @selenium @time_adjust
 Scenario: Search by company (and confirm non-admin cannot search with non-searchable company name)
@@ -124,11 +124,11 @@ Scenario: Search by company (and confirm non-admin cannot search with non-search
   And I cannot select "NoMember" in select list t("activerecord.models.company.one")
   Then I select "We Luv Dogs" in select list t("activerecord.models.company.one")
   And I click on t("search")
-  Then I click on t("toggle.company_search_form.hide")
-  And I should see "We Luv Dogs"
-  And I should not see "HappyMutts"
-  And I should not see "Barky Boys"
-  And I should not see "Dogs R Us"
+  #Then I click on t("toggle.company_search_form.hide")
+  And I should see "We Luv Dogs" in the companies list
+  And I should not see "HappyMutts" in the companies list
+  And I should not see "Barky Boys" in the companies list
+  And I should not see "Dogs R Us" in the companies list
 
 @selenium @time_adjust
 Scenario: Search by company (and confirm admin can search with all company names)
@@ -136,17 +136,17 @@ Scenario: Search by company (and confirm admin can search with all company names
   And I am on the "all companies" page
   And I select "NoPayment" in select list t("activerecord.models.company.one")
   And I click on t("search")
-  And I should see "NoPayment"
-  And I should not see "We Luv Dogs"
+  And I should see "NoPayment" in the companies list
+  And I should not see "We Luv Dogs" in the companies list
   And I reload the page
   And I select "NoMember" in select list t("activerecord.models.company.one")
   And I click on t("search")
-  And I should see "NoMember"
-  And I should not see "We Luv Dogs"
-  And I should not see "HappyMutts"
-  And I should not see "Barky Boys"
-  And I should not see "Dogs R Us"
-  And I should not see "NoPayment"
+  And I should see "NoMember" in the companies list
+  And I should not see "We Luv Dogs" in the companies list
+  And I should not see "HappyMutts" in the companies list
+  And I should not see "Barky Boys" in the companies list
+  And I should not see "Dogs R Us" in the companies list
+  And I should not see "NoPayment" in the companies list
 
 @selenium @time_adjust
 Scenario: Search by kommun and region
@@ -154,20 +154,21 @@ Scenario: Search by kommun and region
   And I am on the "landing" page
   Then I select "Alingsås" in select list t("activerecord.attributes.company.kommun")
   And I click on t("search")
-  Then I click on t("toggle.company_search_form.hide")
-  And I should not see "HappyMutts"
-  And I should not see "We Luv Dogs"
-  And I should see "Barky Boys"
-  And I should not see "Dogs R Us"
-  Then I click on t("toggle.company_search_form.show")
+  #Then I click on t("toggle.company_search_form.hide")
+  And I should not see "HappyMutts" in the companies list
+  And I should not see "We Luv Dogs" in the companies list
+  And I should see "Barky Boys" in the companies list
+  And I should not see "Dogs R Us" in the companies list
+  #Then I click on t("toggle.company_search_form.show")
   Then I select "Norrbotten" in select list t("activerecord.attributes.company.region")
   And I click on t("search")
-  Then I click on t("toggle.company_search_form.hide")
-  And I should not see "HappyMutts"
-  Then I click on t("toggle.company_search_form.show")
+  #Then I click on t("toggle.company_search_form.hide")
+  And I accept the alert
+  And I should not see "HappyMutts" in the companies list
+  #Then I click on t("toggle.company_search_form.show")
   Then I select "Stockholm" in select list t("activerecord.attributes.company.region")
   And I click on t("search")
-  And I should see "Barky Boys"
+  And I should see "Barky Boys" in the companies list
 
 @selenium @time_adjust
 Scenario: Search by category and region
@@ -176,21 +177,22 @@ Scenario: Search by category and region
   Then I select "Groomer" in select list t("activerecord.models.business_category.one")
   Then I select "Västerbotten" in select list t("activerecord.attributes.company.region")
   And I click on t("search")
-  Then I click on t("toggle.company_search_form.hide")
-  And I should not see "HappyMutts"
-  And I should not see "We Luv Dogs"
-  And I should not see "Barky Boys"
-  And I should not see "Dogs R Us"
-  Then I click on t("toggle.company_search_form.show")
+  #Then I click on t("toggle.company_search_form.hide")
+  And I accept the alert
+  And I should not see "HappyMutts" in the companies list
+  And I should not see "We Luv Dogs" in the companies list
+  And I should not see "Barky Boys" in the companies list
+  And I should not see "Dogs R Us" in the companies list
+  #Then I click on t("toggle.company_search_form.show")
   Then I select "Stockholm" in select list t("activerecord.attributes.company.region")
   And I click on t("search")
-  Then I click on t("toggle.company_search_form.hide")
-  And I should see "Barky Boys"
-  Then I click on t("toggle.company_search_form.show")
+  #Then I click on t("toggle.company_search_form.hide")
+  And I should see "Barky Boys" in the companies list
+  #Then I click on t("toggle.company_search_form.show")
   Then I select "Sweden" in select list t("activerecord.attributes.company.region")
   And I click on t("search")
-  Then I click on t("toggle.company_search_form.hide")
-  And I should see "We Luv Dogs"
+  #Then I click on t("toggle.company_search_form.hide")
+  And I should see "We Luv Dogs" in the companies list
 
 @selenium @time_adjust
 Scenario: Search by region
@@ -198,11 +200,11 @@ Scenario: Search by region
   And I am on the "landing" page
   Then I select "Västerbotten" in select list t("activerecord.attributes.company.region")
   And I click on t("search")
-  Then I click on t("toggle.company_search_form.hide")
-  Then I should see "HappyMutts"
-  And I should not see "Barky Boys"
-  And I should not see "Dogs R Us"
-  And I should not see "We Luv Dogs"
+  #Then I click on t("toggle.company_search_form.hide")
+  Then I should see "HappyMutts" in the companies list
+  And I should not see "Barky Boys" in the companies list
+  And I should not see "Dogs R Us" in the companies list
+  And I should not see "We Luv Dogs" in the companies list
 
 @selenium @time_adjust
 Scenario: Search by company
@@ -210,11 +212,11 @@ Scenario: Search by company
   And I am on the "landing" page
   Then I select "We Luv Dogs" in select list t("activerecord.models.company.one")
   And I click on t("search")
-  Then I click on t("toggle.company_search_form.hide")
-  And I should see "We Luv Dogs"
-  And I should not see "HappyMutts"
-  And I should not see "Barky Boys"
-  And I should not see "Dogs R Us"
+  #Then I click on t("toggle.company_search_form.hide")
+  And I should see "We Luv Dogs" in the companies list
+  And I should not see "HappyMutts" in the companies list
+  And I should not see "Barky Boys" in the companies list
+  And I should not see "Dogs R Us" in the companies list
 
 @selenium @time_adjust
 Scenario: Search by kommun
@@ -222,19 +224,19 @@ Scenario: Search by kommun
   And I am on the "landing" page
   Then I select "Alingsås" in select list t("activerecord.attributes.company.kommun")
   And I click on t("search")
-  Then I click on t("toggle.company_search_form.hide")
-  And I should see "Barky Boys"
-  And I should not see "HappyMutts"
-  And I should not see "We Luv Dogs"
-  And I should not see "Dogs R Us"
-  Then I click on t("toggle.company_search_form.show")
+  #Then I click on t("toggle.company_search_form.hide")
+  And I should see "Barky Boys" in the companies list
+  And I should not see "HappyMutts" in the companies list
+  And I should not see "We Luv Dogs" in the companies list
+  And I should not see "Dogs R Us" in the companies list
+  #Then I click on t("toggle.company_search_form.show")
   Then I select "Laxå" in select list t("activerecord.attributes.company.kommun")
   And I click on t("search")
-  Then I click on t("toggle.company_search_form.hide")
-  And I should see "Barky Boys"
-  And I should not see "HappyMutts"
-  And I should see "We Luv Dogs"
-  And I should not see "Dogs R Us"
+  #Then I click on t("toggle.company_search_form.hide")
+  And I should see "Barky Boys" in the companies list
+  And I should not see "HappyMutts" in the companies list
+  And I should see "We Luv Dogs" in the companies list
+  And I should not see "Dogs R Us" in the companies list
 
 @selenium @time_adjust
 Scenario: Search by category and region 2
@@ -243,30 +245,31 @@ Scenario: Search by category and region 2
   Then I select "Groomer" in select list t("activerecord.models.business_category.one")
   Then I select "Västerbotten" in select list t("activerecord.attributes.company.region")
   And I click on t("search")
-  Then I click on t("toggle.company_search_form.hide")
-  And I should not see "HappyMutts"
-  And I should not see "We Luv Dogs"
-  And I should not see "Barky Boys"
-  And I should not see "Dogs R Us"
-  Then I click on t("toggle.company_search_form.show")
+  #Then I click on t("toggle.company_search_form.hide")
+  And I accept the alert
+  And I should not see "HappyMutts" in the companies list
+  And I should not see "We Luv Dogs" in the companies list
+  And I should not see "Barky Boys" in the companies list
+  And I should not see "Dogs R Us" in the companies list
+  #Then I click on t("toggle.company_search_form.show")
   Then I select "Stockholm" in select list t("activerecord.attributes.company.region")
   And I click on t("search")
-  Then I click on t("toggle.company_search_form.hide")
-  And I should see "Barky Boys"
-  Then I click on t("toggle.company_search_form.show")
+  #Then I click on t("toggle.company_search_form.hide")
+  And I should see "Barky Boys" in the companies list
+  #Then I click on t("toggle.company_search_form.show")
   Then I select "Sweden" in select list t("activerecord.attributes.company.region")
   And I click on t("search")
-  Then I click on t("toggle.company_search_form.hide")
-  And I should see "We Luv Dogs"
+  #Then I click on t("toggle.company_search_form.hide")
+  And I should see "We Luv Dogs" in the companies list
 
-@selenium @time_adjust
-Scenario: Toggle Hide/Show search form
-  Given I am Logged out
-  And I am on the "landing" page
-  Then I should see t("companies.index.how_to_search")
-  And I should see t("toggle.company_search_form.hide")
-  And t("activerecord.models.company.one") should be visible
-  Then I click on t("toggle.company_search_form.hide")
-  Then I wait 2 seconds
-  And I should see t("toggle.company_search_form.show")
-  Then t("activerecord.models.company.one") should not be visible
+#@selenium @time_adjust
+#Scenario: Toggle Hide/Show search form
+#  Given I am Logged out
+#  And I am on the "landing" page
+#  Then I should see t("companies.index.how_to_search")
+#  And I should see t("toggle.company_search_form.hide")
+#  And t("activerecord.models.company.one") should be visible
+#  Then I click on t("toggle.company_search_form.hide")
+#  Then I wait 2 seconds
+#  And I should see t("toggle.company_search_form.show")
+#  Then t("activerecord.models.company.one") should not be visible
