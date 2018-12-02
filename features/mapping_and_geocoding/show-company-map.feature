@@ -1,4 +1,6 @@
-Feature: As a visitor
+Feature: Visitor views a company and sees the map for it
+
+  As a visitor
   So that I can how near or far a company is
   Show me the company location on a map on the company details page
 
@@ -37,7 +39,9 @@ Feature: As a visitor
 
 
   @selenium
-  Scenario: Show the company location on the Company detail page (popup should not link to the detail page)
+  Scenario: Show the company on a map on the Company detail page
     Given I am on the page for company number "5560360793"
-    Then I should see xpath "//*[@id='map']"
+    And I should see the map
+    And I should not see the Show Near Me control on the map
+    And I should see 1 company markers on the map
 
