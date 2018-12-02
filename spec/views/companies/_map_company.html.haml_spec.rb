@@ -4,7 +4,7 @@ class TempCompanyHelper
   include CompaniesHelper
 end
 
-RSpec.describe "map companies partial: _map_companies.html.haml" do
+RSpec.describe "map company partial: _map_company.html.haml" do
 
   let(:test_companies) do
     test_cos = []
@@ -15,7 +15,7 @@ RSpec.describe "map companies partial: _map_companies.html.haml" do
 
   it "map markers are raw json (not escaped)" do
 
-    render partial: 'companies/map_companies.html.haml',
+    render partial: 'companies/map_company.html.haml',
            locals: {markers: TempCompanyHelper.new.location_and_markers_for(test_companies, link_name: false)}
 
     expect(rendered).to include("var markers = [{\"latitude\":56.7422437,\"longitude\":12.7206453,")
