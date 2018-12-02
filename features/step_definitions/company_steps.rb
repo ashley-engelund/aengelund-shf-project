@@ -4,6 +4,8 @@ And(/^the following companies exist:$/) do |table|
     kommun = company.delete('kommun') || 'Stockholm'
     visibility = company.delete('visibility') || 'street_address'
 
+    company.delete('dist. to Stockholm') if company.key?('dist. to Stockholm') # ignore this if it's in the data
+
     cmpy = FactoryBot.create(:company, company)
 
     cmpy.addresses.first.update(region: Region.find_or_create_by(name: region),
