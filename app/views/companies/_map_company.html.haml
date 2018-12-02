@@ -1,0 +1,22 @@
+#map
+
+:javascript
+
+   // FIXME: refactor: duplicate code with _map_companies.html.haml
+
+   $(function() {
+
+      var markers = #{raw markers.to_json};
+      var showTheNearMeControl = false;
+      var isProduction = #{  Rails.env.production? };
+
+      var mapCenter = {lat: 59.6749712, lng: 14.5208584}; // center of Sweden
+
+      // just in case markers are empty, check the length
+      if (markers.length === 1) {
+        mapCenter = {lat: markers[0].latitude, lng: markers[0].longitude};
+      }
+
+      initCenteredMap(mapCenter, markers, null, showTheNearMeControl, isProduction);
+
+    });

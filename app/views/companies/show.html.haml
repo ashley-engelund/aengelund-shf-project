@@ -36,7 +36,7 @@
 
       .col-md-7
         - if @company.any_visible_addresses?
-          = render partial: 'map_companies',
+          = render partial: 'map_company',
                    locals: { markers: location_and_markers_for([@company],
                    link_name: false )}
 
