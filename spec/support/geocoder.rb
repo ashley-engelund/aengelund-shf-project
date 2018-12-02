@@ -143,7 +143,6 @@ Geocoder::Lookup::Test.add_stub(
 )
 
 
-
 Geocoder::Lookup::Test.add_stub(
 
     "Kvarnliden 2, 310 40, Harplinge, Halland, Sverige",
@@ -176,7 +175,6 @@ Geocoder::Lookup::Test.add_stub(
 )
 
 
-
 Geocoder::Lookup::Test.add_stub(
 
     "Plingshult, Halland, Sverige",
@@ -198,14 +196,13 @@ Geocoder::Lookup::Test.add_stub(
     "Norway",
     [
         {
-            'latitude'     => 60.47202399999999,
-            'longitude'    => 8.468945999999999,
-            'address'      => 'Norway',
-            'country'      => 'Norway',
+            'latitude'  => 60.47202399999999,
+            'longitude' => 8.468945999999999,
+            'address'   => 'Norway',
+            'country'   => 'Norway'
         }
     ]
 )
-
 
 
 Geocoder::Lookup::Test.add_stub(

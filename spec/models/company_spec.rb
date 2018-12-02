@@ -710,7 +710,7 @@ RSpec.describe Company, type: :model do
       it 'returns all companies at these addresses' do
         kista_address = Address.find_by_city('Kista')
         expect(Company.at_addresses([kista_address]).map(&:name)).to match_array(['Kista Co'])
-  end
+      end
 
       it 'no companies if addresses is empty' do
         expect(Company.at_addresses([]).size).to eq 0
