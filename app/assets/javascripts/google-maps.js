@@ -347,7 +347,7 @@ function makeFakeLocationControl() {
             newInputTitle.className = 'fake-title';
             newInputTitle.innerText = labelText;
 
-            return [newInput, newInputTitle]
+            return [newInput, newInputTitle];
         }
 
         var [fakeLatitudeInput, fakeLatitudeTitle] = makeCoodinateInput(I18n.t('companies.index.fake_latitude_title'),
