@@ -18,7 +18,8 @@ var SHOW_ZOOM_LEVEL = 8;
 
 // TODO: refactor and clean up!
 
-
+var SHOW_NEAR_ME_DIV_ID = 'show-near-me';
+var CANT_GET_LOC_CHECKBOX_ID = 'cant-get-location-checkbox';
 
 // Display a dynamic Google map
 //  centerCoordinates: the initial center for the map.
@@ -55,7 +56,7 @@ function initCenteredMap(centerCoordinates, markers, icon, showNearMeControl,
     var optimize = isProduction === null ? false : isProduction;
 
     if (!(centerCoordinates === null)) {
-        mapCenter =  centerCoordinates;
+        mapCenter = centerCoordinates;
     }
 
     var map = new google.maps.Map(document.getElementById('map'), {
@@ -78,19 +79,17 @@ function initCenteredMap(centerCoordinates, markers, icon, showNearMeControl,
 
         if (!isProduction) {
             // add input boxes for setting the current location latitude & longitude
-            var fakeCurrentLocationDiv = document.createElement('DIV');
-            fakeCurrentLocationDiv.id = 'fake-current-location';
-            new FakeCurrentLocationInputs(fakeCurrentLocationDiv);
+            var fakeCurrentLocationDiv = makeFakeLocationControl();
+
             fakeCurrentLocationDiv.index = 1;
             map.controls[google.maps.ControlPosition.LEFT_BOTTOM]
                 .push(fakeCurrentLocationDiv);
         }
 
         // Create the DIV to hold the search near me button and call
-        // the SearchNearMeButton()
-        // constructor passing in this DIV.
+        // the SearchNearMeButton() method passing in this DIV.
         var searchNearMeDiv = document.createElement('DIV');
-        new ShowNearMeButton(map, searchNearMeDiv, isProduction);
+        showNearMeButton(map, searchNearMeDiv, isProduction);
         searchNearMeDiv.index = 1;
 
         map.controls[google.maps.ControlPosition.TOP_LEFT].push(searchNearMeDiv);
@@ -184,7 +183,7 @@ function createInfoWindow(text) {
 
 
 /**
- * The ShowNearMeButton adds a button to the given DIV (which should
+ * The showNearMeButton adds a button to the given DIV (which should
  * be in a map) that will:
  * 1) geolocate the user and then
  * 2) center the map on that location
@@ -198,24 +197,23 @@ function createInfoWindow(text) {
  * @param controlDiv - a DIV that the button gets appended to
  * @param isProduction [Boolean] - whether or not the system is in production
  *              (vs. in development or testing)
- * @constructor
  */
-function ShowNearMeButton(map, controlDiv, isProduction) {
+function showNearMeButton(map, controlDiv, isProduction) {
 
     // outer box that holds the button and related text
     var showNearMeDiv = document.createElement('DIV');
-    showNearMeDiv.id = 'show-near-me';
+    showNearMeDiv.id = SHOW_NEAR_ME_DIV_ID;
 
     // show near me text
     var showNearMeText = document.createElement('SPAN');
-    showNearMeText.id = 'show-near-me-text';
+    showNearMeText.id = SHOW_NEAR_ME_DIV_ID + '-text';
     showNearMeText.className = showNearMeText.id;
     showNearMeText.innerText = I18n.t('companies.index.show_near_me');
 
 
     var showNearMeButton = document.createElement('INPUT');
     showNearMeButton.setAttribute('type', 'button');
-    showNearMeButton.id = 'show-near-me-button';
+    showNearMeButton.id = SHOW_NEAR_ME_DIV_ID + '-button';
     showNearMeButton.className = showNearMeButton.id;
     showNearMeButton.alt = I18n.t('companies.index.show_near_me');
     showNearMeButton.name = 'submit';
@@ -229,10 +227,13 @@ function ShowNearMeButton(map, controlDiv, isProduction) {
 
         var nearCoords = getUserLocation(isProduction);
 
-        map.setCenter(nearCoords);
-        google.maps.event.addListenerOnce(map, 'bounds_changed', function() {
-            map.setZoom(SHOW_ZOOM_LEVEL);
-        });
+        if (!(nearCoords === null)) {
+
+            map.setCenter(nearCoords);
+            google.maps.event.addListenerOnce(map, 'bounds_changed', function () {
+                map.setZoom(SHOW_ZOOM_LEVEL);
+            });
+        }
     });
 }
 
@@ -251,22 +252,182 @@ function showAlertCantGetLocation() {
 //   1: permission denied
 //   2: position unavailable (error response from location provider)
 //   3: timed out
-var geoError = function (error) {
-    switch (error.code) {
-        case error.PERMISSION_DENIED:
-            showAlertCantGetLocation();
-            break;
-        case error.TIMEOUT:
-            // The user didn't accept the callout
-            //  showNudgeBanner();
-            showAlertCantGetLocation();
-            break;
-        case error.POSITION_UNAVAILABLE:
-            showAlertCantGetLocation();
-            break;
-    }
-    console.log('geolocation Error occurred. Error code: ' + error.code);
+var geoError = function () {
+    showAlertCantGetLocation();
+    console.log('geolocation Error occurred.');
 };
+
+
+/**
+ * Create elements for use in development and testing to enter a
+ * faked current user location,.
+ *
+ * @return DIV - a div with the fake location controls added as child nodes
+ */
+function makeFakeLocationControl() {
+
+
+    function makeCannotGetLocationCheckboxAndLabel() {
+
+        var cantGetCheckbox = document.createElement('INPUT');
+        cantGetCheckbox.type = "checkbox";
+        cantGetCheckbox.id = CANT_GET_LOC_CHECKBOX_ID;
+        cantGetCheckbox.className = cantGetCheckbox.id;
+        cantGetCheckbox.value = false;
+
+        var cantGetLabel = document.createElement('LABEL');
+        cantGetLabel.for = cantGetCheckbox;
+        cantGetLabel.innerText = I18n.t('companies.index.fake_cant_get_location');
+
+        return [cantGetCheckbox, cantGetLabel];
+    }
+
+
+    /**
+     *  Make radio buttons, titles, etc. to select the coordinates used for the
+     *  fake location.
+     *  Add them to the parent DIV passed in
+     *
+     *  @param parentDiv - the DIV to add all of these elements to
+     *  @return the updated parentDiv with the radio button element added to it
+     */
+    function makeFakeLocationRadioButtons(parentDiv) {
+
+        function makeRadioButtonFor(rbName, rbValue, isChecked) {
+            var newRadioButton = document.createElement('INPUT');
+            newRadioButton.setAttribute('type', 'radio');
+            newRadioButton.name = rbName;
+            newRadioButton.id = radioButtonName(rbValue);
+            newRadioButton.className = newRadioButton.id;
+            newRadioButton.value = rbValue;
+            newRadioButton.checked = isChecked;
+            newRadioButton.className = newRadioButton.id;
+            return newRadioButton;
+        }
+
+
+        function makeRadioButtonAndLabel(rbName, labelText, isChecked) {
+            var newRadioButton = makeRadioButtonFor(rbName, (labelText.toLowerCase()), isChecked);
+            var newLabel = document.createElement('LABEL');
+            newLabel.for = newRadioButton;
+            newLabel.innerText = labelText;
+            newLabel.className = 'radio-button-label-' + labelText.toLowerCase();
+            return [newRadioButton, newLabel];
+        }
+
+
+        var buttonGroupName = 'preset-coords';
+
+        // radio buttons to automatically enter coords
+        // for  Stockholm, Gothenburg, or a custom location
+        var [stockholmRadioButton, stockholmLabel] = makeRadioButtonAndLabel(buttonGroupName,
+            'Stockholm', true);
+
+        var [gothenburgRadioButton, gothenburgLabel] = makeRadioButtonAndLabel(buttonGroupName,
+            'Gothenburg', false);
+
+        var [customLocationRadioButton, customLocationlabel] = makeRadioButtonAndLabel(buttonGroupName,
+            'Custom', false);
+
+
+        function makeCoodinateInput(labelText, basename, value) {
+
+            var newInput = document.createElement('INPUT');
+            newInput.setAttribute('type', 'number');
+            newInput.id = numberInputName('fake-' + basename);
+            newInput.name = newInput.id;
+            newInput.className = 'fake-coordinate';
+            newInput.defaultValue = value;
+            newInput.value = value;
+
+            var newInputTitle = document.createElement('LABEL');
+            newInputTitle.for = newInput.id;
+            newInputTitle.id = 'fake-' + basename + '-title';
+            newInputTitle.name = newInputTitle.id;
+            newInputTitle.className = 'fake-title';
+            newInputTitle.innerText = labelText;
+
+            return [newInput, newInputTitle]
+        }
+
+        var [fakeLatitudeInput, fakeLatitudeTitle] = makeCoodinateInput(I18n.t('companies.index.fake_latitude_title'),
+            'latitude', DEFAULT_LAT);
+
+        var [fakeLongitudeInput, fakeLongitudeTitle] = makeCoodinateInput(I18n.t('companies.index.fake_longitude_title'),
+            'longitude', DEFAULT_LONG);
+
+
+        stockholmRadioButton.addEventListener('click', function () {
+            fakeLatitudeInput.value = STOCKHOLM_LAT;
+            fakeLongitudeInput.value = STOCKHOLM_LONG;
+        });
+
+        gothenburgRadioButton.addEventListener('click', function () {
+            fakeLatitudeInput.value = GOTHENBURG_LAT;
+            fakeLongitudeInput.value = GOTHENBURG_LONG;
+        });
+
+
+        var fakeInputValsDiv = document.createElement('DIV');
+        fakeInputValsDiv.id = 'fake-input-values-div';
+        fakeInputValsDiv.className = fakeInputValsDiv.id;
+
+        fakeInputValsDiv.appendChild(stockholmRadioButton);
+        fakeInputValsDiv.appendChild(stockholmLabel);
+
+        fakeInputValsDiv.appendChild(gothenburgRadioButton);
+        fakeInputValsDiv.appendChild(gothenburgLabel);
+
+        fakeInputValsDiv.appendChild(document.createElement('BR'));
+
+        fakeInputValsDiv.appendChild(customLocationRadioButton);
+        fakeInputValsDiv.appendChild(customLocationlabel);
+
+        fakeInputValsDiv.appendChild(fakeLatitudeTitle);
+        fakeInputValsDiv.appendChild(fakeLatitudeInput);
+        fakeInputValsDiv.appendChild(fakeLongitudeTitle);
+        fakeInputValsDiv.appendChild(fakeLongitudeInput);
+
+        parentDiv.appendChild(fakeInputValsDiv);
+        return parentDiv;
+    }
+
+
+    // The controls that are used to set a 'fake' location or 'fake' that the
+    // browser cannot provide the location (buttons, etc)
+    function buildFakeControlDiv() {
+
+        // outer box that holds the inputs
+        var fakeControlDiv = document.createElement('DIV');
+        fakeControlDiv.id = 'fake-inputs';
+
+        var fakeLocationTitle = document.createElement('P');
+        fakeLocationTitle.className = 'fake-location-title';
+        fakeLocationTitle.innerText = I18n.t('companies.index.fake_location_title');
+
+        fakeControlDiv.appendChild(fakeLocationTitle);
+
+        var [cantGetLocCheckbox,
+            cantGetLocLabel] = makeCannotGetLocationCheckboxAndLabel(fakeControlDiv);
+
+        fakeControlDiv.appendChild(cantGetLocCheckbox);
+        fakeControlDiv.appendChild(cantGetLocLabel);
+        fakeControlDiv.appendChild(document.createElement('BR'));
+
+        fakeControlDiv = makeFakeLocationRadioButtons(fakeControlDiv);
+
+        return fakeControlDiv;
+    }
+
+
+    var fakeCurrentLocationDiv = document.createElement('DIV');
+    fakeCurrentLocationDiv.id = 'fake-current-location';
+
+    fakeCurrentLocationDiv.appendChild(buildFakeControlDiv());
+
+    return fakeCurrentLocationDiv;
+
+}
 
 
 /**
@@ -283,8 +444,7 @@ var geoError = function (error) {
  **/
 function getUserLocation(isProduction) {
 
-    var currentCoordinates = new google.maps.LatLng(DEFAULT_LAT, DEFAULT_LONG);
-
+    var currentCoordinates;
 
     if (isProduction) {
 
@@ -295,126 +455,54 @@ function getUserLocation(isProduction) {
             },
             geoError);
 
-    } else { // is not Production so get the value from the UI
-        var lat = document
-            .getElementById('fake-latitude-number')
-            .value;
-        var lng = document
-            .getElementById('fake-longitude-number')
-            .value;
+    } else { // is not Production so get the fake values from the UI
+        currentCoordinates = setFakeCoordinates();
 
-        currentCoordinates = new google.maps.LatLng(lat, lng);
-
-        console.log('fake latitude used:' + currentCoordinates.lat());
-        console.log('fake longitude used:' + currentCoordinates.lng());
+        return currentCoordinates;
     }
 
-    return currentCoordinates;
 }
 
 
-/**
- * Create elements for use in development and testing to enter a
- * faked current user location
- *
- * @param controlDiv - a DIV all of this gets appended to
- * @constructor
- */
-function FakeCurrentLocationInputs(controlDiv) {
+    function setFakeCoordinates() {
 
-    // outer box that holds the inputs
-    var fakeLocInputsDiv = document.createElement('DIV');
-    fakeLocInputsDiv.id = 'fake-inputs';
+        //if checkbox is checked,error.
+        var cantGetCheckbox = document.getElementById(CANT_GET_LOC_CHECKBOX_ID);
 
-    var fakeLocationTitle = document.createElement('P');
-    fakeLocationTitle.className = 'fake-location-title';
-    fakeLocationTitle.innerText = I18n.t('companies.index.fake_location_title');
+        if (cantGetCheckbox.checked) {
+            geoError();
+            return null;
 
-    // radio buttons to automatically enter coords
-    // for either Stockholm or Gothenburg
-    var stockholmRadioButton = document.createElement('INPUT');
-    stockholmRadioButton.setAttribute('type', 'radio');
-    stockholmRadioButton.id = 'radio-button-stockholm';
-    stockholmRadioButton.name = 'preset-coords';
-    stockholmRadioButton.value = 'stockholm';
-    stockholmRadioButton.checked = true;
+        } else {
+            // else get the coordinates and set them
+            var lat = document
+                .getElementById(numberInputName('fake-latitude'))
+                .value;
+            var lng = document
+                .getElementById(numberInputName('fake-longitude'))
+                .value;
 
-    var stockholmLabel = document.createElement('LABEL');
-    stockholmLabel.for = stockholmRadioButton;
-    stockholmLabel.innerText = 'Stockholm';
+            currentCoordinates = new google.maps.LatLng(lat, lng);
 
-    var gothenburgRadioButton = document.createElement('INPUT');
-    gothenburgRadioButton.setAttribute('type', 'radio');
-    gothenburgRadioButton.id = 'radio-button-gothenburg';
-    gothenburgRadioButton.name = 'preset-coords';
-    gothenburgRadioButton.value = 'gothenburg';
-    var gothenburgLabel = document.createElement('LABEL');
-    gothenburgLabel.for = gothenburgRadioButton;
-    gothenburgLabel.innerText = 'Gothenburg';
+            console.log('fake latitude used:' + currentCoordinates.lat());
+            console.log('fake longitude used:' + currentCoordinates.lng());
+
+            return currentCoordinates;
+        }
+
+    }
+
+    function numberInputName(basename) {
+        return 'input-number-' + basename;
+    }
 
 
-    var fakeLatitudeInput = document.createElement('INPUT');
-    fakeLatitudeInput.setAttribute('type', 'number');
-    fakeLatitudeInput.id = 'fake-latitude-number';
-    fakeLatitudeInput.name = fakeLatitudeInput.id;
-    fakeLatitudeInput.className = 'fake-coordinate';
-    fakeLatitudeInput.defaultValue = DEFAULT_LAT;
-    fakeLatitudeInput.value = DEFAULT_LAT;
-
-    var fakeLatitudeTitle = document.createElement('LABEL');
-    fakeLatitudeTitle.for = fakeLatitudeInput.id;
-    fakeLatitudeTitle.id = 'fake-latitude-title';
-    fakeLatitudeTitle.className = 'fake-title';
-    fakeLatitudeTitle.name = fakeLatitudeTitle.id;
-    fakeLatitudeTitle.innerText = I18n.t('companies.index.fake_latitude_title');
-
-    var fakeLongitudeInput = document.createElement('INPUT');
-    fakeLongitudeInput.setAttribute('type', 'number');
-    fakeLongitudeInput.id = 'fake-longitude-number';
-    fakeLongitudeInput.name = fakeLongitudeInput.id;
-    fakeLongitudeInput.className = 'fake-coordinate';
-    fakeLongitudeInput.defaultValue = DEFAULT_LONG;
-    fakeLongitudeInput.value = DEFAULT_LONG;
-
-    var fakeLongitudeTitle = document.createElement('LABEL');
-    fakeLongitudeTitle.for = fakeLongitudeTitle.id;
-    fakeLongitudeTitle.id = 'fake-longitude-title';
-    fakeLongitudeTitle.className = 'fake-title';
-    fakeLongitudeTitle.name = fakeLongitudeTitle.id;
-    fakeLongitudeTitle.innerText = I18n
-        .t('companies.index.fake_longitude_title');
-
-    fakeLocInputsDiv.appendChild(fakeLocationTitle);
-    fakeLocInputsDiv.appendChild(stockholmLabel);
-    fakeLocInputsDiv.appendChild(stockholmRadioButton);
-    fakeLocInputsDiv.appendChild(gothenburgLabel);
-    fakeLocInputsDiv.appendChild(gothenburgRadioButton);
-
-    fakeLocInputsDiv.appendChild(document.createElement('BR'));
-
-    fakeLocInputsDiv.appendChild(fakeLatitudeTitle);
-    fakeLocInputsDiv.appendChild(fakeLatitudeInput);
-    fakeLocInputsDiv.appendChild(fakeLongitudeTitle);
-    fakeLocInputsDiv.appendChild(fakeLongitudeInput);
-    controlDiv.appendChild(fakeLocInputsDiv);
-
-    // Setup the click event for the radio buttons so they automatically enter
-    // coordinates
-    // when clicked
-
-    stockholmRadioButton.addEventListener('click', function () {
-        fakeLatitudeInput.value = STOCKHOLM_LAT;
-        fakeLongitudeInput.value = STOCKHOLM_LONG;
-    });
-
-    gothenburgRadioButton.addEventListener('click', function () {
-        fakeLatitudeInput.value = GOTHENBURG_LAT;
-        fakeLongitudeInput.value = GOTHENBURG_LONG;
-    });
-}
+    function radioButtonName(basename) {
+        return 'radio-button-' + basename;
+    }
 
 
-function logSearchToConsole(latitude, longitude) {
-    console.log('searching near lat:' + latitude +
-        ' long:' + longitude );
-}
+    function logSearchToConsole(latitude, longitude) {
+        console.log('searching near lat:' + latitude +
+            ' long:' + longitude);
+    }

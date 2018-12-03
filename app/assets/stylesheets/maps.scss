@@ -91,15 +91,31 @@ $checkbox-color: #808080; // gray;
       margin-bottom: 2px;
     }
 
-    label {
-      margin-right: 2px;
-    }
-
     input {
       margin-right: 4px;
     }
 
     #fake-inputs {
+
+      label#fake-latitude-title,
+      label#fake-longitude-title {
+        font-weight: normal;
+      }
+
+      .radio-button-label-stockholm,
+      .radio-button-label-gothenburg {
+        margin-right: 12px;
+      }
+
+      .radio-button-label-custom {
+        margin-right: 6px;
+      }
+
+      .radio-button-stockholm,
+      .radio-button-gothenburg,
+      .radio-button-custom {
+        margin-right: 6px;
+      }
 
       .fake-coordinate {
         background-color: $fake-coord-input-background;
@@ -107,7 +123,7 @@ $checkbox-color: #808080; // gray;
         color: $show-near-me-text-color;
         line-height: 1em;
         padding: 2px;
-        width: 80px;
+        width:75px;
       }
     }
   }
