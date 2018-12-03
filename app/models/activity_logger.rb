@@ -3,13 +3,8 @@ class ActivityLogger
   # This supports simple logging of activity, such as loading data into the
   # the DB with a rake task.
   #
-  # This allows for output to $stdout of logged messages.
-  #
-  # This will write to $stdout *instead of a file* if:
-  #   ENV['ACTIVELOG_TO_STDOUT'] exists (the value doesn't matter)
-  # or
-  #   if the directory for the log is not writeable or cannot be created
-  #
+  # If the directory for the log is not writeable or cannot be created
+  #   an error is raised.
   #
   # The format of the logged messages are:
   #
@@ -100,10 +95,11 @@ class ActivityLogger
   # Return a stream to use that we have verified is writeable.
   #
   # Given a full filename path, ensure that we can write to the directory.
-  # If not, use $stdout instead.
+  # If not, raise an error
+  #
   # If the directory for _filename_ does not exist, try to create it.
-  # If we cannot create the directory, then use $stdout for the output.
-  # If the directory is not writeable, then use $stdout for the output.
+  # If we cannot create the directory, then raise an error.
+  # If the directory is not writeable, then raise an error
   #
   # @param unverified_filename [String] - the full path of the unverified filename; we
   #   try to verify that the directory for it exists and is writeable
@@ -126,18 +122,9 @@ class ActivityLogger
     # if we're here, we didn't explicitly use a system output stream
     @is_system_outstream = false
 
-    verified_output = $stdout # fallback to this unless we can verify the directory
-
     unverified_dir = File.dirname unverified_filename
 
-    begin
-      verified_output = unverified_filename if dir_verified?(unverified_dir)
-    rescue => _err
-      # If we can't create or write to the directory, then this
-      # directory is not verified.  Use the fallback output ($stdout)
-    end
-
-    verified_output
+    unverified_filename if dir_verified?(unverified_dir)
   end
 
 
@@ -155,15 +142,23 @@ class ActivityLogger
     if File.exist?(unverified_dir) && File.writable?(unverified_dir)
       is_verified = true
 
-    else  # try to verify it
-      begin
+    else  # try to verify it.  This will raise an error if we cannot
+        begin
         Dir.mkdir(unverified_dir) unless File.exist? unverified_dir
-        raise IOError unless File.writable? unverified_dir
+        rescue IOError => ioerror
+          raise ioerror, 'Could not make log directory.'
+        end
+
+        raise ActivityLoggerDirNotWritable unless File.writable? unverified_dir
+
         is_verified = true # if we got this far it's fine
-      end
     end
 
     is_verified
   end
 
+end # class ActivityLogger
+
+class ActivityLoggerDirNotWritable < StandardError
 end
+

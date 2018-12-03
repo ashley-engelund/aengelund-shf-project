@@ -19,16 +19,16 @@ end
 RSpec.describe ActivityLogger do
 
   LOGDIR_PREFIX = 'alspec'
-  LOGNAME = 'testlog.log'
+  LOGNAME       = 'testlog.log'
 
   CONFIG_KEY_TO_STDOUT = 'ACTIVELOG_TO_STDOUT'
-  
-  
+
+
   # If everything is written to stdout, we can't test writing to log files.
   # So be sure we don't have ENV[CONFIG_KEY_TO_STDOUT] defined during the tests.
   before(:all) do
     if ENV.has_key? CONFIG_KEY_TO_STDOUT
-      @env_has_r_to_stdout = true
+      @env_has_r_to_stdout   = true
       @env_r_to_stdout_value = ENV.delete(CONFIG_KEY_TO_STDOUT)
     end
   end
@@ -41,7 +41,7 @@ RSpec.describe ActivityLogger do
 
   describe 'log file' do
 
-    let(:filepath) { File.join( Dir.mktmpdir(LOGDIR_PREFIX), LOGNAME) }
+    let(:filepath) { File.join(Dir.mktmpdir(LOGDIR_PREFIX), LOGNAME) }
     let(:log) { ActivityLogger.open(filepath, 'TEST', 'open', false) }
 
 
@@ -52,7 +52,7 @@ RSpec.describe ActivityLogger do
     context 'open without a block' do
 
       it_behaves_like 'it creates an ActivityLogger log' do
-        let(:streamname) {filepath}
+        let(:streamname) { filepath }
         let(:activity_log) { log }
       end
 
@@ -85,7 +85,7 @@ RSpec.describe ActivityLogger do
         end
       end
 
-    end  # context 'open with a block'
+    end # context 'open with a block'
 
   end #  describe 'log file'
 
@@ -95,14 +95,14 @@ RSpec.describe ActivityLogger do
     context 'open without a block' do
 
       it_behaves_like 'it creates an ActivityLogger log' do
-        let(:streamname)  { $stdout }
+        let(:streamname) { $stdout }
         let(:activity_log) { ActivityLogger.open(streamname, 'TEST', 'open', false) }
       end
 
       it 'records message to $stdout' do
         expect do
-          logstream =  $stdout
-          log = ActivityLogger.open(logstream, 'TEST', 'open', false)
+          logstream = $stdout
+          log       = ActivityLogger.open(logstream, 'TEST', 'open', false)
           log # to open it
           log.record('info', 'this is a test message')
         end.to output(/\[TEST\] \[open\] \[info\] this is a test message/).to_stdout
@@ -114,7 +114,7 @@ RSpec.describe ActivityLogger do
 
     context 'open with a block' do
 
-      let(:streamname)  { $stdout }
+      let(:streamname) { $stdout }
       let(:activity_log) { ActivityLogger.open(streamname, 'TEST', 'open', false) }
 
       it 'creates log file' do
@@ -130,13 +130,13 @@ RSpec.describe ActivityLogger do
       end
 
       it 'records message to $stdout' do
-          expect do
-            logstream =  $stdout
-            ActivityLogger.open(logstream, 'TEST', 'open', false) do |log|
-              log # to open it
-              log.record('info', 'this is another test message')
-            end
-          end.to output(/\[TEST\] \[open\] \[info\] this is another test message/).to_stdout
+        expect do
+          logstream = $stdout
+          ActivityLogger.open(logstream, 'TEST', 'open', false) do |log|
+            log # to open it
+            log.record('info', 'this is another test message')
+          end
+        end.to output(/\[TEST\] \[open\] \[info\] this is another test message/).to_stdout
       end
 
     end # context 'open with a block'
@@ -149,14 +149,14 @@ RSpec.describe ActivityLogger do
     context 'open without a block' do
 
       it_behaves_like 'it creates an ActivityLogger log' do
-        let(:streamname)  { $stderr }
+        let(:streamname) { $stderr }
         let(:activity_log) { ActivityLogger.open(streamname, 'TEST', 'open', false) }
       end
 
       it "records message to $stderr" do
         expect do
-          logstream =  $stderr
-          log = ActivityLogger.open(logstream, 'TEST', 'open', false)
+          logstream = $stderr
+          log       = ActivityLogger.open(logstream, 'TEST', 'open', false)
           log # to open it
           log.record('info', 'this is a test message')
         end.to output(/\[TEST\] \[open\] \[info\] this is a test message/).to_stderr
@@ -168,7 +168,7 @@ RSpec.describe ActivityLogger do
 
     context 'open with a block' do
 
-      let(:streamname)  { $stderr }
+      let(:streamname) { $stderr }
       let(:activity_log) { ActivityLogger.open(streamname, 'TEST', 'open', false) }
 
       it 'creates log file' do
@@ -185,7 +185,7 @@ RSpec.describe ActivityLogger do
 
       it "records message to $stderr" do
         expect do
-          logstream =  $stderr
+          logstream = $stderr
           ActivityLogger.open(logstream, 'TEST', 'open', false) do |log|
             log # to open it
             log.record('info', 'this is another test message')
@@ -202,7 +202,7 @@ RSpec.describe ActivityLogger do
 
     context "always writes to $stdout if ENV.has_key? CONFIG_KEY_TO_STDOUT " do
 
-      let(:filepath) { File.join( Dir.mktmpdir(LOGDIR_PREFIX), LOGNAME) }
+      let(:filepath) { File.join(Dir.mktmpdir(LOGDIR_PREFIX), LOGNAME) }
       let(:log) { ActivityLogger.open(filepath, 'TEST', 'open', false) }
 
 
@@ -215,7 +215,7 @@ RSpec.describe ActivityLogger do
         orig_has_r_to_stdout = true
 
         unless ENV.has_key? CONFIG_KEY_TO_STDOUT
-          orig_has_r_to_stdout = false
+          orig_has_r_to_stdout      = false
           ENV[CONFIG_KEY_TO_STDOUT] = '1'
         end
 
@@ -238,7 +238,7 @@ RSpec.describe ActivityLogger do
         orig_has_r_to_stdout = false
 
         if ENV.has_key? CONFIG_KEY_TO_STDOUT
-          orig_has_r_to_stdout = true
+          orig_has_r_to_stdout   = true
           orig_r_to_stdout_value = ENV.delete(CONFIG_KEY_TO_STDOUT)
         end
 
@@ -256,12 +256,12 @@ RSpec.describe ActivityLogger do
         end
       end
 
-
     end # context "always writes to $stdout if ENV[CONFIG_KEY_TO_STDOUT].present?" do
+
 
     context 'directory does not exist' do
 
-      it 'cannot create directory, returns $stdout' do
+      it 'cannot create directory, raises IOError (SAD PATH)' do
 
         nonexistant_dirname = Dir::Tmpname.create(LOGDIR_PREFIX) { |dirname| dirname }
         unverified_filename = File.join(nonexistant_dirname, LOGNAME)
@@ -270,12 +270,12 @@ RSpec.describe ActivityLogger do
 
         allow(Dir).to receive(:mkdir).and_raise(IOError)
 
-        verified_output = ActivityLogger.verified_output_stream(unverified_filename)
-        expect(verified_output).to eq $stdout
+        expect { ActivityLogger.verified_output_stream(unverified_filename) }.
+            to raise_error(IOError, 'Could not make log directory.')
 
       end
 
-      it 'cannot create a writeable directory, returns $stdout' do
+      it 'cannot create a writeable directory, raises ActivityLoggerDirNotWritable (SAD PATH)' do
 
         nonexistant_dirname = Dir::Tmpname.create(LOGDIR_PREFIX) { |dirname| dirname }
         unverified_filename = File.join(nonexistant_dirname, LOGNAME)
@@ -285,13 +285,13 @@ RSpec.describe ActivityLogger do
         original_mkdir = Dir.method(:mkdir)
 
         allow(Dir).to receive(:mkdir) do
-            original_mkdir.call(nonexistant_dirname)
-            File.chmod(0444, nonexistant_dirname) # make it read only
-            nonexistant_dirname
+          original_mkdir.call(nonexistant_dirname)
+          File.chmod(0444, nonexistant_dirname) # make it read only
+          nonexistant_dirname
         end
 
-        verified_output = ActivityLogger.verified_output_stream(unverified_filename)
-        expect(verified_output).to eq $stdout
+        expect { ActivityLogger.verified_output_stream(unverified_filename) }.
+            to raise_error ActivityLoggerDirNotWritable
 
       end
 
@@ -314,24 +314,20 @@ RSpec.describe ActivityLogger do
     end # context log directory does not exist
 
 
-    context 'directory is read only' do
+    it 'directory is read only, raises ActivityLoggerDirNotWritable (SAD PATH)' do
 
-      it 'returns $stdout as the verified output' do
+      readonly_dir = Dir.mktmpdir(LOGDIR_PREFIX)
+      File.chmod(0444, readonly_dir) # make it read only
 
-        readonly_dir = Dir.mktmpdir(LOGDIR_PREFIX)
-        File.chmod(0444, readonly_dir)  # make it read only
+      unverified_filename = File.join(readonly_dir, LOGNAME)
 
-        unverified_filename = File.join(readonly_dir, LOGNAME)
+      expect(File.exist? readonly_dir).to be_truthy
+      expect(File.writable? readonly_dir).to be_falsey
 
-        expect(File.exist? readonly_dir).to be_truthy
-        expect(File.writable? readonly_dir).to be_falsey
-
-        verified_output = ActivityLogger.verified_output_stream(unverified_filename)
-        expect(verified_output).to eq $stdout
-
-      end
-
+      expect { ActivityLogger.verified_output_stream(unverified_filename) }.
+          to raise_error ActivityLoggerDirNotWritable
     end
+
 
     it 'directory exists and is writable, returns the original filename (and path)' do
 
