@@ -18,30 +18,13 @@ end
 
 RSpec.describe ActivityLogger do
 
-  LOGDIR_PREFIX = 'alspec'
-  LOGNAME       = 'testlog.log'
+  SPEC_LOGDIR_PREFIX = 'alspec'
+  SPEC_LOGNAME       = 'testlog.log'
 
-  CONFIG_KEY_TO_STDOUT = 'ACTIVELOG_TO_STDOUT'
-
-
-  # If everything is written to stdout, we can't test writing to log files.
-  # So be sure we don't have ENV[CONFIG_KEY_TO_STDOUT] defined during the tests.
-  before(:all) do
-    if ENV.has_key? CONFIG_KEY_TO_STDOUT
-      @env_has_r_to_stdout   = true
-      @env_r_to_stdout_value = ENV.delete(CONFIG_KEY_TO_STDOUT)
-    end
-  end
-
-  after(:all) do
-    if @env_has_r_to_stdout
-      ENV[CONFIG_KEY_TO_STDOUT] = @env_r_to_stdout_value
-    end
-  end
 
   describe 'log file' do
 
-    let(:filepath) { File.join(Dir.mktmpdir(LOGDIR_PREFIX), LOGNAME) }
+    let(:filepath) { File.join(Dir.mktmpdir(SPEC_LOGDIR_PREFIX), SPEC_LOGNAME) }
     let(:log) { ActivityLogger.open(filepath, 'TEST', 'open', false) }
 
 
@@ -61,6 +44,7 @@ RSpec.describe ActivityLogger do
         expect(File.read(filepath))
             .to include '[TEST] [open] [info] this is a test message'
       end
+
 
     end # context 'open without a block'
 
@@ -87,274 +71,210 @@ RSpec.describe ActivityLogger do
 
     end # context 'open with a block'
 
-  end #  describe 'log file'
-
-
-  context 'using $stdout as the log' do
-
-    context 'open without a block' do
-
-      it_behaves_like 'it creates an ActivityLogger log' do
-        let(:streamname) { $stdout }
-        let(:activity_log) { ActivityLogger.open(streamname, 'TEST', 'open', false) }
-      end
-
-      it 'records message to $stdout' do
-        expect do
-          logstream = $stdout
-          log       = ActivityLogger.open(logstream, 'TEST', 'open', false)
-          log # to open it
-          log.record('info', 'this is a test message')
-        end.to output(/\[TEST\] \[open\] \[info\] this is a test message/).to_stdout
-
-      end
-
-    end # context 'open without a block'
-
-
-    context 'open with a block' do
-
-      let(:streamname) { $stdout }
-      let(:activity_log) { ActivityLogger.open(streamname, 'TEST', 'open', false) }
-
-      it 'creates log file' do
-        ActivityLogger.open(streamname, 'TEST', 'open', false) do |_log|
-          expect(File).to exist(streamname)
-        end
-      end
-
-      it 'returns instance of ActivityLogger' do
-        ActivityLogger.open(streamname, 'TEST', 'open', false) do |log|
-          expect(log).to be_an_instance_of(ActivityLogger)
-        end
-      end
-
-      it 'records message to $stdout' do
-        expect do
-          logstream = $stdout
-          ActivityLogger.open(logstream, 'TEST', 'open', false) do |log|
-            log # to open it
-            log.record('info', 'this is another test message')
-          end
-        end.to output(/\[TEST\] \[open\] \[info\] this is another test message/).to_stdout
-      end
-
-    end # context 'open with a block'
-
-  end # context 'using $stdout as the log'
-
-
-  context "using $stderr as the log" do
-
-    context 'open without a block' do
-
-      it_behaves_like 'it creates an ActivityLogger log' do
-        let(:streamname) { $stderr }
-        let(:activity_log) { ActivityLogger.open(streamname, 'TEST', 'open', false) }
-      end
-
-      it "records message to $stderr" do
-        expect do
-          logstream = $stderr
-          log       = ActivityLogger.open(logstream, 'TEST', 'open', false)
-          log # to open it
-          log.record('info', 'this is a test message')
-        end.to output(/\[TEST\] \[open\] \[info\] this is a test message/).to_stderr
-
-      end
-
-    end # context 'open without a block'
-
-
-    context 'open with a block' do
-
-      let(:streamname) { $stderr }
-      let(:activity_log) { ActivityLogger.open(streamname, 'TEST', 'open', false) }
-
-      it 'creates log file' do
-        ActivityLogger.open(streamname, 'TEST', 'open', false) do |_log|
-          expect(File).to exist(streamname)
-        end
-      end
-
-      it 'returns instance of ActivityLogger' do
-        ActivityLogger.open(streamname, 'TEST', 'open', false) do |log|
-          expect(log).to be_an_instance_of(ActivityLogger)
-        end
-      end
-
-      it "records message to $stderr" do
-        expect do
-          logstream = $stderr
-          ActivityLogger.open(logstream, 'TEST', 'open', false) do |log|
-            log # to open it
-            log.record('info', 'this is another test message')
-          end
-        end.to output(/\[TEST\] \[open\] \[info\] this is another test message/).to_stderr
-      end
-
-    end # context 'open with a block'
-
-  end # context 'using $stderr as the log'
-
-
-  describe '#verified_output_stream' do
-
-    context "always writes to $stdout if ENV.has_key? CONFIG_KEY_TO_STDOUT " do
-
-      let(:filepath) { File.join(Dir.mktmpdir(LOGDIR_PREFIX), LOGNAME) }
-      let(:log) { ActivityLogger.open(filepath, 'TEST', 'open', false) }
-
-
-      before(:each) do
-        File.delete(filepath) if File.file?(filepath)
-      end
-
-
-      it "ENV[CONFIG_KEY_TO_STDOUT] is present" do
-        orig_has_r_to_stdout = true
-
-        unless ENV.has_key? CONFIG_KEY_TO_STDOUT
-          orig_has_r_to_stdout      = false
-          ENV[CONFIG_KEY_TO_STDOUT] = '1'
-        end
-
-        # expect info to write to stdout
-        expect do
-          log
-          log.record('info', 'this is a test message')
-        end.to output(/\[TEST\] \[open\] \[info\] this is a test message/).to_stdout
-
-        # expect the log file not to  be created
-        expect(File).not_to exist(filepath)
-
-        unless orig_has_r_to_stdout
-          ENV.delete(CONFIG_KEY_TO_STDOUT)
-        end
-      end
-
-
-      it "ENV[CONFIG_KEY_TO_STDOUT] is not present" do
-        orig_has_r_to_stdout = false
-
-        if ENV.has_key? CONFIG_KEY_TO_STDOUT
-          orig_has_r_to_stdout   = true
-          orig_r_to_stdout_value = ENV.delete(CONFIG_KEY_TO_STDOUT)
-        end
-
-        # expect nothing to be written to stdout
-        expect do
-          log # to open it
-          log.record('info', 'this is a test message')
-        end.not_to output(/\[TEST\] \[open\] \[info\] this is a test message/).to_stdout
-
-        # expect the log file to change or be created
-        expect(File).to exist(filepath)
-
-        if orig_has_r_to_stdout
-          ENV[CONFIG_KEY_TO_STDOUT] = orig_r_to_stdout_value
-        end
-      end
-
-    end # context "always writes to $stdout if ENV[CONFIG_KEY_TO_STDOUT].present?" do
-
 
     context 'directory does not exist' do
 
-      it 'cannot create directory, raises IOError (SAD PATH)' do
+      it 'can create a writeable directory and the log in it' do
 
-        nonexistant_dirname = Dir::Tmpname.create(LOGDIR_PREFIX) { |dirname| dirname }
-        unverified_filename = File.join(nonexistant_dirname, LOGNAME)
+        nonexistent_dirname = Dir::Tmpname.create(SPEC_LOGDIR_PREFIX) { |dirname| dirname }
+        log_file            = File.join(nonexistent_dirname, SPEC_LOGNAME)
 
-        expect(File.exist?(nonexistant_dirname)).to be_falsey
+        expect(File.exist? nonexistent_dirname).to be_falsey
+
+        log = ActivityLogger.open(log_file, 'TEST', 'open', false)
+        log.close
+
+        # dir was created
+        expect(File.exist?(nonexistent_dirname)).to be_truthy
+        expect(File.writable?(nonexistent_dirname)).to be_truthy
+
+        # log was created
+        expect(File).to exist(log_file)
+
+      end
+
+      it '(SAD PATH) cannot create directory, raises IOError' do
+
+        cant_create_dirname = Dir::Tmpname.create(SPEC_LOGDIR_PREFIX) { |dirname| dirname }
+        file_in_problem_dir = File.join(cant_create_dirname, SPEC_LOGNAME)
+
+        expect(File.exist?(cant_create_dirname)).to be_falsey
 
         allow(Dir).to receive(:mkdir).and_raise(IOError)
 
-        expect { ActivityLogger.verified_output_stream(unverified_filename) }.
+        expect { ActivityLogger.open(file_in_problem_dir, 'TEST', 'open', false) }.
             to raise_error(IOError, 'Could not make log directory.')
 
       end
 
-      it 'cannot create a writeable directory, raises ActivityLoggerDirNotWritable (SAD PATH)' do
+      it '(SAD PATH) cannot create a writeable directory, raises ActivityLoggerDirNotWritable' do
 
-        nonexistant_dirname = Dir::Tmpname.create(LOGDIR_PREFIX) { |dirname| dirname }
-        unverified_filename = File.join(nonexistant_dirname, LOGNAME)
+        dir_not_writeable       = Dir::Tmpname.create(SPEC_LOGDIR_PREFIX) { |dirname| dirname }
+        file_in_unwriteable_dir = File.join(dir_not_writeable, SPEC_LOGNAME)
 
-        expect(File.exist?(nonexistant_dirname)).to be_falsey
+        expect(File.exist?(dir_not_writeable)).to be_falsey
 
         original_mkdir = Dir.method(:mkdir)
 
         allow(Dir).to receive(:mkdir) do
-          original_mkdir.call(nonexistant_dirname)
-          File.chmod(0444, nonexistant_dirname) # make it read only
-          nonexistant_dirname
+          original_mkdir.call(dir_not_writeable)
+          File.chmod(0444, dir_not_writeable) # make it read only
+          dir_not_writeable
         end
 
-        expect { ActivityLogger.verified_output_stream(unverified_filename) }.
+        expect { ActivityLogger.open(file_in_unwriteable_dir, 'TEST', 'open', false) }.
             to raise_error ActivityLoggerDirNotWritable
-
       end
 
-      it 'if it can create a directory and it is writable, returns the directory' do
-
-        nonexistant_dirname = Dir::Tmpname.create(LOGDIR_PREFIX) { |dirname| dirname }
-        unverified_filename = File.join(nonexistant_dirname, LOGNAME)
-
-        expect(File.exist? nonexistant_dirname).to be_falsey
-
-        verified_output = ActivityLogger.verified_output_stream(unverified_filename)
-        expect(verified_output).to eq unverified_filename
-
-        verified_dir = File.dirname(verified_output)
-        expect(File.exist?(verified_dir)).to be_truthy
-        expect(File.writable?(verified_dir)).to be_truthy
-
-      end
 
     end # context log directory does not exist
 
 
     it 'directory is read only, raises ActivityLoggerDirNotWritable (SAD PATH)' do
 
-      readonly_dir = Dir.mktmpdir(LOGDIR_PREFIX)
+      readonly_dir = Dir.mktmpdir(SPEC_LOGDIR_PREFIX)
       File.chmod(0444, readonly_dir) # make it read only
 
-      unverified_filename = File.join(readonly_dir, LOGNAME)
+      log_in_unwritable_dir = File.join(readonly_dir, SPEC_LOGNAME)
 
       expect(File.exist? readonly_dir).to be_truthy
       expect(File.writable? readonly_dir).to be_falsey
 
-      expect { ActivityLogger.verified_output_stream(unverified_filename) }.
+      expect { ActivityLogger.open(log_in_unwritable_dir, 'TEST', 'open', false) }.
           to raise_error ActivityLoggerDirNotWritable
     end
 
 
-    it 'directory exists and is writable, returns the original filename (and path)' do
-
-      readonly_dir = Dir.mktmpdir(LOGDIR_PREFIX)
-
-      unverified_filename = File.join(readonly_dir, LOGNAME)
-
-      expect(File.exist? readonly_dir).to be_truthy
-      expect(File.writable? readonly_dir).to be_truthy
-
-      verified_output = ActivityLogger.verified_output_stream(unverified_filename)
-      expect(verified_output).to eq unverified_filename
-    end
+  end #  describe 'log file'
 
 
-    context 'is a standard output stream ($stdout | $stderr)' do
 
-      it 'returns $stdout if unverfied is $stdout' do
-        expect(ActivityLogger.verified_output_stream($stdout)).to eq $stdout
-      end
+  context 'using stdout or stderr as the log' do
+    # Odd, but we must handle it
 
-      it 'returns $stderr if unverified is $stderr' do
-        expect(ActivityLogger.verified_output_stream($stderr)).to eq $stderr
-      end
+    context "using $stderr as the log" do
 
-    end # context 'is a standard stream ($stdout | $stderr)' do
+      context 'open without a block' do
 
-  end
+        it_behaves_like 'it creates an ActivityLogger log' do
+          let(:streamname) { $stderr }
+          let(:activity_log) { ActivityLogger.open(streamname, 'TEST', 'open', false) }
+        end
+
+        it "records message to $stderr" do
+          expect do
+            logstream = $stderr
+            log       = ActivityLogger.open(logstream, 'TEST', 'open', false)
+            log # to open it
+            log.record('info', 'this is a test message to stderr')
+          end.to output(/\[TEST\] \[open\] \[info\] this is a test message to stderr/).to_stderr
+        end
+
+        # If the stream is closed, the OS will throw errors the next time *any process* tries to write to the stream
+        it "doesn't close the stream" do
+          logstream = $stderr
+          log       = ActivityLogger.open(logstream, 'TEST', 'open', false)
+          log # to open it
+          log.record('info', 'this is a test message to stderr again')
+          log.close
+          expect($stderr.closed?).to be_falsey
+        end
+
+      end # context 'open without a block'
+
+      context 'open with a block' do
+
+        let(:streamname) { $stderr }
+        let(:activity_log) { ActivityLogger.open(streamname, 'TEST', 'open', false) }
+
+        it 'creates log file' do
+          ActivityLogger.open(streamname, 'TEST', 'open', false) do |_log|
+            expect(File).to exist(streamname)
+          end
+        end
+
+        it 'returns instance of ActivityLogger' do
+          ActivityLogger.open(streamname, 'TEST', 'open', false) do |log|
+            expect(log).to be_an_instance_of(ActivityLogger)
+          end
+        end
+
+        it "records message to $stderr" do
+          expect do
+            logstream = $stderr
+            ActivityLogger.open(logstream, 'TEST', 'open', false) do |log|
+              log # to open it
+              log.record('info', 'this is another test message to stderr')
+            end
+          end.to output(/\[TEST\] \[open\] \[info\] this is another test message to stderr/).to_stderr
+        end
+
+      end # context 'open with a block'
+
+    end # context 'using $stderr as the log'
+
+
+    context "using $stdout as the log" do
+
+      context 'open without a block' do
+
+        it_behaves_like 'it creates an ActivityLogger log' do
+          let(:streamname) { $stdout }
+          let(:activity_log) { ActivityLogger.open(streamname, 'TEST', 'open', false) }
+        end
+
+        it "records message to $stdout" do
+          expect do
+            logstream = $stdout
+            log       = ActivityLogger.open(logstream, 'TEST', 'open', false)
+            log # to open it
+            log.record('info', 'this is a test message to stdout')
+          end.to output(/\[TEST\] \[open\] \[info\] this is a test message to stdout/).to_stdout
+        end
+
+        # If the stream is closed, the OS will throw errors the next time *any process* tries to write to the stream
+        it "doesn't close the stream" do
+          logstream = $stdout
+          log       = ActivityLogger.open(logstream, 'TEST', 'open', false)
+          log # to open it
+          log.record('info', 'this is a test message to stdout again')
+          log.close
+          expect($stdout.closed?).to be_falsey
+        end
+
+      end # context 'open without a block'
+
+      context 'open with a block' do
+
+        let(:streamname) { $stdout }
+        let(:activity_log) { ActivityLogger.open(streamname, 'TEST', 'open', false) }
+
+        it 'creates log file' do
+          ActivityLogger.open(streamname, 'TEST', 'open', false) do |_log|
+            expect(File).to exist(streamname)
+          end
+        end
+
+        it 'returns instance of ActivityLogger' do
+          ActivityLogger.open(streamname, 'TEST', 'open', false) do |log|
+            expect(log).to be_an_instance_of(ActivityLogger)
+          end
+        end
+
+        it "records message to $stdout" do
+          expect do
+            logstream = $stdout
+            ActivityLogger.open(logstream, 'TEST', 'open', false) do |log|
+              log # to open it
+              log.record('info', 'this is another test message to stdout')
+            end
+          end.to output(/\[TEST\] \[open\] \[info\] this is another test message to stdout/).to_stdout
+        end
+
+      end # context 'open with a block'
+
+    end # context 'using $stdout as the log'
+
+  end # context 'using stdout or stderr as the log' do
 
 end
