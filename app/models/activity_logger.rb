@@ -1,3 +1,9 @@
+
+
+class ActivityLoggerDirNotWritable < StandardError
+end
+
+
 class ActivityLogger
 
   # This supports simple logging of activity, such as loading data into the
@@ -32,9 +38,6 @@ class ActivityLogger
   # NOTE: this requires ActiveSupport.  It can only be run with Rails
 
 
-  # key to check for sending all output to $stdout
-  CONFIG_KEY_TO_STDOUT = 'ACTIVELOG_TO_STDOUT'
-
 
   def self.open(filename, facility, activity, show=true)
 
@@ -52,6 +55,7 @@ class ActivityLogger
   end
 
   private def initialize(filename, facility, activity, show)
+
     @filename = filename
     @facility = facility
     @activity = activity
@@ -60,7 +64,7 @@ class ActivityLogger
     @start_time = Time.zone.now
     @is_system_outstream = false # true if we use $stdout or $stderr
 
-    verified_output_stream = ActivityLogger.verified_output_stream(filename)
+    verified_output_stream = verified_output_stream(filename)
 
     @log = ActiveSupport::TaggedLogging.new(ActiveSupport::Logger.new(verified_output_stream))
 
@@ -92,6 +96,11 @@ class ActivityLogger
   end
 
 
+  # ===================================
+
+  private
+
+
   # Return a stream to use that we have verified is writeable.
   #
   # Given a full filename path, ensure that we can write to the directory.
@@ -107,19 +116,14 @@ class ActivityLogger
   # @return the full filename + path to use for output.
   #      This might be changed to $stdout if we could not use or create the directory
   #      for filename
-  def self.verified_output_stream(unverified_filename)
+  def verified_output_stream(unverified_filename)
 
     @is_system_outstream = true
-
-    # always log to stdout no matter what unverified_filename is
-    if ENV.has_key?(CONFIG_KEY_TO_STDOUT)
-      return $stdout
-    end
 
     # gating condition:
     return unverified_filename if is_system_stream?(unverified_filename)
 
-    # if we're here, we didn't explicitly use a system output stream
+    # we didn't explicitly use a system output stream
     @is_system_outstream = false
 
     unverified_dir = File.dirname unverified_filename
@@ -128,14 +132,14 @@ class ActivityLogger
   end
 
 
-  def self.is_system_stream?(stream)
+  def is_system_stream?(stream)
     (stream == $stdout || stream == $stderr || stream.class.name == 'IO')
     # sometimes a stdout will not have the same address as $stdout depending on
     # how it was created. Hence we also test the class name
   end
 
 
-  def self.dir_verified?(unverified_dir)
+  def dir_verified?(unverified_dir)
     is_verified = false
 
     # if it exists and we can write to it, it's fine to use.
@@ -158,7 +162,3 @@ class ActivityLogger
   end
 
 end # class ActivityLogger
-
-class ActivityLoggerDirNotWritable < StandardError
-end
-
