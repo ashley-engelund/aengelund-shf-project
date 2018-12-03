@@ -585,6 +585,7 @@ en:
       fake_location_title:  Fake current location
       fake_latitude_title:  Lat
       fake_longitude_title: Lng
+      fake_cant_get_location: Cannot get location
 
 
 

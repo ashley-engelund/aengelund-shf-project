@@ -591,6 +591,7 @@ sv:
       fake_location_title:  Fake nuvarande plats
       fake_latitude_title:  Lat
       fake_longitude_title: Lng
+      fake_cant_get_location: Kan inte få plats
 
 
     destroy:
