@@ -14,7 +14,7 @@ var GOTHENBURG_LONG = 11.9746;
 var DEFAULT_LAT = STOCKHOLM_LAT;
 var DEFAULT_LONG = STOCKHOLM_LONG;
 
-var SHOW_ZOOM_LEVEL = 8;
+var SHOW_ZOOM_LEVEL = 9;
 
 // TODO: refactor and clean up!
 
