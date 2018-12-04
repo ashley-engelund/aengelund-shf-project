@@ -6,7 +6,13 @@
 
 .entry-content
   .row
-    .col-md-6
+
+    .col-md-5
+      = render 'map_companies',
+             markers: location_and_markers_for(@companies),
+             nearMeChecked: @search_near_me
+
+    .col-md-7
 
       - unless current_user.admin?
 
@@ -21,16 +27,10 @@
                                             style: 'color:black; text-transform:none;' }
             #{t('toggle.company_search_form.hide')}
 
-      .panel.panel-default.search-form#company_search_form
+      .search-form#company_search_form
 
         = render 'search_form', all_companies: @all_companies,
                                 search_params: @search__params
-
-
-    .col-md-6
-      = render 'map_companies',
-             markers: location_and_markers_for(@companies),
-             nearMeChecked: @search_near_me
 
 
   - if @companies.empty?

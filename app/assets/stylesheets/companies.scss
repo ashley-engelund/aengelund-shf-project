@@ -28,6 +28,26 @@ $slider-before-background-color: #ffffff;
 
 }
 
+.companies {
+
+  .search-instructions {
+    margin-bottom: 1em;
+  }
+
+  .search-form {
+    padding-left:0;
+    padding-right: 0;
+
+    .submit-col {
+      text-align: right;
+    }
+
+    input[type="submit"] {
+      font-weight: bold;
+    }
+  }
+
+}
 
 .company {
 
@@ -77,6 +97,10 @@ $slider-before-background-color: #ffffff;
     }
   }
 
+  .search-instructions {
+    margin-bottom: 20px;  // same as Bootstrap panel margin-bottom
+  }
+
   .dinkurs-fetch-button {
     margin-bottom: 2px;
     margin-right: 0;
@@ -117,10 +141,6 @@ $slider-before-background-color: #ffffff;
 
   .text-align-right {
     text-align: right;
-  }
-
-  .search-instructions {
-    margin-bottom: 20px;  // same as Bootstrap panel margin-bottom
   }
 
   .map-marker {
