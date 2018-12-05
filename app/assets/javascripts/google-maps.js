@@ -78,7 +78,8 @@ function initCenteredMap(centerCoordinates, markers, showNearMeControl,
     if (showNearMeControl) {
 
         if (!isProduction) {
-            // add input boxes for faking the current location latitude & longitude
+            // add input boxes for
+            // faking the current location latitude & longitude
             const fakeCurrentLocationDiv = makeFakeLocationControlDiv();
 
             fakeCurrentLocationDiv.style.zIndex = 1;
@@ -224,7 +225,7 @@ function showNearMeButton(map, controlDiv, isProduction) {
 
             // browser does not support geolocation
             if ('geolocation' in navigator === false) {
-                alert( I18n.t('companies.index.geolocation_unsupported') );
+                alert(I18n.t('companies.index.geolocation_unsupported'));
             }
 
             // getCurrentPosition( function to call on success,
@@ -232,20 +233,22 @@ function showNearMeButton(map, controlDiv, isProduction) {
             navigator.geolocation.getCurrentPosition(
                 // On success:
                 position => {
-                    console.log(`Lat: ${position.coords.latitude} Lng: ${position.coords.longitude}`);
+                    console.log(`Lat: ${position.coords.latitude}
+                     Lng: ${position.coords.longitude}`);
 
-                    currentLocCoords = new google.maps.LatLng(position.coords.latitude,
-                        position.coords.longitude);
+                    currentLocCoords =
+                        new google.maps.LatLng(position.coords.latitude,
+                            position.coords.longitude);
 
                     zoomMapTo(map, currentLocCoords, SHOW_ZOOM_LEVEL);
                 },
 
                 // On error
-                err => alert(`Error (${err.code}): ${getPositionErrorMessage(err.code)}`)
+                err => alert(`Error (${err.code}):
+                 ${getPositionErrorMessage(err.code)}`)
             );
 
-        }
-        else {
+        } else {
             currentLocCoords = setFakeCoordinates();
             zoomMapTo(map, currentLocCoords, SHOW_ZOOM_LEVEL);
         }
@@ -330,7 +333,8 @@ function makeFakeLocationControlDiv() {
 
 
         function makeRadioButtonAndLabel(rbName, labelText, isChecked) {
-            const newRadioButton = makeRadioButtonFor(rbName, (labelText.toLowerCase()), isChecked);
+            const newRadioButton = makeRadioButtonFor(rbName,
+                (labelText.toLowerCase()), isChecked);
             const newLabel = document.createElement('LABEL');
             newLabel.for = newRadioButton;
             newLabel.innerText = labelText;
@@ -343,13 +347,16 @@ function makeFakeLocationControlDiv() {
 
         // radio buttons to automatically enter coords
         // for  Stockholm, Gothenburg, or a custom location
-        const [stockholmRadioButton, stockholmLabel] = makeRadioButtonAndLabel(buttonGroupName,
+        const [stockholmRadioButton, stockholmLabel] =
+            makeRadioButtonAndLabel(buttonGroupName,
             'Stockholm', true);
 
-        const [gothenburgRadioButton, gothenburgLabel] = makeRadioButtonAndLabel(buttonGroupName,
+        const [gothenburgRadioButton, gothenburgLabel] =
+            makeRadioButtonAndLabel(buttonGroupName,
             'Gothenburg', false);
 
-        const [customLocationRadioButton, customLocationlabel] = makeRadioButtonAndLabel(buttonGroupName,
+        const [customLocationRadioButton, customLocationlabel] =
+            makeRadioButtonAndLabel(buttonGroupName,
             'Custom', false);
 
 
@@ -373,10 +380,12 @@ function makeFakeLocationControlDiv() {
             return [newInput, newInputTitle];
         }
 
-        const [fakeLatitudeInput, fakeLatitudeTitle] = makeCoodinateInput(I18n.t('companies.index.fake_latitude_title'),
+        const [fakeLatitudeInput, fakeLatitudeTitle] =
+            makeCoodinateInput(I18n.t('companies.index.fake_latitude_title'),
             'latitude', STOCKHOLM_LAT);
 
-        const [fakeLongitudeInput, fakeLongitudeTitle] = makeCoodinateInput(I18n.t('companies.index.fake_longitude_title'),
+        const [fakeLongitudeInput, fakeLongitudeTitle] =
+            makeCoodinateInput(I18n.t('companies.index.fake_longitude_title'),
             'longitude', STOCKHOLM_LONG);
 
 
@@ -459,7 +468,7 @@ function setFakeCoordinates() {
     const cantGetCheckbox = document.getElementById(CANT_GET_LOC_CHECKBOX_ID);
 
     if (cantGetCheckbox.checked) {
-        alert( I18n.t('companies.index.location_permission_denied') );
+        alert(I18n.t('companies.index.location_permission_denied'));
         return null;
 
     } else {
