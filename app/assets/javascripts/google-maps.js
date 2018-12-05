@@ -218,8 +218,9 @@ function showNearMeButton(map, controlDiv, isProduction) {
 
         if (isProduction) {
 
+            // browser does not support geolocation
             if ('geolocation' in navigator === false) {
-                return onError(new Error('Geolocation is not supported by your browser.'));
+                alert( I18n.t('companies.index.geolocation_unsupported') );
             }
 
             // getCurrentPosition( function to call on success,
