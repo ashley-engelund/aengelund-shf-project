@@ -1,3 +1,7 @@
+/*global google, I18n*/
+// ^^ this tells eslint that these globals are OK
+
+
 // Don't load until after the code in the window has loaded.
 //  because we have to be sure that jquery, google maps etc.
 //  javascripts have been loaded
