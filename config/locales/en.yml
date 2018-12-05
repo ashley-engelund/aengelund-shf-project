@@ -582,6 +582,7 @@ en:
       delete: *delete
       show_near_me: Show companies near me
       cannot_get_location: Cannot get your location. You may need to change your browser settings.
+      location_permission_denied: Cannot get your location because permission is denied. Please allow us to get your location. You  may need to change your browser settings.
       fake_location_title:  Fake current location
       fake_latitude_title:  Lat
       fake_longitude_title: Lng

@@ -588,6 +588,7 @@ sv:
       delete: *delete
       show_near_me: Visa företag nära mig
       cannot_get_location: Kan inte få din plats. Du kan behöva ändra dina webbläsarinställningar.
+      location_permission_denied: Kan inte få din plats eftersom behörighet nekas. Låt oss få din plats. Du kan behöva ändra dina webbläsarinställningar.
       fake_location_title:  Fake nuvarande plats
       fake_latitude_title:  Lat
       fake_longitude_title: Lng
