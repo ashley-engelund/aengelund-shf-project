@@ -2,93 +2,88 @@
 //  because we have to be sure that jquery, google maps etc.
 //  javascripts have been loaded
 
-//var SEARCH_NEAR_ME_IMG = 'assets/near-location-25x.jpg';
+const SWEDEN_CENTER_LAT = 59.6749712;
+const SWEDEN_CENTER_LONG = 14.5208584;
 
-var SWEDEN_CENTER_LAT = 59.6749712;
-var SWEDEN_CENTER_LONG = 14.5208584;
-var STOCKHOLM_LAT = 59.3293235;
-var STOCKHOLM_LONG = 18.068580;
-var GOTHENBURG_LAT = 57.7089;
-var GOTHENBURG_LONG = 11.9746;
+const STOCKHOLM_LAT = 59.3293235;
+const STOCKHOLM_LONG = 18.068580;
 
-var DEFAULT_LAT = STOCKHOLM_LAT;
-var DEFAULT_LONG = STOCKHOLM_LONG;
+const GOTHENBURG_LAT = 57.7089;
+const GOTHENBURG_LONG = 11.9746;
 
-var SHOW_ZOOM_LEVEL = 9;
+const DEFAULT_LAT = SWEDEN_CENTER_LAT;
+const DEFAULT_LONG = SWEDEN_CENTER_LONG;
 
-// TODO: refactor and clean up!
+const SHOW_ZOOM_LEVEL = 9;
+const ZOOM_LEVEL_NO_MARKERS = 4;
 
-var SHOW_NEAR_ME_DIV_ID = 'show-near-me';
-var CANT_GET_LOC_CHECKBOX_ID = 'cant-get-location-checkbox';
 
-// Display a dynamic Google map
-//  centerCoordinates: the initial center for the map.
-//   (= Stockholm if none given  [59.32932349999999, 18.0685808])
-//  markers = an array of markers to display on the map
-//  icon = the icon to use for each of the markers
-//
-//  If there is only 1 marker for the map, center the map on that marker
-//  else display all of the markers,and so the center is automatically
-//   determined by the center of all of them.
-//
-//  We need to tell GoogleMaps whether or not we want it to be optimized or not.
-//  If it _is_ optimized, then the map is just a canvas and we will
-//  not be able to
-//  test for specific marker or other elements on it.
-//  If it is _not_ optimized, then we will be able to test for
-//  specific elements;
-//  we need to do this if we are developing or testing.
-//
-//  @url https://mixandgo.com/learn/how-to-write-a-cucumber-test-for-google-maps
-//
-function initCenteredMap(centerCoordinates, markers, icon, showNearMeControl,
+const SHOW_NEAR_ME_DIV_ID = 'show-near-me';
+const CANT_GET_LOC_CHECKBOX_ID = 'cant-get-location-checkbox';
+
+/**
+ *
+ * Display a dynamic Google map
+ *  centerCoordinates: the initial center for the map.
+ *                     (= center of Sweden if none given)
+ *  markers = an array of markers to display on the map
+ *
+ *  If there is only 1 marker for the map, center the map on that marker
+ *  else display all of the markers,and so the center is automatically
+ *   determined by the center of all of them.
+ *
+ *  Tell GoogleMaps whether or not we want it to be optimized or not.
+ *  If it _is_ optimized, then the map is just a canvas and we will
+ *  not be able to test for specific marker or other elements on it.
+ *  If it is _not_ optimized, then we will be able to test for
+ *  specific elements;
+ *  we need to do this if we are developing or testing.
+ *
+ *  Helpful example code:
+ *  @url https://bagja.net/blog/track-user-location-google-maps.html
+ *
+ *  @url https://mixandgo.com/learn/how-to-write-a-cucumber-test-for-google-maps
+ *
+ */
+function initCenteredMap(centerCoordinates, markers, showNearMeControl,
                          isProduction) {
 
-    if (markers.length === 0) {
-        alert(I18n.t('companies.index.no_search_results'));
-        return;
-    }
-
     // use the center of Sweden as the default location
-    var mapCenter = new google.maps.LatLng(SWEDEN_CENTER_LAT, SWEDEN_CENTER_LONG);
+    let mapCenter = new google.maps.LatLng(DEFAULT_LAT, DEFAULT_LONG);
 
-    var marks = markers === null ? [] : markers;
-    var optimize = isProduction === null ? false : isProduction;
+    const marks = markers === null ? [] : markers;
+    const optimize = isProduction === null ? false : isProduction;
 
     if (!(centerCoordinates === null)) {
         mapCenter = centerCoordinates;
     }
 
-    var map = new google.maps.Map(document.getElementById('map'), {
-        center: mapCenter,
-        zoom: 13,
-        mapTypeControl: false  // hide this control to save space.
-    });
+    const zoomLevel = (marks.length === 0) ? ZOOM_LEVEL_NO_MARKERS : SHOW_ZOOM_LEVEL;
 
-    var bounds = new google.maps.LatLngBounds();
-    addMarkersToMap(map, marks, bounds, icon, optimize);
+    const map = createMap(mapCenter, zoomLevel, !showNearMeControl);
+
+    const bounds = new google.maps.LatLngBounds();
+    addMarkersToMap(map, marks, bounds, optimize);
 
     //now fit the map to the newly inclusive bounds
-    // this will zoom in too far if there's only 1 marker
+    // this will zoom in quite far if there's only 1 marker
     if (marks.length > 1) {
         map.fitBounds(bounds);
     }
 
-
     if (showNearMeControl) {
 
         if (!isProduction) {
-            // add input boxes for setting the current location latitude & longitude
-            var fakeCurrentLocationDiv = makeFakeLocationControl();
+            // add input boxes for faking the current location latitude & longitude
+            const fakeCurrentLocationDiv = makeFakeLocationControlDiv();
 
-            fakeCurrentLocationDiv.index = 1;
+            fakeCurrentLocationDiv.style.zIndex = 1;
             map.controls[google.maps.ControlPosition.LEFT_BOTTOM]
                 .push(fakeCurrentLocationDiv);
         }
 
-        // Create the DIV to hold the search near me button and call
-        // the SearchNearMeButton() method passing in this DIV.
-        var searchNearMeDiv = document.createElement('DIV');
+        // Create the DIV to hold the search near me button
+        const searchNearMeDiv = document.createElement('DIV');
         showNearMeButton(map, searchNearMeDiv, isProduction);
         searchNearMeDiv.index = 1;
 
@@ -98,37 +93,47 @@ function initCenteredMap(centerCoordinates, markers, icon, showNearMeControl,
 }
 
 
+function createMap({lat, lng}, zoomLevel, showMapTypeControl) {
+    return new google.maps.Map(document.getElementById('map'), {
+        center: {lat, lng},
+        zoom: zoomLevel,
+        mapTypeControl: showMapTypeControl
+    });
+}
+
+
 // add the markers to the map that is defined on the page with id = 'map'
-function addMarkersToMap(map, markers, bounds, icon, optimize) {
+function addMarkersToMap(map, markers, bounds, optimize) {
 
     // if the map doesn't exist, do nothing
     if (document.getElementById('map') !== null) {
 
-        var marks = markers === null ? [] : markers;
-        var bound = bounds === null ? new google.maps.LatLngBounds() : bounds;
+        const marks = markers === null ? [] : markers;
+        const bound = bounds === null ? new google.maps.LatLngBounds() : bounds;
 
 
-        for (var i = 0, len = marks.length; i < len; i++) {
+        let i = 0;
+        const len = marks.length;
+        for (; i < len; i++) {
 
-            var position = {
+            const position = {
                 lat: marks[i].latitude,
                 lng: marks[i].longitude
             };
 
-            addMarker(position, map, marks[i].text, icon, optimize);
+            addMarker(position, map, marks[i].text, optimize);
 
             //extend the bounds to include the position for this marker
             bound.extend(position);
         }
     }
-
 }
 
 
 // get the text from element with id = element_id
 //  if there is no element_id in the document, return an empty string
 function getMarkerText(elementId) {
-    var text = '';
+    let text = '';
 
     if (document.getElementById(elementId) !== null) {
         text = document.getElementById(elementId).childNodes[0].nodeValue;
@@ -137,31 +142,16 @@ function getMarkerText(elementId) {
 }
 
 
-// get the value for the element with id element_id and convert it to a Number
-//  If there is no element_id in the document, show an error on the console
-function getNumber(elementId) {
-
-    if (document.getElementById(elementId) !== null) {
-        return parseFloat(document.getElementById(elementId).childNodes[0].nodeValue);
-    } else {
-        console.error("Expected document to have an element with id '" + elementId + "' but it did not.");
-    }
-
-}
-
-
-// Create a marker. Optionally, set the icon to be used for it
+// Create a marker.
 // When it's clicked, pop-up a box with text in it
-function addMarker(coordinates, map, text, icon, optimize) {
-    var marker;
+function addMarker(coordinates, map, text, optimize) {
+    let marker;
 
     marker = new google.maps.Marker({
         position: coordinates,
         map: map,
-        icon: icon,
         optimized: optimize
     });
-
 
     // don't create a pop-up box if there's no text to display
     if (text !== '') {
@@ -190,28 +180,27 @@ function createInfoWindow(text) {
  * 3) zoom to
  *
  * If the user can not be geolocated (perhaps they have that option turned
- * off in
- * their browser), then an alert is shown about that.
+ * off in their browser), then an alert is shown.
  *
  * @param map [Google map] - the Google map that we are using
  * @param controlDiv - a DIV that the button gets appended to
  * @param isProduction [Boolean] - whether or not the system is in production
- *              (vs. in development or testing)
+ *              (vs. in development or testing).  Needed to get the user's
+ *              location
  */
 function showNearMeButton(map, controlDiv, isProduction) {
 
     // outer box that holds the button and related text
-    var showNearMeDiv = document.createElement('DIV');
+    const showNearMeDiv = document.createElement('DIV');
     showNearMeDiv.id = SHOW_NEAR_ME_DIV_ID;
 
     // show near me text
-    var showNearMeText = document.createElement('SPAN');
+    const showNearMeText = document.createElement('SPAN');
     showNearMeText.id = SHOW_NEAR_ME_DIV_ID + '-text';
     showNearMeText.className = showNearMeText.id;
     showNearMeText.innerText = I18n.t('companies.index.show_near_me');
 
-
-    var showNearMeButton = document.createElement('INPUT');
+    const showNearMeButton = document.createElement('INPUT');
     showNearMeButton.setAttribute('type', 'button');
     showNearMeButton.id = SHOW_NEAR_ME_DIV_ID + '-button';
     showNearMeButton.className = showNearMeButton.id;
@@ -225,57 +214,86 @@ function showNearMeButton(map, controlDiv, isProduction) {
     // Setup the click event listeners: center the map on their location
     showNearMeButton.addEventListener('click', function () {
 
-        var nearCoords = getUserLocation(isProduction);
+        let currentLocCoords;
 
-        if (!(nearCoords === null)) {
+        if (isProduction) {
 
-            map.setCenter(nearCoords);
-            google.maps.event.addListenerOnce(map, 'bounds_changed', function () {
-                map.setZoom(SHOW_ZOOM_LEVEL);
-            });
+            if ('geolocation' in navigator === false) {
+                return onError(new Error('Geolocation is not supported by your browser.'));
+            }
+
+            // getCurrentPosition( function to call on success,
+            //                      [optional] function to call on failure )
+            navigator.geolocation.getCurrentPosition(
+                // On success:
+                position => {
+                    console.log(`Lat: ${position.coords.latitude} Lng: ${position.coords.longitude}`);
+
+                    currentLocCoords = new google.maps.LatLng(position.coords.latitude,
+                        position.coords.longitude);
+
+                    zoomMapTo(map, currentLocCoords, SHOW_ZOOM_LEVEL);
+                },
+
+                // On error
+                err => alert(`Error (${err.code}): ${getPositionErrorMessage(err.code)}`)
+            );
+
+        }
+        else {
+            currentLocCoords = setFakeCoordinates();
+            zoomMapTo(map, currentLocCoords, SHOW_ZOOM_LEVEL);
         }
     });
 }
 
 
-/**
- * Show alert to the user saying we cannot get their location with a reminder
- * that they can allow us by changing their browser settings.
- */
-function showAlertCantGetLocation() {
-    alert(I18n.t('companies.index.cannot_get_location'));
+function zoomMapTo(map, centerCoords, zoomLevel) {
+    map.setCenter(centerCoords);
+    google.maps.event.addListenerOnce(map, 'bounds_changed', function () {
+        map.setZoom(zoomLevel);
+    });
 }
 
 
-// error.code can be:
-//   0: unknown error
-//   1: permission denied
-//   2: position unavailable (error response from location provider)
-//   3: timed out
-var geoError = function () {
-    showAlertCantGetLocation();
-    console.log('geolocation Error occurred.');
+/**
+ * Get position error message from the given error code.
+ * @param {number} code
+ * @return {String} the error message to display, based on the code
+ */
+const getPositionErrorMessage = code => {
+    switch (code) {
+        case 1: // permission denied
+            return I18n.t('companies.index.location_permission_denied');
+        case 2: // position unavailable (error response from location provider)
+            return I18n.t('companies.index.cannot_get_location');
+        case 3: // request timed out
+            return I18n.t('companies.index.cannot_get_location');
+        default:
+            return I18n.t('companies.index.cannot_get_location');
+    }
 };
 
 
 /**
  * Create elements for use in development and testing to enter a
- * faked current user location,.
+ * faked current user location.
+ *
  *
  * @return DIV - a div with the fake location controls added as child nodes
  */
-function makeFakeLocationControl() {
+function makeFakeLocationControlDiv() {
 
 
     function makeCannotGetLocationCheckboxAndLabel() {
 
-        var cantGetCheckbox = document.createElement('INPUT');
+        const cantGetCheckbox = document.createElement('INPUT');
         cantGetCheckbox.type = "checkbox";
         cantGetCheckbox.id = CANT_GET_LOC_CHECKBOX_ID;
         cantGetCheckbox.className = cantGetCheckbox.id;
         cantGetCheckbox.value = false;
 
-        var cantGetLabel = document.createElement('LABEL');
+        const cantGetLabel = document.createElement('LABEL');
         cantGetLabel.for = cantGetCheckbox;
         cantGetLabel.innerText = I18n.t('companies.index.fake_cant_get_location');
 
@@ -284,17 +302,17 @@ function makeFakeLocationControl() {
 
 
     /**
-     *  Make radio buttons, titles, etc. to select the coordinates used for the
-     *  fake location.
+     *  Make and add radio buttons, titles, etc. to select the coordinates
+     *  used for the fake location.
      *  Add them to the parent DIV passed in
      *
      *  @param parentDiv - the DIV to add all of these elements to
      *  @return the updated parentDiv with the radio button element added to it
      */
-    function makeFakeLocationRadioButtons(parentDiv) {
+    function addFakeLocationRadioButtons(parentDiv) {
 
         function makeRadioButtonFor(rbName, rbValue, isChecked) {
-            var newRadioButton = document.createElement('INPUT');
+            const newRadioButton = document.createElement('INPUT');
             newRadioButton.setAttribute('type', 'radio');
             newRadioButton.name = rbName;
             newRadioButton.id = radioButtonName(rbValue);
@@ -307,8 +325,8 @@ function makeFakeLocationControl() {
 
 
         function makeRadioButtonAndLabel(rbName, labelText, isChecked) {
-            var newRadioButton = makeRadioButtonFor(rbName, (labelText.toLowerCase()), isChecked);
-            var newLabel = document.createElement('LABEL');
+            const newRadioButton = makeRadioButtonFor(rbName, (labelText.toLowerCase()), isChecked);
+            const newLabel = document.createElement('LABEL');
             newLabel.for = newRadioButton;
             newLabel.innerText = labelText;
             newLabel.className = 'radio-button-label-' + labelText.toLowerCase();
@@ -316,23 +334,23 @@ function makeFakeLocationControl() {
         }
 
 
-        var buttonGroupName = 'preset-coords';
+        const buttonGroupName = 'preset-coords';
 
         // radio buttons to automatically enter coords
         // for  Stockholm, Gothenburg, or a custom location
-        var [stockholmRadioButton, stockholmLabel] = makeRadioButtonAndLabel(buttonGroupName,
+        const [stockholmRadioButton, stockholmLabel] = makeRadioButtonAndLabel(buttonGroupName,
             'Stockholm', true);
 
-        var [gothenburgRadioButton, gothenburgLabel] = makeRadioButtonAndLabel(buttonGroupName,
+        const [gothenburgRadioButton, gothenburgLabel] = makeRadioButtonAndLabel(buttonGroupName,
             'Gothenburg', false);
 
-        var [customLocationRadioButton, customLocationlabel] = makeRadioButtonAndLabel(buttonGroupName,
+        const [customLocationRadioButton, customLocationlabel] = makeRadioButtonAndLabel(buttonGroupName,
             'Custom', false);
 
 
         function makeCoodinateInput(labelText, basename, value) {
 
-            var newInput = document.createElement('INPUT');
+            const newInput = document.createElement('INPUT');
             newInput.setAttribute('type', 'number');
             newInput.id = numberInputName('fake-' + basename);
             newInput.name = newInput.id;
@@ -340,7 +358,7 @@ function makeFakeLocationControl() {
             newInput.defaultValue = value;
             newInput.value = value;
 
-            var newInputTitle = document.createElement('LABEL');
+            const newInputTitle = document.createElement('LABEL');
             newInputTitle.for = newInput.id;
             newInputTitle.id = 'fake-' + basename + '-title';
             newInputTitle.name = newInputTitle.id;
@@ -350,11 +368,11 @@ function makeFakeLocationControl() {
             return [newInput, newInputTitle];
         }
 
-        var [fakeLatitudeInput, fakeLatitudeTitle] = makeCoodinateInput(I18n.t('companies.index.fake_latitude_title'),
-            'latitude', DEFAULT_LAT);
+        const [fakeLatitudeInput, fakeLatitudeTitle] = makeCoodinateInput(I18n.t('companies.index.fake_latitude_title'),
+            'latitude', STOCKHOLM_LAT);
 
-        var [fakeLongitudeInput, fakeLongitudeTitle] = makeCoodinateInput(I18n.t('companies.index.fake_longitude_title'),
-            'longitude', DEFAULT_LONG);
+        const [fakeLongitudeInput, fakeLongitudeTitle] = makeCoodinateInput(I18n.t('companies.index.fake_longitude_title'),
+            'longitude', STOCKHOLM_LONG);
 
 
         stockholmRadioButton.addEventListener('click', function () {
@@ -368,7 +386,7 @@ function makeFakeLocationControl() {
         });
 
 
-        var fakeInputValsDiv = document.createElement('DIV');
+        const fakeInputValsDiv = document.createElement('DIV');
         fakeInputValsDiv.id = 'fake-input-values-div';
         fakeInputValsDiv.className = fakeInputValsDiv.id;
 
@@ -398,29 +416,29 @@ function makeFakeLocationControl() {
     function buildFakeControlDiv() {
 
         // outer box that holds the inputs
-        var fakeControlDiv = document.createElement('DIV');
+        let fakeControlDiv = document.createElement('DIV');
         fakeControlDiv.id = 'fake-inputs';
 
-        var fakeLocationTitle = document.createElement('P');
+        const fakeLocationTitle = document.createElement('P');
         fakeLocationTitle.className = 'fake-location-title';
         fakeLocationTitle.innerText = I18n.t('companies.index.fake_location_title');
 
         fakeControlDiv.appendChild(fakeLocationTitle);
 
-        var [cantGetLocCheckbox,
+        const [cantGetLocCheckbox,
             cantGetLocLabel] = makeCannotGetLocationCheckboxAndLabel(fakeControlDiv);
 
         fakeControlDiv.appendChild(cantGetLocCheckbox);
         fakeControlDiv.appendChild(cantGetLocLabel);
         fakeControlDiv.appendChild(document.createElement('BR'));
 
-        fakeControlDiv = makeFakeLocationRadioButtons(fakeControlDiv);
+        fakeControlDiv = addFakeLocationRadioButtons(fakeControlDiv);
 
         return fakeControlDiv;
     }
 
 
-    var fakeCurrentLocationDiv = document.createElement('DIV');
+    const fakeCurrentLocationDiv = document.createElement('DIV');
     fakeCurrentLocationDiv.id = 'fake-current-location';
 
     fakeCurrentLocationDiv.appendChild(buildFakeControlDiv());
@@ -430,79 +448,39 @@ function makeFakeLocationControl() {
 }
 
 
-/**
- * Get the current location of the user from their browser.
+function setFakeCoordinates() {
 
- * If we cannot get the current location,
- *  show an alert to the user and
- *  return the DEFAULT_LAT and DEFAULT_LONG
- *
- * @return google.maps.LatLng
- *          The current location for the user,
- *          either from their browser or, if testing or in development,
- *          values entered in the UI
- **/
-function getUserLocation(isProduction) {
+    //if checkbox is checked,error.
+    const cantGetCheckbox = document.getElementById(CANT_GET_LOC_CHECKBOX_ID);
 
-    var currentCoordinates;
+    if (cantGetCheckbox.checked) {
+        alert( I18n.t('companies.index.location_permission_denied') );
+        return null;
 
-    if (isProduction) {
+    } else {
+        // else get the coordinates and set them
+        const lat = document
+            .getElementById(numberInputName('fake-latitude'))
+            .value;
+        const lng = document
+            .getElementById(numberInputName('fake-longitude'))
+            .value;
 
-        navigator.geolocation.getCurrentPosition(function (position) {
-                currentCoordinates = new google.maps.LatLng(position.coords
-                        .latitude,
-                    position.coords.longitude);
-            },
-            geoError);
+        const currentCoordinates = new google.maps.LatLng(lat, lng);
 
-    } else { // is not Production so get the fake values from the UI
-        currentCoordinates = setFakeCoordinates();
+        console.log('fake latitude used:' + currentCoordinates.lat());
+        console.log('fake longitude used:' + currentCoordinates.lng());
 
         return currentCoordinates;
     }
 
 }
 
-
-    function setFakeCoordinates() {
-
-        //if checkbox is checked,error.
-        var cantGetCheckbox = document.getElementById(CANT_GET_LOC_CHECKBOX_ID);
-
-        if (cantGetCheckbox.checked) {
-            geoError();
-            return null;
-
-        } else {
-            // else get the coordinates and set them
-            var lat = document
-                .getElementById(numberInputName('fake-latitude'))
-                .value;
-            var lng = document
-                .getElementById(numberInputName('fake-longitude'))
-                .value;
-
-            currentCoordinates = new google.maps.LatLng(lat, lng);
-
-            console.log('fake latitude used:' + currentCoordinates.lat());
-            console.log('fake longitude used:' + currentCoordinates.lng());
-
-            return currentCoordinates;
-        }
-
-    }
-
-    function numberInputName(basename) {
-        return 'input-number-' + basename;
-    }
+function numberInputName(basename) {
+    return 'input-number-' + basename;
+}
 
 
-    function radioButtonName(basename) {
-        return 'radio-button-' + basename;
-    }
-
-
-    function logSearchToConsole(latitude, longitude) {
-        console.log('searching near lat:' + latitude +
-            ' long:' + longitude);
-    }
+function radioButtonName(basename) {
+    return 'radio-button-' + basename;
+}
