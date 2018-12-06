@@ -7,7 +7,11 @@ BACKUP_FILES_DIR = '/home/deploy/SHF_BACKUPS/'
 CODE_BACKUPS_TO_KEEP = 4
 DB_BACKUPS_TO_KEEP = 15
 
+SLACK_COLOR_LTBLUE = '#439FE0'
+SLACK_SUCCESS_COLOR = "good"
+SLACK_FAIL_COLOR = "danger"
 SLACK_SUCCESS_EMOJI = ':white_check_mark:'
+SLACK_FAIL_EMOJI = ':x:'
 
 
 # "keep" key defines how many backups (code or DB) to retain on _local_ storage.
@@ -20,35 +24,53 @@ BACKUP_TARGETS = [
 ]
 
 
-# Sends a notification to Slack. Adds timestamps to the text and uses and emoji.
+def slack_success_notification(task_name, notification_text, emoji: SLACK_SUCCESS_EMOJI)
+
+  slack_notification(task_name, notification_text, emoji: emoji,
+                     color: SLACK_SUCCESS_COLOR)
+
+end
+
+
+def slack_fail_notification(task_name, notification_text, emoji: SLACK_FAIL_EMOJI)
+
+  slack_notification(task_name, notification_text, emoji: emoji,
+                     color: SLACK_FAIL_COLOR)
+
+end
+
+
+# Sends a notification to Slack. Adds timestamps to the text and uses the emoji.
 #
-# @param task_name - name of the task that calls this
+# @param source_name [String] - shows in the footer so we know the source of the message
 # @param notification_text [String] - main text for the notification
 # @param emoji [String] (optional) - emoji name to use; must be in the
 #                   Slack format  ":emojiname:"
 #                   see https://www.webpagefx.com/tools/emoji-cheat-sheet/
-def slack_success_notification(task_name, notification_text, emoji: SLACK_SUCCESS_EMOJI)
+def slack_notification(source_name, notification_text,
+                       emoji: SLACK_SUCCESS_EMOJI,
+                       color: SLACK_COLOR_LTBLUE)
 
   slack_notifier = Slack::Notifier.new ENV['SHF_SLACK_WEBHOOKURL'] do
     defaults channel:               ENV['SHF_SLACK_CHANNEL'],
-             username:              ENV['SHF_SLACK_USERNAME'],
+             username:              ENV['SHF_SLACK_USERNAME']
   end
 
   success_timestamp = DateTime.now.utc
 
   text = "#{notification_text} #{success_timestamp}"
 
-  success_info = {
+  details = {
       'fallback': text,
-      'color':    '#36a64f',
+      'color':    color,
       'title':    text,
-      'footer':   "SHF rake task: #{task_name}",
+      'footer':   "SHF: #{source_name}",
       'ts':       success_timestamp.to_i
   }
-
-  slack_notifier.post  attachments: [success_info], icon_emoji: emoji
+  slack_notifier.post  attachments: [details], icon_emoji: emoji
 
 end
+
 
 
 desc 'backup code and DB'
@@ -115,7 +137,7 @@ task :backup => [:environment] do | task |
     end
 
     # Send 'backup successful' notification to Slack
-    slack_success_notification(task.name, 'Backup Successful')
+    slack_success_notification(task.name, 'Backup succeeded')
 
   end
 end
