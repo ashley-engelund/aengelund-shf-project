@@ -1,10 +1,13 @@
 require 'active_support/logger'
+require 'slack-notifier'
 
 LOG_FILE = 'log/backup'
 BACKUP_FILES_DIR = '/home/deploy/SHF_BACKUPS/'
 
 CODE_BACKUPS_TO_KEEP = 4
 DB_BACKUPS_TO_KEEP = 15
+
+SLACK_SUCCESS_EMOJI = ':white_check_mark:'
 
 
 # "keep" key defines how many backups (code or DB) to retain on _local_ storage.
@@ -16,8 +19,40 @@ BACKUP_TARGETS = [
     type: 'db', keep: DB_BACKUPS_TO_KEEP }
 ]
 
+
+# Sends a notification to Slack. Adds timestamps to the text and uses and emoji.
+#
+# @param task_name - name of the task that calls this
+# @param notification_text [String] - main text for the notification
+# @param emoji [String] (optional) - emoji name to use; must be in the
+#                   Slack format  ":emojiname:"
+#                   see https://www.webpagefx.com/tools/emoji-cheat-sheet/
+def slack_success_notification(task_name, notification_text, emoji: SLACK_SUCCESS_EMOJI)
+
+  slack_notifier = Slack::Notifier.new ENV['SHF_SLACK_WEBHOOKURL'] do
+    defaults channel:               ENV['SHF_SLACK_CHANNEL'],
+             username:              ENV['SHF_SLACK_USERNAME'],
+  end
+
+  success_timestamp = DateTime.now.utc
+
+  text = "#{notification_text} #{success_timestamp}"
+
+  success_info = {
+      'fallback': text,
+      'color':    '#36a64f',
+      'title':    text,
+      'footer':   "SHF rake task: #{task_name}",
+      'ts':       success_timestamp.to_i
+  }
+
+  slack_notifier.post  attachments: [success_info], icon_emoji: emoji
+
+end
+
+
 desc 'backup code and DB'
-task :backup => [:environment] do
+task :backup => [:environment] do | task |
 
   ActivityLogger.open(LOG_FILE, 'SHF_TASK', 'Backup') do |log|
 
@@ -78,6 +113,9 @@ task :backup => [:environment] do
         delete_files.each { |file| File.delete(file) }
       end
     end
+
+    # Send 'backup successful' notification to Slack
+    slack_success_notification(task.name, 'Backup Successful')
 
   end
 end
