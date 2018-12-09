@@ -8,7 +8,10 @@ Feature: Show companies on a map
 
   Background:
 
-    Given the following users exists
+    Given the date is set to "2018-10-01"
+
+
+    And the following users exists
       | email                                  | admin | member |
       | fred-groomer-walker@kista.com          |       | true   |
       | johngroomer@celsius-gs-stockholm.com   |       | true   |
@@ -86,9 +89,6 @@ Feature: Show companies on a map
       | emma-walker@lidingo1.com               | 2018-01-01 | 2018-12-31  | branding_fee | betald | none    | 5569467466     |
       | norbert-groomer-walker@norrbotten1.com | 2018-01-01 | 2018-12-31  | branding_fee | betald | none    | 8589182768     |
 
-
-
-    Given the date is set to "2018-10-01"
 
 
   @selenium
