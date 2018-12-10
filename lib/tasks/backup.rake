@@ -75,8 +75,9 @@ end
 desc 'backup code and DB'
 task :backup => [:environment] do |task|
 
-  begin
-    ActivityLogger.open(LOG_FILE, 'SHF_TASK', 'Backup') do |log|
+  ActivityLogger.open(LOG_FILE, 'SHF_TASK', 'Backup') do |log|
+
+    begin
 
       today = Time.now.strftime '%Y-%m-%d'
 
@@ -139,10 +140,15 @@ task :backup => [:environment] do |task|
       # Send 'backup successful' notification to Slack
       slack_success_notification(task.name, 'Backup succeeded')
 
+    rescue => err
+
+      slack_fail_notification(task.name, 'Backup raised an error! (')
+      log.record('error', "Backup Failed with:\n #{err.message}")
+
+      raise err
     end
 
-  rescue => err
-    slack_fail_notification(task.name, 'Backup raised an error!')
-    raise err
   end
+
+
 end
