@@ -30,8 +30,14 @@ class SHFNotifySlack
   FOOTER_PREFIX = 'SHF'
 
 
-  # if an error is raised from code_run, send a fail notifcation
-  #  else send a success notification
+  # Surround a block of code with this method.
+  # If an error is raised from code_run, a failure_notification is sent
+  #  and the original error is raised.
+  #
+  # If the code block runs successfully, a successful_notification is sent.
+  #
+  # See the RSpec specification for examples.
+  #
   def self.notify_after(notification_source, success_text: SUCCESS_TEXT,
       failure_text: FAILURE_TEXT,
       success_emoji: SLACK_SUCCESS_EMOJI,
