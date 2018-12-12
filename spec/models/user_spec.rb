@@ -672,6 +672,70 @@ This is now the responsibility of the MembershipStatusUpdater class
   end
 
 
+  describe 'membership_current_as_of? checks membership payment status as of a given date' do
+
+    it 'is false if nil is the given date' do
+      expect((create :user).membership_current_as_of?(nil)).to be_falsey
+    end
+
+
+    context 'membership payments have not expired yet' do
+
+      let(:paid_member) {
+        member = create(:member_with_membership_app)
+        create(:membership_fee_payment,
+               :successful,
+               user:        member,
+               start_date:  jan_1,
+               expire_date: User.expire_date_for_start_date(jan_1))
+        member
+      }
+
+      it 'true as of dec 1, start = jan 1, expire = dec 31' do
+        expect(paid_member.membership_expire_date).to eq dec_31
+        expect(paid_member.membership_current_as_of?(dec_1)).to be_truthy
+      end
+
+    end
+
+
+    context 'testing dates right before, on, and after expire_date' do
+
+      let(:paid_expires_today_member) {
+        member = create(:member_with_membership_app)
+        create(:membership_fee_payment,
+               :successful,
+               user:        member,
+               start_date:  dec_3_last_year,
+               expire_date: User.expire_date_for_start_date(dec_3_last_year))
+        member
+      }
+
+      it 'true as of nov 30, start = dec 3 last year, expire = dec 2' do
+        expect(paid_expires_today_member.membership_expire_date).to eq dec_2
+        expect(paid_expires_today_member.membership_current_as_of?(nov_30)).to be_truthy
+      end
+
+      it 'true as of dec 1, start = dec 3 last year, expire = dec 2' do
+        expect(paid_expires_today_member.membership_expire_date).to eq dec_2
+        expect(paid_expires_today_member.membership_current_as_of?(dec_1)).to be_truthy
+      end
+
+      it 'false as of dec 2, start = dec 3 last year, expire = dec 2' do
+        expect(paid_expires_today_member.membership_expire_date).to eq dec_2
+        expect(paid_expires_today_member.membership_current_as_of?(dec_2)).to be_falsey
+      end
+
+      it 'false today = dec 3, start = dec 3 last year, expire = dec 2' do
+        expect(paid_expires_today_member.membership_expire_date).to eq dec_2
+        expect(paid_expires_today_member.membership_current_as_of?(dec_3)).to be_falsey
+      end
+
+    end
+
+  end
+
+
   describe 'membership_app_and_payments_current?  checks both application and membership payment status' do
 
     context 'has an approved application' do
@@ -688,12 +752,22 @@ This is now the responsibility of the MembershipStatusUpdater class
           member
         }
 
-        it 'true if today = dec 1, start = jan 1, expire = dec 31' do
-          Timecop.freeze(dec_1) do
-            expect(paid_member.membership_expire_date).to eq dec_31
-            expect(paid_member.membership_app_and_payments_current?).to be_truthy
-          end # Timecop
-        end
+        context 'today is dec 1' do
+
+          it 'true if start = jan 1, expire = dec 3' do
+            Timecop.freeze(dec_1) do
+              expect(paid_member.membership_expire_date).to eq dec_31
+              expect(paid_member.membership_app_and_payments_current?).to be_truthy
+            end
+          end
+
+          it 'is == membership_current?' do
+            Timecop.freeze(dec_1) do
+              expect(paid_member.membership_app_and_payments_current?).to eq(paid_member.membership_current?)
+            end
+          end
+
+        end # context 'today is dec 1'
 
       end
 
@@ -710,37 +784,65 @@ This is now the responsibility of the MembershipStatusUpdater class
           member
         }
 
-        it 'true if today = nov 30, start = dec 3 last year, expire = dec 2' do
-          Timecop.freeze(nov_30) do
-            expect(paid_expires_today_member.membership_expire_date).to eq dec_2
-            expect(paid_expires_today_member.membership_app_and_payments_current?).to be_truthy
-          end # Timecop
-        end
+        context 'today is nov 30' do
+          it 'true if today = nov 30, start = dec 3 last year, expire = dec 2' do
+            Timecop.freeze(nov_30) do
+              expect(paid_expires_today_member.membership_expire_date).to eq dec_2
+              expect(paid_expires_today_member.membership_app_and_payments_current?).to be_truthy
+            end # Timecop
+          end
+          it 'is == membership_current?' do
+            Timecop.freeze(nov_30) do
+              expect(paid_expires_today_member.membership_app_and_payments_current?).to eq(paid_expires_today_member.membership_current?)
+            end
+          end
+        end # context 'today is nov 30'
 
-        it 'true if today = dec 1, start = dec 3 last year, expire = dec 2' do
-          Timecop.freeze(dec_1) do
-            expect(paid_expires_today_member.membership_expire_date).to eq dec_2
-            expect(paid_expires_today_member.membership_app_and_payments_current?).to be_truthy
-          end # Timecop
-        end
+        context 'today is dec 1' do
+          it 'true if today = dec 1, start = dec 3 last year, expire = dec 2' do
+            Timecop.freeze(dec_1) do
+              expect(paid_expires_today_member.membership_expire_date).to eq dec_2
+              expect(paid_expires_today_member.membership_app_and_payments_current?).to be_truthy
+            end # Timecop
+          end
+          it 'is == membership_current?' do
+            Timecop.freeze(dec_1) do
+              expect(paid_expires_today_member.membership_app_and_payments_current?).to eq(paid_expires_today_member.membership_current?)
+            end
+          end
+        end # context 'today is dec 1'
 
-        it 'false if today = dec 2, start = dec 3 last year, expire = dec 2' do
-          Timecop.freeze(dec_2) do
-            expect(paid_expires_today_member.membership_expire_date).to eq dec_2
-            expect(paid_expires_today_member.membership_app_and_payments_current?).to be_falsey
-          end # Timecop
-        end
+        context 'today is dec 2' do
+          it 'false if today = dec 2, start = dec 3 last year, expire = dec 2' do
+            Timecop.freeze(dec_2) do
+              expect(paid_expires_today_member.membership_expire_date).to eq dec_2
+              expect(paid_expires_today_member.membership_app_and_payments_current?).to be_falsey
+            end # Timecop
+          end
+          it 'is == membership_current?' do
+            Timecop.freeze(dec_2) do
+              expect(paid_expires_today_member.membership_app_and_payments_current?).to eq(paid_expires_today_member.membership_current?)
+            end
+          end
+        end # context 'today is dec 2'
 
-        it 'false today = dec 3, start = dec 3 last year, expire = dec 2' do
-          Timecop.freeze(dec_3) do
-            expect(paid_expires_today_member.membership_expire_date).to eq dec_2
-            expect(paid_expires_today_member.membership_app_and_payments_current?).to be_falsey
-          end # Timecop
-        end
+        context 'today is dec 3' do
+          it 'false today = dec 3, start = dec 3 last year, expire = dec 2' do
+            Timecop.freeze(dec_3) do
+              expect(paid_expires_today_member.membership_expire_date).to eq dec_2
+              expect(paid_expires_today_member.membership_app_and_payments_current?).to be_falsey
+            end # Timecop
+          end
+          it 'is == membership_current?' do
+            Timecop.freeze(dec_3) do
+              expect(paid_expires_today_member.membership_app_and_payments_current?).to eq(paid_expires_today_member.membership_current?)
+            end
+          end
+        end # context 'today is dec 2'
 
-      end
+      end # context 'testing dates right before, on, and after expire_date'
 
-    end
+    end #  context 'has an approved application'
 
 
     context 'does NOT have an approved application - is always FALSE' do
@@ -748,7 +850,7 @@ This is now the responsibility of the MembershipStatusUpdater class
       context 'membership payments have not expired yet' do
 
         let(:paid_no_app) {
-          user = create(:user_with_membership_app)  # not approved; not a member Maybe it was later rejected
+          user = create(:user_with_membership_app) # not approved; not a member Maybe it was later rejected
           create(:membership_fee_payment,
                  :successful,
                  user:        user,
@@ -770,7 +872,7 @@ This is now the responsibility of the MembershipStatusUpdater class
       context 'testing dates right before, on, and after expire_date' do
 
         let(:no_app_expires_today) {
-          user = create(:user_with_membership_app)  # not approved; not a member Maybe it was later rejected
+          user = create(:user_with_membership_app) # not approved; not a member Maybe it was later rejected
           create(:membership_fee_payment,
                  :successful,
                  user:        user,
@@ -810,6 +912,158 @@ This is now the responsibility of the MembershipStatusUpdater class
       end
 
     end
+
+  end
+
+
+  describe 'membership_app_and_payments_current_as_of?  checks both application and membership payment status as of a given date' do
+
+    it 'is false if nil is the given date' do
+      expect((create :user).membership_app_and_payments_current_as_of?(nil)).to be_falsey
+    end
+
+
+    context 'has an approved application' do
+
+      context 'membership payments have not expired yet' do
+
+        let(:paid_member) {
+          member = create(:member_with_membership_app)
+          create(:membership_fee_payment,
+                 :successful,
+                 user:        member,
+                 start_date:  jan_1,
+                 expire_date: User.expire_date_for_start_date(jan_1))
+          member
+        }
+
+        it 'true if today = dec 1, start = jan 1, expire = dec 31' do
+          expect(paid_member.membership_expire_date).to eq dec_31
+          expect(paid_member.membership_app_and_payments_current_as_of?(dec_1)).to be_truthy
+        end
+
+        it 'is == membership_current_as_of?' do
+          expect(paid_member.membership_app_and_payments_current_as_of?(dec_1)).to eq(paid_member.membership_current_as_of?(dec_1))
+        end
+
+      end # context 'membership payments have not expired yet'
+
+
+      context 'testing dates right before, on, and after expire_date' do
+
+        let(:paid_expires_today_member) {
+          member = create(:member_with_membership_app)
+          create(:membership_fee_payment,
+                 :successful,
+                 user:        member,
+                 start_date:  dec_3_last_year,
+                 expire_date: User.expire_date_for_start_date(dec_3_last_year))
+          member
+        }
+
+        context 'as of nov 30' do
+          it 'true if start = dec 3 last year, expire = dec 2' do
+            expect(paid_expires_today_member.membership_expire_date).to eq dec_2
+            expect(paid_expires_today_member.membership_app_and_payments_current_as_of?(nov_30)).to be_truthy
+          end
+          it 'is == membership_current_as_of?(nov 30)' do
+            expect(paid_expires_today_member.membership_app_and_payments_current_as_of?(nov_30)).to eq(paid_expires_today_member.membership_current_as_of?(nov_30))
+          end
+        end
+
+        context 'as of dec 1' do
+          it 'true if start = dec 3 last year, expire = dec 2' do
+            expect(paid_expires_today_member.membership_expire_date).to eq dec_2
+            expect(paid_expires_today_member.membership_app_and_payments_current_as_of?(dec_1)).to be_truthy
+          end
+          it 'is == membership_current_as_of?(dec 1)' do
+            expect(paid_expires_today_member.membership_app_and_payments_current_as_of?(dec_1)).to eq(paid_expires_today_member.membership_current_as_of?(dec_1))
+          end
+        end
+
+        context 'as of dec 2' do
+          it 'false if today = dec 2, start = dec 3 last year, expire = dec 2' do
+            expect(paid_expires_today_member.membership_expire_date).to eq dec_2
+            expect(paid_expires_today_member.membership_app_and_payments_current_as_of?(dec_2)).to be_falsey
+          end
+          it 'is == membership_current_as_of?(dec 2)' do
+            expect(paid_expires_today_member.membership_app_and_payments_current_as_of?(dec_2)).to eq(paid_expires_today_member.membership_current_as_of?(dec_2))
+          end
+        end
+
+        context 'as of dec 3' do
+          it 'false today = dec 3, start = dec 3 last year, expire = dec 2' do
+            expect(paid_expires_today_member.membership_expire_date).to eq dec_2
+            expect(paid_expires_today_member.membership_app_and_payments_current_as_of?(dec_3)).to be_falsey
+          end
+          it 'is == membership_current_as_of?(dec 3)' do
+            expect(paid_expires_today_member.membership_app_and_payments_current_as_of?(dec_3)).to eq(paid_expires_today_member.membership_current_as_of?(dec_3))
+          end
+        end
+
+
+      end # context 'testing dates right before, on, and after expire_date'
+
+    end # context 'has an approved application'
+
+
+    context 'does NOT have an approved application: is always FALSE' do
+
+      context 'membership payments have not expired yet' do
+
+        let(:paid_no_app) {
+          user = create(:user_with_membership_app) # not approved; not a member Maybe it was later rejected
+          create(:membership_fee_payment,
+                 :successful,
+                 user:        user,
+                 start_date:  jan_1,
+                 expire_date: User.expire_date_for_start_date(jan_1))
+          user
+        }
+
+        it 'false as of dec 1, start = jan 1, expire = dec 31' do
+          expect(paid_no_app.membership_expire_date).to eq dec_31
+          expect(paid_no_app.membership_app_and_payments_current_as_of?(dec_1)).to be_falsey
+        end
+
+      end # context 'membership payments have not expired yet'
+
+
+      context 'testing dates right before, on, and after expire_date' do
+
+        let(:no_app_expires_today) {
+          user = create(:user_with_membership_app) # not approved; not a member Maybe it was later rejected
+          create(:membership_fee_payment,
+                 :successful,
+                 user:        user,
+                 start_date:  dec_3_last_year,
+                 expire_date: User.expire_date_for_start_date(dec_3_last_year))
+          user
+        }
+
+        it 'false as of nov 30, start = dec 3 last year, expire = dec 2' do
+          expect(no_app_expires_today.membership_expire_date).to eq dec_2
+          expect(no_app_expires_today.membership_app_and_payments_current_as_of?(nov_30)).to be_falsey
+        end
+
+        it 'false as of dec 1, start = dec 3 last year, expire = dec 2' do
+          expect(no_app_expires_today.membership_expire_date).to eq dec_2
+          expect(no_app_expires_today.membership_app_and_payments_current_as_of?(dec_1)).to be_falsey
+        end
+
+        it 'false as of dec 2, start = dec 3 last year, expire = dec 2' do
+          expect(no_app_expires_today.membership_expire_date).to eq dec_2
+          expect(no_app_expires_today.membership_app_and_payments_current_as_of?(dec_2)).to be_falsey
+        end
+
+        it 'false as of dec 3, start = dec 3 last year, expire = dec 2' do
+          expect(no_app_expires_today.membership_expire_date).to eq dec_2
+          expect(no_app_expires_today.membership_app_and_payments_current_as_of?(dec_3)).to be_falsey
+        end
+
+      end # context 'testing dates right before, on, and after expire_date'
+
+    end # context 'does NOT have an approved application - is always FALSE'
 
   end
 
