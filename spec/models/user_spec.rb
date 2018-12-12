@@ -27,35 +27,52 @@ RSpec.describe User, type: :model do
   let(:member_payment1) do
     start_date, expire_date = User.next_membership_payment_dates(user.id)
     create(:payment, user: user, status: success,
-           payment_type: Payment::PAYMENT_TYPE_MEMBER,
-           notes: 'these are notes for member payment1',
-           start_date: start_date,
-           expire_date: expire_date)
+           payment_type:   Payment::PAYMENT_TYPE_MEMBER,
+           notes:          'these are notes for member payment1',
+           start_date:     start_date,
+           expire_date:    expire_date)
   end
   let(:member_payment2) do
     start_date, expire_date = User.next_membership_payment_dates(user.id)
     create(:payment, user: user, status: success,
-           payment_type: Payment::PAYMENT_TYPE_MEMBER,
-           notes: 'these are notes for member payment2',
-           start_date: start_date,
-           expire_date: expire_date)
+           payment_type:   Payment::PAYMENT_TYPE_MEMBER,
+           notes:          'these are notes for member payment2',
+           start_date:     start_date,
+           expire_date:    expire_date)
   end
   let(:branding_payment1) do
     start_date, expire_date = Company.next_branding_payment_dates(complete_co.id)
     create(:payment, user: user, status: success, company: complete_co,
-           payment_type: Payment::PAYMENT_TYPE_BRANDING,
-           notes: 'these are notes for branding payment1',
-           start_date: start_date,
-           expire_date: expire_date)
+           payment_type:   Payment::PAYMENT_TYPE_BRANDING,
+           notes:          'these are notes for branding payment1',
+           start_date:     start_date,
+           expire_date:    expire_date)
   end
   let(:branding_payment2) do
     start_date, expire_date = Company.next_branding_payment_dates(complete_co.id)
     create(:payment, user: user, status: success, company: complete_co,
-           payment_type: Payment::PAYMENT_TYPE_BRANDING,
-           notes: 'these are notes for branding payment2',
-           start_date: start_date,
-           expire_date: expire_date)
+           payment_type:   Payment::PAYMENT_TYPE_BRANDING,
+           notes:          'these are notes for branding payment2',
+           start_date:     start_date,
+           expire_date:    expire_date)
   end
+
+  let(:jan_1) { Time.zone.local(2018, 1, 1) }
+
+  let(:nov_29) { Time.zone.local(2018, 11, 29) }
+  let(:nov_30) { Time.zone.local(2018, 11, 30) }
+  let(:dec_1) { Time.zone.local(2018, 12, 1) }
+  let(:dec_2) { Time.zone.local(2018, 12, 2) }
+  let(:dec_3) { Time.zone.local(2018, 12, 3) }
+  let(:dec_31) { Time.zone.local(2018, 12, 31) }
+
+  let(:nov_29_last_year) { Time.zone.local(2017, 11, 29) }
+  let(:nov_30_last_year) { Time.zone.local(2017, 11, 30) }
+  let(:dec_1_last_year) { Time.zone.local(2017, 12, 1) }
+  let(:dec_2_last_year) { Time.zone.local(2017, 12, 2) }
+  let(:dec_3_last_year) { Time.zone.local(2017, 12, 3) }
+
+  let(:nov_30_next_year) { Time.zone.local(2019, 11, 30) }
 
 
   describe 'Factory' do
@@ -88,16 +105,16 @@ RSpec.describe User, type: :model do
     it { is_expected.to validate_uniqueness_of :membership_number }
     it do
       is_expected.to validate_attachment_content_type(:member_photo)
-        .allowing('image/png', 'image/jpeg')
-        .rejecting('image/gif', 'image/bmp')
+                         .allowing('image/png', 'image/jpeg')
+                         .rejecting('image/gif', 'image/bmp')
     end
 
     describe 'validates file contents and file type' do
       let(:file_root) { "#{Rails.root}/spec/fixtures/member_photos/" }
-      let(:txt_file)  { File.new(file_root + 'text_file.jpg') }
-      let(:gif_file)  { File.new(file_root + 'gif_file.jpg') }
-      let(:ico_file)  { File.new(file_root + 'ico_file.png') }
-      let(:xyz_file)  { File.new(file_root + 'member_with_dog.xyz') }
+      let(:txt_file) { File.new(file_root + 'text_file.jpg') }
+      let(:gif_file) { File.new(file_root + 'gif_file.jpg') }
+      let(:ico_file) { File.new(file_root + 'ico_file.png') }
+      let(:xyz_file) { File.new(file_root + 'member_with_dog.xyz') }
 
       it 'rejects if content not jpeg or png' do
         user.member_photo = txt_file
@@ -123,7 +140,7 @@ RSpec.describe User, type: :model do
     it { is_expected.to have_attached_file(:member_photo) }
     it { is_expected.to have_many(:companies).through(:shf_application) }
     it { is_expected.to accept_nested_attributes_for(:shf_application)
-      .allow_destroy(false).update_only(true) }
+                            .allow_destroy(false).update_only(true) }
   end
 
   describe 'Admin' do
@@ -176,7 +193,7 @@ RSpec.describe User, type: :model do
 
       it 'h-branding payments' do
         company_id = complete_co.id
-        user_id = user.id
+        user_id    = user.id
 
         expect { branding_payment1; branding_payment2 }.to change(Payment, :count).by(2)
 
@@ -194,11 +211,11 @@ RSpec.describe User, type: :model do
       it 'returns 2 users that are admins and 0 that are not' do
         admin1 = create(:user, admin: true, first_name: 'admin1')
         admin2 = create(:user, admin: true, first_name: 'admin2')
-        user1 = create(:user, first_name: 'user1')
+        user1  = create(:user, first_name: 'user1')
 
         all_admins = described_class.admins
 
-        expect(all_admins.count ).to eq 2
+        expect(all_admins.count).to eq 2
         expect(all_admins).to include admin1
         expect(all_admins).to include admin2
         expect(all_admins).not_to include user1
@@ -441,7 +458,44 @@ RSpec.describe User, type: :model do
       end
     end
 
-    describe '.self.next_membership_payment_dates' do
+
+    describe '.next_membership_payment_date' do
+
+      around(:each) do |example|
+        Timecop.freeze(payment_date_2018_11_21)
+        example.run
+        Timecop.return
+      end
+
+      it "returns today's date for first payment start date" do
+        expect(User.next_membership_payment_date(user.id)).to eq Time.zone.today
+      end
+
+      it 'returns date-after-expiration for second payment start date' do
+        member_payment1
+        expect(User.next_membership_payment_date(user.id))
+            .to eq Time.zone.today + 1.year
+      end
+
+
+      context 'if next payment occurs after prior payment expire date' do
+
+        it 'returns actual payment date for start date' do
+          # User renews membership (pays fee) *after* the prior payment has expired.
+          # In this case, the new payment period starts on the day of payment (2020/03/15).
+          member_payment1
+          Timecop.freeze(payment_date_2020_03_15)
+
+          payment_start_date = User.next_membership_payment_date(user.id)
+
+          expect(payment_start_date).to eq payment_date_2020_03_15
+        end
+
+      end
+    end
+
+
+    describe '.next_membership_payment_dates' do
 
       around(:each) do |example|
         Timecop.freeze(payment_date_2018_11_21)
@@ -453,21 +507,23 @@ RSpec.describe User, type: :model do
         expect(User.next_membership_payment_dates(user.id)[0]).to eq Time.zone.today
       end
 
+      # FIXME it returns one year MINUS 1 DAY
       it 'returns one year later for first payment expire date' do
         expect(User.next_membership_payment_dates(user.id)[1])
-          .to eq Time.zone.today + 1.year - 1.day
+            .to eq Time.zone.today + 1.year - 1.day
       end
 
       it 'returns date-after-expiration for second payment start date' do
         member_payment1
         expect(User.next_membership_payment_dates(user.id)[0])
-          .to eq Time.zone.today + 1.year
+            .to eq Time.zone.today + 1.year
       end
 
+      # FIXME returns one year MINUS 1 DAY
       it 'returns one year later for second payment expire date' do
         member_payment1
         expect(User.next_membership_payment_dates(user.id)[1])
-          .to eq Time.zone.today + 1.year + 1.year - 1.day
+            .to eq Time.zone.today + 1.year + 1.year - 1.day
       end
 
       context 'if next payment occurs after prior payment expire date' do
@@ -545,6 +601,218 @@ This is now the responsibility of the MembershipStatusUpdater class
 =end
 
   end
+
+
+  describe 'membership_current? just checks membership payment status' do
+
+    context 'membership payments have not expired yet' do
+
+      let(:paid_member) {
+        member = create(:member_with_membership_app)
+        create(:membership_fee_payment,
+               :successful,
+               user:        member,
+               start_date:  jan_1,
+               expire_date: User.expire_date_for_start_date(jan_1))
+        member
+      }
+
+      it 'true if today = dec 1, start = jan 1, expire = dec 31' do
+        Timecop.freeze(dec_1) do
+          expect(paid_member.membership_expire_date).to eq dec_31
+          expect(paid_member.membership_current?).to be_truthy
+        end # Timecop
+      end
+
+    end
+
+
+    context 'testing dates right before, on, and after expire_date' do
+
+      let(:paid_expires_today_member) {
+        member = create(:member_with_membership_app)
+        create(:membership_fee_payment,
+               :successful,
+               user:        member,
+               start_date:  dec_3_last_year,
+               expire_date: User.expire_date_for_start_date(dec_3_last_year))
+        member
+      }
+
+      it 'true if today = nov 30, start = dec 3 last year, expire = dec 2' do
+        Timecop.freeze(nov_30) do
+          expect(paid_expires_today_member.membership_expire_date).to eq dec_2
+          expect(paid_expires_today_member.membership_current?).to be_truthy
+        end # Timecop
+      end
+
+      it 'true if today = dec 1, start = dec 3 last year, expire = dec 2' do
+        Timecop.freeze(dec_1) do
+          expect(paid_expires_today_member.membership_expire_date).to eq dec_2
+          expect(paid_expires_today_member.membership_current?).to be_truthy
+        end # Timecop
+      end
+
+      it 'false if today = dec 2, start = dec 3 last year, expire = dec 2' do
+        Timecop.freeze(dec_2) do
+          expect(paid_expires_today_member.membership_expire_date).to eq dec_2
+          expect(paid_expires_today_member.membership_current?).to be_falsey
+        end # Timecop
+      end
+
+      it 'false today = dec 3, start = dec 3 last year, expire = dec 2' do
+        Timecop.freeze(dec_3) do
+          expect(paid_expires_today_member.membership_expire_date).to eq dec_2
+          expect(paid_expires_today_member.membership_current?).to be_falsey
+        end # Timecop
+      end
+
+    end
+
+  end
+
+
+  describe 'membership_app_and_payments_current?  checks both application and membership payment status' do
+
+    context 'has an approved application' do
+
+      context 'membership payments have not expired yet' do
+
+        let(:paid_member) {
+          member = create(:member_with_membership_app)
+          create(:membership_fee_payment,
+                 :successful,
+                 user:        member,
+                 start_date:  jan_1,
+                 expire_date: User.expire_date_for_start_date(jan_1))
+          member
+        }
+
+        it 'true if today = dec 1, start = jan 1, expire = dec 31' do
+          Timecop.freeze(dec_1) do
+            expect(paid_member.membership_expire_date).to eq dec_31
+            expect(paid_member.membership_app_and_payments_current?).to be_truthy
+          end # Timecop
+        end
+
+      end
+
+
+      context 'testing dates right before, on, and after expire_date' do
+
+        let(:paid_expires_today_member) {
+          member = create(:member_with_membership_app)
+          create(:membership_fee_payment,
+                 :successful,
+                 user:        member,
+                 start_date:  dec_3_last_year,
+                 expire_date: User.expire_date_for_start_date(dec_3_last_year))
+          member
+        }
+
+        it 'true if today = nov 30, start = dec 3 last year, expire = dec 2' do
+          Timecop.freeze(nov_30) do
+            expect(paid_expires_today_member.membership_expire_date).to eq dec_2
+            expect(paid_expires_today_member.membership_app_and_payments_current?).to be_truthy
+          end # Timecop
+        end
+
+        it 'true if today = dec 1, start = dec 3 last year, expire = dec 2' do
+          Timecop.freeze(dec_1) do
+            expect(paid_expires_today_member.membership_expire_date).to eq dec_2
+            expect(paid_expires_today_member.membership_app_and_payments_current?).to be_truthy
+          end # Timecop
+        end
+
+        it 'false if today = dec 2, start = dec 3 last year, expire = dec 2' do
+          Timecop.freeze(dec_2) do
+            expect(paid_expires_today_member.membership_expire_date).to eq dec_2
+            expect(paid_expires_today_member.membership_app_and_payments_current?).to be_falsey
+          end # Timecop
+        end
+
+        it 'false today = dec 3, start = dec 3 last year, expire = dec 2' do
+          Timecop.freeze(dec_3) do
+            expect(paid_expires_today_member.membership_expire_date).to eq dec_2
+            expect(paid_expires_today_member.membership_app_and_payments_current?).to be_falsey
+          end # Timecop
+        end
+
+      end
+
+    end
+
+
+    context 'does NOT have an approved application - is always FALSE' do
+
+      context 'membership payments have not expired yet' do
+
+        let(:paid_no_app) {
+          user = create(:user_with_membership_app)  # not approved; not a member Maybe it was later rejected
+          create(:membership_fee_payment,
+                 :successful,
+                 user:        user,
+                 start_date:  jan_1,
+                 expire_date: User.expire_date_for_start_date(jan_1))
+          user
+        }
+
+        it 'false if today = dec 1, start = jan 1, expire = dec 31' do
+          Timecop.freeze(dec_1) do
+            expect(paid_no_app.membership_expire_date).to eq dec_31
+            expect(paid_no_app.membership_app_and_payments_current?).to be_falsey
+          end # Timecop
+        end
+
+      end
+
+
+      context 'testing dates right before, on, and after expire_date' do
+
+        let(:no_app_expires_today) {
+          user = create(:user_with_membership_app)  # not approved; not a member Maybe it was later rejected
+          create(:membership_fee_payment,
+                 :successful,
+                 user:        user,
+                 start_date:  dec_3_last_year,
+                 expire_date: User.expire_date_for_start_date(dec_3_last_year))
+          user
+        }
+
+        it 'false if today = nov 30, start = dec 3 last year, expire = dec 2' do
+          Timecop.freeze(nov_30) do
+            expect(no_app_expires_today.membership_expire_date).to eq dec_2
+            expect(no_app_expires_today.membership_app_and_payments_current?).to be_falsey
+          end # Timecop
+        end
+
+        it 'false if today = dec 1, start = dec 3 last year, expire = dec 2' do
+          Timecop.freeze(dec_1) do
+            expect(no_app_expires_today.membership_expire_date).to eq dec_2
+            expect(no_app_expires_today.membership_app_and_payments_current?).to be_falsey
+          end # Timecop
+        end
+
+        it 'false if today = dec 2, start = dec 3 last year, expire = dec 2' do
+          Timecop.freeze(dec_2) do
+            expect(no_app_expires_today.membership_expire_date).to eq dec_2
+            expect(no_app_expires_today.membership_app_and_payments_current?).to be_falsey
+          end # Timecop
+        end
+
+        it 'false today = dec 3, start = dec 3 last year, expire = dec 2' do
+          Timecop.freeze(dec_3) do
+            expect(no_app_expires_today.membership_expire_date).to eq dec_2
+            expect(no_app_expires_today.membership_app_and_payments_current?).to be_falsey
+          end # Timecop
+        end
+
+      end
+
+    end
+
+  end
+
 
   describe '#get_short_proof_of_membership_url' do
     context 'there is already a shortened url in the table' do
