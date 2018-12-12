@@ -32,7 +32,7 @@ RSpec.describe MembershipExpireAlert, type: :model do
     Timecop.return
   end
 
-  describe '.send_alert_today?(config, user)' do
+  describe '.send_alert_this_day?(config, user)' do
 
 
     context 'user is a member' do
@@ -51,11 +51,11 @@ RSpec.describe MembershipExpireAlert, type: :model do
 
 
         it 'true when the day  is in the config list of days to send the alert' do
-          expect(described_class.send_alert_today?(config, paid_member, dec_1)).to be_truthy
+          expect(described_class.send_alert_this_day?(config, paid_member, dec_1)).to be_truthy
         end
 
         it 'false when the day  is not in the config list of days to send the alert' do
-          expect(described_class.send_alert_today?(config, paid_member, dec_2)).to be_falsey
+          expect(described_class.send_alert_this_day?(config, paid_member, dec_2)).to be_falsey
         end
 
       end # context 'membership has not expired yet'
@@ -78,11 +78,11 @@ RSpec.describe MembershipExpireAlert, type: :model do
 
           it 'true if the day is in the config list of days to send the alert (= 1)' do
             expect(paid_expires_today_member.membership_expire_date).to eq dec_1
-            expect(described_class.send_alert_today?({ days: [1] }, paid_expires_today_member, nov_30)).to be_truthy
+            expect(described_class.send_alert_this_day?({ days: [1] }, paid_expires_today_member, nov_30)).to be_truthy
           end
 
           it 'false if the day is not in the config list of days to send the alert' do
-            expect(described_class.send_alert_today?(config, paid_expires_today_member, nov_29)).to be_falsey
+            expect(described_class.send_alert_this_day?(config, paid_expires_today_member, nov_29)).to be_falsey
           end
 
         end
@@ -91,7 +91,7 @@ RSpec.describe MembershipExpireAlert, type: :model do
 
           it 'false even if the day is in the list of days to send it' do
             expect(paid_expires_today_member.membership_expire_date).to eq dec_1
-            expect(described_class.send_alert_today?({ days: [0] }, paid_expires_today_member, dec_1)).to be_falsey
+            expect(described_class.send_alert_this_day?({ days: [0] }, paid_expires_today_member, dec_1)).to be_falsey
           end
 
         end
@@ -113,11 +113,11 @@ RSpec.describe MembershipExpireAlert, type: :model do
 
 
         it 'false if the day is in the config list of days to send the alert' do
-          expect(described_class.send_alert_today?(config, paid_expired_member, dec_1)).to be_falsey
+          expect(described_class.send_alert_this_day?(config, paid_expired_member, dec_1)).to be_falsey
         end
 
         it 'false if the day is not in the config list of days to send the alert' do
-          expect(described_class.send_alert_today?(config, paid_expired_member, dec_2)).to be_falsey
+          expect(described_class.send_alert_this_day?(config, paid_expired_member, dec_2)).to be_falsey
         end
 
       end
@@ -130,11 +130,11 @@ RSpec.describe MembershipExpireAlert, type: :model do
       let(:user) { create(:user) }
 
       it 'false when the day is in the config list of days to send the alert' do
-        expect(described_class.send_alert_today?(config, user, dec_2)).to be_falsey
+        expect(described_class.send_alert_this_day?(config, user, dec_2)).to be_falsey
       end
 
       it 'false when the day is not in the config list of days to send the alert' do
-        expect(described_class.send_alert_today?(config, user, dec_3)).to be_falsey
+        expect(described_class.send_alert_this_day?(config, user, dec_3)).to be_falsey
       end
 
     end

@@ -1,6 +1,6 @@
 class MembershipExpireAlert < UserEmailAlert
 
-  def self.send_alert_today?(config, user, this_date)
+  def self.send_alert_this_day?(config, user, this_date)
 
     return false unless user.membership_current_as_of?(this_date)
 
