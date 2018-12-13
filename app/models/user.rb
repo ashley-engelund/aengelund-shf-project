@@ -45,6 +45,11 @@ class User < ApplicationRecord
 
   scope :members, -> { where(member: true) }
 
+  scope :membership_expires_in_x_days, -> (num_days){ includes(:payments).where("payments.payment_type = ? AND payments.expire_date = ?", Payment::PAYMENT_TYPE_MEMBER, (Date.current + num_days) ).order('payments.expire_date').references(:payments) }
+
+  scope :company_hbrand_expires_in_x_days, -> (num_days){ includes(:payments).where("payments.payment_type = ? AND payments.expire_date = ?", Payment::PAYMENT_TYPE_BRANDING, (Date.current + num_days) ).order('payments.expire_date').references(:payments) }
+
+
 
   def most_recent_membership_payment
     most_recent_payment(Payment::PAYMENT_TYPE_MEMBER)
