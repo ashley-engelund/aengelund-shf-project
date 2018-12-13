@@ -64,11 +64,10 @@ end
 
 if Rails.env.development? || Rails.env.staging? || ENV['HEROKU_STAGING']
 
-  puts 'Creating additional users ...'
+ number_of_users = (ENV['SHF_SEED_USERS'] || SEED_USERS).to_i
+ puts "Creating #{number_of_users} additional users. (This number can be set with ENV['SHF_SEED_USERS'])..."
 
-  number_of_users = (ENV['SHF_SEED_USERS'] || SEED_USERS).to_i
-
-  users = {}
+ users = {}
   while users.length < number_of_users-1 do
     email = FFaker::InternetSE.disposable_email
     first_name = FFaker::NameSE.first_name
@@ -78,7 +77,7 @@ if Rails.env.development? || Rails.env.staging? || ENV['HEROKU_STAGING']
                                 last_name: last_name) unless users.key?(email)
   end
 
-  puts "Users created: #{User.count}"
+  puts "Users now in the db: #{User.count}"
 
   puts "\nCreating membership applications ..."
   puts "  As companies are created for accepted applications, their address has to be geocoded/located."
