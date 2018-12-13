@@ -205,6 +205,41 @@ RSpec.describe User, type: :model do
       end
     end
 
+
+    describe 'members' do
+
+      it 'returns those with member = true' do
+        user_member1 = create(:member_with_membership_app, first_name: 'Member 1')
+        user_member2 = create(:member_with_membership_app, first_name: 'Member 2')
+
+        user_has_app_not_member = create(:user_with_membership_app, first_name: 'App')
+        visitor = create(:user, first_name: 'Visitor')
+        admin = create(:user, admin: true, first_name: 'Admin')
+
+        members = described_class.members
+
+        expect(members.count).to eq 2
+        expect(members).to include user_member1
+        expect(members).to include user_member2
+        expect(members).not_to include admin
+        expect(members).not_to include visitor
+        expect(members).not_to include user_has_app_not_member
+
+      end
+
+    end
+
+
+    describe 'membership_expires_in_x_days' do
+
+    end
+
+
+    describe 'company_hbrand_expires_in_x_days' do
+
+    end
+
+
   end
 
   describe '#has_shf_application?' do
