@@ -1,31 +1,41 @@
+require 'smarter_csv'
+require_relative('../lib/fake_addresses/csv_fake_addresses_reader')
+
+
 module SeedHelper
 
   # The tests of defined? below are due to the rspec file that executes the seed file
   # repeatedly.  Without this, rspec complains about "already initialized constant"
 
-  SEED_ERROR_MSG = 'Seed ERROR: Could not load either admin email or password.' +
-                   ' NO ADMIN was created!' unless defined?(SEED_ERROR_MSG)
+  SEED_ERROR_MSG           = 'Seed ERROR: Could not load either admin email or password.' +
+      ' NO ADMIN was created!' unless defined?(SEED_ERROR_MSG)
 
-  MA_ACCEPTED_STATE = :accepted unless defined?(MA_ACCEPTED_STATE)
+  MA_ACCEPTED_STATE        = :accepted unless defined?(MA_ACCEPTED_STATE)
 
-  MA_ACCEPTED_STATE_STR = MA_ACCEPTED_STATE.to_s unless defined?(MA_ACCEPTED_STATE_STR)
+  MA_ACCEPTED_STATE_STR    = MA_ACCEPTED_STATE.to_s unless defined?(MA_ACCEPTED_STATE_STR)
 
   MA_BEING_DESTROYED_STATE = :being_destroyed unless defined?(MA_BEING_DESTROYED_STATE)
 
-  FIRST_MEMBERSHIP_NUMBER = 100 unless defined?(FIRST_MEMBERSHIP_NUMBER)
+  FIRST_MEMBERSHIP_NUMBER  = 100 unless defined?(FIRST_MEMBERSHIP_NUMBER)
+
+
+  DEFAULT_FAKE_ADDRESSES_CSV_FILE = 'fake-addresses-2018-12-12-154259-0800.csv' unless defined?(FAKE_ADDRESSES_CSV_FILE)
+
+  FAKE_ADDRESSES_CSV_FILE = File.join(__dir__,(ENV.fetch('SHF_SEED_FAKE_ADDR_CSV_FILE', DEFAULT_FAKE_ADDRESSES_CSV_FILE)) )
+
 
   class SeedAdminENVError < StandardError
   end
 
+
   def env_invalid_blank(env_key)
     env_val = nil
-    raise SeedAdminENVError, SEED_ERROR_MSG if
-      ENV[env_key].nil? || (env_val = ENV.fetch(env_key)).blank?
+    raise SeedAdminENVError, SEED_ERROR_MSG if ENV[env_key].nil? || (env_val = ENV.fetch(env_key)).blank?
     env_val
   end
 
 
-  def get_company_number(r=Random.new)
+  def get_company_number(r = Random.new)
     company_number = nil
     100.times do
       # loop until done or we find a valid Org number
@@ -57,11 +67,12 @@ module SeedHelper
 
     return if users_with_application == 0
 
-    users[0..users_with_application-1].each.with_index do | each_user |
+    users[0..users_with_application - 1].each.with_index do |each_user|
       make_application(each_user)
     end
 
   end
+
 
   #---
   # Create a membership application.
@@ -78,9 +89,9 @@ module SeedHelper
     else
       # set a random state for the rest of the applications (except accepted and being destroyed)
       states = ShfApplication.aasm.states.map(&:name) -
-               [MA_ACCEPTED_STATE, MA_BEING_DESTROYED_STATE]
+          [MA_ACCEPTED_STATE, MA_BEING_DESTROYED_STATE]
 
-      state = FFaker.fetch_sample( states )
+      state = FFaker.fetch_sample(states)
     end
 
     make_n_save_app(user, state)
@@ -106,25 +117,25 @@ module SeedHelper
       start_date, expire_date = User.next_membership_payment_dates(user.id)
 
       user.payments << Payment.create(payment_type: Payment::PAYMENT_TYPE_MEMBER,
-                                      user_id: user.id,
-                                      hips_id: 'none',
-                                      status: Payment.order_to_payment_status('successful'),
-                                      start_date: start_date,
-                                      expire_date: expire_date)
+                                      user_id:      user.id,
+                                      hips_id:      'none',
+                                      status:       Payment::SUCCESSFUL,
+                                      start_date:   start_date,
+                                      expire_date:  expire_date)
 
       start_date, expire_date = Company.next_branding_payment_dates(ma.companies[0].id)
 
 
-      MembershipStatusUpdater.instance.check_requirements_and_act({user: user, send_email: false})
+      MembershipStatusUpdater.instance.check_requirements_and_act({ user: user, send_email: false })
       #user.update_action(send_email: false)
 
       ma.companies[0].payments << Payment.create(payment_type: Payment::PAYMENT_TYPE_BRANDING,
-                                      user_id: user.id,
-                                      company_id: ma.companies[0].id,
-                                      hips_id: 'none',
-                                      status: Payment.order_to_payment_status('successful'),
-                                      start_date: start_date,
-                                      expire_date: expire_date)
+                                                 user_id:      user.id,
+                                                 company_id:   ma.companies[0].id,
+                                                 hips_id:      'none',
+                                                 status:       Payment::SUCCESSFUL,
+                                                 start_date:   start_date,
+                                                 expire_date:  expire_date)
     end
 
     user.shf_application = ma
@@ -136,28 +147,15 @@ module SeedHelper
 
   def make_new_company(company_number)
 
-    regions = Region.all.to_a
-    kommuns = Kommun.all.to_a
-
-    num_regions = regions.size
-    num_kommuns = kommuns.size
-
     # make a full company instance
     company = Company.new(company_number: company_number,
-                          email: FFaker::InternetSE.disposable_email,
-                          name: FFaker::CompanySE.name,
-                          phone_number: FFaker::PhoneNumberSE.phone_number,
-                          website: FFaker::InternetSE.http_url)
+                          email:          FFaker::InternetSE.disposable_email,
+                          name:           FFaker::CompanySE.name,
+                          phone_number:   FFaker::PhoneNumberSE.phone_number,
+                          website:        FFaker::InternetSE.http_url)
+
     if company.save
-
-      address = Address.new(addressable: company,
-                            city: FFaker::AddressSE.city,
-                            street_address: FFaker::AddressSE.street_address,
-                            post_code: FFaker::AddressSE.zip_code,
-                            region: regions[FFaker.rand(0..num_regions-1)],
-                            kommun: kommuns[FFaker.rand(0..num_kommuns-1)],
-                            visibility: 'street_address')
-
+      address = get_a_new_address(company)
       address.save
     end
 
@@ -179,14 +177,101 @@ module SeedHelper
     # add 1 to 3 business_categories, picked at random from them
     cats = FFaker.fetch_sample(business_categories, { count: (r.rand(1..3)) })
 
-    cats.each do | category |
+    cats.each do |category|
       ma.business_categories << category
     end
 
     ma
   end
 
+
   def load_app_config
     AdminOnly::AppConfiguration.create
   end
-end
+
+
+  # if needed, load addresses from the csv file of fake addresses
+  def already_constructed_addresses
+    @already_constructed_addresses ||= CSVFakeAddressesReader.read_from_csv_file(FAKE_ADDRESSES_CSV_FILE).shuffle
+  end
+
+  def num_already_constructed_addresses
+    @num_already_constructed_addresses ||= already_constructed_addresses.size
+  end
+
+
+  def num_regions
+    @num_regions ||= regions.size
+  end
+
+
+  def num_kommuns
+    @num_kommuns || kommuns.size
+  end
+
+
+  def regions
+    @regions ||= Region.all.to_a
+  end
+
+
+  def kommuns
+    @kommuns ||= Kommun.all.to_a
+  end
+
+
+  # ==========================================================================
+
+  private
+
+
+  # Get a new address.
+  # First try to use an already constructed address.
+  #
+  # If there are no more already constructed addresses,
+  # create a new address from scratch.
+  def get_a_new_address(addressable_entity)
+
+    if already_constructed_addresses.empty? ||
+        (new_address = get_an_already_constructed_address(addressable_entity)).nil?
+      new_address = create_a_new_address(addressable_entity)
+    end
+
+    new_address
+  end
+
+
+  # Get an address from one already created and geocoded.
+  # If we cannot get an address, return nil
+  #
+  # This saves time geocoding.
+  #
+  # We ensure that each address is used just once by
+  # removing it from the list of already constructed addresses.
+  #
+  # @param addressable_entity [] - the addressable object that we will associate with the address
+  # @return [Address] - an address that is _not_saved
+  def get_an_already_constructed_address(addressable_entity)
+
+    constructed_address = already_constructed_addresses.pop
+
+    constructed_address.addressable = addressable_entity unless constructed_address.nil?
+    constructed_address
+  end
+
+
+  # Create a new address.  This will have to be geocoded, which takes time.
+  def create_a_new_address(addressable_entity)
+
+    Address.new(addressable:    addressable_entity,
+                city:           FFaker::AddressSE.city,
+                street_address: FFaker::AddressSE.street_address,
+                post_code:      FFaker::AddressSE.zip_code,
+                region:         regions[FFaker.rand(0..num_regions - 1)],
+                kommun:         kommuns[FFaker.rand(0..num_kommuns - 1)],
+                visibility:     'street_address')
+  end
+
+
+
+end # module SeedHelper
