@@ -1,17 +1,17 @@
 require 'active_support/logger'
 require 'slack-notifier'
 
-LOG_FILE         = 'log/backup'
-BACKUP_FILES_DIR = '/home/deploy/SHF_BACKUPS/'
+LOG_FILE         = 'log/backup' unless defined?(LOG_FILE)
+BACKUP_FILES_DIR = '/home/deploy/SHF_BACKUPS/' unless defined?(BACKUP_FILES_DIR)
 
-CODE_BACKUPS_TO_KEEP = 4
-DB_BACKUPS_TO_KEEP   = 15
+CODE_BACKUPS_TO_KEEP = 4 unless defined?(CODE_BACKUPS_TO_KEEP)
+DB_BACKUPS_TO_KEEP   = 15 unless defined?(DB_BACKUPS_TO_KEEP)
 
-SLACK_COLOR_LTBLUE  = '#439FE0'
-SLACK_SUCCESS_COLOR = "good"
-SLACK_FAIL_COLOR    = "danger"
-SLACK_SUCCESS_EMOJI = ':white_check_mark:'
-SLACK_FAIL_EMOJI    = ':x:'
+SLACK_COLOR_LTBLUE  = '#439FE0' unless defined?(SLACK_COLOR_LTBLUE)
+SLACK_SUCCESS_COLOR = "good" unless defined?(SLACK_SUCCESS_COLOR)
+SLACK_FAIL_COLOR    = "danger" unless defined?(SLACK_FAIL_COLOR)
+SLACK_SUCCESS_EMOJI = ':white_check_mark:' unless defined?(SLACK_SUCCESS_EMOJI)
+SLACK_FAIL_EMOJI    = ':x:' unless defined?(SLACK_FAIL_EMOJI)
 
 
 # "keep" key defines how many backups (code or DB) to retain on _local_ storage.
@@ -21,7 +21,7 @@ BACKUP_TARGETS = [
       type:     'file', keep: CODE_BACKUPS_TO_KEEP },
     { location: 'shf_project_production', filebase: 'db_backup.sql.',
       type:     'db', keep: DB_BACKUPS_TO_KEEP }
-]
+]  unless defined?(BACKUP_TARGETS)
 
 
 def slack_success_notification(task_name, notification_text, emoji: SLACK_SUCCESS_EMOJI)
