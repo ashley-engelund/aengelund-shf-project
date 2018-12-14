@@ -1,12 +1,15 @@
+# This emails a member _before_ their membership expires to alert
+# them that it will be expiring.
+#
 class MembershipExpireAlert < UserEmailAlert
 
-  def self.send_alert_this_day?(config, user, this_date)
+  def self.send_alert_this_day?(timing, config, user)
 
-    return false unless user.membership_current_as_of?(this_date)
+    return false unless user.membership_current?
 
-    days_until_expiry = days_since(this_date, user.membership_expire_date)
+    day_to_check = days_today_is_away_from(user.membership_expire_date, timing)
 
-    send_on_day_number?(days_until_expiry, config)
+    send_on_day_number?(day_to_check, config)
   end
 
 
