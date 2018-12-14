@@ -2,21 +2,21 @@ FactoryBot.define do
 
   factory :condition do
     class_name { 'MyString' }
-    timing { 'on' }
+    timing { :on }
     config { {} }
   end
 
 
   trait :after do
-    timing { 'after' }
+    timing { :after }
   end
 
   trait :before do
-    timing { 'before' }
+    timing { :before }
   end
 
   trait :on  do
-    timing { 'on' }
+    timing { :on }
   end
 
 end
