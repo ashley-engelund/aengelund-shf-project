@@ -1,7 +1,7 @@
 # class:          Condition
 #
 # Responsibility: Provides the information needed so that a specific
-#                 class can be instantiated and :process_condition
+#                 class can be instantiated and :condition_response
 #                 can run on those instances.
 #
 #                 This class is  _descriptive._  (= the configration pattern)
@@ -9,11 +9,11 @@
 #                 Ex:  A nightly rake/rails task will go thru all of the
 #                 Condition record in the db and, using the information in each,
 #                 instantiate the class in _class_name_.
-#                 The task will send each instance the :process_condition method,
-#                 passing it the name, timing, and config data.
+#                 The task will send each such class the :condition_response method,
+#                 passing it the condition to respond to.
 #
 #                 Each instance will then do 'whatever needs to be done' when
-#                 it is sent :process_condition with the information.
+#                 it is sent :condition_response with the condtion.
 #                 Ex: this will send out emails to all users that are past due
 #                 with their Membership fee, etc.
 #
@@ -26,7 +26,7 @@
 #             reads much more naturally.  Some classes may need to use
 #             this when running :process_condition
 #   config - whatever configuration information is required for a
-#         particular Condition class
+#         particular ConditionResponse class
 #
 #  @author:  Patrick Bolger
 #
