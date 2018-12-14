@@ -22,8 +22,6 @@
 #   to every instance of a class.
 #
 #   class_name - the name of the class to instantiate
-#   name - the name of the method to call for the condition TODO - is this really needed?
-#
 #   timing - this can be mostly descriptive so that the code
 #             reads much more naturally.  Some classes may need to use
 #             this when running :process_condition
