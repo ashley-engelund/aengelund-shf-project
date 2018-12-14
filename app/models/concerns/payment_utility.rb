@@ -26,7 +26,7 @@ module PaymentUtility
       if expire_date && expire_date.future?
         start_date = expire_date + 1.day
       else
-        start_date = Time.zone.today
+        start_date = Time.zone.today  # can't use this to determine how many days OVERDUE the membership payment is!
       end
 
       expire_date = expire_date_for_start_date(start_date)
