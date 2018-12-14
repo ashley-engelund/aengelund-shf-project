@@ -43,7 +43,7 @@ class ConditionResponder
   #
   # @param condtion [Condition] - the Condition that must be responded do
   # @param log [ActivityLog] - the log file to write to
-  def self.condition_response(condition, log)
+  def self.condition_response(_condition, _log)
     raise NoMethodError, "Subclass must define the #{__method__} method", caller
   end
 
