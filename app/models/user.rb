@@ -45,9 +45,22 @@ class User < ApplicationRecord
 
   scope :members, -> { where(member: true) }
 
-  scope :membership_expires_in_x_days, -> (num_days){ includes(:payments).where("payments.payment_type = ? AND payments.expire_date = ?", Payment::PAYMENT_TYPE_MEMBER, (Date.current + num_days) ).order('payments.expire_date').references(:payments) }
+  successful_payment_with_type_and_expire_date = 'payments.payment_type = ? AND payments.status = ? AND payments.expire_date = ?'
+  scope :membership_expires_in_x_days, -> (num_days){ includes(:payments)
+                                                          .where(successful_payment_with_type_and_expire_date,
+                                                                 Payment::PAYMENT_TYPE_MEMBER,
+                                                                 Payment::SUCCESSFUL,
+                                                                 (Date.current + num_days) )
+                                                          .order('payments.expire_date')
+                                                          .references(:payments) }
 
-  scope :company_hbrand_expires_in_x_days, -> (num_days){ includes(:payments).where("payments.payment_type = ? AND payments.expire_date = ?", Payment::PAYMENT_TYPE_BRANDING, (Date.current + num_days) ).order('payments.expire_date').references(:payments) }
+  scope :company_hbrand_expires_in_x_days, -> (num_days){ includes(:payments)
+                                                              .where(successful_payment_with_type_and_expire_date,
+                                                                     Payment::PAYMENT_TYPE_BRANDING,
+                                                                     Payment::SUCCESSFUL,
+                                                                     (Date.current + num_days) )
+                                                              .order('payments.expire_date')
+                                                              .references(:payments) }
 
 
 
