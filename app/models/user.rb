@@ -45,11 +45,12 @@ class User < ApplicationRecord
 
   scope :members, -> { where(member: true) }
 
-  successful_payment_with_type_and_expire_date = 'payments.payment_type = ? AND payments.status = ? AND payments.expire_date = ?'
+
+  successful_payment_with_type_and_expire_date = "payments.status = '#{Payment::SUCCESSFUL}' AND" +
+      " payments.payment_type = ? AND payments.expire_date = ?"
   scope :membership_expires_in_x_days, -> (num_days){ includes(:payments)
                                                           .where(successful_payment_with_type_and_expire_date,
                                                                  Payment::PAYMENT_TYPE_MEMBER,
-                                                                 Payment::SUCCESSFUL,
                                                                  (Date.current + num_days) )
                                                           .order('payments.expire_date')
                                                           .references(:payments) }
@@ -57,7 +58,6 @@ class User < ApplicationRecord
   scope :company_hbrand_expires_in_x_days, -> (num_days){ includes(:payments)
                                                               .where(successful_payment_with_type_and_expire_date,
                                                                      Payment::PAYMENT_TYPE_BRANDING,
-                                                                     Payment::SUCCESSFUL,
                                                                      (Date.current + num_days) )
                                                               .order('payments.expire_date')
                                                               .references(:payments) }
