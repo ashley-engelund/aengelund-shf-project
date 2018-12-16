@@ -119,6 +119,7 @@ class Address < ApplicationRecord
   def geocode_best_possible
 
     return unless addressable_type == 'Company'
+    return if (Rails.env.development? || Rails.env.test? ) && !latitude.nil? && !longitude.nil?
 
     specificity_order = address_array
 
