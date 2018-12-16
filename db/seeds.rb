@@ -80,8 +80,9 @@ if Rails.env.development? || Rails.env.staging? || ENV['HEROKU_STAGING']
   puts "Users now in the db: #{User.count}"
 
   puts "\nCreating membership applications ..."
-  puts "  As companies are created for accepted applications, their address has to be geocoded/located."
-  puts "  This takes time to do. Be patient. (You can look at the /log/development.log to be sure that things are happening and this is not stuck.)"
+  puts "  If a company address must be created (instead of reading from a CSV file), it must be geocoded, which takes time.  Be patient."
+  puts "  You can look at the /log/development.log to be sure that things are happening and this is not stuck."
+  puts "  You can specify a CSV file of addresses to use in your .env file (.env.development etc.)."
 
   make_applications(users.values)
 
