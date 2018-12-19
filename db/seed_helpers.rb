@@ -262,7 +262,7 @@ module SeedHelper
 
 
     def num_kommuns
-      @num_kommuns || @kommuns.size
+      @num_kommuns ||= @kommuns.size
     end
 
 
@@ -279,25 +279,28 @@ module SeedHelper
     #
     def make_n_save_a_new_address(addressable_entity)
 
-      if already_constructed_addresses.empty? ||
-          (already_constructed_address = get_an_already_constructed_address(addressable_entity)).nil?
-
-        created_address = create_a_new_address(addressable_entity)
-        created_address.save
-        new_address = created_address
+      if can_use_already_constructed_address?
+        new_address = get_an_already_constructed_address(addressable_entity)
       else
-        already_constructed_address.save(validations: false)
-        new_address = already_constructed_address
+        new_address = create_a_new_address(addressable_entity)
       end
 
       new_address
     end
 
 
-    # Get an address from one already created and geocoded.
-    # If we cannot get an address, return nil
+    # @return [Boolean] - can we get an address from a list of already constructed
+    #                     addresses?
+    def can_use_already_constructed_address?
+      !already_constructed_addresses.empty?
+    end
+
+
+    # Get an already constructed address, assign the addressable entity,
+    # remove it from the list of already constructed addresses
+    # and save it.
     #
-    # This saves time geocoding.
+    # If we cannot get an address, return nil
     #
     # We ensure that each address is used just once by
     # removing it from the list of already constructed addresses.
@@ -306,9 +309,13 @@ module SeedHelper
     # @return [Address] - an address that is _not_saved
     def get_an_already_constructed_address(addressable_entity)
 
-      constructed_address             = already_constructed_addresses.pop
+      constructed_address = already_constructed_addresses.pop
 
-      constructed_address.addressable = addressable_entity unless constructed_address.nil?
+      unless constructed_address.nil?
+        constructed_address.addressable = addressable_entity
+        constructed_address.save(validations: false)
+      end
+
       constructed_address
     end
 
@@ -324,6 +331,7 @@ module SeedHelper
                          kommun:         @kommuns[FFaker.rand(0..(num_kommuns - 1))],
                          visibility:     'street_address')
       puts " Creating a new address: #{addr.street_address} #{addr.city}. (Will geolocate when saving it)"
+      addr.save
       addr
     end
 
