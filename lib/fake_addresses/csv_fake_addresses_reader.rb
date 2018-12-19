@@ -45,7 +45,7 @@ class CSVFakeAddressesReader
     csv_data = []
 
     File.open(File.absolute_path(csv_filename), "r:bom|utf-8") do | csv_file |
-      csv_data = SmarterCSV.process(csv_file);
+      csv_data = SmarterCSV.process(csv_file) unless File.empty?(csv_file)
     end
 
     create_addresses(csv_data)
