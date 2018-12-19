@@ -43,6 +43,7 @@ class Address < ApplicationRecord
   after_validation :geocode_best_possible,
                    if: ->(obj) {
                           obj.new_record? ||
+                          (obj.latitude.nil? || obj.longitude.nil?) ||
                           (obj.changed_attribute_names_to_save &
                             GEO_FIELDS).any?
                    }
@@ -119,7 +120,10 @@ class Address < ApplicationRecord
   def geocode_best_possible
 
     return unless addressable_type == 'Company'
-    return if (Rails.env.development? || Rails.env.test? ) && !latitude.nil? && !longitude.nil?
+
+    # don't Geocode if we're doing development or testing AND
+    # we already have lat and long and nothing has changed
+    return if dev_or_test_and_have_geo_unchanged?
 
     specificity_order = address_array
 
@@ -143,6 +147,16 @@ class Address < ApplicationRecord
 
 
   private
+
+  # Are we doing development or testing
+  #  AND already  have the latitude and longitude
+  #  AND it is  new AND one of the geolocation fields have NOT changed?
+  def dev_or_test_and_have_geo_unchanged?
+    (Rails.env.development? || Rails.env.test?) &&
+      (!latitude.nil? && !longitude.nil?)  &&
+      (self.new_record? || !((self.changed & GEO_FIELDS).any?) )
+  end
+
 
 
   def sverige_if_nil
