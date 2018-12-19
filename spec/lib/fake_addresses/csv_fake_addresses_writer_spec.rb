@@ -29,7 +29,7 @@ RSpec.describe CSVFakeAddressesWriter do
 
       it 'puts a timestamp in the name' do
         default_fn = CSVFakeAddressesWriter.default_csv_filename
-        expect(default_fn).to match(/\.\/fake-addresses-(\d\d\d\d-\d\d-\d\d-\d\d\d\d\d\d-\d\d\d\d)\.csv/)
+        expect(default_fn).to match(/\.\/fake-addresses-(\d\d\d\d-\d\d-\d\d-\d\d\d\d\d\d[-+]\d\d\d\d)\.csv/)
       end
 
     end
