@@ -25,7 +25,6 @@
 #--------------------------
 
 
-
 class ConditionResponder
 
   Timing = Symbol
@@ -53,7 +52,7 @@ class ConditionResponder
   # @return [Config] the condition.config,
   #                 or the DEFAULT_CONFIG if there is no condition
   def self.get_config(condition)
-    condition.nil?  ? DEFAULT_CONFIG : condition.config
+    condition.nil? ? DEFAULT_CONFIG : condition.config
   end
 
 
@@ -79,10 +78,8 @@ class ConditionResponder
 
     if timing_is_before?(timing)
       day_num_to_check = this_date - Date.current
-    else
-      if timing_is_after?(timing)
-        day_num_to_check = Date.current - this_date
-      end
+    elsif timing_is_after?(timing)
+      day_num_to_check = Date.current - this_date
     end
 
     day_num_to_check.to_i
