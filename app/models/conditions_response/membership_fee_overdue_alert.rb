@@ -6,7 +6,8 @@ class MembershipFeeOverdueAlert < UserEmailAlert
 
   def self.send_alert_this_day?(timing, config, user)
 
-    return false unless user.has_approved_shf_application?
+    # the order of these 2 is on purpose: the first has fewer SQL queries
+    return false if !user.has_approved_shf_application? || user.membership_current?
 
     day_to_check = days_today_is_away_from(User.next_membership_payment_date(user.id), timing)
 
