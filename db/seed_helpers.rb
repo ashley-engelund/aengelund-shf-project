@@ -306,7 +306,7 @@ module SeedHelper
     # removing it from the list of already constructed addresses.
     #
     # @param addressable_entity [] - the addressable object that we will associate with the address
-    # @return [Address] - an address that is _not_saved
+    # @return [Address] - an address that is saved but _not_ validated
     def get_an_already_constructed_address(addressable_entity)
 
       constructed_address = already_constructed_addresses.pop
