@@ -46,6 +46,24 @@ class User < ApplicationRecord
   scope :members, -> { where(member: true) }
 
 
+  successful_payment_with_type_and_expire_date = "payments.status = '#{Payment::SUCCESSFUL}' AND" +
+      " payments.payment_type = ? AND payments.expire_date = ?"
+  scope :membership_expires_in_x_days, -> (num_days){ includes(:payments)
+                                                          .where(successful_payment_with_type_and_expire_date,
+                                                                 Payment::PAYMENT_TYPE_MEMBER,
+                                                                 (Date.current + num_days) )
+                                                          .order('payments.expire_date')
+                                                          .references(:payments) }
+
+  scope :company_hbrand_expires_in_x_days, -> (num_days){ includes(:payments)
+                                                              .where(successful_payment_with_type_and_expire_date,
+                                                                     Payment::PAYMENT_TYPE_BRANDING,
+                                                                     (Date.current + num_days) )
+                                                              .order('payments.expire_date')
+                                                              .references(:payments) }
+
+
+
   def most_recent_membership_payment
     most_recent_payment(Payment::PAYMENT_TYPE_MEMBER)
   end
@@ -66,6 +84,36 @@ class User < ApplicationRecord
   # TODO this should not be the responsibility of the User class.
   def membership_current?
     membership_expire_date&.future?
+  end
+
+
+  # TODO this should not be the responsibility of the User class.
+  def membership_current_as_of?(this_date)
+    return false if this_date.nil?
+
+    membership_payment_expire_date = membership_expire_date
+    !membership_payment_expire_date.nil? && (membership_payment_expire_date > this_date)
+  end
+
+
+  # User has an approved membership application and
+  # is up to date (current) on membership payments
+  def membership_app_and_payments_current?
+    has_approved_shf_application? && membership_current?
+  end
+
+
+  # User has an approved membership application and
+  # is up to date (current) on membership payments
+  def membership_app_and_payments_current_as_of?(this_date)
+    has_approved_shf_application? && membership_current_as_of?(this_date)
+  end
+
+
+  # TODO this should not be the responsibility of the User class.
+  # The next membership payment date
+  def self.next_membership_payment_date(user_id)
+    next_membership_payment_dates(user_id).first
   end
 
 
