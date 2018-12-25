@@ -145,7 +145,7 @@ class MembershipStatusUpdater < AbstractUpdater
   end
 
 
-  def renew_membership(user, send_email)
+  def renew_membership(user, _send_email)
 
     ActivityLogger.open(log_filename, self.class.to_s, LOGMSG_MEMBERSHIP_RENEWED, false) do |log|
 
