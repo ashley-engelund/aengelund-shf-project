@@ -11,12 +11,9 @@ class HBrandingFeePastDueAlert < CompanyEmailAlert
   #
   def send_alert_this_day?(timing, config, company)
 
-    return false if company.branding_license?
+    return false if RequirementsForHBrandingFeeNotDue.requirements_met?({company: company})
 
-    current_members = company.current_members
-    return false if current_members.empty?
-
-    earliest_member_fee_paid = current_members.map(&:membership_start_date).sort.first
+    earliest_member_fee_paid = company.current_members.map(&:membership_start_date).sort.first
 
     day_to_check = self.class.days_today_is_away_from(earliest_member_fee_paid, timing)
 
