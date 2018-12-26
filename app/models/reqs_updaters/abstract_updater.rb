@@ -123,7 +123,7 @@ class AbstractUpdater
   # Requirements were satisified, so do the update.
   #  Set states (values) and do any behaviors (events) needed.
   #
-   def update_action(args = {})
+   def update_action(_args = {})
      raise NoMethodError, "Subclass must define the #{__method__} method and return true or false", caller
    end
 
@@ -138,7 +138,7 @@ class AbstractUpdater
   #   ex:  May need to 'revoke membership' if membershipship requirements are no longer met.
   #        This could mean setting some states (values) and sending out an email.
   #
-   def revoke_update_action(args = {})
+   def revoke_update_action(_args = {})
     raise NoMethodError, "Subclass must define the #{__method__} method and return true or false", caller
    end
 

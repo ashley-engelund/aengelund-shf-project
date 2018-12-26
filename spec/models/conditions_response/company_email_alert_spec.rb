@@ -45,7 +45,7 @@ RSpec.describe CompanyEmailAlert, focus:true do
   end
 
 
-  let(:c2_2_members) { all_companies.find{|c| c.name == 'company2'}}
+  let(:c2_2_members) { all_companies.detect{|c| c.name == 'company2'}}
 
   let(:member1_c2_exp_jun6) do
     shf_accepted_app = create(:shf_application, :accepted, company_number: c2_2_members.company_number)

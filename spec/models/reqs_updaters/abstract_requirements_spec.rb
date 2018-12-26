@@ -49,7 +49,7 @@ RSpec.describe AbstractRequirements, type: :model do
           it 'args is not empty' do
             expect(subject.args_have_keys?({this: 'that'}, key_value)).to be_truthy
           end
-       end # describe "keys is #{key_desc}"
+        end # describe "keys is #{key_desc}"
       end
 
     end
