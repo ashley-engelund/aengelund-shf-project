@@ -136,7 +136,8 @@ RSpec.describe MemberMailer, type: :mailer do
     end
 
     it 'tells how to pay the H-branding fee' do
-      pending
+      pending "need to write the email and create specs for the content"
+      expect(false).to be_truthy
       #member1_exp_jan1
       #expect(company2.current_members.size).to eq 1
 
