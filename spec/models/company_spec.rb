@@ -53,15 +53,15 @@ RSpec.describe Company, type: :model, focus: true do
 
   let(:user) { create(:user) }
 
-  let(:success) { Payment.order_to_payment_status('successful') }
-
   let(:payment_date_2017) { Time.zone.local(2017, 10, 1) }
   let(:payment_date_2018) { Time.zone.local(2018, 11, 21) }
   let(:payment_date_2020) { Time.zone.local(2020, 3, 15) }
 
   let(:payment1) do
     start_date, expire_date = Company.next_branding_payment_dates(complete_co.id)
-    create(:payment, user: user, status: success,
+    create(:payment,
+           :successful,
+           user: user,
            company:        complete_co,
            payment_type:   Payment::PAYMENT_TYPE_BRANDING,
            notes:          'these are notes for branding payment1',
@@ -70,7 +70,9 @@ RSpec.describe Company, type: :model, focus: true do
   end
   let(:payment2) do
     start_date, expire_date = Company.next_branding_payment_dates(complete_co.id)
-    create(:payment, user: user, status: success,
+    create(:payment,
+           :successful,
+           user: user,
            company:        complete_co,
            payment_type:   Payment::PAYMENT_TYPE_BRANDING,
            notes:          'these are notes for branding payment2',
@@ -327,7 +329,10 @@ RSpec.describe Company, type: :model, focus: true do
       mem1_exp = mem1_shf.user
       mem1_co  = mem1_shf.companies.first
 
-      create(:payment, user: mem1_exp, status: success, company: mem1_co,
+      create(:payment,
+             :successful,
+             user: mem1_exp,
+             company: mem1_co,
              payment_type:   Payment::PAYMENT_TYPE_MEMBER,
              notes:          'these are notes for branding payment1',
              start_date:     payment_date_2017,
@@ -349,7 +354,10 @@ RSpec.describe Company, type: :model, focus: true do
       mem1_exp = mem1_shf.user
       mem1_co  = mem1_shf.companies.first
 
-      create(:payment, user: mem1_exp, status: success, company: mem1_co,
+      create(:payment,
+             :successful,
+             user: mem1_exp,
+             company: mem1_co,
              payment_type:   Payment::PAYMENT_TYPE_MEMBER,
              notes:          'these are notes for branding payment1',
              start_date:     Date.new(2018, 12, 1),
@@ -902,4 +910,81 @@ RSpec.describe Company, type: :model, focus: true do
 
     end # context 'payments after today'
   end # describe '#branding_license?'
+
+
+  describe '#earliest_current_member_fee_paid' do
+    #current_members.empty? ? nil : current_members.map(&:membership_start_date).sort.first'
+
+    it 'is nil if there are no current members' do
+      expect( (create(:company)).earliest_current_member_fee_paid ).to be_nil
+    end
+
+
+    it 'is the earliest membership_fee paid date for all current members' do
+
+      dec_3 = Date.new(2018, 12, 3)
+      dec_5 = Date.new(2018, 12, 5)
+
+      member_paid_dec_3_shf_app = create(:shf_application, :accepted)
+      member_paid_dec_3 = member_paid_dec_3_shf_app.user
+      co_with_1_member_expires  = member_paid_dec_3_shf_app.companies.first
+
+      create(:payment,
+             :successful,
+             user: member_paid_dec_3,
+             company: co_with_1_member_expires,
+             payment_type:   Payment::PAYMENT_TYPE_MEMBER,
+             notes:          'these are notes for branding payment1',
+             start_date:     dec_3,
+             expire_date:    User.expire_date_for_start_date(dec_3) )
+
+      member_paid_dec_5_shf_app = create(:shf_application, :accepted, company_number: co_with_1_member_expires.company_number)
+      member_paid_dec_5 = member_paid_dec_5_shf_app.user
+
+      create(:payment,
+             :successful,
+             user: member_paid_dec_5,
+             company: co_with_1_member_expires,
+             payment_type:   Payment::PAYMENT_TYPE_MEMBER,
+             notes:          'these are notes for branding payment1',
+             start_date:     dec_5,
+             expire_date:    User.expire_date_for_start_date(dec_5) )
+
+      member_dec_3_start = member_paid_dec_3.payment_start_date(Payment::PAYMENT_TYPE_MEMBER)
+      member_dec_3_start_time = Time.utc(member_dec_3_start.year, member_dec_3_start.month, member_dec_3_start.day)
+
+      member_dec_3_expiry = member_paid_dec_3.payment_expire_date(Payment::PAYMENT_TYPE_MEMBER)
+      member_dec_3_expiry_time = Time.utc(member_dec_3_expiry.year, member_dec_3_expiry.month, member_dec_3_expiry.day)
+
+      day_before_member_dec_3_expiry = member_dec_3_expiry - 1
+      day_before_member_dec_3_expiry_time = Time.utc(day_before_member_dec_3_expiry.year, day_before_member_dec_3_expiry.month, day_before_member_dec_3_expiry.day)
+
+      member_dec_5_start = member_paid_dec_5.payment_start_date(Payment::PAYMENT_TYPE_MEMBER)
+      member_dec_5_start_time = Time.utc(member_dec_5_start.year, member_dec_5_start.month, member_dec_5_start.day)
+
+
+      Timecop.freeze( day_before_member_dec_3_expiry_time ) do
+
+        # update membership status based on today's date
+        MembershipStatusUpdater.instance.user_updated(member_paid_dec_3)
+        MembershipStatusUpdater.instance.user_updated(member_paid_dec_5)
+
+        expect(co_with_1_member_expires.current_members.size).to eq 2
+        expect( co_with_1_member_expires.earliest_current_member_fee_paid ).to eq member_dec_3_start_time
+      end
+
+
+      Timecop.freeze( member_dec_3_expiry_time) do
+        # update membership status based on today's date
+        MembershipStatusUpdater.instance.user_updated(member_paid_dec_3)
+        MembershipStatusUpdater.instance.user_updated(member_paid_dec_5)
+
+        expect(co_with_1_member_expires.current_members.size).to eq 1
+        expect( co_with_1_member_expires.earliest_current_member_fee_paid ).to eq member_dec_5_start_time
+      end
+
+    end
+
+  end # describe '#earliest_current_member_fee_paid'
+
 end

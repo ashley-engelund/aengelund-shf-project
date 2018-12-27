@@ -103,6 +103,16 @@ class Company < ApplicationRecord
     branding_expire_date&.future? == true # == true prevents this from ever returning nil
   end
 
+
+  # This is used to calculate when an H-Branding fee is due if there has not been any H-Branding fee paid yet
+  # TODO: this should go in a class responsible for knowing how to calculate when H-Branding fees are due (perhaps a subclass of PaymentUtility named something like CompanyPaymentsDueCalculator )
+  #
+  # @return nil if there are no current members else the earliest membership_start_date of all current members
+  def earliest_current_member_fee_paid
+    current_members.empty? ? nil : current_members.map(&:membership_start_date).sort.first
+  end
+
+
   def self.next_branding_payment_dates(company_id)
     next_payment_dates(company_id, Payment::PAYMENT_TYPE_BRANDING)
   end
