@@ -79,7 +79,9 @@ class CompanyEmailAlert < EmailAlert
 
 
   # --------------------------------------------------------------------
-  # The following methods would be private if they were instance methods.
+
+  private
+
 
   def info_str(company, member)
     "to #{user_info(member)} #{company_info(company)}"

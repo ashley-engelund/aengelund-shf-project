@@ -36,7 +36,7 @@ class AlertLogStrMaker
   # @param log_args [Array] - the arguments to pass to the :failure_method
   #    so that the :alert can generate the string needed
   #
-  # @return [String] - the string to write to the log upon success
+  # @return [String] - the string to write to the log upon failure
   def failure_info(log_args)
     alert.send(failure_method, *log_args)
   end

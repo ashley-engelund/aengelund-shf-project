@@ -38,7 +38,7 @@ class EmailAlert < ConditionResponder
   end
 
 
-  # Loop through all 'entities' and send them an email if an alerty should be sent today
+  # Loop through all 'entities' and send them an email if an alert should be sent today
   def condition_response(condition, log)
 
     config = self.class.get_config(condition)
@@ -210,7 +210,7 @@ class EmailAlert < ConditionResponder
   end
 
 
-  # Given the information, return a string to write to the log upon success
+  # Given the information, return a string to write to the log upon failure
   #
   # SUBCLASSES SHOULD REDEFINE THIS TO SOMETHING USEFUL
   #
