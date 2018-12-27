@@ -24,6 +24,7 @@ RSpec.describe ConditionResponder, type: :model do
     expect(ConditionResponder::DEFAULT_TIMING).to eq :on
   end
 
+
   describe '.get_timing' do
 
     it 'always returns a symbol even if given a string' do
@@ -51,6 +52,7 @@ RSpec.describe ConditionResponder, type: :model do
     expect(default_c).to be_empty
   end
 
+
   describe '.get_config' do
 
     context 'condition is nil' do
@@ -66,7 +68,6 @@ RSpec.describe ConditionResponder, type: :model do
     end
 
   end
-
 
 
   describe '.days_from_today(timing, some_date)' do
@@ -134,6 +135,23 @@ RSpec.describe ConditionResponder, type: :model do
         expect(ConditionResponder.days_today_is_away_from(dec_2, timing_on)).to eq 0
       end
     end
+
+    context 'timing is every day always returns 0 days away' do
+      let(:timing_every_day) { ConditionResponder::TIMING_EVERY_DAY }
+
+      it 'date is 1 day before today = 0' do
+        expect(ConditionResponder.days_today_is_away_from(nov_30, timing_every_day)).to eq 0
+      end
+
+      it 'date is on today = 0' do
+        expect(ConditionResponder.days_today_is_away_from(dec_1, timing_every_day)).to eq 0
+      end
+
+      it 'date is 1 day after today = 0' do
+        expect(ConditionResponder.days_today_is_away_from(dec_2, timing_every_day)).to eq 0
+      end
+
+    end # context 'timing is every day' do
 
   end
 
