@@ -5,8 +5,14 @@ require 'email_spec/rspec'
 RSpec.describe HBrandingFeePastDueAlert do
 
   let(:jan_1) { Date.new(2018, 1, 1) }
+
   let(:dec_1) { Date.new(2018, 12, 1) }
   let(:dec_2) { Date.new(2018, 12, 2) }
+  let(:dec_3) { Date.new(2018, 12, 3) }
+  let(:dec_4) { Date.new(2018, 12, 4) }
+  let(:dec_5) { Date.new(2018, 12, 5) }
+  let(:dec_6) { Date.new(2018, 12, 6) }
+  let(:dec_7) { Date.new(2018, 12, 7) }
 
   let(:nov_30_last_year) { Date.new(2017, 11, 30) }
   let(:dec_2_last_year) { Date.new(2017, 12, 2) }
@@ -65,75 +71,105 @@ RSpec.describe HBrandingFeePastDueAlert do
 
     context 'h-branding fee is not paid' do
 
-      describe 'day 0 for the h-branding fee past due is set once and does not change until it is paid' do
+      describe 'day 0 for the h-branding fee past due changes based on current membership' do
 
         let(:paid_members_co) { create(:company, name: 'Co with paid members') }
 
-        let(:paid_member_exp_dec31) {
+        let(:member_paid_dec_3) {
           member = create(:member_with_membership_app, company_number: paid_members_co.company_number)
           create(:membership_fee_payment,
                  :successful,
                  user:        member,
                  company:     paid_members_co,
-                 start_date:  jan_1,
-                 expire_date: User.expire_date_for_start_date(jan_1))
+                 start_date:  dec_3,
+                 expire_date: User.expire_date_for_start_date(dec_3))
           member
         }
 
-        let(:paid_member_exp_dec2) {
+        let(:member_paid_dec_5) {
           member = create(:member_with_membership_app, company_number: paid_members_co.company_number)
           create(:membership_fee_payment,
                  :successful,
                  user:        member,
                  company:     paid_members_co,
-                 start_date:  dec_3_last_year,
-                 expire_date: User.expire_date_for_start_date(dec_3_last_year))
+                 start_date:  dec_5,
+                 expire_date: User.expire_date_for_start_date(dec_5))
           member
         }
 
-        let(:condition_config) {  { days: [1] } }
+        let(:condition_config) {  { days: [1, 3, 363, 364] } }
+        # day 1 for member_paid_dec_3 = 4 Dec 2018
+        # day 3 for member_paid_dec_3 = 6 Dec 2018
+        # day 363 for member_paid_dec_3 = 1 Dec 2019
+        # day 363 for member_paid_dec_5 = 3 Dec 2019
+        # day 364 for member_paid_dec_3 = 2 Dec 2019 == the expiration date, so the membership has expired at the end of this day.
+        # day 364 for member_paid_dec_5 = 4 Dec 2019 == the expiration date, so the membership has expired at the end of this day.
 
-        def print_membership_dates
-          print("\nCurrent members membership dates for #{Date.today}:")
-          print("\n membership start dates: #{ paid_members_co.current_members.map{|m| { id: m.id, start_date: m.membership_start_date } } }")
-          print("\n membership expire dates: #{ paid_members_co.current_members.map{|m| { id: m.id, expire_date: m.membership_expire_date } } }\n")
-        end
+        # Hint: you can do this in IRB to figure out dates:
+        #   require 'date'
+        #   dec_3 = Date.new(2018, 12, 3)
+        #   dec_5 = Date.new(2018, 12, 5)
+        #   dec_3 + 363
+        #    ==> Sun, 01 Dec 2019
 
-        it 'saves the oldest (first paid) membership fee payment of all of current members as day 0 past due' do
+
+        it 'uses the oldest (first paid) membership fee payment of all of current members as day 0 past due' do
           paid_members_co
-          paid_member_exp_dec31
-          paid_member_exp_dec2
+          member_paid_dec_3
+          member_paid_dec_5
 
-          Timecop.freeze(Time.utc(2017, 12, 4)) do
+          Timecop.freeze(Time.utc(2018, 12, 4)) do
             # update membership status based on today's date
-            MembershipStatusUpdater.instance.user_updated(paid_member_exp_dec31)
-            MembershipStatusUpdater.instance.user_updated(paid_member_exp_dec2)
+            MembershipStatusUpdater.instance.user_updated(member_paid_dec_3)
+            MembershipStatusUpdater.instance.user_updated(member_paid_dec_5)
 
-            print_membership_dates
+            expect(paid_members_co.current_members).to match_array [member_paid_dec_3, member_paid_dec_5]
             expect(described_class.instance.send_alert_this_day?(timing, condition_config, paid_members_co)).to be_truthy
+          end
+
+          Timecop.freeze(Time.utc(2018, 12, 6)) do
+            # update membership status based on today's date
+            MembershipStatusUpdater.instance.user_updated(member_paid_dec_3)
+            MembershipStatusUpdater.instance.user_updated(member_paid_dec_5)
+
+            expect(paid_members_co.current_members).to match_array [member_paid_dec_3, member_paid_dec_5]
+            expect(described_class.instance.send_alert_this_day?(timing, condition_config, paid_members_co)).to be_truthy
+          end
+
+          Timecop.freeze(Time.utc(2019, 12, 4)) do
+            # update membership status based on today's date
+            MembershipStatusUpdater.instance.user_updated(member_paid_dec_3)
+            MembershipStatusUpdater.instance.user_updated(member_paid_dec_5)
+
+            expect(paid_members_co.current_members).to be_empty
+            expect(described_class.instance.send_alert_this_day?(timing, condition_config, paid_members_co)).to be_falsey
           end
 
         end
 
-        it 'if the member with oldest paid membership lets her membership expire, day 0 does not change' do
-          pending
-          #paid_members_co
-          #paid_member_exp_dec31
-          #paid_member_exp_dec2
 
-          # Now paid_member_exp_dec2 has expired.  But the expiration date for h_branding should still be set to Dec 2.
-          #Timecop.freeze(Date.new(2018, 12, 30)) do
-          #
-          # update membership status based on today's date
-          # MembershipStatusUpdater.instance.user_updated(paid_member_exp_dec31)
-          # MembershipStatusUpdater.instance.user_updated(paid_member_exp_dec2)
+        it 'if the member with oldest paid membership lets thier membership expire, day 0 changes' do
 
-          #  print_membership_dates
-          #  expect(described_class.instance.send_alert_this_day?(timing, condition_config, paid_members_co)).to be_falsey
-          #end
+          Timecop.freeze(Time.utc(2019, 12, 2)) do
+            # update membership status based on today's date
+            MembershipStatusUpdater.instance.user_updated(member_paid_dec_3)
+            MembershipStatusUpdater.instance.user_updated(member_paid_dec_5)
+
+            expect(paid_members_co.current_members).to match_array [member_paid_dec_5]
+            expect(described_class.instance.send_alert_this_day?(timing, condition_config, paid_members_co)).to be_falsey
+          end
+
+          Timecop.freeze(Time.utc(2019, 12, 3)) do
+            # update membership status based on today's date
+            MembershipStatusUpdater.instance.user_updated(member_paid_dec_3)
+            MembershipStatusUpdater.instance.user_updated(member_paid_dec_5)
+
+            expect(paid_members_co.current_members).to match_array [member_paid_dec_5]
+            expect(described_class.instance.send_alert_this_day?(timing, condition_config, paid_members_co)).to be_truthy
+          end
         end
 
-      end # describe 'day 0 for the h-branding fee past due is set once and does not change until it is paid'
+      end # describe 'day 0 for the h-branding fee past due changes based on current membership'
 
 
       context 'membership has not expired yet' do
