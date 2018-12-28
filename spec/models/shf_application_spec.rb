@@ -50,6 +50,7 @@ RSpec.describe ShfApplication, type: :model do
     it { is_expected.to have_db_column :custom_reason_text }
     it { is_expected.to have_db_column :user_id }
     it { is_expected.to have_db_column :member_app_waiting_reasons_id }
+    it { is_expected.to have_db_column :when_approved }
   end
 
   describe 'Associations' do
@@ -284,6 +285,7 @@ RSpec.describe ShfApplication, type: :model do
     end
   end
 
+
   describe 'test factories' do
 
     it '1 category with default category name' do
@@ -431,32 +433,50 @@ RSpec.describe ShfApplication, type: :model do
 
     end
 
+
     context 'actions taken on state transition' do
       let(:uploaded_files) { create(:uploaded_file,
                                     actual_file: (File.new(File.join(FIXTURE_DIR,
                                                   'image.jpg')))) }
+
+      let(:jan_2_early_am) { Time.utc(2019, 1, 2, 3, 4, 5)}
+
       describe 'application accepted' do
+
         before(:each) do
-          application.uploaded_files = [uploaded_files]
-          application.start_review!
-          application.accept!
+          Timecop.freeze(jan_2_early_am) do
+            application.uploaded_files = [uploaded_files]
+            application.start_review!
+            application.accept!
+          end
+
         end
 
         it "assigns app's latest-added-company email to application contact_email" do
           expect(application.companies.last.email).to eq application.contact_email
         end
+
+        it 'records the time when it was accepted/approved' do
+          expect(application.when_approved).to eq jan_2_early_am
+        end
       end
+
 
       describe 'application rejected' do
         before(:each) do
           application.uploaded_files = [uploaded_files]
           application.user.membership_number = 10
+          application.when_approved = jan_2_early_am
           application.start_review!
           application.reject!
         end
 
         it 'assigns user membership_number to nil' do
           expect(application.user.membership_number).to be_nil
+        end
+
+        it 'sets when_approved to nil' do
+          expect(application.when_approved).to be_nil
         end
 
         it 'destroys uploaded files' do
