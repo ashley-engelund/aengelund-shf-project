@@ -28,7 +28,9 @@ RSpec.describe ConditionResponder, type: :model do
   describe '.get_timing' do
 
     it 'always returns a symbol even if given a string' do
-      expect(ConditionResponder.get_timing(create(:condition, timing: 'blorf'))).to eq(:blorf)
+      condition_with_timing_string = create(:condition)
+      condition_with_timing_string.timing = 'blorf'
+      expect(ConditionResponder.get_timing(condition_with_timing_string)).to eq(:blorf)
     end
 
     context 'condition is nil' do
