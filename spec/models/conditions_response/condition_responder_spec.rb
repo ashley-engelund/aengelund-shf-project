@@ -1,7 +1,10 @@
 require 'rails_helper'
 
+require 'shared_context/activity_logger'
+
 
 RSpec.describe ConditionResponder, type: :model do
+  include_context 'create logger'
 
 
   describe '.condition_response' do
@@ -11,8 +14,6 @@ RSpec.describe ConditionResponder, type: :model do
       condition    = Condition.create(class_name: 'MembershipExpireAlert',
                                       timing:     'before',
                                       config:     { days: [60, 30, 14, 2] })
-      logfile_name = 'log.log'
-      log          = ActivityLogger.open(File.join(Dir.mktmpdir, logfile_name), 'ConditionResponder', 'respond')
 
       expect { described_class.condition_response(condition, log) }.to raise_exception NoMethodError
     end
@@ -24,13 +25,10 @@ RSpec.describe ConditionResponder, type: :model do
     expect(ConditionResponder::DEFAULT_TIMING).to eq :on
   end
 
-
   describe '.get_timing' do
 
-    it 'always returns a symbol even if given a string' do
-      condition_with_timing_string = create(:condition)
-      condition_with_timing_string.timing = 'blorf'
-      expect(ConditionResponder.get_timing(condition_with_timing_string)).to eq(:blorf)
+    it 'always returns a symbol' do
+      expect(ConditionResponder.get_timing(create(:condition, timing: :blorf))).to eq(:blorf)
     end
 
     context 'condition is nil' do
@@ -54,7 +52,6 @@ RSpec.describe ConditionResponder, type: :model do
     expect(default_c).to be_empty
   end
 
-
   describe '.get_config' do
 
     context 'condition is nil' do
@@ -70,6 +67,7 @@ RSpec.describe ConditionResponder, type: :model do
     end
 
   end
+
 
 
   describe '.days_from_today(timing, some_date)' do
@@ -136,120 +134,84 @@ RSpec.describe ConditionResponder, type: :model do
       it 'date is 1 day after today = 0' do
         expect(ConditionResponder.days_today_is_away_from(dec_2, timing_on)).to eq 0
       end
-    end
 
-    context 'timing is every day always returns 0 days away' do
-      let(:timing_every_day) { ConditionResponder::TIMING_EVERY_DAY }
-
-      it 'date is 1 day before today = 0' do
-        expect(ConditionResponder.days_today_is_away_from(nov_30, timing_every_day)).to eq 0
-      end
-
-      it 'date is on today = 0' do
-        expect(ConditionResponder.days_today_is_away_from(dec_1, timing_every_day)).to eq 0
-      end
-
-      it 'date is 1 day after today = 0' do
-        expect(ConditionResponder.days_today_is_away_from(dec_2, timing_every_day)).to eq 0
-      end
-
-    end # context 'timing is every day' do
-
-  end
-
-
-  describe ".timing_is_before?(timing)" do
-
-    it 'true if == TIMING_BEFORE' do
-      expect(ConditionResponder.timing_is_before?(ConditionResponder::TIMING_BEFORE)).to be_truthy
-    end
-
-    describe 'false if == anything else' do
-      it 'TIMING_AFTER' do
-        expect(ConditionResponder.timing_is_before?(ConditionResponder::TIMING_AFTER)).to be_falsey
-      end
-
-      it 'TIMING_ON' do
-        expect(ConditionResponder.timing_is_before?(ConditionResponder::TIMING_ON)).to be_falsey
-      end
-
-      it 'blorf' do
-        expect(ConditionResponder.timing_is_before?('blorf')).to be_falsey
-      end
     end
 
   end
 
+  context 'timing predicate methods' do
 
-  describe ".timing_is_after?(timing)" do
-    it 'true if == TIMING_AFTER' do
-      expect(ConditionResponder.timing_is_after?(ConditionResponder::TIMING_AFTER)).to be_truthy
-    end
+    let(:condition) { build(:condition) }
+    let(:timing) { ConditionResponder.get_timing(condition) }
 
-    describe 'false if == anything else' do
-      it 'TIMING_AFTER' do
-        expect(ConditionResponder.timing_is_after?(ConditionResponder::TIMING_BEFORE)).to be_falsey
+    describe '.timing_is_before?(timing)' do
+      it 'returns true if timing == :before' do
+        condition.timing = ConditionResponder::TIMING_BEFORE
+        expect(ConditionResponder.timing_is_before?(timing)).to be true
       end
 
-      it 'TIMING_ON' do
-        expect(ConditionResponder.timing_is_after?(ConditionResponder::TIMING_ON)).to be_falsey
-      end
-
-      it 'blorf' do
-        expect(ConditionResponder.timing_is_after?('blorf')).to be_falsey
-      end
-
-      it '7' do
-        expect(ConditionResponder.timing_is_after?(7)).to be_falsey
-      end
-
-      it 'nil' do
-        expect(ConditionResponder.timing_is_before?(nil)).to be_falsey
+      it 'returns false otherwise' do
+        condition.timing = ConditionResponder::DEFAULT_TIMING
+        expect(ConditionResponder.timing_is_before?(timing)).to be false
       end
     end
+
+
+    describe '.timing_is_after?(timing)' do
+      it 'returns true if timing == :after' do
+        condition.timing = ConditionResponder::TIMING_AFTER
+        expect(ConditionResponder.timing_is_after?(timing)).to be true
+      end
+
+      it 'returns false otherwise' do
+        condition.timing = ConditionResponder::DEFAULT_TIMING
+        expect(ConditionResponder.timing_is_after?(timing)).to be false
+      end
+    end
+
+
+    describe '.timing_is_on?(timing)' do
+      it 'returns true if timing == :on' do
+        condition.timing = ConditionResponder::TIMING_ON
+        expect(ConditionResponder.timing_is_on?(timing)).to be true
+      end
+
+      it 'returns false otherwise' do
+        condition.timing = :not_on
+        expect(ConditionResponder.timing_is_on?(timing)).to be false
+      end
+    end
+
+
+    describe '.timing_is_every_day?(timing)' do
+
+      it 'returns true if timing == :every_day' do
+        condition.timing = ConditionResponder::TIMING_EVERY_DAY
+        expect(ConditionResponder.timing_is_every_day?(timing)).to be true
+      end
+
+      it 'returns false otherwise' do
+        condition.timing = ConditionResponder::DEFAULT_TIMING
+        expect(ConditionResponder.timing_is_every_day?(timing)).to be false
+      end
+
+    end
+
   end
 
-
-  describe '.timing_is_on?(timing)' do
-    it 'true if == TIMING_ON' do
-      expect(ConditionResponder.timing_is_on?(ConditionResponder::TIMING_ON)).to be_truthy
-    end
-
-    describe 'false if == anything else' do
-      it 'TIMING_AFTER' do
-        expect(ConditionResponder.timing_is_on?(ConditionResponder::TIMING_AFTER)).to be_falsey
-      end
-
-      it 'TIMING_ON' do
-        expect(ConditionResponder.timing_is_on?(ConditionResponder::TIMING_BEFORE)).to be_falsey
-      end
-
-      it 'blorf' do
-        expect(ConditionResponder.timing_is_on?('blorf')).to be_falsey
-      end
-
-      it '7' do
-        expect(ConditionResponder.timing_is_on?(7)).to be_falsey
-      end
-
-      it 'nil' do
-        expect(ConditionResponder.timing_is_on?(nil)).to be_falsey
-      end
-    end
-  end
-
-
-  describe '.timing_is_every_day?(timing)' do
+  describe '.confirm_correct_timing' do
     let(:condition) { build(:condition, :every_day) }
     let(:timing) { ConditionResponder.get_timing(condition) }
 
-    it 'returns true if timing == :every_day' do
-      expect(ConditionResponder.timing_is_every_day?(timing)).to be true
+    it 'does not raise exception if received timing == expected' do
+      expect { ConditionResponder.confirm_correct_timing(:every_day, timing, log) }
+        .not_to raise_error
     end
 
-    it 'returns false otherwise' do
-      condition.timing = ConditionResponder::DEFAULT_TIMING
-      expect(ConditionResponder.timing_is_every_day?(timing)).to be false
+    it 'raises exception if received timing != expected' do
+      expect { ConditionResponder.confirm_correct_timing(:not_every_day, :every_day, log) }
+        .to raise_exception ArgumentError,
+                            'Received timing: not_every_day but expected: every_day'
     end
 
   end
