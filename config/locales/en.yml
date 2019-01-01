@@ -1039,10 +1039,9 @@ en:
         subject: The H-Branding fee for your company is unpaid/past due
         greeting: *email_greeting
         message_text:
-          fee_is_unpaid: "The branding fee for your company %{company_name} has not yet been paid."
-          how_to_pay_fee: "To pay the fee, go to the xxx page and ..."
-          account_login_html: "%{account_link} (you may need to login first before the link works)."
-
+          fee_is_unpaid: Please note that your current H-branding fee is unpaid.
+          how_to_pay_fee: You can pay your H-branding for another 12 months by paying the fee. This makes you visible on the map.
+          company_link_login_msg: " (You may need to login first before you can see the button to pay)."
 
   devise:
     min_length: '(at least %{minimum_length} characters)'
