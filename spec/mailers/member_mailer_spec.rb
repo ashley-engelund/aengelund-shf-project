@@ -135,16 +135,23 @@ RSpec.describe MemberMailer, type: :mailer do
       let(:email_created) { email_sent }
     end
 
-    it 'tells how to pay the H-branding fee' do
-      pending "need to write the email and create specs for the content"
-      expect(false).to be_truthy
-      #member1_exp_jan1
-      #expect(company2.current_members.size).to eq 1
 
-      #  email = MemberMailer.h_branding_fee_past_due(company2, company2.current_members)
-      #  expect(email).to have_body_text(I18n.t('message_text.how_to_pay_fee',
-      #                                         scope: HBRANDING_PAST_DUE_SCOPE))
+    it 'tells you the H-branding fee is unpaid' do
+      expect(email_sent).to have_body_text(I18n.t('message_text.fee_is_unpaid',
+                                                  scope: HBRANDING_PAST_DUE_SCOPE))
     end
+
+    it 'tells how to pay the H-branding fee' do
+      expect(email_sent).to have_body_text(I18n.t('message_text.how_to_pay_fee',
+                                                  scope: HBRANDING_PAST_DUE_SCOPE))
+    end
+
+    it 'provides a link to the company and a reminder that you might have to log in' do
+      expect(email_sent).to have_body_text(I18n.t('message_text.company_link_login_msg',
+                                                  scope: HBRANDING_PAST_DUE_SCOPE,
+                                           company_link: "<a href=\"#{company_url(company2)}\">#{company2.name}</a>") )
+    end
+
 
     it_behaves_like 'from address is correct' do
       let(:mail_address) { email_sent.header['from'] }

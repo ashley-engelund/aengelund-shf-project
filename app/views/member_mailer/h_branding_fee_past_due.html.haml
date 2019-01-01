@@ -6,11 +6,11 @@
 = render layout: 'layouts/mail_from_membership' do
 
   %p
-    = t('fee_is_unpaid', scope: message_scope, company_name: @company.name )
+    = t('fee_is_unpaid', scope: message_scope )
 
   %p
     = t('how_to_pay_fee', scope: message_scope)
 
   %p
-    = t('account_login_html', scope: message_scope,
-        account_link: link_to(t('menus.nav.users.your_account'), user_url(@member)))
+    = link_to(@company.name,  company_url(@company), target: '_blank')
+    = t('company_link_login_msg', scope: message_scope)
