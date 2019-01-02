@@ -15,6 +15,8 @@
 #     The full path for the log file is the Rails log directory.
 #
 #
+# Use:  LogfileNamer.name_for(MembershipStatusUpdater)
+#
 # @author Ashley Engelund (ashley.engelund@gmail.com  weedySeaDragon @ github)
 # @date   2019-01-02
 #
@@ -28,7 +30,7 @@ class LogfileNamer
   FILE_EXT = 'log'
 
 
-  def self.for( klass_name )
+  def self.name_for( klass_name )
 
     env_prefix = Rails.env.production? ? '' : "#{Rails.env}_"
     File.join(Rails.configuration.paths['log'].absolute_current, "#{env_prefix}#{klass_name}.#{FILE_EXT}")

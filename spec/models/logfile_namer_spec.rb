@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe LogfileNamer do
 
+RSpec.describe LogfileNamer do
 
   describe 'Rails environment prefix' do
 
@@ -10,8 +10,8 @@ RSpec.describe LogfileNamer do
       RSpec::Mocks.with_temporary_scope do
 
         allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
-        expect(described_class.for(BasicObject)).to match(/BasicObject/)
-        expect(described_class.for(BasicObject)).not_to match(/production_BasicObject/)
+        expect(described_class.name_for(BasicObject)).to match(/BasicObject/)
+        expect(described_class.name_for(BasicObject)).not_to match(/production_BasicObject/)
       end
 
     end
@@ -23,7 +23,7 @@ RSpec.describe LogfileNamer do
         RSpec::Mocks.with_temporary_scope do
           allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new(rails_env))
 
-          expect(described_class.for(BasicObject)).to match(/#{rails_env}_BasicObject/)
+          expect(described_class.name_for(BasicObject)).to match(/#{rails_env}_BasicObject/)
         end
 
       end
@@ -33,15 +33,15 @@ RSpec.describe LogfileNamer do
 
   it 'is in the Rails log directory (the first log dir encountered if there is more than one)' do
     log_path = File.dirname(Rails.configuration.paths['log'].expanded.first)
-    expect(described_class.for(BasicObject)).to match(/^#{log_path}/)
+    expect(described_class.name_for(BasicObject)).to match(/^#{log_path}/)
   end
 
   it 'has .log as the extension' do
-    expect(described_class.for(BasicObject)).to match(/.log$/)
+    expect(described_class.name_for(BasicObject)).to match(/.log$/)
   end
 
   it 'uses the class as the main log name' do
-    expect(described_class.for(BasicObject)).to match(/BasicObject.log/)
+    expect(described_class.name_for(BasicObject)).to match(/BasicObject.log/)
   end
 
 end
