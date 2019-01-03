@@ -884,6 +884,10 @@ RSpec.describe Company, type: :model, focus: true do
 
     context 'payments expire after today' do
 
+      let(:payment_start)  { Time.zone.local(2018, 1, 3)   }
+      let(:payment_expire) { Time.zone.local(2019, 1, 2)   }
+      let(:pretend_today)  { Time.zone.local(2018, 10, 10) }
+
       context 'successful payments' do
 
         let(:successful_payments_co) { create(:company) }
@@ -893,14 +897,16 @@ RSpec.describe Company, type: :model, focus: true do
                  company:        successful_payments_co,
                  payment_type:   Payment::PAYMENT_TYPE_BRANDING,
                  notes:          'these are notes for branding payment1',
-                 start_date:     Time.zone.local(2018, 1, 3),
-                 expire_date:    Time.zone.local(2019, 1, 2) )
+                 start_date:     payment_start,
+                 expire_date:    Company.expire_date_for_start_date(payment_start) )
         end
 
         it 'is true' do
-          payment_2018_1_3
-          expect(successful_payments_co.payments.size).to eq 1
-          expect(successful_payments_co.branding_license?).to be_truthy
+          Timecop.freeze( pretend_today ) do
+            payment_2018_1_3
+            expect(successful_payments_co.payments.size).to eq 1
+            expect(successful_payments_co.branding_license?).to be_truthy
+          end
         end
       end
 
@@ -918,15 +924,17 @@ RSpec.describe Company, type: :model, focus: true do
                    company:        not_successful_payments_co,
                    payment_type:   Payment::PAYMENT_TYPE_BRANDING,
                    notes:          'these are notes for branding payment1',
-                   start_date:     Time.zone.local(2018, 1, 3),
-                   expire_date:    Time.zone.local(2019, 1, 2) )
+                   start_date:     payment_start,
+                   expire_date:    Company.expire_date_for_start_date(payment_start) )
           end
 
           it "payment status #{payment_status}: is false (never nil)" do
-            payment_2018_1_3
-            expect(not_successful_payments_co.payments.size).to eq 1
-            expect(not_successful_payments_co.branding_license?).not_to be_nil
-            expect(not_successful_payments_co.branding_license?).to be_falsey
+            Timecop.freeze( pretend_today ) do
+              payment_2018_1_3
+              expect(not_successful_payments_co.payments.size).to eq 1
+              expect(not_successful_payments_co.branding_license?).not_to be_nil
+              expect(not_successful_payments_co.branding_license?).to be_falsey
+            end
           end
 
         end
@@ -961,7 +969,7 @@ RSpec.describe Company, type: :model, focus: true do
              payment_type:   Payment::PAYMENT_TYPE_MEMBER,
              notes:          'these are notes for branding payment1',
              start_date:     dec_3,
-             expire_date:    User.expire_date_for_start_date(dec_3) )
+             expire_date:    Company.expire_date_for_start_date(dec_3) )
 
       member_paid_dec_5_shf_app = create(:shf_application, :accepted, company_number: co_with_1_member_expires.company_number)
       member_paid_dec_5 = member_paid_dec_5_shf_app.user
@@ -973,7 +981,7 @@ RSpec.describe Company, type: :model, focus: true do
              payment_type:   Payment::PAYMENT_TYPE_MEMBER,
              notes:          'these are notes for branding payment1',
              start_date:     dec_5,
-             expire_date:    User.expire_date_for_start_date(dec_5) )
+             expire_date:    Company.expire_date_for_start_date(dec_5) )
 
       member_dec_3_start = member_paid_dec_3.payment_start_date(Payment::PAYMENT_TYPE_MEMBER)
       member_dec_3_start_time = Time.utc(member_dec_3_start.year, member_dec_3_start.month, member_dec_3_start.day)
