@@ -87,16 +87,16 @@ RSpec.describe ConditionResponder, type: :model do
 
       let(:timing_before) { ConditionResponder::TIMING_BEFORE }
 
-      it '2nd date is 1 day after the date  = -1' do
-        expect(ConditionResponder.days_2nd_date_is_away_from(nov_30, dec_1, timing_before)).to eq(-1)
+      it '1st is 1 day before 2nd date  = 1' do
+        expect(ConditionResponder.days_1st_date_is_from_2nd(nov_30, dec_1, timing_before)).to eq 1
       end
 
-      it '2nd date is == the date = 0' do
-        expect(ConditionResponder.days_2nd_date_is_away_from(dec_1, dec_1, timing_before)).to eq 0
+      it '1st = 2nd date  == 0' do
+        expect(ConditionResponder.days_1st_date_is_from_2nd(dec_1, dec_1, timing_before)).to eq 0
       end
 
-      it '2nd date is 1 day before  = 1' do
-        expect(ConditionResponder.days_2nd_date_is_away_from(dec_2, dec_1, timing_before)).to eq 1
+      it '1st date is 1 day after 2nd date  = -1' do
+        expect(ConditionResponder.days_1st_date_is_from_2nd(dec_2, dec_1, timing_before)).to eq -1
       end
 
     end
@@ -105,16 +105,16 @@ RSpec.describe ConditionResponder, type: :model do
 
       let(:timing_after) { ConditionResponder::TIMING_AFTER }
 
-      it '2nd date is 1 day after the date = 1' do
-        expect(ConditionResponder.days_2nd_date_is_away_from(nov_30, dec_1, timing_after)).to eq(1)
+      it '1st is 1 day before 2nd date  = -1' do
+        expect(ConditionResponder.days_1st_date_is_from_2nd(nov_30, dec_1, timing_after)).to eq -1
       end
 
-      it '2nd date == the date = 0' do
-        expect(ConditionResponder.days_2nd_date_is_away_from(dec_1, dec_1, timing_after)).to eq 0
+      it '1st = 2nd date  == 0' do
+        expect(ConditionResponder.days_1st_date_is_from_2nd(dec_1, dec_1, timing_after)).to eq 0
       end
 
-      it '2nd date is 1 day before the date = -1' do
-        expect(ConditionResponder.days_2nd_date_is_away_from( dec_2, dec_1, timing_after)).to eq(-1)
+      it '1st date is 1 day after 2nd date  = 1' do
+        expect(ConditionResponder.days_1st_date_is_from_2nd(dec_2, dec_1, timing_after)).to eq 1
       end
 
     end
@@ -125,15 +125,15 @@ RSpec.describe ConditionResponder, type: :model do
       let(:timing_on) { ConditionResponder::TIMING_ON }
 
       it '2nd date is 1 day before the date = 0' do
-        expect(ConditionResponder.days_2nd_date_is_away_from(dec_1, nov_30, timing_on)).to eq 0
+        expect(ConditionResponder.days_1st_date_is_from_2nd(dec_1, nov_30, timing_on)).to eq 0
       end
 
       it '2nd date is == the date = 0' do
-        expect(ConditionResponder.days_2nd_date_is_away_from(dec_1, dec_1, timing_on)).to eq 0
+        expect(ConditionResponder.days_1st_date_is_from_2nd(dec_1, dec_1, timing_on)).to eq 0
       end
 
       it '2nd date is 1 day after the date = 0' do
-        expect(ConditionResponder.days_2nd_date_is_away_from(dec_1, dec_2, timing_on)).to eq 0
+        expect(ConditionResponder.days_1st_date_is_from_2nd(dec_1, dec_2, timing_on)).to eq 0
       end
 
     end
@@ -158,16 +158,16 @@ RSpec.describe ConditionResponder, type: :model do
 
       let(:timing_before) { ConditionResponder::TIMING_BEFORE }
 
-      it 'today is 1 day before the date = ConditionResponder.days_2nd_date_is_away_from(Date.current, nov_30, timing_before)' do
-        expect(ConditionResponder.days_today_is_away_from(nov_30, timing_before)).to eq ConditionResponder.days_2nd_date_is_away_from(dec_1, nov_30, timing_before)
+      it 'today is 1 day before the date = ConditionResponder.days_1st_date_is_from_2nd(Date.current, nov_30, timing_before)' do
+        expect(ConditionResponder.days_today_is_away_from(nov_30, timing_before)).to eq ConditionResponder.days_1st_date_is_from_2nd(dec_1, nov_30, timing_before)
       end
 
-      it 'today = the date = ConditionResponder.days_2nd_date_is_away_from(Date.current, dec_1, timing_before)' do
-        expect(ConditionResponder.days_today_is_away_from(dec_1, timing_before)).to eq ConditionResponder.days_2nd_date_is_away_from(Date.current, dec_1, timing_before)
+      it 'today = the date = ConditionResponder.days_1st_date_is_from_2nd(Date.current, dec_1, timing_before)' do
+        expect(ConditionResponder.days_today_is_away_from(dec_1, timing_before)).to eq ConditionResponder.days_1st_date_is_from_2nd(Date.current, dec_1, timing_before)
       end
 
-      it 'today is 1 day after the date = ConditionResponder.days_2nd_date_is_away_from(Date.current, dec_2, timing_before)' do
-        expect(ConditionResponder.days_today_is_away_from(dec_2, timing_before)).to eq ConditionResponder.days_2nd_date_is_away_from(Date.current, dec_2, timing_before)
+      it 'today is 1 day after the date = ConditionResponder.days_1st_date_is_from_2nd(Date.current, dec_2, timing_before)' do
+        expect(ConditionResponder.days_today_is_away_from(dec_2, timing_before)).to eq ConditionResponder.days_1st_date_is_from_2nd(Date.current, dec_2, timing_before)
       end
 
     end
@@ -176,16 +176,16 @@ RSpec.describe ConditionResponder, type: :model do
 
       let(:timing_after) { ConditionResponder::TIMING_AFTER }
 
-      it 'today is 1 day after the date = ConditionResponder.days_2nd_date_is_away_from(Date.current, dec_2, timing_after)' do
-        expect(ConditionResponder.days_today_is_away_from(dec_2, timing_after)).to eq  ConditionResponder.days_2nd_date_is_away_from(Date.current, dec_2, timing_after)
+      it 'today is 1 day after the date = ConditionResponder.days_1st_date_is_from_2nd(Date.current, dec_2, timing_after)' do
+        expect(ConditionResponder.days_today_is_away_from(dec_2, timing_after)).to eq  ConditionResponder.days_1st_date_is_from_2nd(Date.current, dec_2, timing_after)
       end
 
-      it 'date is on today = ConditionResponder.days_2nd_date_is_away_from(Date.current, dec_1, timing_after)' do
-        expect(ConditionResponder.days_today_is_away_from(dec_1, timing_after)).to eq ConditionResponder.days_2nd_date_is_away_from(Date.current, dec_1, timing_after)
+      it 'date is on today = ConditionResponder.days_1st_date_is_from_2nd(Date.current, dec_1, timing_after)' do
+        expect(ConditionResponder.days_today_is_away_from(dec_1, timing_after)).to eq ConditionResponder.days_1st_date_is_from_2nd(Date.current, dec_1, timing_after)
       end
 
-      it 'today is 1 day before the date = ConditionResponder.days_2nd_date_is_away_from(Date.current, nov_30, timing_after)' do
-        expect(ConditionResponder.days_today_is_away_from(nov_30, timing_after)).to eq ConditionResponder.days_2nd_date_is_away_from(Date.current, nov_30, timing_after)
+      it 'today is 1 day before the date = ConditionResponder.days_1st_date_is_from_2nd(Date.current, nov_30, timing_after)' do
+        expect(ConditionResponder.days_today_is_away_from(nov_30, timing_after)).to eq ConditionResponder.days_1st_date_is_from_2nd(Date.current, nov_30, timing_after)
       end
 
     end
@@ -195,16 +195,16 @@ RSpec.describe ConditionResponder, type: :model do
 
       let(:timing_on) { ConditionResponder::TIMING_ON }
 
-      it 'date is 1 day before today = ConditionResponder.days_2nd_date_is_away_from(Date.current, nov_30, timing_on)' do
-        expect(ConditionResponder.days_today_is_away_from(nov_30, timing_on)).to eq ConditionResponder.days_2nd_date_is_away_from(Date.current, nov_30, timing_on)
+      it 'date is 1 day before today = ConditionResponder.days_1st_date_is_from_2nd(Date.current, nov_30, timing_on)' do
+        expect(ConditionResponder.days_today_is_away_from(nov_30, timing_on)).to eq ConditionResponder.days_1st_date_is_from_2nd(Date.current, nov_30, timing_on)
       end
 
-      it 'date is on today = ConditionResponder.days_2nd_date_is_away_from(Date.current, dec_1, timing_on)' do
-        expect(ConditionResponder.days_today_is_away_from(dec_1, timing_on)).to eq ConditionResponder.days_2nd_date_is_away_from(Date.current, dec_1, timing_on)
+      it 'date is on today = ConditionResponder.days_1st_date_is_from_2nd(Date.current, dec_1, timing_on)' do
+        expect(ConditionResponder.days_today_is_away_from(dec_1, timing_on)).to eq ConditionResponder.days_1st_date_is_from_2nd(Date.current, dec_1, timing_on)
       end
 
-      it 'date is 1 day after today = ConditionResponder.days_2nd_date_is_away_from(Date.current, dec_2, timing_on)' do
-        expect(ConditionResponder.days_today_is_away_from(dec_2, timing_on)).to eq ConditionResponder.days_2nd_date_is_away_from(Date.current, dec_2, timing_on)
+      it 'date is 1 day after today = ConditionResponder.days_1st_date_is_from_2nd(Date.current, dec_2, timing_on)' do
+        expect(ConditionResponder.days_today_is_away_from(dec_2, timing_on)).to eq ConditionResponder.days_1st_date_is_from_2nd(Date.current, dec_2, timing_on)
       end
 
     end
