@@ -85,7 +85,7 @@ class ConditionResponder
   # @param a_date [Date] - the starting date
   # @param second_date [Date] - the date to compare to :a_date
   # @param timing [Timing] - which 'direction' (before, after, on) to compare to :a_date
-  # @return [Integer] - the number of days away from today, based on our :timing
+  # @return [Integer] - the number of days separating the two dates, based on the :timing
   def self.days_1st_date_is_from_2nd(a_date, second_date, timing)
 
     day_num_to_check = 0 # default value
