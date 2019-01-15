@@ -1,4 +1,4 @@
-Feature: Alerts for past due H-branding fee sent; company HAS previous H-Branding fee payments (a Condition response)
+Feature: Alerts for H-branding fee is due sent; company HAS previous H-Branding fee payments (a Condition response)
 
   As a nightly task
   So that users are notified ('alerted') if payment for the H-branding fee
@@ -7,36 +7,9 @@ Feature: Alerts for past due H-branding fee sent; company HAS previous H-Brandin
 
   (reminder: "current member" = approved AND paid membership fee)
 
-  From the comments in HBrandingFeePastDueAlert:
+  See the comments in HBrandingFeeDueAlert
 
-  The first day the H-branding fee is due (a.k.a "day zero") is
-  IF an H-branding fee has ever been paid,
-  it is 1 day after the latest expiration date of the latest H-branding fee payment
-  ELSE
-  it is the date of the _earliest_ membership fee payment of the current members in the company.
-
-
-  Ex:  no H-branding fee has ever been paid
-
-  member 1 membership exp = Jan 1
-  member 2 membership exp = Jan 2
-
-  ===>  day 0 for h-branding fee = the earliest membership start (paid) date
-  of the _current members_ of the company
-
-  the first 'H-Branding fee is past due' email will go out on Jan. 2  ( = 1 day past due)
-
-
-  Ex:  H-branding fee was paid on July 1, 2017 and expired on June 30, 2018
-  Today is August 6, 2019
-
-  member 1 membership exp = Jan 1, 2019
-  member 2 membership exp = Jan 2, 2020
-
-  ===>  day 0 for h-branding fee = July 1, 2018, the day after the last H-Branding fee payment expired
-
-  the first 'H-Branding fee is past due' email will go out on July 2, 2018  ( = 1 day past due)
-  Since today  is August 6, 2019, an alert will only go out if the
+  If today  is August 6, 2019, an alert will only go out if the
   Condition configuration [:days] includes 400. ( Date.new(2019, 8, 6) - Date.new(2018, 7,2) = 400 )
 
 
@@ -84,9 +57,9 @@ Feature: Alerts for past due H-branding fee sent; company HAS previous H-Brandin
 
 
     # Note the expiration dates for the H-Branding license (branding_fee) payments for the companies
-    #  and the dates for the # days past due after each expiration date:
+    #  and the dates for the # days after the next H-Branding fee is due:
     #
-    #                                         Days past due:
+    #                                         Days after the next H-Branding fee is due:
     # Company                    expire_date    1          32         42         60         363
     # -------------------------  -----------  ---------- ---------- ---------- ---------- ----------
     # @mutts-exp-17-6-6.se       2017-6-6     2017-06-08 2017-07-09 2017-07-19 2017-08-06 2018-06-05
@@ -106,18 +79,15 @@ Feature: Alerts for past due H-branding fee sent; company HAS previous H-Brandin
       | memb21_exp_20-3-1@happymutts-exp-19-3-2.se | 2019-3-2   | 2020-3-1    | member_fee   | betald | none    |                |
 
 
-    Given there is a condition with class_name "HBrandingFeePastDueAlert" and timing "after"
+    Given there is a condition with class_name "HBrandingFeeDueAlert" and timing "after"
     Given the condition has days set to [1, 32, 42, 60, 363 ]
 
-
-  #Scenario Outline: Past H-Brand fees were paid but H-Brand license is expired
 
 
   Scenario Outline: HBrand fees paid, has expired; 1 member current until 18-1-3
 
-
     Given the date is set to <today>
-    And the process_condition task sends "condition_response" to the "HBrandingFeePastDueAlert" class
+    And the process_condition task sends "condition_response" to the "HBrandingFeeDueAlert" class
     Then "memb01_exp_18_1_3@mutts-exp-17-6-6.se" should receive <member01_email> email
     And "memb02_exp-17-1-4@mutts-exp-17-6-6.se" should receive <memb02_email> email
     And "memb06_exp_19-1-16@voof-exp-19-1-16.se" should receive <memb06_email> email
@@ -144,7 +114,7 @@ Feature: Alerts for past due H-branding fee sent; company HAS previous H-Brandin
     # Has not expired for the @voof... company. Which is what we're interested in
 
     Given the date is set to <today>
-    And the process_condition task sends "condition_response" to the "HBrandingFeePastDueAlert" class
+    And the process_condition task sends "condition_response" to the "HBrandingFeeDueAlert" class
     Then "memb01_exp_18_1_3@mutts-exp-17-6-6.se" should receive <member01_email> email
     And "memb02_exp-17-1-4@mutts-exp-17-6-6.se" should receive <memb02_email> email
     And "memb06_exp_19-1-16@voof-exp-19-1-16.se" should receive <memb06_email> email
