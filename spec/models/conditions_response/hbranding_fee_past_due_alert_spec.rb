@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'email_spec/rspec'
 
 
-RSpec.describe HBrandingFeePastDueAlert do
+RSpec.describe HBrandingFeeDueAlert do
 
   subject  { described_class.instance }
 
@@ -28,7 +28,7 @@ RSpec.describe HBrandingFeePastDueAlert do
 
 
   let(:config) { { days: [1, 7, 14, 30] } }
-  let(:timing) { HBrandingFeePastDueAlert::TIMING_AFTER }
+  let(:timing) { HBrandingFeeDueAlert::TIMING_AFTER }
   let(:condition) { create(:condition, timing, config) }
 
 
@@ -419,8 +419,8 @@ RSpec.describe HBrandingFeePastDueAlert do
       end
 
       expect(ActionMailer::Base.deliveries.size).to eq 2
-      expect(File.read(filepath)).to include("[info] HBrandingFeePastDueAlert email sent to user id: #{paid_member1.id} email: #{paid_member1.email} company id: #{paid_member_co.id} name: #{paid_member_co.name}.")
-      expect(File.read(filepath)).to include("[info] HBrandingFeePastDueAlert email sent to user id: #{paid_member2.id} email: #{paid_member2.email} company id: #{paid_member_co.id} name: #{paid_member_co.name}.")
+      expect(File.read(filepath)).to include("[info] HBrandingFeeDueAlert email sent to user id: #{paid_member1.id} email: #{paid_member1.email} company id: #{paid_member_co.id} name: #{paid_member_co.name}.")
+      expect(File.read(filepath)).to include("[info] HBrandingFeeDueAlert email sent to user id: #{paid_member2.id} email: #{paid_member2.email} company id: #{paid_member_co.id} name: #{paid_member_co.name}.")
     end
 
   end

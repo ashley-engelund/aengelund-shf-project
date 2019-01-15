@@ -1,7 +1,7 @@
 # This emails all current members in a company if the h-branding fee is past due.
 #
 #
-class HBrandingFeePastDueAlert < CompanyEmailAlert
+class HBrandingFeeDueAlert < CompanyEmailAlert
 
 
   # If an H Branding Fee is due for the company, then
