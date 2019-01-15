@@ -117,27 +117,26 @@ class Company < ApplicationRecord
     next_payment_dates(company_id, Payment::PAYMENT_TYPE_BRANDING)
   end
 
-  # The first day the H-branding fee is past due (a.k.a "day zero") is
+
+  # The day the next H-branding fee is due is:
   #    IF an H-branding fee has ever been paid,
   #      it is 1 day after the latest expiration date of the latest H-branding fee payment
   #    ELSE
   #      it is the date of the _earliest_ membership fee payment of the current members in the company.
   #
   #
-  # If a company has previous H-Brand payments and the latest *expiration date is 30 Nov 2017*
+  # Ex: If a company has previous H-Brand payments and the latest *expiration date is 30 Nov 2017*
   #    then the day that the next H-Brand payment is due is *1 Dec 2017*
   #
   # That means that the last H-Brand payment was made 1 Dec 2016.
   #  The H-Brand licensing term ran from 1 Dec 2016 to 30 Nov 2017.
   #  Thus the next H-Brand payment is due 1 Dec 2017.
   #
-  # On 1 Dec 2017, the H-Brand fee would be zero (0) days _past due_.
+  # On 1 Dec 2017, the next H-Brand fee is due.
   # On 2 Dec 2017, the H-Brand fee would be 1 days _past due._
-  # Thus the `0 days past due` date is 1 Dec 2017.
   #
-  #
-  # @return [Date]  - the Date that is the day that the branding payment becomes past due.
-  def hbranding_payment_past_due_day_0
+  # @return [Date]  - the Date the next H-Branding payment is due
+  def next_hbranding_payment_due_date
 
     if (latest_payment_expiry = branding_expire_date)
       latest_payment_expiry + 1
@@ -145,6 +144,7 @@ class Company < ApplicationRecord
       earliest_current_member_fee_paid
     end
   end
+
 
   # All addresses for a company are complete AND the name is not blank
   # must qualify name with 'companies' because there are other tables that use 'name' and if

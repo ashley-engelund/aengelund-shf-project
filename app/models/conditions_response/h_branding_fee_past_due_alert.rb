@@ -11,7 +11,7 @@ class HBrandingFeePastDueAlert < CompanyEmailAlert
 
     if RequirementsForHBrandingFeeDue.requirements_met?({company: company})
 
-      day_to_check = self.class.days_today_is_away_from(company.hbranding_payment_past_due_day_0, timing)
+      day_to_check = self.class.days_today_is_away_from(company.next_hbranding_payment_due_date, timing)
 
       send_on_day_number?(day_to_check, config)
 

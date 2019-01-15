@@ -130,7 +130,7 @@ RSpec.describe HBrandingFeePastDueAlert do
               MembershipStatusUpdater.instance.user_updated(member_paid_dec_5)
 
               expect(paid_members_co.current_members).to match_array [member_paid_dec_3, member_paid_dec_5]
-              expect(paid_members_co.hbranding_payment_past_due_day_0).to eq dec_3
+              expect(paid_members_co.next_hbranding_payment_due_date).to eq dec_3
               expect(subject.send_alert_this_day?(timing, condition_config, paid_members_co)).to be_truthy
             end
 
@@ -326,7 +326,7 @@ RSpec.describe HBrandingFeePastDueAlert do
             end
 
             expect(paid_members_co.branding_license?).to be_falsey
-            expect(paid_members_co.hbranding_payment_past_due_day_0).to eq nov_30
+            expect(paid_members_co.next_hbranding_payment_due_date).to eq nov_30
 
             Timecop.freeze(Time.utc(2019, 12, 3)) do
               expect(subject.send_alert_this_day?(timing, { days: [368] }, paid_members_co)).to be_truthy

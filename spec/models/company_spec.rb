@@ -1023,7 +1023,7 @@ RSpec.describe Company, type: :model, focus: true do
   end # describe '#earliest_current_member_fee_paid'
 
 
-  describe '#hbranding_payment_past_due_day_0' do
+  describe '#next_hbranding_payment_due_date' do
 
     let(:dec_1) { Date.new(2018, 12, 1) }
     let(:dec_2) { Date.new(2018, 12, 2) }
@@ -1043,7 +1043,7 @@ RSpec.describe Company, type: :model, focus: true do
           user_applied = create(:user_with_membership_app)
           new_co = user_applied.shf_application.companies.first
 
-          expect(new_co.hbranding_payment_past_due_day_0).to be_nil
+          expect(new_co.next_hbranding_payment_due_date).to be_nil
         end
       end
 
@@ -1085,7 +1085,7 @@ RSpec.describe Company, type: :model, focus: true do
             MembershipStatusUpdater.instance.user_updated(member_paid_dec_7)
 
             expect(paid_members_co.current_members).to match_array [member_paid_dec_3, member_paid_dec_7]
-            expect(paid_members_co.hbranding_payment_past_due_day_0).to eq dec_3
+            expect(paid_members_co.next_hbranding_payment_due_date).to eq dec_3
           end
 
         end
@@ -1101,7 +1101,7 @@ RSpec.describe Company, type: :model, focus: true do
             MembershipStatusUpdater.instance.user_updated(member_paid_dec_7)
 
             expect(paid_members_co.current_members).to match_array [member_paid_dec_7]
-            expect(paid_members_co.hbranding_payment_past_due_day_0).to eq dec_7
+            expect(paid_members_co.next_hbranding_payment_due_date).to eq dec_7
           end
         end
 
@@ -1116,7 +1116,7 @@ RSpec.describe Company, type: :model, focus: true do
             MembershipStatusUpdater.instance.user_updated(member_paid_dec_7)
 
             expect(paid_members_co.current_members).to be_empty
-            expect(paid_members_co.hbranding_payment_past_due_day_0).to be_nil
+            expect(paid_members_co.next_hbranding_payment_due_date).to be_nil
           end
 
         end
@@ -1158,7 +1158,7 @@ RSpec.describe Company, type: :model, focus: true do
             MembershipStatusUpdater.instance.user_updated(member_paid_dec_3)
 
             expect(paid_members_co.current_members).to be_empty
-            expect(paid_members_co.hbranding_payment_past_due_day_0).to eq dec_2
+            expect(paid_members_co.next_hbranding_payment_due_date).to eq dec_2
           end
         end
 
@@ -1182,13 +1182,13 @@ RSpec.describe Company, type: :model, focus: true do
             MembershipStatusUpdater.instance.user_updated(member_paid_dec_3)
 
             expect(paid_members_co.current_members).to match_array [member_paid_dec_3]
-            expect(paid_members_co.hbranding_payment_past_due_day_0).to eq dec_1_next_year
+            expect(paid_members_co.next_hbranding_payment_due_date).to eq dec_1_next_year
           end
         end
       end
 
     end
-  end # describe '#hbranding_payment_past_due_day_0'
+  end # describe '#next_hbranding_payment_due_date'
 
 
 end
