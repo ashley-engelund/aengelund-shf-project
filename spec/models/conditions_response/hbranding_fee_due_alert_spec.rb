@@ -9,14 +9,12 @@ RSpec.describe HBrandingFeeDueAlert do
 
   let(:jan_1) { Date.new(2018, 1, 1) }
 
+  let(:nov_29) { Date.new(2018, 11, 29) }
   let(:nov_30) { Date.new(2018, 11, 30) }
   let(:dec_1)  { Date.new(2018, 12, 1) }
   let(:dec_2)  { Date.new(2018, 12, 2) }
   let(:dec_3)  { Date.new(2018, 12, 3) }
-  let(:dec_4)  { Date.new(2018, 12, 4) }
   let(:dec_5)  { Date.new(2018, 12, 5) }
-  let(:dec_6)  { Date.new(2018, 12, 6) }
-  let(:dec_7)  { Date.new(2018, 12, 7) }
 
   let(:nov_30_last_year) { Date.new(2017, 11, 30) }
   let(:dec_2_last_year) { Date.new(2017, 12, 2) }
@@ -27,7 +25,7 @@ RSpec.describe HBrandingFeeDueAlert do
   let(:company) { create(:company) }
 
 
-  let(:config) { { days: [1, 7, 14, 30] } }
+  let(:config) { { days: [1, 7, 15, 30] } }
   let(:timing) { HBrandingFeeDueAlert::TIMING_AFTER }
   let(:condition) { create(:condition, timing, config) }
 
@@ -100,11 +98,13 @@ RSpec.describe HBrandingFeeDueAlert do
       }
 
       let(:condition_config) {  { days: [1, 3, 363, 364] } }
+      # day 0 for member_paid_dec_3 = 3 Dec 2018
       # day 1 for member_paid_dec_3 = 4 Dec 2018
       # day 3 for member_paid_dec_3 = 6 Dec 2018
       # day 363 for member_paid_dec_3 = 1 Dec 2019
-      # day 363 for member_paid_dec_5 = 3 Dec 2019
       # day 364 for member_paid_dec_3 = 2 Dec 2019 == the expiration date, so the membership has expired at the end of this day.
+
+      # day 363 for member_paid_dec_5 = 3 Dec 2019
       # day 364 for member_paid_dec_5 = 4 Dec 2019 == the expiration date, so the membership has expired at the end of this day.
 
       # Hint: you can do this in IRB to figure out dates:
@@ -117,9 +117,9 @@ RSpec.describe HBrandingFeeDueAlert do
 
       context 'h-branding fee has never been paid' do
 
-        describe 'day 0 for the h-branding fee past due changes based on current membership' do
+        describe 'the h-branding fee due date changes based on current membership' do
 
-          it 'uses the oldest (first paid) membership fee payment of all of current members as day 0 past due' do
+          it 'uses the oldest (first paid) membership fee payment of all of current members as day 0 ' do
             paid_members_co
             member_paid_dec_3
             member_paid_dec_5
@@ -155,16 +155,7 @@ RSpec.describe HBrandingFeeDueAlert do
           end
 
 
-          it 'if the member with oldest paid membership lets thier membership expire, day 0 changes' do
-
-            Timecop.freeze(Time.utc(2019, 12, 2)) do
-              # update membership status based on today's date
-              MembershipStatusUpdater.instance.user_updated(member_paid_dec_3)
-              MembershipStatusUpdater.instance.user_updated(member_paid_dec_5)
-
-              expect(paid_members_co.current_members).to match_array [member_paid_dec_5]
-              expect(subject.send_alert_this_day?(timing, condition_config, paid_members_co)).to be_falsey
-            end
+          it 'if the member with oldest paid membership lets thier membership expires, day 0 changes' do
 
             Timecop.freeze(Time.utc(2019, 12, 3)) do
               # update membership status based on today's date
@@ -174,9 +165,18 @@ RSpec.describe HBrandingFeeDueAlert do
               expect(paid_members_co.current_members).to match_array [member_paid_dec_5]
               expect(subject.send_alert_this_day?(timing, condition_config, paid_members_co)).to be_truthy
             end
+
+            Timecop.freeze(Time.utc(2019, 12, 4)) do
+              # update membership status based on today's date
+              MembershipStatusUpdater.instance.user_updated(member_paid_dec_3)
+              MembershipStatusUpdater.instance.user_updated(member_paid_dec_5)
+
+              expect(paid_members_co.current_members).to match_array []
+              expect(subject.send_alert_this_day?(timing, condition_config, paid_members_co)).to be_falsey
+            end
           end
 
-        end # describe 'day 0 for the h-branding fee past due changes based on current membership'
+        end # describe 'day 0 for the h-branding fee due date changes based on current membership'
 
 
         context 'membership has not expired yet' do
@@ -194,23 +194,22 @@ RSpec.describe HBrandingFeeDueAlert do
           let(:paid_member_co) { paid_member.companies.first }
 
           it 'true when the day is in the config list of days to send the alert' do
-            Timecop.freeze(Time.utc(2018, 1, 15)) do
+            Timecop.freeze(Time.utc(2018, 1, 16)) do
               expect(subject.send_alert_this_day?(timing, config, paid_member_co)).to be_truthy
             end
           end
 
-          it 'false when the day  is not in the config list of days to send the alert' do
-            Timecop.freeze(Time.utc(2018, 1, 16)) do
+          it 'false when the day is not in the config list of days to send the alert' do
+            Timecop.freeze(Time.utc(2018, 1, 17)) do
               expect(subject.send_alert_this_day?(timing, config, paid_member_co)).to be_falsey
             end
           end
 
         end # context 'membership has not expired yet'
 
-        context 'membership expiration is on or after the given date to check' do
+        context 'earliest membership expires on or after the given date to check' do
 
           context 'membership expires 1 day after today (dec 1); expires dec 2' do
-
 
             let(:paid_expires_tomorrow_member) {
               shf_accepted_app = create(:shf_application, :accepted)
@@ -226,7 +225,6 @@ RSpec.describe HBrandingFeeDueAlert do
             }
 
             let(:paid_member_co) { paid_expires_tomorrow_member.companies.first }
-
 
             it 'true if the day is in the config list of days to send the alert (= 1)' do
               Timecop.freeze(Time.utc(2017, 12, 4)) do
@@ -312,7 +310,7 @@ RSpec.describe HBrandingFeeDueAlert do
 
         context 'today is in the list of configuration days' do
 
-          it 'true if today - (last HBrand expire date + 1 day) is in the config list of alert days ' do
+          it 'true if (today - last HBrand expire date) is in the config list of alert days ' do
             paid_members_co
             member_paid_dec_5
 
@@ -326,15 +324,16 @@ RSpec.describe HBrandingFeeDueAlert do
             end
 
             expect(paid_members_co.branding_license?).to be_falsey
-            expect(paid_members_co.next_hbranding_payment_due_date).to eq nov_30
+            expect(paid_members_co.branding_expire_date).to eq nov_29
 
             Timecop.freeze(Time.utc(2019, 12, 3)) do
-              expect(subject.send_alert_this_day?(timing, { days: [368] }, paid_members_co)).to be_truthy
+              expect(subject.send_alert_this_day?(timing, { days: [369] }, paid_members_co)).to be_truthy
+              expect(subject.send_alert_this_day?(timing, { days: [368] }, paid_members_co)).to be_falsey
             end
 
           end
 
-          it 'false if today - (last HBrand expire date + 1 day) is NOT in the config list of alert days ' do
+          it 'false if (today - last HBrand expire date ) is NOT in the config list of alert days ' do
             paid_members_co
             member_paid_dec_3
 
@@ -358,9 +357,7 @@ RSpec.describe HBrandingFeeDueAlert do
 
         end
 
-
       end
-
     end
 
   end # describe '.send_alert_this_day?(config, user)'
