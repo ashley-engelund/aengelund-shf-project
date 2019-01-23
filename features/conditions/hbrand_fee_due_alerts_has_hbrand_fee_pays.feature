@@ -1,4 +1,4 @@
-Feature: Alerts for H-branding fee is due sent; company HAS previous H-Branding fee payments (a Condition response)
+Feature: Alerts sent for H-branding fee is due; company HAS previous H-Branding fee payments (a Condition response)
 
   As a nightly task
   So that users are notified ('alerted') if payment for the H-branding fee
@@ -62,9 +62,9 @@ Feature: Alerts for H-branding fee is due sent; company HAS previous H-Branding 
     #                                         Days after the next H-Branding fee is due:
     # Company                    expire_date    1          32         42         60         363
     # -------------------------  -----------  ---------- ---------- ---------- ---------- ----------
-    # @mutts-exp-17-6-6.se       2017-6-6     2017-06-08 2017-07-09 2017-07-19 2017-08-06 2018-06-05
-    # @voof-exp-19-1-16.se       2019-1-16    2019-01-18 2019-02-18 2019-02-28 2019-03-18 2020-01-15
-    # @happymutts-exp-19-3-2.se  2019-3-2     2019-03-04 2019-04-04 2019-04-14 2019-05-02 2020-02-29
+    # @mutts-exp-17-6-6.se       2017-6-6     2017-06-07 2017-07-08 2017-07-18 2017-08-05 2018-06-04
+    # @voof-exp-19-1-16.se       2019-1-16    2019-01-17 2019-02-17 2019-02-27 2019-03-17 2020-01-14
+    # @happymutts-exp-19-3-2.se  2019-3-2     2019-03-03 2019-04-03 2019-04-13 2019-05-01 2020-02-28
 
     And the following payments exist
       | user_email                                 | start_date | expire_date | payment_type | status | hips_id | company_number |
@@ -96,17 +96,23 @@ Feature: Alerts for H-branding fee is due sent; company HAS previous H-Branding 
     And "memb21_exp_20-3-1@happymutts-exp-19-3-2.se" should receive no email
 
     # checking the day before and after the alert day just to be sure no emails are sent then
+    #  all memberships have expired by June 2018
     Scenarios:
       | today        | member01_email | memb02_email | memb06_email | memb07_email |
-      | "2017-06-07" | no             | no           | no           | no           |
-      | "2017-06-08" | an             | no           | no           | no           |
-      | "2017-07-09" | an             | no           | no           | no           |
-      | "2017-07-18" | no             | no           | no           | no           |
-      | "2017-07-19" | an             | no           | no           | no           |
-      | "2017-07-20" | no             | no           | no           | no           |
-      | "2017-08-7"  | no             | no           | no           | no           |
-      | "2017-08-06" | an             | no           | no           | no           |
-      | "2017-08-07" | no             | no           | no           | no           |
+      | "2017-06-06" | no             | no           | no           | no           |
+      | "2017-06-07" | an             | no           | no           | no           |
+      | "2017-06-08" | no             | no           | no           | no           |
+      | "2017-07-07" | no             | no           | no           | no           |
+      | "2017-07-08" | an             | no           | no           | no           |
+      | "2017-07-09" | no             | no           | no           | no           |
+      | "2017-07-17" | no             | no           | no           | no           |
+      | "2017-07-18" | an             | no           | no           | no           |
+      | "2017-07-19" | no             | no           | no           | no           |
+      | "2017-08-04" | no             | no           | no           | no           |
+      | "2017-08-05" | an             | no           | no           | no           |
+      | "2017-08-06" | no             | no           | no           | no           |
+      | "2018-06-03" | no             | no           | no           | no           |
+      | "2018-06-04" | no             | no           | no           | no           |
       | "2018-06-05" | no             | no           | no           | no           |
 
 
@@ -128,11 +134,11 @@ Feature: Alerts for H-branding fee is due sent; company HAS previous H-Branding 
       | "2019-01-18" | no             | no           | no           | no           | no           | no           |
       | "2019-02-18" | no             | no           | no           | no           | no           | no           |
       | "2019-02-28" | no             | no           | no           | no           | no           | no           |
-      | "2019-03-04" | no             | no           | no           | no           | no           | an           |
+      | "2019-03-03" | no             | no           | no           | no           | no           | an           |
       | "2019-03-18" | no             | no           | no           | no           | no           | no           |
-      | "2019-04-04" | no             | no           | no           | no           | no           | an           |
-      | "2019-04-14" | no             | no           | no           | no           | no           | an           |
-      | "2019-05-02" | no             | no           | no           | no           | no           | an           |
+      | "2019-04-03" | no             | no           | no           | no           | no           | an           |
+      | "2019-04-13" | no             | no           | no           | no           | no           | an           |
+      | "2019-05-01" | no             | no           | no           | no           | no           | an           |
       | "2020-01-15" | no             | no           | no           | no           | no           | no           |
-      | "2020-02-29" | no             | no           | no           | no           | no           | an           |
+      | "2020-02-28" | no             | no           | no           | no           | no           | an           |
 
