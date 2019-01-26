@@ -1045,6 +1045,14 @@ sv:
           how_to_pay_fee: Betala den ett år till via länken nedan. Detta gör att du fortsätter synas på kartan och fortsätter ha ett H-märkt företag.
           company_link_login_msg: " (du kan behöva logga in först innan du ser knappen för att betala)."
 
+      membership_lapsed:
+        subject: "Your SHF membership has expired. Don't give up the benefits of membership!"
+        greeting: *email_greeting
+        message_text:
+          expire_alert_html: "Your SHF membership term ended on %{expire_date}.  (list benefits.  ...company is no longer visible to the public.)"
+          renew_membership: You can renew your membership and keep taking advantage of SHF member benefits by logging in and paying your membership fee.
+          account_login_html: "%{account_link} (you may need to login first before the link works)."
+
 
   devise:
     min_length: '(minst %{minimum_length} tecken)'
