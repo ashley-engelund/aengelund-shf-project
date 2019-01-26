@@ -633,61 +633,6 @@ RSpec.describe User, type: :model do
   end
 
 
-=begin
-  This is now the responsibility of the MembershipStatusUpdater class
-
-  describe '#grant_membership' do
-
-    it 'sets the member field for the user' do
-      # mock the MemberMailer so we don't try to send emails
-      expect(MemberMailer).to receive(:membership_granted).with(subject).and_return( double('MemberMailer', deliver: true))
-
-      subject.grant_membership
-      expect(subject.member).to be_truthy
-    end
-
-    it 'does not overwrite an existing membership_number' do
-      # mock the MemberMailer so we don't try to send emails
-      expect(MemberMailer).to receive(:membership_granted).with(subject).and_return( double('MemberMailer', deliver: true))
-
-      existing_number = 'SHF00042'
-      subject.membership_number = existing_number
-      subject.grant_membership
-      expect(subject.membership_number).to eq(existing_number)
-    end
-
-    it 'generates sequential membership_numbers' do
-      # mock the MemberMailer so we don't try to send emails
-      expect(MemberMailer).to receive(:membership_granted).with(subject).twice.and_return( double('MemberMailer', deliver: true))
-
-      subject.grant_membership
-      first_number = subject.membership_number.to_i
-
-      subject.membership_number = nil
-      subject.grant_membership
-      second_number = subject.membership_number.to_i
-
-      expect(second_number).to eq(first_number+1)
-    end
-
-    it 'sends emails out by default' do
-      expect_any_instance_of(MemberMailer).to receive(:membership_granted).with(subject)
-      subject.grant_membership
-    end
-
-    it 'send_email: true sends email to the member to let them know they are now a member' do
-      expect_any_instance_of(MemberMailer).to receive(:membership_granted).with(subject)
-      subject.grant_membership(send_email:true)
-    end
-
-    it 'send_email: false does not send email to the member to let them know they are now a member' do
-      expect_any_instance_of(MemberMailer).not_to receive(:membership_granted).with(subject)
-      subject.grant_membership(send_email: false)
-    end
-
-  end
-=end
-
   context 'payment and membership period' do
 
     describe '#membership_start_date' do
@@ -834,40 +779,6 @@ RSpec.describe User, type: :model do
         expect(user.allow_pay_member_fee?).to eq true
       end
     end
-
-=begin
-This is now the responsibility of the MembershipStatusUpdater class
-
-    describe '#check_memberstatus' do
-      it 'does nothing if not a member' do
-        user.check_member_status
-        expect(user.member).to be false
-      end
-
-      it 'does nothing if a member and payment not expired' do
-        member_payment1
-        user.update(member: true)
-
-        user.check_member_status
-        expect(user.member).to be true
-      end
-
-      it 'revokes membership if a member and payment has expired' do
-        Timecop.freeze(payment_date_2018_11_21)
-
-        member_payment1
-        user.update(member: true)
-
-        Timecop.freeze(Time.zone.today + 1.year)
-
-        user.check_member_status
-        expect(user.member).to be false
-
-        Timecop.return
-      end
-
-    end
-=end
 
   end
 
