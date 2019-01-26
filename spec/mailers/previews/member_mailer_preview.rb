@@ -24,4 +24,28 @@ class MemberMailerPreview < ActionMailer::Preview
 
     MemberMailer.h_branding_fee_past_due(new_co, new_approved_user)
   end
+
+
+  def membership_lapsed
+
+    expires = User.expired_memberships
+    if expires.size > 0
+      member = expires.last
+      MemberMailer.membership_lapsed(member)
+    else
+      # take a current member and make their term expired!
+      current = User.current_members
+      if current.size > 0
+        member = current.last
+        most_recent_payment = member.most_recent_membership_payment
+        most_recent_payment.update(expire_date: Date.current - 3)
+        MemberMailer.membership_lapsed(member)
+      else
+        # Uh oh.  you have NO current members.  this will throw an error but not important enough to spend development time on.
+      end
+    end
+
+    #
+  end
+
 end
