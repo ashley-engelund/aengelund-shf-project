@@ -31,4 +31,14 @@ class MemberMailer < ApplicationMailer
       mail to: @recipient_email,  subject: t('mailers.member_mailer.h_branding_fee_past_due.subject')
   end
 
+
+  def app_no_uploaded_files(recipient)
+
+    set_mail_info __method__, recipient
+    @member  = recipient
+    mail to:      @recipient_email,
+         subject: t('mailers.member_mailer.app_no_uploaded_files.subject')
+
+  end
+
 end
