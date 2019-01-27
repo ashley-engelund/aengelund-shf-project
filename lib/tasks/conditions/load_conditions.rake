@@ -1,9 +1,11 @@
 namespace :shf do
   desc 'load conditions to DB'
-  task :load_conditions => [:environment] do
+  task load_conditions: [:environment] do
 
     # Start from scratch
     Condition.delete_all
+
+    lapsed_expired_days = [60, 30, 14, 9, 2]
 
     Condition.create(class_name: 'MembershipExpireAlert',
                      timing: :before,
@@ -11,7 +13,11 @@ namespace :shf do
 
     Condition.create(class_name: 'HBrandingFeePastDueAlert',
                      timing: :after,
-                     config: { days: [60, 30, 14, 9, 2] })
+                     config: { days: lapsed_expired_days })
+
+    Condition.create(class_name: 'MembershipLapsedAlert',
+                     timing: :after,
+                     config: { days: lapsed_expired_days })
 
 
     # days_to_keep - specifies number of (daily) backups to retain on production server
