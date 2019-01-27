@@ -20,8 +20,9 @@ RSpec.describe ShfAppNoUploadedFilesAlert do
 
   describe '.send_alert_this_day?(config, user)' do
 
-    APP_STATE_STILL_NEEDING_UPLOADS = [:new, :under_review, :waiting_for_applicant]
-    OTHER_STATES = ShfApplication.all_states - APP_STATE_STILL_NEEDING_UPLOADS
+    APP_STATE_STILL_NEEDING_UPLOADS = ShfAppNoUploadedFilesAlert::APP_STATES_CHECKED
+
+    OTHER_STATES = ShfApplication.all_states.map(&:to_s) - APP_STATE_STILL_NEEDING_UPLOADS
 
     it 'false if no application' do
       expect(described_class.instance.send_alert_this_day?(timing, config, user)).to be_falsey
@@ -29,7 +30,7 @@ RSpec.describe ShfAppNoUploadedFilesAlert do
 
 
     describe "application state not one of #{APP_STATE_STILL_NEEDING_UPLOADS}" do
-      APP_STATE_STILL_NEEDING_UPLOADS.each do | app_state |
+      OTHER_STATES.each do | app_state |
 
         let(:applicant) do
           u = create(:user_with_membership_app)
@@ -82,7 +83,7 @@ RSpec.describe ShfAppNoUploadedFilesAlert do
           alert_days = [ dec1, dec7 ]
           alert_days.each do | alert_date |
             Timecop.freeze(alert_date) do
-              expect(described_class.instance.send_alert_this_day?(timing, config, applicant)).to be_falsey
+              expect(described_class.instance.send_alert_this_day?(timing, config, applicant)).to be_truthy
             end
 
           end
