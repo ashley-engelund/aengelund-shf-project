@@ -14,6 +14,12 @@ namespace :shf do
                      config: { days: [60, 30, 14, 9, 2] })
 
 
+    Condition.create(class_name: 'ShfAppNoUploadedFilesAlert',
+                     timing: :after,
+                     config: { days: [60, 30, 14, 9, 2] })
+
+
+
     # days_to_keep - specifies number of (daily) backups to retain on production server
     # backup_directory - where daily backups are retained on production server;
     #                    omit or set to nil to use default directory
