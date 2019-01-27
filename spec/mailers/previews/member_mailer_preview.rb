@@ -69,6 +69,15 @@ class MemberMailerPreview < ActionMailer::Preview
   end
 
 
+  def app_no_uploaded_files
+    new_email = "user-#{Time.now.to_i}@example.com"
+    new_approved_user = FactoryBot.create(:user_with_membership_app, email: new_email)
+
+    MemberMailer.app_no_uploaded_files new_approved_user
+  end
+
+
+  # ================================
   # ================================
 
   private
@@ -77,5 +86,7 @@ class MemberMailerPreview < ActionMailer::Preview
   def unique_email
     "user-#{Time.now.to_i}@example.com"
   end
+
+
 
 end
