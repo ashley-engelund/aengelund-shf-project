@@ -106,6 +106,11 @@ Then "I should{negate} see {capture_string} link" do |negate, link_label|
 end
 
 
+Then(/^I should( not)? see the (?:checkbox|radio button) with id "([^"]*)" checked$/) do |negate, checkbox_id|
+  expect(page).send (negate ? :not_to : :to),  have_checked_field(checkbox_id)
+end
+
+
 Then(/^I should( not)? see the (?:checkbox|radio button) with id "([^"]*)" unchecked$/) do |negate, checkbox_id|
   expect(page).send (negate ? :not_to : :to),  have_unchecked_field(checkbox_id)
 end
