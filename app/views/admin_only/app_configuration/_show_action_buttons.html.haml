@@ -1,0 +1,4 @@
+.row
+  .col-sm-12.wpcf7
+    = link_to "#{t('edit')} #{t('admin_only.app_configuration.show.title')}", admin_only_edit_app_configuration_path(@app_configuration), class:'btn btn-warning'
+    = link_to "#{t('back')}", :back, class: 'btn btn-default'
