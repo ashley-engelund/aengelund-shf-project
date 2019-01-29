@@ -10,7 +10,6 @@ Feature: Admin enables/disables the emails sent when a new application is receiv
     Given the following users exists
       | email                 | admin | member |
       | new_user1@example.com |       |        |
-      | new_user2@example.com |       |        |
       | admin@shf.se          | true  |        |
 
     And the following business categories exist
