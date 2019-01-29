@@ -64,6 +64,10 @@ module PathHelpers
         path = test_exception_notifications_path
       when 'admin dashboard'
         path = admin_only_dashboard_path
+    when 'admin edit app configuration'
+      path = admin_only_edit_app_configuration_path
+      when 'admin show app configuration'
+        path = admin_only_app_configuration_path
     end
 
     expect(path).not_to be_empty, "A step was called with path= '#{pagename}', but that path is not defined in #{__method__} \n    (which is in #{__FILE__}"
@@ -107,7 +111,8 @@ end
 
 
 Then(/^I should( not)? see the (?:checkbox|radio button) with id "([^"]*)" checked$/) do |negate, checkbox_id|
-  expect(page).send (negate ? :not_to : :to),  have_checked_field(checkbox_id)
+#  expect(page).send (negate ? :not_to : :to),  have_checked_field(checkbox_id)
+ expect(page).to have_selector(:id, checkbox_id), "got: #{page.html}"
 end
 
 
