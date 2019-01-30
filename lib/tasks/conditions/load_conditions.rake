@@ -1,6 +1,6 @@
 namespace :shf do
   desc 'load conditions to DB'
-  task :load_conditions => [:environment] do
+  task load_conditions: [:environment] do
 
     # Start from scratch
     Condition.delete_all
