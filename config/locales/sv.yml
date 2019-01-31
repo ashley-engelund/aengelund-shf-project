@@ -1031,7 +1031,7 @@ sv:
       app_no_uploaded_files:
         subject: Din ansökan till Sveriges Hundföretagare saknar underlag
         message_text: "Detta är en automatisk påminnelse från systemet som meddelar att din ansökan saknar uppladdade filer. Filerna behövs för att vi ska kunna handlägga din ansökan."
-        will_see_app_button: "After you log in, you will see a button that will take you to your application where you can upload your files."
+        will_see_app_button: "När du har loggat in visas en knapp som tar dig till din ansökan, och sedan kan du ladda upp dina filer."
         thanks:  "Tack för att du vill vara medlem."
         error_sending: *shf_email_error
 
