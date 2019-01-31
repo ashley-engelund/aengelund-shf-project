@@ -1042,7 +1042,8 @@ en:
 
       app_no_uploaded_files:
         subject: Please upload qualification files to your Sveriges Hundföretagare application
-        message_text: "This is a reminder that you need up load files for your SHF application....  why they're needed..."
+        message_text: "This is a reminder that you need up load files for your SHF application so that it can be reviewed."
+        will_see_app_button: "After you log in, you will see a button that will take you to your application where you can upload your files."
         thanks:  "Thank you for wanting to be a member and contributing to a Sweden with an ethical dog industry."
         error_sending: *shf_email_error
 
