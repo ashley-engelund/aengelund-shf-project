@@ -70,11 +70,26 @@ class MemberMailerPreview < ActionMailer::Preview
 
 
   def app_no_uploaded_files
-    new_email = "user-#{Time.now.to_i}@example.com"
-    new_approved_user = FactoryBot.create(:user_with_membership_app, email: new_email)
 
-    MemberMailer.app_no_uploaded_files new_approved_user
+    # create a new user with a brand new application (that has no uploaded files)
+    if @new_approved_user.nil?
+      new_email = "sussh-#{Time.now.to_i}@example.com"
+
+      @new_approved_user = User.create(first_name:   'Suss',
+                                       last_name:    'Hundapor',
+                                       password:     'whatever',
+                                       email:        new_email,
+                                       member_photo: nil,
+                                       )
+      ShfApplication.new(user: @new_approved_user)
+    end
+
+    MemberMailer.app_no_uploaded_files @new_approved_user
+
+  ensure
+    User.delete(@new_approved_user.id) unless @new_approved_user.nil?
   end
+end
 
 
   # ================================
