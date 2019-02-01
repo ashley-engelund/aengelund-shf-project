@@ -1056,12 +1056,12 @@ sv:
           company_link_login_msg: " (du kan behöva logga in först innan du ser knappen för att betala)."
 
       membership_lapsed:
-        subject: "Your SHF membership has expired. Don't give up the benefits of membership!"
+        subject: "Ditt medlemskap har löpt ut"
         greeting: *email_greeting
         message_text:
-          expire_alert_html: "Your SHF membership term ended on %{expire_date}.  (list benefits.  ...company is no longer visible to the public.)"
-          renew_membership: You can renew your membership and keep taking advantage of SHF member benefits by logging in and paying your membership fee.
-          account_login_html: "%{account_link} (you may need to login first before the link works)."
+          expire_alert_html: "Ditt medlemsskap gick ut %{expire_date}."
+          renew_membership: Du kan förnya ditt medlemsskap och fortsätta dra nytta av medlemsfördelarna genom att logga in och betala.
+          account_login_html: "Du betalar på ditt konto: %{account_link} (du behöver vara inloggad för att länken ska fungera)."
 
 
   devise:
