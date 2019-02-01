@@ -34,6 +34,8 @@ end
 RSpec.describe User, type: :model do
 
   let(:user) { create(:user) }
+  let(:user_with_member_photo) { create(:user, :with_member_photo) }
+
   let(:user_with_app) { create(:user_with_membership_app) }
   let(:member) { create(:member_with_membership_app) }
 
@@ -147,18 +149,19 @@ RSpec.describe User, type: :model do
       let(:xyz_file) { File.new(file_root + 'member_with_dog.xyz') }
 
       it 'rejects if content not jpeg or png' do
-        user.member_photo = txt_file
-        expect(user).not_to be_valid
 
-        user.member_photo = gif_file
-        expect(user).not_to be_valid
+        user_with_member_photo.member_photo = txt_file
+        expect(user_with_member_photo).not_to be_valid
 
-        user.member_photo = ico_file
-        expect(user).not_to be_valid
+        user_with_member_photo.member_photo = gif_file
+        expect(user_with_member_photo).not_to be_valid
+
+        user_with_member_photo.member_photo = ico_file
+        expect(user_with_member_photo).not_to be_valid
       end
       it 'rejects if content OK but file type wrong' do
-        user.member_photo = xyz_file
-        expect(user).not_to be_valid
+        user_with_member_photo.member_photo = xyz_file
+        expect(user_with_member_photo).not_to be_valid
       end
     end
   end
@@ -193,13 +196,13 @@ RSpec.describe User, type: :model do
   describe 'destroy or nullify associated records when user is destroyed' do
 
     it 'member_photo' do
-      expect(user.member_photo).not_to be_nil
-      expect(user.member_photo.exists?).to be true
+      expect(user_with_member_photo.member_photo).not_to be_nil
+      expect(user_with_member_photo.member_photo.exists?).to be true
 
-      user.destroy
+      user_with_member_photo.destroy
 
-      expect(user.destroyed?).to be true
-      expect(user.member_photo.exists?).to be false
+      expect(user_with_member_photo.destroyed?).to be true
+      expect(user_with_member_photo.member_photo.exists?).to be false
     end
 
     context 'membership application' do
