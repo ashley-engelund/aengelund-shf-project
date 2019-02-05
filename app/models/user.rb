@@ -63,6 +63,8 @@ class User < ApplicationRecord
                                                               .references(:payments) }
 
 
+  scope :current_members, -> { User.joins(:payments).where("payments.status = '#{Payment::SUCCESSFUL}' AND payments.payment_type = ? AND  payments.expire_date > ?", Payment::PAYMENT_TYPE_MEMBER, Date.current).joins(:shf_application).where(shf_applications: {state: 'accepted'}) }
+
 
   def most_recent_membership_payment
     most_recent_payment(Payment::PAYMENT_TYPE_MEMBER)
