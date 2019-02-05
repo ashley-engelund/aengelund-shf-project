@@ -48,8 +48,8 @@ class MemberMailerPreview < ActionMailer::Preview
         most_recent_payment.update(expire_date: Date.current - 3)
         member
       else
-        # Uh oh.  you have NO current members in the db.
-        #  this will throw an error but not important enough to spend development time on.
+        # Uh oh.  you have NO current members in the db.  You need to put some there so you can preview emails.
+        #  This will throw an error but it's not important enough to spend development time on.
       end
     end
 
