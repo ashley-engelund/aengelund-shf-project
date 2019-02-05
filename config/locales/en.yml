@@ -1041,7 +1041,7 @@ en:
         greeting: *email_greeting
         message_text:
           expire_alert_html: Please note that your current membership period will
-                        expire on <span class="date_warning">%{expire_date}</span>.
+                        expire on <span class="date-warning">%{expire_date}</span>.
           extend_membership: You can extend your membership for another
                              12 months by paying the membership fee.
 
@@ -1057,7 +1057,7 @@ en:
         subject: "Your SHF membership has expired"
         greeting: *email_greeting
         message_text:
-          expire_alert_html: "Your SHF membership term ended on <span class='date_warning'> %{expire_date}.</span>"
+          expire_alert_html: "Your SHF membership term ended on <span class='date-warning'> %{expire_date}.</span>"
           renew_membership: You can renew your membership and keep taking advantage of SHF member benefits by logging in and paying your membership fee.
 
 

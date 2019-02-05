@@ -1044,7 +1044,7 @@ sv:
         greeting: *email_greeting
         message_text:
           expire_alert_html: Observera att din nuvarande medlemsperiod löper ut den
-                        <span class="date_warning">%{expire_date}</span>.
+                        <span class="date-warning">%{expire_date}</span>.
           extend_membership: Du kan förlänga ditt medlemskap i ytterligare
                                   12 månader genom att betala medlemsavgiften.
 
@@ -1060,7 +1060,7 @@ sv:
         subject: "Ditt medlemskap har löpt ut"
         greeting: *email_greeting
         message_text:
-          expire_alert_html: "Ditt medlemsskap gick ut <span class='date_warning'> %{expire_date}.</span>"
+          expire_alert_html: "Ditt medlemsskap gick ut <span class='date-warning'> %{expire_date}.</span>"
           renew_membership: Du kan förnya ditt medlemsskap och fortsätta dra nytta av medlemsfördelarna genom att logga in och betala.
 
 
