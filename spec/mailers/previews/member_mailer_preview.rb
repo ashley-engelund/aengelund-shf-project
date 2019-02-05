@@ -33,7 +33,7 @@ class MemberMailerPreview < ActionMailer::Preview
 
     # create a new user with a brand new application (that has no uploaded files)
     if @new_approved_user.nil?
-      new_email = "sussh-#{Time.now.to_i}@example.com"
+      new_email = "sussh-#{DateTime.now.strftime('%Q')}@example.com"
 
       @new_approved_user = User.create(first_name:   'Suss',
                                        last_name:    'Hundapor',
