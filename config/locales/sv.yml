@@ -1028,6 +1028,8 @@ sv:
 
 
     member_mailer:
+      member_account_link: "%{account_link} (Du kan behöva logga in först innan länken fungerar.)"
+
       membership_granted:
         subject: &subject_welcome "Välkommen som medlem i Sveriges Hundföretagare"
         greeting: *email_greeting
@@ -1042,10 +1044,9 @@ sv:
         greeting: *email_greeting
         message_text:
           expire_alert_html: Observera att din nuvarande medlemsperiod löper ut den
-                        <span style="background-color:yellow;">%{expire_date}</span>.
+                        <span class="date_warning">%{expire_date}</span>.
           extend_membership: Du kan förlänga ditt medlemskap i ytterligare
                                   12 månader genom att betala medlemsavgiften.
-          account_login_html: "%{account_link} (du kan behöva logga in först innan länken fungerar)."
 
       h_branding_fee_past_due:
         subject: Ditt företags H-märkespremie är obetald.
@@ -1059,9 +1060,8 @@ sv:
         subject: "Ditt medlemskap har löpt ut"
         greeting: *email_greeting
         message_text:
-          expire_alert_html: "Ditt medlemsskap gick ut %{expire_date}."
+          expire_alert_html: "Ditt medlemsskap gick ut <span class='date_warning'> %{expire_date}.</span>"
           renew_membership: Du kan förnya ditt medlemsskap och fortsätta dra nytta av medlemsfördelarna genom att logga in och betala.
-          account_login_html: "Du betalar på ditt konto: %{account_link} (du behöver vara inloggad för att länken ska fungera)."
 
 
   devise:
