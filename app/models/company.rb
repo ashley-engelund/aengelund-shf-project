@@ -44,73 +44,6 @@ class Company < ApplicationRecord
   alias_method :categories, :business_categories
   delegate :visible, to: :addresses, prefix: true
 
-  def approved_applications_from_members
-    # Returns ActiveRecord Relation
-    shf_applications.accepted.includes(:user)
-      .order('users.last_name').where('users.member = ?', true)
-  end
-
-  def validate_key_and_fetch_dinkurs_events(on_update: true)
-    return true if on_update and !will_save_change_to_attribute?('dinkurs_company_id')
-    fetch_dinkurs_events
-    true
-  rescue Dinkurs::Errors::InvalidKey
-    errors.add(:dinkurs_company_id, :invalid)
-    return false
-  end
-
-  def fetch_dinkurs_events
-    events.clear
-    return if dinkurs_company_id.blank?
-    Dinkurs::EventsCreator.new(self, events_start_date).call
-  end
-
-  def events_start_date
-    # Fetch events that start on or after this date
-    1.day.ago.to_date
-  end
-
-  def any_visible_addresses?
-    addresses_visible.any?
-  end
-
-  def categories_names
-    categories.select(:name).distinct.order(:name).pluck(:name)
-  end
-
-  def addresses_region_names
-    addresses.joins(:region).select('regions.name').distinct.pluck('regions.name')
-  end
-
-  def kommuns_names
-    addresses.joins(:kommun).select('kommuns.name').distinct.pluck('kommuns.name')
-  end
-
-  def most_recent_branding_payment
-    most_recent_payment(Payment::PAYMENT_TYPE_BRANDING)
-  end
-
-  def branding_expire_date
-    payment_expire_date(Payment::PAYMENT_TYPE_BRANDING)
-  end
-
-  def branding_payment_notes
-    payment_notes(Payment::PAYMENT_TYPE_BRANDING)
-  end
-
-  # @return [Boolean] - true only if there is a branding_expire_date and it is in the future (from today)
-  def branding_license?
-    branding_expire_date&.future? == true # == true prevents this from ever returning nil
-  end
-
-
-  # This is used to calculate when an H-Branding fee is due if there has not been any H-Branding fee paid yet
-  # TODO: this should go in a class responsible for knowing how to calculate when H-Branding fees are due (perhaps a subclass of PaymentUtility named something like CompanyPaymentsDueCalculator )
-  #
-  # @return nil if there are no current members else the earliest membership_start_date of all current members
-  def earliest_current_member_fee_paid
-    current_members.empty? ? nil : current_members.map(&:membership_start_date).sort.first
-  end
 
 
   def self.next_branding_payment_dates(company_id)
@@ -128,10 +61,12 @@ class Company < ApplicationRecord
               id: Address.lacking_region.pluck(:addressable_id))
   end
 
+
   def self.branding_licensed
     # All companies (distinct) with at least one unexpired branding payment
     joins(:payments).merge(Payment.branding_fee.completed.unexpired).distinct
   end
+
 
   def self.address_visible
     # Return ActiveRecord::Relation object for all companies (distinct) with at
@@ -141,24 +76,108 @@ class Company < ApplicationRecord
 
   def self.with_members
     joins(:shf_applications)
-      .where('shf_applications.state = ?', :accepted)
-      .joins(:users).where('users.member = ?', true).distinct
+        .where('shf_applications.state = ?', :accepted)
+        .joins(:users).where('users.member = ?', true).distinct
   end
+
 
   def self.searchable
     # Criteria limiting visibility of companies to non-admin users
     complete.with_members.branding_licensed
   end
 
+
   # all companies at these addresses (array of Address)
   def self.at_addresses(addresses)
     joins(:addresses)
-      .where(id: addresses.map(&:addressable_id) )
+        .where(id: addresses.map(&:addressable_id) )
   end
+
 
   def self.with_dinkurs_id
     where.not(dinkurs_company_id: [nil, '']).order(:id)
   end
+
+
+  def approved_applications_from_members
+    # Returns ActiveRecord Relation
+    shf_applications.accepted.includes(:user)
+      .order('users.last_name').where('users.member = ?', true)
+  end
+
+
+  def validate_key_and_fetch_dinkurs_events(on_update: true)
+    return true if on_update and !will_save_change_to_attribute?('dinkurs_company_id')
+    fetch_dinkurs_events
+    true
+  rescue Dinkurs::Errors::InvalidKey
+    errors.add(:dinkurs_company_id, :invalid)
+    return false
+  end
+
+
+  def fetch_dinkurs_events
+    events.clear
+    return if dinkurs_company_id.blank?
+    Dinkurs::EventsCreator.new(self, events_start_date).call
+  end
+
+
+  def events_start_date
+    # Fetch events that start on or after this date
+    1.day.ago.to_date
+  end
+
+
+  def any_visible_addresses?
+    addresses_visible.any?
+  end
+
+
+  def categories_names
+    categories.select(:name).distinct.order(:name).pluck(:name)
+  end
+
+
+  def addresses_region_names
+    addresses.joins(:region).select('regions.name').distinct.pluck('regions.name')
+  end
+
+
+  def kommuns_names
+    addresses.joins(:kommun).select('kommuns.name').distinct.pluck('kommuns.name')
+  end
+
+
+  def most_recent_branding_payment
+    most_recent_payment(Payment::PAYMENT_TYPE_BRANDING)
+  end
+
+
+  def branding_expire_date
+    payment_expire_date(Payment::PAYMENT_TYPE_BRANDING)
+  end
+
+
+  def branding_payment_notes
+    payment_notes(Payment::PAYMENT_TYPE_BRANDING)
+  end
+
+
+  # @return [Boolean] - true only if there is a branding_expire_date and it is in the future (from today)
+  def branding_license?
+    branding_expire_date&.future? == true # == true prevents this from ever returning nil
+  end
+
+
+  # This is used to calculate when an H-Branding fee is due if there has not been any H-Branding fee paid yet
+  # TODO: this should go in a class responsible for knowing how to calculate when H-Branding fees are due (perhaps a subclass of PaymentUtility named something like CompanyPaymentsDueCalculator )
+  #
+  # @return nil if there are no current members else the earliest membership_start_date of all current members
+  def earliest_current_member_fee_paid
+    current_members.empty? ? nil : current_members.map(&:membership_start_date).sort.first
+  end
+
 
   def destroy_checks
 
@@ -204,6 +223,7 @@ class Company < ApplicationRecord
       AddressExporter.se_mailing_csv_str( main_address )
   end
 
+
   def get_short_h_brand_url(url)
     found = self.short_h_brand_url
     return found if found
@@ -217,6 +237,9 @@ class Company < ApplicationRecord
   end
 
 
+  # ========================================================================
+
+
   private
 
 
@@ -226,6 +249,7 @@ class Company < ApplicationRecord
   def sanitize_website
     self.website = InputSanitizer.sanitize_url(website)
   end
+
 
   def sanitize_description
     self.description = InputSanitizer.sanitize_html(description)
