@@ -979,7 +979,7 @@ en:
       companies_incomplete: "companies with information not yet complete"
 
   mailers:
-    login_here: "Click here to go to the SHF login page."
+    login_here: "Click here to go to the login page."
 
     application_mailer:
       greeting: &email_greeting "Hello %{greeting_name}"

@@ -983,7 +983,7 @@ sv:
       companies_incomplete: "companies with information not yet complete"
 
   mailers:
-    login_here: "Klicka här för att gå till SHF inloggningssidan."
+    login_here: "Klicka här för att gå till inloggningssidan."
 
     application_mailer:
       greeting: &email_greeting "Hej %{greeting_name}"
