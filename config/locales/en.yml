@@ -990,6 +990,7 @@ en:
       companies_incomplete: "companies with information not yet complete"
 
   mailers:
+    login_here: "Click here to go to the login page."
     may_need_to_login_first: "You may need to log in first.  Here's the login page:"
 
     login_here: "Click here to go to the SHF login page."
