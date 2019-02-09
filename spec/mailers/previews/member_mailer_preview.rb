@@ -69,4 +69,15 @@ class MemberMailerPreview < ActionMailer::Preview
 
 
 
+
+
+  def company_info_incomplete
+
+    approved_app = ShfApplication.where(state: :accepted).first
+    approved_user = approved_app.user
+    incomplete_co = approved_app.companies.first
+    incomplete_co.update(name: '')
+
+    MemberMailer.company_info_incomplete(incomplete_co, approved_user)
+  end
 end

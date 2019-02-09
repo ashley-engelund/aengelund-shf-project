@@ -208,6 +208,70 @@ RSpec.describe MemberMailer, type: :mailer do
   end
 
 
+  describe '#company_info_incomplete' do
+
+    CO_INFO_INCOMPLETE_SCOPE = 'mailers.member_mailer.co_info_incomplete'
+
+    let(:jan1) { Date.new(2019, 1, 1) }
+
+    let(:company2) do
+      co = create(:company)
+      co.name = ''
+      co
+    end
+
+    let(:member1_exp_jan1) do
+      app = create(:shf_application, :accepted, company_number: company2.company_number)
+      m   = app.user
+      m.email = 'only_member@example.com'
+      m.payments << create(:payment, :successful,
+                           expire_date: jan1)
+      m.save!
+      m
+    end
+
+    let(:display_for_blank_name) do
+      I18n.t('mailers.member_mailer.co_info_incomplete.message_text.company_needs_name', co_number: company2.company_number)
+    end
+
+
+    let(:email_sent) do
+      # create the company and members
+      member1_exp_jan1
+      MemberMailer.company_info_incomplete(company2, member1_exp_jan1)
+    end
+
+    it_behaves_like 'a successfully created email',
+                    I18n.t('subject', scope: CO_INFO_INCOMPLETE_SCOPE),
+                    'only_member@example.com',
+                    'Firstname Lastname' do
+      let(:email_created) { email_sent }
+    end
+
+
+    it 'tells you the info needs to be completed so visitors can see the company' do
+      expect(email_sent).to have_body_text(I18n.t('message_text.complete_the_info',
+                                                  scope: CO_INFO_INCOMPLETE_SCOPE,
+                                                  co_name: display_for_blank_name))
+    end
+
+
+    it 'provides a link to the company and a reminder that you might have to log in' do
+      expect(email_sent).to have_body_text(I18n.t('message_text.company_link_login_msg',
+                                                  scope: CO_INFO_INCOMPLETE_SCOPE,
+                                                  company_link: "<a href=\"#{company_url(company2)}\">#{company2.name}</a>") )
+    end
+
+
+    it_behaves_like 'from address is correct' do
+      let(:mail_address) { email_sent.header['from'] }
+    end
+
+    it_behaves_like 'reply-to address is correct' do
+      let(:email_created) { email_sent }
+    end
+  end
+
   it 'has a previewer' do
     expect(MemberMailerPreview).to be
   end
