@@ -159,11 +159,6 @@ class Company < ApplicationRecord
   end
 
 
-  def branding_start_date
-    payment_start_date(Payment::PAYMENT_TYPE_BRANDING)
-  end
-
-
   def branding_expire_date
     payment_expire_date(Payment::PAYMENT_TYPE_BRANDING)
   end
