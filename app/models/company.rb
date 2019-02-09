@@ -99,6 +99,11 @@ class Company < ApplicationRecord
   end
 
 
+  def complete?
+    RequirementsForCoInfoComplete.requirements_met? company: self
+  end
+
+
   def approved_applications_from_members
     # Returns ActiveRecord Relation
     shf_applications.accepted.includes(:user)
@@ -151,6 +156,11 @@ class Company < ApplicationRecord
 
   def most_recent_branding_payment
     most_recent_payment(Payment::PAYMENT_TYPE_BRANDING)
+  end
+
+
+  def branding_start_date
+    payment_start_date(Payment::PAYMENT_TYPE_BRANDING)
   end
 
 
