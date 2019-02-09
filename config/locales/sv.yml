@@ -4,6 +4,12 @@ sv:
   title: 'Medlemmar i Sveriges Hundföretagare'
 
   SHF_name: &SHF_name Sveriges Hundföretagare
+  meta:
+    default:
+      title: "H-märkt hundföretag, hundinstruktör"
+      description: "Etiska svenska hundföretag som har tjänat H-mark. Hitta en hundinstruktör, Hundbolaget, hundens entreprenör."
+      keywords: 'hund, hundägare, hundinstruktör, hundens entreprenör, Hundbolaget, Sveriges Hundföretagare, svenskt hundföretag, etisk, H-markt, ansvarig, tjänat H-marknaden'
+
 
   home: Hem
   about: Om
@@ -591,6 +597,11 @@ sv:
 
     index:
       title:  Hitta H-märkt företag
+      meta:
+        title: "Hitta H-märkt hundföretag, hundinstruktör"
+        description: "Hitta ett etiskt svenskt hundföretag som har tjänat H-märkt. Hitta en hundinstruktör, Hundbolaget, hundens entreprenör."
+        keywords: 'hund, hundägare, hundinstruktör, hundens entreprenör, Hundbolaget, Sveriges Hundföretagare, svenskt hundföretag, etisk, H-markt, ansvarig, tjänat H-marknaden'
+        image_src: "Sveriges_hundforetagare_banner_sajt.jpg"
       admin_title: Redigera medlemsföretag
       category: *business_category
       name: *name
