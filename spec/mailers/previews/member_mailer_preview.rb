@@ -57,20 +57,6 @@ class MemberMailerPreview < ActionMailer::Preview
   end
 
 
-  # ================================
-  # ================================
-
-  private
-
-  # create a unique email address based on the Time right now
-  def unique_email
-    "user-#{Time.now.to_i}@example.com"
-  end
-
-
-
-
-
   def company_info_incomplete
 
     approved_app = ShfApplication.where(state: :accepted).first
@@ -80,4 +66,15 @@ class MemberMailerPreview < ActionMailer::Preview
 
     MemberMailer.company_info_incomplete(incomplete_co, approved_user)
   end
+
+
+  # ================================
+
+  private
+
+  # create a unique email address based on the Time right now
+  def unique_email
+    "user-#{Time.now.to_i}@example.com"
+  end
+
 end
