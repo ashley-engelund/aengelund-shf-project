@@ -1,5 +1,5 @@
-# This emails all current members in a company if the h-branding fee is past due.
-#
+# This emails all current members in a company if the information for
+# the company is 'incomplete.'
 #
 class CompanyInfoIncompleteAlert < CompanyEmailAlert
 
