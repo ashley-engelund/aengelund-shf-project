@@ -30,7 +30,7 @@ class RequirementsForCoInfoComplete < AbstractRequirements
   def self.requirements_met?(args)
     company = args[:company]
 
-    !( company.name.blank? || company.addresses.map(&:region).include?(nil) )
+    !( company.name.blank? || company.missing_region? )
   end
 
 end # RequirementsForCoInfoComplete
