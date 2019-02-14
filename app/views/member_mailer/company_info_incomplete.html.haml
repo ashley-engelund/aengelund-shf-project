@@ -8,16 +8,21 @@
 = render layout: 'layouts/mail_from_membership' do
 
   %p
-    = t('message_text.complete_the_info', scope: message_scope, co_name: co_name_display)
+    = t('message_text.complete_the_info', scope: message_scope, co_identifier: co_name_display)
 
-  %p <em>should we list the things that are incomplete?  I suggest we do.</em>
-  %p <em>The only 2 things that could be wrong are: (1) company name is blank and (2) an address has a nil Region</em>
+  - missing_info = []
+  - missing_info << t('message_text.co_name_missing', scope: message_scope) if @company.name.blank?
+  - missing_info << t('message_text.co_region_missing', scope: message_scope) if @company.missing_region?
+
+  %p= t('message_text.what_is_missing', scope: message_scope)
+  %ul.missing_info
+    - missing_info.each do | missing |
+      %li.missing= missing
+
+  %p= t('message_text.please_complete', scope: message_scope)
 
   %p
     = t('message_text.company_link_login_msg', scope: message_scope)
     = link_to(co_name_display,  company_url(@company), target: '_blank')
 
-  %p
-    = t('mailers.may_need_to_login_first') + ' '
-    = link_to(t('login_page'), new_user_session_url, target: '_blank')
-
+  %p= render 'may_need_to_login'

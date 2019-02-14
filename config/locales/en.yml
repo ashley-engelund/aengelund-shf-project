@@ -1068,8 +1068,12 @@ en:
         subject: Please complete the company information
         greeting: *email_greeting
         message_text:
-          complete_the_info: "You need to complete the info for %{co_name}. If you don't it won't show up on the map or in google searches"
-          company_needs_name: "Org nummer %{co_number}"
+          complete_the_info: "You need to complete the info for %{co_identifier}. If you don't it won't show up on the map or in Google searches"
+          company_needs_name: "company number %{co_number}"
+          what_is_missing: "Here is what's missing:"
+          co_name_missing: "there is no name for the company"
+          co_region_missing: "the region for the company is not provided"
+          please_complete: "Please add the above information so the company information is complete."
           company_link_login_msg: "Here's the link to the company so you can edit it: "
 
 

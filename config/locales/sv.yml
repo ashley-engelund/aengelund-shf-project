@@ -1063,8 +1063,12 @@ sv:
         subject: Var god färdigställ din företagssida
         greeting: *email_greeting
         message_text:
-          complete_the_info: "Du behöver färdigställa informationen om %{co_name}. Om du inte gör det syns du inte i sökningar. Saknar du adress syns du heller inte på kartan."
+          complete_the_info: "Du behöver färdigställa informationen om %{co_identifier}. Om du inte gör det syns du inte i sökningar. Saknar du adress syns du heller inte på kartan."
           company_needs_name: "Org nummer %{co_number}"
+          what_is_missing: "Här är vad som saknas:"
+          co_name_missing: "det finns inget namn för företaget"
+          co_region_missing: "regionen för företaget tillhandahålls inte"
+          please_complete: "Vänligen lägg till ovanstående information så att företagsinformationen är klar."
           company_link_login_msg: "Här är länken där du kan redigera ditt företag: "
 
       membership_lapsed:
