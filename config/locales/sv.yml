@@ -1060,12 +1060,12 @@ sv:
           company_link_login_msg: &co_link_login " (du kan behöva logga in först innan du ser knappen för att betala)."
 
       co_info_incomplete:
-        subject: Please complete the company information
+        subject: Var god färdigställ din företagssida
         greeting: *email_greeting
         message_text:
-          complete_the_info: "You need to complete the info for %{co_name}. If you don't it won't show up on the map or in google searches"
+          complete_the_info: "Du behöver färdigställa informationen om %{co_name}. Om du inte gör det syns du inte i sökningar. Saknar du adress syns du heller inte på kartan."
           company_needs_name: "Org nummer %{co_number}"
-          company_link_login_msg: "Here's the link to the company so you can edit it: "
+          company_link_login_msg: "Här är länken där du kan redigera ditt företag: "
 
       membership_lapsed:
         subject: "Ditt medlemskap har löpt ut"
