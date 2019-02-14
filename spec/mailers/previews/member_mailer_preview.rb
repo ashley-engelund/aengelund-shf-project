@@ -63,6 +63,7 @@ class MemberMailerPreview < ActionMailer::Preview
     approved_user = approved_app.user
     incomplete_co = approved_app.companies.first
     incomplete_co.update(name: '')
+    incomplete_co.addresses.first.update(region: nil)
 
     MemberMailer.company_info_incomplete(incomplete_co, approved_user)
   end
