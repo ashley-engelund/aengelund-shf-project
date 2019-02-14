@@ -104,6 +104,11 @@ class Company < ApplicationRecord
   end
 
 
+  def missing_region?
+    addresses.map(&:region).include?(nil)
+  end
+
+
   def approved_applications_from_members
     # Returns ActiveRecord Relation
     shf_applications.accepted.includes(:user)
