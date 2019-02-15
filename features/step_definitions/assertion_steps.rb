@@ -340,3 +340,23 @@ end
 When "I cannot select {capture_string} in select list {capture_string}" do |option, list|
   expect(find_field(list).text.match(option)).to be_nil
 end
+
+
+Then("the page title should be {capture_string}") do | page_title |
+  expect(page).to have_title(page_title)
+end
+
+
+Then("the page head should include meta {capture_string} = {capture_string} with content {capture_string}") do | meta_tag, value, meta_content|
+  meta_xpath = "/html/head/meta[@#{meta_tag}=\"#{value}\"]/@content"
+  expect(page).to have_xpath(meta_xpath, visible: false)
+
+  tag_found = page.find(meta_xpath, visible: false)
+  # have to pass :all to .text to get text that is not visible
+  expect(tag_found.text(:all)).to eq meta_content
+end
+
+Then("the page head should include the link hreflang tag {capture_string} with href {capture_string}") do | hreflang, href |
+  hreflang_xpath = "/html/head/link[@rel='alternate'][@hreflang='#{hreflang}'][@href='#{href}']"
+  expect(page).to have_xpath(hreflang_xpath, visible: false)
+end
