@@ -13,7 +13,7 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
 
   let(:expected_base_url) { "#{MOCK_BASE_URL}#{MOCK_ASSET_PATH}/" }
 
-  let(:default_title) { 'H-märkt hundföretag, hundinstruktör' }
+  let(:default_title) { 'H-märkt hundföretag, hundinstruktör | Sveriges Hundföretagare' }
   let(:default_desc) { 'Etiska svenska hundföretag som har tjänat H-mark. Hitta en hundinstruktör, Hundbolaget, hundens entreprenör.' }
   let(:default_keywords) { 'hund, hundägare, hundinstruktör, hundens entreprenör, Hundbolaget, Sveriges Hundföretagare, svenskt hundföretag, etisk, H-markt, ansvarig, tjänat H-marknaden' }
   let(:default_image_filename) { 'Sveriges_hundforetagare_banner_sajt.jpg' }
@@ -48,7 +48,7 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
       end
 
 
-      it 'default title = H-märkt hundföretag, hundinstruktör' do
+      it 'default title = H-märkt hundföretag, hundinstruktör |  Sveriges Hundföretagare' do
         expect(@meta_tags_set['title']).to eq default_title
       end
 
@@ -146,11 +146,12 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
                                         .with(anything, anything, anything)
                                         .and_return('blorf')
       expected_result = {
-          "title"       => 'blorf',
+          "site"        => 'Sveriges Hundföretagare',
+          "title"       => 'blorf | Sveriges Hundföretagare',
           "description" => 'blorf',
           "keywords"    => 'blorf',
           "og"          => {
-              "title"       => 'blorf',
+              "title"       => 'blorf | Sveriges Hundföretagare',
               "description" => 'blorf',
               "url"         => 'http://test.host/test-path',
               "type"        => 'blorf',
@@ -188,13 +189,12 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
       end
 
       it 'title' do
-        expect(@meta_tags_set['title']).to eq PageMetaTagsSetter::META_TITLE_DEFAULT
+        expect(@meta_tags_set['title']).to eq "#{PageMetaTagsSetter::META_TITLE_DEFAULT} | #{PageMetaTagsSetter::META_SITE_NAME}"
       end
 
       it 'description' do
         expect(@meta_tags_set['description']).to eq PageMetaTagsSetter::META_DESC_DEFAULT
       end
-
       it 'type' do
         expect(@meta_tags_set['type']).to eq PageMetaTagsSetter::META_OG_DEFAULT_TYPE
       end

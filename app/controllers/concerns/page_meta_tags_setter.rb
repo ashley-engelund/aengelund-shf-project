@@ -51,7 +51,7 @@ module PageMetaTagsSetter
   # needed so we can get the asset_url of the images needed for meta tags
   include ActionView::Helpers::AssetUrlHelper
 
-
+  META_SITE_NAME = I18n.t('SHF_name')
   META_TITLE_DEFAULT    = I18n.t('meta.default.title')
   META_DESC_DEFAULT     = I18n.t('meta.default.description')
   META_KEYWORDS_DEFAULT = I18n.t('meta.default.keywords')
@@ -106,14 +106,17 @@ module PageMetaTagsSetter
   # be put into meta tags (e.g. og.url)
   def set_meta_tags_for_url_path(base_url, request_fullpath)
 
-    page_desc  = t(LOCALE_DESCRIPTION_KEY, default: META_DESC_DEFAULT)
     page_title = t(LOCALE_TITLE_KEY, default: META_TITLE_DEFAULT)
+    page_desc  = t(LOCALE_DESCRIPTION_KEY, default: META_DESC_DEFAULT)
 
-    set_meta_tags title:       page_title,
+    full_title = meta_full_title(page_title)
+
+    set_meta_tags site: META_SITE_NAME,
+                  title:      full_title,
                   description: page_desc,
                   keywords:    create_keywords
 
-    set_og_meta_tags(title: page_title,
+    set_og_meta_tags(title: full_title,
                      description: page_desc,
                      type: t(LOCALE_TYPE_KEY, default: META_OG_DEFAULT_TYPE),
                      base_url: base_url,
@@ -124,7 +127,8 @@ module PageMetaTagsSetter
   end
 
 
-  def set_og_meta_tags(title: META_TITLE_DEFAULT, description: META_DESC_DEFAULT,
+  def set_og_meta_tags(title: meta_default_full_title,
+                       description: META_DESC_DEFAULT,
                        type: META_OG_DEFAULT_TYPE,
                        base_url: self.request.base_url,
                        fullpath:  '/')
@@ -238,7 +242,7 @@ module PageMetaTagsSetter
   def create_keywords
 
     keywords      = t(LOCALE_KEYWORDS_KEY, default: META_KEYWORDS_DEFAULT)
-    business_cats = BusinessCategory.pluck(:name)
+    business_cats = BusinessCategory.pluck(:name).uniq
 
     cats_str = business_cats.empty? ? '' : ', ' + business_cats.join(', ')
 
@@ -249,6 +253,17 @@ module PageMetaTagsSetter
   # get the IETF code for our current locale.  default is 'sv_SE'
   def meta_og_locale
     LOCALES_TO_IETF.fetch(I18n.locale, 'sv_SE')
+  end
+
+
+  # appends the site title to the page_title
+  def meta_full_title(page_title)
+   "#{page_title} | #{META_SITE_NAME}"
+  end
+
+
+  def meta_default_full_title
+    meta_full_title(META_TITLE_DEFAULT)
   end
 
 end
