@@ -13,7 +13,8 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
 
   let(:expected_base_url) { "#{MOCK_BASE_URL}#{MOCK_ASSET_PATH}/" }
 
-  let(:default_title) { 'H-märkt hundföretag, hundinstruktör | Sveriges Hundföretagare' }
+  let(:default_title) { 'H-märkt hundföretag, hundinstruktör' }
+  let(:default_full_title) { 'H-märkt hundföretag, hundinstruktör | Sveriges Hundföretagare' }
   let(:default_desc) { 'Etiska svenska hundföretag som har tjänat H-mark. Hitta en hundinstruktör, Hundbolaget, hundens entreprenör.' }
   let(:default_keywords) { 'hund, hundägare, hundinstruktör, hundens entreprenör, Hundbolaget, Sveriges Hundföretagare, svenskt hundföretag, etisk, H-markt, ansvarig, tjänat H-marknaden' }
   let(:default_image_filename) { 'Sveriges_hundforetagare_banner_sajt.jpg' }
@@ -64,7 +65,7 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
       describe 'Facebook OpenGraph (og)' do
 
         it 'title = default title' do
-          expect(@meta_tags_set['og']['title']).to eq default_title
+          expect(@meta_tags_set['og']['title']).to eq default_full_title
         end
 
         it 'description = default description' do
@@ -147,7 +148,7 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
                                         .and_return('blorf')
       expected_result = {
           "site"        => 'Sveriges Hundföretagare',
-          "title"       => 'blorf | Sveriges Hundföretagare',
+          "title"       => 'blorf',
           "description" => 'blorf',
           "keywords"    => 'blorf',
           "og"          => {

@@ -112,7 +112,7 @@ module PageMetaTagsSetter
     full_title = meta_full_title(page_title)
 
     set_meta_tags site: META_SITE_NAME,
-                  title:      full_title,
+                  title:     page_title,
                   description: page_desc,
                   keywords:    create_keywords
 
