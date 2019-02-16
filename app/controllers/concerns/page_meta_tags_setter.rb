@@ -209,7 +209,7 @@ module PageMetaTagsSetter
                           _:      image_asset_url,
                           type:   "image/#{image_type}",
                           width:  width,
-                          height: height,
+                          height: height
                       }
                   }
   end

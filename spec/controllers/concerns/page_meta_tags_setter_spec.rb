@@ -162,12 +162,12 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
                   "height" => default_image_height,
                   "type"   => default_image_type,
                   "width"  => default_image_width
-              },
+              }
           },
           "twitter"     => {
               "card" => 'blorf'
           },
-          "image_src"   => default_image_url,
+          "image_src"   => default_image_url
       }
 
       subject.set_meta_tags_for_url_path(MOCK_BASE_URL, MOCK_REQ_PATH)
