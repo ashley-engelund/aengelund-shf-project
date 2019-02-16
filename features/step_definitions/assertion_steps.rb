@@ -361,7 +361,15 @@ Then("the page head should include meta {capture_string} = {capture_string} with
   expect(tag_found.text(:all)).to eq meta_content
 end
 
+
+Then("the page head should not include meta {capture_string} = {capture_string}") do | meta_tag, value |
+  meta_xpath = "/html/head/meta[@#{meta_tag}=\"#{value}\"]/@content"
+  expect(page).not_to have_xpath(meta_xpath, visible: false)
+end
+
+
 Then("the page head should include the link hreflang tag {capture_string} with href {capture_string}") do | hreflang, href |
   hreflang_xpath = "/html/head/link[@rel='alternate'][@hreflang='#{hreflang}'][@href='#{href}']"
   expect(page).to have_xpath(hreflang_xpath, visible: false)
 end
+
