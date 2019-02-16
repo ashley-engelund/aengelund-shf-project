@@ -31,21 +31,22 @@ Feature: Edit a company page has meta tags nofollow and noindex set
     Then I should see t("companies.edit.title", company_name: "HappyMutts")
 
     And the page title should be "Sveriges Hundföretagare"
+    And the page head should not include a link tag with rel = "image_src" and href = "http://www.example.com/assets/Sveriges_hundforetagare_banner_sajt.jpg"
 
-    And the page head should include the link hreflang tag "x-default" with href "https://hitta.sverigeshundforetagare.se"
-    And the page head should include the link hreflang tag "sv" with href "https://hitta.sverigeshundforetagare.se"
-    And the page head should include the link hreflang tag "en" with href "https://hitta.sverigeshundforetagare.se/en"
+    And the page head should include a link tag with hreflang = "x-default" and href = "https://hitta.sverigeshundforetagare.se"
+    And the page head should include a link tag with hreflang = "sv" and href = "https://hitta.sverigeshundforetagare.se"
+    And the page head should include a link tag with hreflang = "en" and href = "https://hitta.sverigeshundforetagare.se/en"
 
-    And the page head should include meta "name" = "robots" with content "noindex, nofollow"
+    And the page head should include meta "name" "robots" with content = "noindex, nofollow"
 
-    And the page head should not include meta "property" = "og:title"
-    And the page head should not include meta "property" = "og:description"
-    And the page head should not include meta "property" = "og:type"
-    And the page head should not include meta "property" = "og:url"
-    And the page head should not include meta "property" = "og:locale"
-    And the page head should not include meta "property" = "og:image"
-    And the page head should not include meta "property" = "og:image:type"
-    And the page head should not include meta "property" = "og:image:width"
-    And the page head should not include meta "property" = "og:image:height"
+    And the page head should not include meta "property" "og:title"
+    And the page head should not include meta "property" "og:description"
+    And the page head should not include meta "property" "og:type"
+    And the page head should not include meta "property" "og:url"
+    And the page head should not include meta "property" "og:locale"
+    And the page head should not include meta "property" "og:image"
+    And the page head should not include meta "property" "og:image:type"
+    And the page head should not include meta "property" "og:image:width"
+    And the page head should not include meta "property" "og:image:height"
 
-    And the page head should not include meta "name" = "twitter:card"
+    And the page head should not include meta "name" "twitter:card"
