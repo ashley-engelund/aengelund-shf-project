@@ -7,9 +7,9 @@ en:
   meta:
     default:
       title: "H-markt dog companies, dog training instructors, dog trainers"
-      description: "Ethical Swedish dog companies that have earned H-mark. Find a dog trainer, dog training instructor, a dog supply company, or dog company."
-      keywords: 'dog, dog owner, dog instructor, dog entrepreneur, dog company, Swedish dog company, Swedish dog company, ethical, H-markt, responsible, earned the H-market'
-
+      description: "Here you will find ethical Swedish dog companies that have earned the H-brand mark. Find dog trainers, dog training instructors, dog psychologists, dog day care, grooming and more."
+      keywords: 'dog, dog owner, dog instructor, dog entrepreneur, Swedish dog company, Swedish dog company, ethical, H-brand, H-mark, H-marked, dog training'
+      image_src: "Sveriges_hundforetagare_banner_sajt.jpg"
 
   home: Home
   about: About
@@ -592,9 +592,6 @@ en:
       title: Find H-labeled companies
       meta:
         title: "Find an H-branded dog company, dog instructor, or dog entrepreneur."
-        description: "Find an ethical Swedish dog company that has earned the H-mark. Find a dog instructor, dog company, or dog entrepreneur."
-        keywords: 'dog, dog owner, dog instructor, dog entrepreneur, dog company, Swedish Dog Company, ethical, H-markt, earned the H-markt, industry reviewed'
-        image_src: "Sveriges_hundforetagare_banner_sajt.jpg"
       admin_title: Edit member companies
       name: *name
       company_number: *org_nr
