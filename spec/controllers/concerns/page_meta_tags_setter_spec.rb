@@ -15,8 +15,8 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
 
   let(:default_title) { 'H-märkt hundföretag, hundinstruktör' }
   let(:default_full_title) { 'H-märkt hundföretag, hundinstruktör | Sveriges Hundföretagare' }
-  let(:default_desc) { 'Etiska svenska hundföretag som har tjänat H-mark. Hitta en hundinstruktör, Hundbolaget, hundens entreprenör.' }
-  let(:default_keywords) { 'hund, hundägare, hundinstruktör, hundens entreprenör, Hundbolaget, Sveriges Hundföretagare, svenskt hundföretag, etisk, H-markt, ansvarig, tjänat H-marknaden' }
+  let(:default_desc) { 'Etiska, svenska, H-märkta hundföretag. Du hittar bland annat hundinstruktörer, hundpsykologer, hunddagis, trim med mera.' }
+  let(:default_keywords) { 'hund, hundägare, hundinstruktör, hundentreprenör, Sveriges Hundföretagare, svenskt hundföretag, etisk, H-märkt, hundkurs' }
   let(:default_image_filename) { 'Sveriges_hundforetagare_banner_sajt.jpg' }
   let(:default_image_url) { "http://test.host/assets/#{default_image_filename}" }
   let(:default_image_width) { 1245 }
@@ -53,12 +53,12 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
         expect(@meta_tags_set['title']).to eq default_title
       end
 
-      it 'default description = Etiska svenska hundföretag som har tjänat H-mark. Hitta en hundinstruktör, Hundbolaget, hundens entreprenör.' do
+      it 'default description = Etiska, svenska, H-märkta hundföretag. Du hittar bland annat hundinstruktörer, hundpsykologer, hunddagis, trim med mera.' do
         expect(@meta_tags_set['description']).to eq default_desc
       end
 
       it "default keywords = 'hund, hundägare, hundinstruktör, hundens entreprenör, Hundbolaget, Sveriges Hundföretagare, svenskt hundföretag, etisk, H-markt, ansvarig, tjänat H-marknaden" do
-        expect(@meta_tags_set['keywords']).to eq 'hund, hundägare, hundinstruktör, hundens entreprenör, Hundbolaget, Sveriges Hundföretagare, svenskt hundföretag, etisk, H-markt, ansvarig, tjänat H-marknaden'
+        expect(@meta_tags_set['keywords']).to eq 'hund, hundägare, hundinstruktör, hundentreprenör, Sveriges Hundföretagare, svenskt hundföretag, etisk, H-märkt, hundkurs'
       end
 
 

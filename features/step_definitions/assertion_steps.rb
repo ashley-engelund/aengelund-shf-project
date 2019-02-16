@@ -347,29 +347,38 @@ When "I cannot select {capture_string} in select list {capture_string}" do |opti
 end
 
 
-Then("the page title should be {capture_string}") do | page_title |
-  expect(page).to have_title(page_title)
+Then("the page title should{negate} be {capture_string}") do | negate, page_title |
+  expect(page).send (negate ? :not_to : :to), have_title(page_title)
 end
 
 
-Then("the page head should include meta {capture_string} = {capture_string} with content {capture_string}") do | meta_tag, value, meta_content|
+Then("the page head should{negate} include meta {capture_string} {capture_string} with content = {capture_string}") do | negate, meta_tag, value, meta_content|
   meta_xpath = "/html/head/meta[@#{meta_tag}=\"#{value}\"]/@content"
-  expect(page).to have_xpath(meta_xpath, visible: false)
+  found_meta_tag  = page.find(meta_xpath, visible: false)
 
-  tag_found = page.find(meta_xpath, visible: false)
-  # have to pass :all to .text to get text that is not visible
-  expect(tag_found.text(:all)).to eq meta_content
+  if negate.nil?
+    expect(found_meta_tag.text(:all)).to eq meta_content
+  else
+    # have to pass :all to .text to get text that is not visible
+    expect(found_meta_tag && (found_meta_tag.text(:all) == meta_content)).to be_falsey
+  end
 end
 
 
-Then("the page head should not include meta {capture_string} = {capture_string}") do | meta_tag, value |
+Then("the page head should{negate} include meta {capture_string} {capture_string}") do | negate, meta_tag, value |
   meta_xpath = "/html/head/meta[@#{meta_tag}=\"#{value}\"]/@content"
-  expect(page).not_to have_xpath(meta_xpath, visible: false)
+  expect(page).send (negate ? :not_to : :to), have_xpath(meta_xpath, visible: false)
 end
 
 
-Then("the page head should include the link hreflang tag {capture_string} with href {capture_string}") do | hreflang, href |
+Then("the page head should{negate} include a link tag with hreflang = {capture_string} and href = {capture_string}") do | negate, hreflang, href |
   hreflang_xpath = "/html/head/link[@rel='alternate'][@hreflang='#{hreflang}'][@href='#{href}']"
-  expect(page).to have_xpath(hreflang_xpath, visible: false)
+  expect(page).send (negate ? :not_to : :to), have_xpath(hreflang_xpath, visible: false)
+end
+
+
+Then("the page head should{negate} include a link tag with rel = {capture_string} and href = {capture_string}") do | negate, rel, href |
+  hreflang_xpath = "/html/head/link[@rel='#{rel}'][@href='#{href}']"
+  expect(page).send (negate ? :not_to : :to), have_xpath(hreflang_xpath, visible: false)
 end
 
