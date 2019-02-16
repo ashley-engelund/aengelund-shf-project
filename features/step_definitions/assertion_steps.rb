@@ -315,6 +315,11 @@ Then "{capture_string} should{negate} have {capture_string} as an option" do | s
 end
 
 
+And(/^the "([^"]*)" should( not)? go to "([^"]*)"$/) do |link, negate, url|
+  expect(page).send (negate ? :not_to : :to), have_link(link, href: url)
+end
+
+
 And(/^the url "([^"]*)" should( not)? be a valid route$/) do |url, negate |
 
   if negate
