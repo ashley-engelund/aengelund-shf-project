@@ -342,6 +342,9 @@ en:
       need_to_enter_name_html: You must have your first and last name defined
                           in order to create a membership application.
                           %{edit_profile}.
+      submit_button_explain: Select a file delivery option to enable Submit
+      where_to_mail_files: We will email you the address
+      email_files_subject: My Application Files
 
     rendering:
       success: Action performed successfully
@@ -349,17 +352,24 @@ en:
     create:
       success: "Thank You. Your membership application has been submitted. You should receive an email shortly at %{email_address} with information about what to expect next."
       error: The was a problem creating and submitting your application.
-      success_with_file_problem: YOUR APPLICATION WAS CREATED, BUT PLEASE NOTE PROBLEM(S) BELOW
+      success_with_file_problem: YOUR APPLICATION WAS CREATED, BUT PLEASE NOTE PROBLEM(S) WITH FILE UPLOAD
+      success_with_app_files_missing: YOUR APPLICATION WAS CREATED, BUT REQUIRED FILES ARE MISSING
+      upload_file_or_select_method: &upload_files Please upload files or select another delivery method
+      remember_to_deliver_files: &chosen_method Please remember to deliver files via the chosen delivery method
 
     edit:
       title: Edit Membership Application
       is_ready_for_review: Is Ready for Review
       submit_button_label: *save
+      submit_button_explain: Select a file delivery option to enable Save
 
     update:
       success: The application was updated.
       error: One or more problems prevented your application from being updated.
       enter_member_number: Please review the member number and save.
+      success_with_app_files_missing: YOUR APPLICATION WAS UPDATED, BUT REQUIRED FILES ARE MISSING
+      upload_file_or_select_method: *upload_files
+      remember_to_deliver_files: *chosen_method
 
     show:
       title: Application from %{user_full_name}
@@ -1025,6 +1035,8 @@ en:
 
 
     member_mailer:
+      member_account_link: "%{account_link} (You may need to login first before the link works.)"
+
       membership_granted:
         subject: &subject_welcome "Welcome to SHF! You are now a member"
         greeting: *email_greeting
@@ -1039,10 +1051,9 @@ en:
         greeting: *email_greeting
         message_text:
           expire_alert_html: Please note that your current membership period will
-                        expire on <span style="background-color:yellow;">%{expire_date}</span>.
+                        expire on <span class="date-warning">%{expire_date}</span>.
           extend_membership: You can extend your membership for another
                              12 months by paying the membership fee.
-          account_login_html: "%{account_link} (you may need to login first before the link works)."
 
       h_branding_fee_past_due:
         subject: The H-Branding fee for your company is unpaid/past due
@@ -1051,6 +1062,14 @@ en:
           fee_is_unpaid: Please note that your current H-branding fee is unpaid.
           how_to_pay_fee: You can pay your H-branding for another 12 months by paying the fee. This makes you visible on the map.
           company_link_login_msg: " (You may need to login first before you can see the button to pay)."
+
+      membership_lapsed:
+        subject: "Your SHF membership has expired"
+        greeting: *email_greeting
+        message_text:
+          expire_alert_html: "Your SHF membership term ended on <span class='date-warning'> %{expire_date}.</span>"
+          renew_membership: You can renew your membership and keep taking advantage of SHF member benefits by logging in and paying your membership fee.
+
 
   devise:
     min_length: '(at least %{minimum_length} characters)'
