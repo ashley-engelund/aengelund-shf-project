@@ -37,7 +37,6 @@ require 'mini_magick'
 #       end
 #
 #
-#
 # @author Ashley Engelund (ashley.engelund@gmail.com  weedySeaDragon @ github)
 # @date   2019-02-07
 #
@@ -70,7 +69,7 @@ module PageMetaTagsSetter
   # This is a simple mapping to the locales we're using.  If we start supporting
   # more languages and/or regions, this can be made more complex.
   LOCALES_TO_IETF = { sv: 'sv_SE',
-                      en: 'en_US',
+                      en: 'en_US'
   }
 
   LOCALE_TITLE_KEY        = '.meta.title'
