@@ -34,14 +34,14 @@ class AbstractOppositeRequirements < AbstractRequirements
   end
 
 
-  # This requires the same arguments as RequirementsForHBrandingFeeDue since
-  # it sends those arguments to RequirementsForHBrandingFeeDue.requirements_met?
+  # This requires the same arguments as it's opposite class since
+  # it sends those arguments to opposite_class.has_expected_arguments?(args)
   def self.has_expected_arguments?(args)
     opposite_class.has_expected_arguments?(args)
   end
 
 
-  # This is always just the opposite of if the required info for a company is incomplete
+  # This is always just the opposite of the opposite_class
   def self.requirements_met?(args)
     !opposite_class.requirements_met?(args)
   end
