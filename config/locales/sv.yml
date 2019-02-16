@@ -7,10 +7,9 @@ sv:
   meta:
     default:
       title: "H-märkt hundföretag, hundinstruktör"
-      description: "Etiska svenska hundföretag som har tjänat H-mark. Hitta en hundinstruktör, Hundbolaget, hundens entreprenör."
-      keywords: 'hund, hundägare, hundinstruktör, hundens entreprenör, Hundbolaget, Sveriges Hundföretagare, svenskt hundföretag, etisk, H-markt, ansvarig, tjänat H-marknaden'
-
-
+      description: "Etiska, svenska, H-märkta hundföretag. Du hittar bland annat hundinstruktörer, hundpsykologer, hunddagis, trim med mera."
+      keywords: 'hund, hundägare, hundinstruktör, hundentreprenör, Sveriges Hundföretagare, svenskt hundföretag, etisk, H-märkt, hundkurs'
+      image_src: "Sveriges_hundforetagare_banner_sajt.jpg"
   home: Hem
   about: Om
   more: Mer
@@ -599,9 +598,7 @@ sv:
       title:  Hitta H-märkt företag
       meta:
         title: "Hitta H-märkt hundföretag, hundinstruktör"
-        description: "Hitta ett etiskt svenskt hundföretag som har tjänat H-märkt. Hitta en hundinstruktör, Hundbolaget, hundens entreprenör."
-        keywords: 'hund, hundägare, hundinstruktör, hundens entreprenör, Hundbolaget, Sveriges Hundföretagare, svenskt hundföretag, etisk, H-markt, ansvarig, tjänat H-marknaden'
-        image_src: "Sveriges_hundforetagare_banner_sajt.jpg"
+        description: "Här hittar du etiska, svenska, H-märkta hundföretag. Du hittar bland annat hundinstruktörer, hundpsykologer, hunddagis, trim med mera."
       admin_title: Redigera medlemsföretag
       category: *business_category
       name: *name

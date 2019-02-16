@@ -58,7 +58,7 @@ module PageMetaTagsSetter
   META_OG_DEFAULT_TYPE  = 'website'
   META_TWITTER_CARDTYPE = 'summary'
 
-  META_IMAGE_DEFAULT_FN     = 'Sveriges_hundforetagare_banner_sajt.jpg'
+  META_IMAGE_DEFAULT_FN     = I18n.t('meta.default.image_src')
   META_IMAGE_DEFAULT_TYPE   = 'jpeg'
   META_IMAGE_DEFAULT_WIDTH  = 1245
   META_IMAGE_DEFAULT_HEIGHT = 620
