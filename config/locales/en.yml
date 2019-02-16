@@ -592,6 +592,7 @@ en:
       title: Find H-labeled companies
       meta:
         title: "Find an H-branded dog company, dog instructor, or dog entrepreneur."
+        description: "Here you will find ethical Swedish dog companies that have earned the H-brand mark. Find dog trainers, dog training instructors, dog psychologists, dog day care, grooming and more."
       admin_title: Edit member companies
       name: *name
       company_number: *org_nr
