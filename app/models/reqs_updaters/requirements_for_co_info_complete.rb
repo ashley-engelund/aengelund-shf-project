@@ -6,9 +6,9 @@
 #       a.k.a. is "complete" (= the requirements are met)
 #
 #       This is a very simple class because the requirements are currently very simple.
-#       The importance is that
-#        it is the only place that code needs to be touched if the rules for
-#        when the all the required information for a company is complete
+#
+#       If the rules/definition for a 'complete' company change, this class
+#       must be changed _and_ the Company.complete scope must be changed.
 #
 #  Only 1 is needed for the system.
 #

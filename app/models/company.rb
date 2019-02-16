@@ -51,6 +51,9 @@ class Company < ApplicationRecord
   end
 
 
+  # Note: If the rules/definition for a 'complete' company change, this scope
+  # must be changed in addition to the code in RequirementsForCoInfoComplete
+  #
   # All addresses for a company are complete AND the name is not blank
   # must qualify name with 'companies' because there are other tables that use 'name' and if
   # this scope is combined with a clause for a different table that also uses 'name',
