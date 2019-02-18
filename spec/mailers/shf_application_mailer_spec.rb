@@ -134,6 +134,17 @@ RSpec.describe ShfApplicationMailer, type: :mailer do
       let(:email_created) { email_sent }
     end
 
+    it 'shows information submitted in the application' do
+
+    end
+
+    it 'shows the file upload method chosen' do
+
+    end
+
+    it 'list files uploaded if any' do
+
+    end
 
     it_behaves_like 'from address is correct' do
       let(:mail_address) { email_sent.header['from'] }
