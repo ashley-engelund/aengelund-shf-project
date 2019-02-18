@@ -13,7 +13,7 @@ require 'mini_magick'
 # Ex: In the CompaniesController, use the defaults for the :index action
 #     but set the title tag specifically for a company that is being displayed
 #     with the :show action.
-#      (Note the really there would be more meta-tag info set for a Company.)
+#      (Note there really would be more meta-tag info set for a Company.)
 #     Set nofollow and noindex to true for the
 #     :edit action with the :set_page_meta_robots_none method
 #
