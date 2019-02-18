@@ -10,7 +10,7 @@
 
   %hr
   %p= t('your_submitted_info', scope: i18n_scope)
-  %div.shf-application-info
+  .shf-application-info
     %p
       = shf_app_to_html(@shf_application)
   %hr
@@ -19,5 +19,5 @@
     %p.nofiles-will-review= t('review_after_recevied_files', scope: i18n_scope)
 
   %p.login-url
-    ='You can log in and change your information and upload more files. '
-    =login_url_link
+    = 'You can log in and change your information and upload more files. '
+    = login_url_link
