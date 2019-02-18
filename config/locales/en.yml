@@ -1028,7 +1028,7 @@ en:
         subject: Your application to Sveriges Hundföretagare has been received
         message_text: "Your application has been received.  We are all working hard, so it might take a while before we get to it. So do not worry if it takes a while before you hear from us."
         your_submitted_info: "As a reminder, here is what you submitted:"
-        review_after_files_received: *review_after_recevied_files
+        review_after_recevied_files: *review_after_recevied_files
         upload_choice_intro: "Your choice for providing files: "
         error_sending: &shf_email_error "There was a problem sending email to you at {%email} about your application."
 
