@@ -5,9 +5,6 @@
 = render layout: 'layouts/mail_from_membership' do
   %p= t('message_text', scope: i18n_scope)
 
-  -# FIXME: just for now, use a fake number of files uploaded
-  - num_files_uploaded = Random.rand(0..2)
-
   %hr
   %p= t('your_submitted_info', scope: i18n_scope)
   .shf-application-info
@@ -15,7 +12,7 @@
       = shf_app_to_html(@shf_application)
   %hr
 
-  - if num_files_uploaded == 0
+  - if @shf_application.uploaded_files.size == 0
     %p.nofiles-will-review= t('review_after_recevied_files', scope: i18n_scope)
 
   %p.login-url
