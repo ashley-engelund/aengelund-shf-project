@@ -127,3 +127,11 @@ RSpec.shared_examples 'a successfully created email' do |subject, recipient, gre
 
   end
 end
+
+
+RSpec.shared_examples 'it has a link to the login page' do
+
+  it 'link and text are in the email' do
+    expect(email_created).to have_body_text(I18n.t('mailers.login_here'))
+  end
+end
