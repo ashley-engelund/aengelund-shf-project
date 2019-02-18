@@ -516,12 +516,13 @@ en:
     uploads:
       no_files: You have not uploaded any files for this application.
       files_uploaded: 'Files uploaded for this application:'
-      filename: Filename
-      file_was_uploaded: 'This file was uploaded: %{filename}'
-      confirm_delete: 'Are you sure you want to delete %{filename}?'
+      filename: &filename Filename
+      file_was_uploaded: &file_was_uploaded 'This file was uploaded: %{filename}'
+      confirm_delete: &upload_confirm_delete 'Are you sure you want to delete %{filename}?'
       invalid_upload_type: &invalid_upload_type Sorry, this is not a file type you can upload.
       file_too_large: &file_too_large_5MB The file must be smaller than 5 MB
       please_upload_again: Please upload your files again.
+      will_review_after_received: &review_after_recevied_files "Once we have received your files, we will review your application."
 
     update_the_status: Update the status
     application_deleted: Application deleted.
@@ -531,11 +532,12 @@ en:
   file_uploads:
     no_files: No files have been uploaded.
     files_uploaded: 'Files uploaded:'
-    filename: Filename
-    file_was_uploaded: 'This file was uploaded: %{filename}'
-    confirm_delete: 'Are you sure you want to delete %{filename}?'
-    invalid_upload_type: Sorry, this is not a file type you can upload.
-    file_too_large: The file must be smaller than 5 MB
+    filename: *filename
+    file_was_uploaded: *file_was_uploaded
+    confirm_delete: *upload_confirm_delete
+    invalid_upload_type: *invalid_upload_type
+    file_too_large: *file_too_large_5MB
+
 
 
 
@@ -989,6 +991,8 @@ en:
       companies_incomplete: "companies with information not yet complete"
 
   mailers:
+    login_here: "Click here to go to the login page."
+
     application_mailer:
       greeting: &email_greeting "Hello %{greeting_name}"
 
@@ -1023,6 +1027,9 @@ en:
       acknowledge_received:
         subject: Your application to Sveriges Hundföretagare has been received
         message_text: "Your application has been received.  We are all working hard, so it might take a while before we get to it. So do not worry if it takes a while before you hear from us."
+        your_submitted_info: "As a reminder, here is what you submitted:"
+        review_after_files_received: *review_after_recevied_files
+        upload_choice_intro: "Your choice for providing files: "
         error_sending: &shf_email_error "There was a problem sending email to you at {%email} about your application."
 
       app_approved:
