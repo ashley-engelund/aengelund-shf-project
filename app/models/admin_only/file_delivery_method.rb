@@ -39,5 +39,11 @@ module AdminOnly
       name == METHOD_NAMES[:mail]
     end
 
+
+    def description_for_locale(locale)
+      text_method = "description_#{locale}".to_sym
+      self.send(text_method)
+    end
+
   end
 end
