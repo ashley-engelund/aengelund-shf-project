@@ -28,7 +28,7 @@ module AdminOnly
         raise ArgumentError, 'Argument must be a symbol and a known delivery name key'
       end
 
-      where(name: METHOD_NAMES[name_key])[0]
+      where(name: METHOD_NAMES[name_key])[0]  # TODO: should use :find instead of :where
     end
 
     def email?
