@@ -20,7 +20,7 @@ RSpec.describe ShfAppNoUploadedFilesAlert do
 
   describe '.send_alert_this_day?(config, user)' do
 
-    APP_STATE_STILL_NEEDING_UPLOADS = ShfAppNoUploadedFilesAlert::APP_STATES_CHECKED
+    APP_STATE_STILL_NEEDING_UPLOADS = ShfAppNoUploadedFilesAlert::APP_STATES_WAITING_FOR_FILES
 
     OTHER_STATES = ShfApplication.all_states.map(&:to_s) - APP_STATE_STILL_NEEDING_UPLOADS
 
@@ -29,71 +29,95 @@ RSpec.describe ShfAppNoUploadedFilesAlert do
     end
 
 
-    describe "application state not one of #{APP_STATE_STILL_NEEDING_UPLOADS}" do
-      OTHER_STATES.each do | app_state |
+    describe 'only send if application is in a state waiting for files' do
+      context "application state not one of #{APP_STATE_STILL_NEEDING_UPLOADS}" do
+        OTHER_STATES.each do | app_state |
 
-        let(:applicant) do
-          u = create(:user_with_membership_app)
-          u.shf_application.state = app_state
-          u
-        end
-
-        it 'false even if today is in the list of alert days' do
-          # ensure that the updated_at date is Nov 30
-          Timecop.freeze(nov30) do
-            applicant
+          let(:applicant) do
+            u = create(:user_with_membership_app)
+            u.shf_application.state = app_state
+            u
           end
 
-          Timecop.freeze(dec1) do
-            expect(Date.current - applicant.shf_application.updated_at.to_date).to eq 1
-            expect(described_class.instance.send_alert_this_day?(timing, { days: [1] }, applicant)).to be_falsey
-          end
+          it 'false even if today is in the list of alert days' do
+            # ensure that the updated_at date is Nov 30
+            Timecop.freeze(nov30) do
+              applicant
+            end
 
-        end
-      end
-    end
-
-    describe "application state IS one of  #{APP_STATE_STILL_NEEDING_UPLOADS}" do
-
-      APP_STATE_STILL_NEEDING_UPLOADS.each do | app_state |
-
-        let(:applicant) do
-          u = create(:user_with_membership_app)
-          u.shf_application.state = app_state
-          u
-        end
-
-        it 'false if today - shf_app.updated_at date is not in the list of days' do
-          # ensure that the updated_at date is Nov 30
-          Timecop.freeze(nov30) do
-            applicant
-          end
-
-          Timecop.freeze(dec1) do
-            expect(described_class.instance.send_alert_this_day?(timing, { days: [999] }, applicant)).to be_falsey
-          end
-        end
-
-        it 'true if today - shf_app.updated_at date IS in the list of days' do
-          # ensure that the updated_at date is Nov 30
-          Timecop.freeze(nov30) do
-            applicant
-          end
-
-          alert_days = [ dec1, dec7 ]
-          alert_days.each do | alert_date |
-            Timecop.freeze(alert_date) do
-              expect(described_class.instance.send_alert_this_day?(timing, config, applicant)).to be_truthy
+            Timecop.freeze(dec1) do
+              expect(Date.current - applicant.shf_application.updated_at.to_date).to eq 1
+              expect(described_class.instance.send_alert_this_day?(timing, { days: [1] }, applicant)).to be_falsey
             end
 
           end
         end
       end
 
+      context "application state IS one of  #{APP_STATE_STILL_NEEDING_UPLOADS}" do
+
+        APP_STATE_STILL_NEEDING_UPLOADS.each do | app_state |
+
+          let(:applicant) do
+            u = create(:user_with_membership_app)
+            u.shf_application.state = app_state
+            u
+          end
+
+          it 'false if today - shf_app.updated_at date is not in the list of days' do
+            # ensure that the updated_at date is Nov 30
+            Timecop.freeze(nov30) do
+              applicant
+            end
+
+            Timecop.freeze(dec1) do
+              expect(described_class.instance.send_alert_this_day?(timing, { days: [999] }, applicant)).to be_falsey
+            end
+          end
+
+          it 'true if today - shf_app.updated_at date IS in the list of days' do
+            # ensure that the updated_at date is Nov 30
+            Timecop.freeze(nov30) do
+              applicant
+            end
+
+            alert_days = [ dec1, dec7 ]
+            alert_days.each do | alert_date |
+              Timecop.freeze(alert_date) do
+                expect(described_class.instance.send_alert_this_day?(timing, config, applicant)).to be_truthy
+              end
+
+            end
+          end
+        end
+
+      end
+
+    end
+
+
+  end
+
+  context 'no files uploaded' do
+
+    describe "don't send if they said they would email them" do
+      pending
+    end
+
+    describe "don't send if they said they would (postal) mail them" do
+      pending
+    end
+
+    describe "send for other delivery methods" do
+      pending
+
     end
 
   end
 
+  it "don't send if files were uploaded" do
+    pending
+  end
 
   it '.mailer_method' do
     expect(described_class.instance.mailer_method).to eq :app_no_uploaded_files
