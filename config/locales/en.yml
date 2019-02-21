@@ -6,7 +6,7 @@ en:
   SHF_name: &SHF_name "Swedish Dog Industry Association"
   meta:
     default:
-      title: "H-markt dog companies, dog training instructors, dog trainers"
+      title: "Find H-markt dog companies, dog training instructors, dog trainers, or dog entrepreneurs."
       description: "Here you will find ethical Swedish dog companies that have earned the H-brand mark. Find dog trainers, dog training instructors, dog psychologists, dog day care, grooming and more."
       keywords: 'dog, dog owner, dog instructor, dog entrepreneur, Swedish dog company, Swedish dog company, ethical, H-brand, H-mark, H-marked, dog training'
       image_src: "Sveriges_hundforetagare_banner_sajt.jpg"
@@ -591,9 +591,6 @@ en:
 
     index:
       title: Find H-labeled companies
-      meta:
-        title: "Find an H-branded dog company, dog instructor, or dog entrepreneur."
-        description: "Here you will find ethical Swedish dog companies that have earned the H-brand mark. Find dog trainers, dog training instructors, dog psychologists, dog day care, grooming and more."
       admin_title: Edit member companies
       name: *name
       company_number: *org_nr

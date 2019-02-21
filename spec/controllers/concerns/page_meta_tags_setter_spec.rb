@@ -13,9 +13,9 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
 
   let(:expected_base_url) { "#{MOCK_BASE_URL}#{MOCK_ASSET_PATH}/" }
 
-  let(:default_title) { 'H-märkt hundföretag, hundinstruktör' }
-  let(:default_full_title) { 'H-märkt hundföretag, hundinstruktör | Sveriges Hundföretagare' }
-  let(:default_desc) { 'Etiska, svenska, H-märkta hundföretag. Du hittar bland annat hundinstruktörer, hundpsykologer, hunddagis, trim med mera.' }
+  let(:default_title) { 'Hitta H-märkt hundföretag, hundinstruktör' }
+  let(:default_full_title) { 'Hitta H-märkt hundföretag, hundinstruktör | Sveriges Hundföretagare' }
+  let(:default_desc) { 'Här hittar du etiska, svenska, H-märkta hundföretag. Du hittar bland annat hundinstruktörer, hundpsykologer, hunddagis, trim med mera.' }
   let(:default_keywords) { 'hund, hundägare, hundinstruktör, hundentreprenör, Sveriges Hundföretagare, svenskt hundföretag, etisk, H-märkt, hundkurs' }
   let(:default_image_filename) { 'Sveriges_hundforetagare_banner_sajt.jpg' }
   let(:default_image_url) { "http://test.host/assets/#{default_image_filename}" }
