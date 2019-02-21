@@ -8,7 +8,6 @@ RSpec.describe ShfAppNoUploadedFilesAlert do
   let(:dec1)  { Time.utc(2018, 12, 1) }
   let(:dec7)  { Time.utc(2018, 12, 7) }
 
-
   let(:user) { create(:user, email: FFaker::InternetSE.disposable_email) }
 
   let(:condition) { create(:condition, :after, config: { days: [1, 7] }) }
@@ -16,6 +15,8 @@ RSpec.describe ShfAppNoUploadedFilesAlert do
   let(:config) { { days: [1, 7] } }
 
   let(:timing) { ShfAppNoUploadedFilesAlert::TIMING_AFTER }
+
+  let(:alert_days) { [ dec1, dec7 ] }
 
 
   describe '.send_alert_this_day?(config, user)' do
@@ -81,7 +82,6 @@ RSpec.describe ShfAppNoUploadedFilesAlert do
               applicant
             end
 
-            alert_days = [ dec1, dec7 ]
             alert_days.each do | alert_date |
               Timecop.freeze(alert_date) do
                 expect(described_class.instance.send_alert_this_day?(timing, config, applicant)).to be_truthy
@@ -100,24 +100,91 @@ RSpec.describe ShfAppNoUploadedFilesAlert do
 
   context 'no files uploaded' do
 
-    describe "don't send if they said they would email them" do
-      pending
+    let(:applicant) { create(:user_with_membership_app) }
+
+    it "don't send if they said they would email them" do
+
+      # ensure that the updated_at date is Nov 30
+      Timecop.freeze(nov30) do
+        applicant
+        applicant.shf_application.file_delivery_method = create(:file_delivery_email)
+      end
+
+      alert_days.each do | alert_date |
+        Timecop.freeze(alert_date) do
+          expect(described_class.instance.send_alert_this_day?(timing, config, applicant)).to be_falsey
+        end
+      end
     end
 
-    describe "don't send if they said they would (postal) mail them" do
-      pending
+
+    it "don't send if they said they would (postal) mail them" do
+
+      # ensure that the updated_at date is Nov 30
+      Timecop.freeze(nov30) do
+        applicant
+        applicant.shf_application.file_delivery_method = create(:file_delivery_mail)
+      end
+
+      alert_days.each do | alert_date |
+        Timecop.freeze(alert_date) do
+          expect(described_class.instance.send_alert_this_day?(timing, config, applicant)).to be_falsey
+        end
+      end
     end
 
     describe "send for other delivery methods" do
-      pending
+
+      other_delivery_methods = AdminOnly::FileDeliveryMethod::METHOD_NAMES.keys.reject{|key| key == :email || key == :mail || key == :upload_now }
+      other_delivery_methods.each do | delivery_method_name |
+
+        it "do send for method #{delivery_method_name}" do
+
+          # ensure that the updated_at date is Nov 30
+          Timecop.freeze(nov30) do
+            applicant
+            applicant.shf_application.file_delivery_method = create("file_delivery_#{delivery_method_name}".to_sym)
+          end
+
+          alert_days.each do | alert_date |
+            Timecop.freeze(alert_date) do
+              expect(described_class.instance.send_alert_this_day?(timing, config, applicant)).to be_truthy
+            end
+          end
+        end
+
+      end
 
     end
 
   end
 
-  it "don't send if files were uploaded" do
-    pending
+
+  describe "don't send if files were uploaded" do
+
+    let(:applicant) { create(:user_with_membership_app) }
+
+    it "1 file uploaded" do
+      # ensure that the updated_at date is Nov 30
+      Timecop.freeze(nov30) do
+        applicant
+        #  applicant.shf_application.file_delivery_method = create("file_delivery_#{delivery_method_name}".to_sym)
+
+        UPLOAD_FIXTURES_DIR = File.join(Rails.root, 'spec', 'fixtures','uploaded_files')
+        fn1 = File.join(UPLOAD_FIXTURES_DIR, 'diploma.pdf')
+        applicant.shf_application.uploaded_files.create(actual_file: File.open(fn1, 'r') )
+
+      end
+
+      alert_days.each do | alert_date |
+        Timecop.freeze(alert_date) do
+          expect(described_class.instance.send_alert_this_day?(timing, config, applicant)).to be_falsey
+        end
+      end
+    end
+
   end
+
 
   it '.mailer_method' do
     expect(described_class.instance.mailer_method).to eq :app_no_uploaded_files
