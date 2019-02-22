@@ -11,7 +11,5 @@ module ApplicationMailerHelper
   def login_url_link
     link_to(t('mailers.login_here'), new_user_session_url,  target: '_blank', rel: 'nofollow')
   end
-
-
 end
 

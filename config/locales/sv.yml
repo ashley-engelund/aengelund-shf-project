@@ -4,7 +4,12 @@ sv:
   title: 'Medlemmar i Sveriges Hundföretagare'
 
   SHF_name: &SHF_name Sveriges Hundföretagare
-
+  meta:
+    default:
+      title: "Hitta H-märkt hundföretag, hundinstruktör"
+      description: "Här hittar du etiska, svenska, H-märkta hundföretag. Du hittar bland annat hundinstruktörer, hundpsykologer, hunddagis, trim med mera."
+      keywords: 'hund, hundägare, hundinstruktör, hundentreprenör, Sveriges Hundföretagare, svenskt hundföretag, etisk, H-märkt, hundkurs'
+      image_src: "Sveriges_hundforetagare_banner_sajt.jpg"
   home: Hem
   about: Om
   more: Mer
@@ -56,6 +61,8 @@ sv:
   shf_facebook_group_url: &shf_facebook_group_url https://www.facebook.com/groups/sverigeshundforetagare/
   shf_instagram_url: &shf_instagram_url https://instagram.com/sverigeshundforetagare
 
+
+  login_page: login sida
 
   info:
     logged_in_as_admin: Du är inloggad som admin
@@ -995,6 +1002,8 @@ sv:
 
   mailers:
     login_here: "Klicka här för att gå till inloggningssidan."
+    may_need_to_login_first: "Du kan behöva logga in först.  Här är inloggningssidan:"
+
     application_mailer:
       greeting: &email_greeting "Hej %{greeting_name}"
 
@@ -1045,6 +1054,13 @@ sv:
     member_mailer:
       member_account_link: "%{account_link} (Du kan behöva logga in först innan länken fungerar.)"
 
+      app_no_uploaded_files:
+        subject: Din ansökan till Sveriges Hundföretagare saknar underlag
+        message_text: "Detta är en automatisk påminnelse från systemet som meddelar att din ansökan saknar uppladdade filer. Filerna behövs för att vi ska kunna handlägga din ansökan."
+        will_see_app_button: "När du har loggat in visas en knapp som tar dig till din ansökan, och sedan kan du ladda upp dina filer."
+        thanks:  "Tack för att du vill vara medlem."
+        error_sending: *shf_email_error
+
       membership_granted:
         subject: &subject_welcome "Välkommen som medlem i Sveriges Hundföretagare"
         greeting: *email_greeting
@@ -1069,7 +1085,19 @@ sv:
         message_text:
           fee_is_unpaid: Observera att ditt företags H-märkespremie inte är betald.
           how_to_pay_fee: Betala den ett år till via länken nedan. Detta gör att du fortsätter synas på kartan och fortsätter ha ett H-märkt företag.
-          company_link_login_msg: " (du kan behöva logga in först innan du ser knappen för att betala)."
+          company_link_login_msg: &co_link_login " (du kan behöva logga in först innan du ser knappen för att betala)."
+
+      co_info_incomplete:
+        subject: Var god färdigställ din företagssida
+        greeting: *email_greeting
+        message_text:
+          complete_the_info: "Du behöver färdigställa informationen om %{co_identifier}. Om du inte gör det syns du inte i sökningar. Saknar du adress syns du heller inte på kartan."
+          company_needs_name: "företag: %{co_number}"
+          what_is_missing: "Här är vad som saknas:"
+          co_name_missing: "Företagsnamn"
+          co_region_missing: "Postadress"
+          please_complete: "Vänligen lägg till ovanstående information så att företagsinformationen är klar."
+          company_link_login_msg: "Här är länken där du kan redigera ditt företag: "
 
       membership_lapsed:
         subject: "Ditt medlemskap har löpt ut"

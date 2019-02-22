@@ -33,9 +33,9 @@ class MemberMailerPreview < ActionMailer::Preview
   def membership_lapsed
 
     lapsed_members = User.joins(:payments).where("payments.status = '#{Payment::SUCCESSFUL}' AND " +
-                                               "payments.payment_type = ? AND " +
-                                               " payments.expire_date < ?", Payment::PAYMENT_TYPE_MEMBER, Date.current)
-        .joins(:shf_application).where(shf_applications: {state: 'accepted'})
+                                                     "payments.payment_type = ? AND " +
+                                                     " payments.expire_date < ?", Payment::PAYMENT_TYPE_MEMBER, Date.current)
+        .joins(:shf_application).where(shf_applications: { state: 'accepted' })
 
     lapsed_member = if lapsed_members.size > 0
       lapsed_members.last
@@ -57,10 +57,44 @@ class MemberMailerPreview < ActionMailer::Preview
   end
 
 
+  def company_info_incomplete
+
+    approved_app = ShfApplication.where(state: :accepted).first
+    approved_user = approved_app.user
+    incomplete_co = approved_app.companies.first
+    incomplete_co.update(name: '')
+    incomplete_co.addresses.first.update(region: nil)
+
+    MemberMailer.company_info_incomplete(incomplete_co, approved_user)
+  end
+
+
+  def app_no_uploaded_files
+
+    # create a new user with a brand new application (that has no uploaded files)
+    new_email = "sussh-#{DateTime.now.strftime('%Q')}@example.com"
+
+    new_approved_user = User.create(first_name:   'Suss',
+                                    last_name:    'Hundapor',
+                                    password:     'whatever',
+                                    email:        new_email,
+                                    member_photo: nil,
+    )
+    ShfApplication.new(user: new_approved_user)
+
+    MemberMailer.app_no_uploaded_files new_approved_user
+
+  ensure
+    User.delete(new_approved_user.id) unless new_approved_user.nil?
+  end
+
+
   # ================================
   # ================================
 
+
   private
+
 
   # create a unique email address based on the Time right now
   def unique_email

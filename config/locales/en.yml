@@ -4,6 +4,12 @@ en:
   title: "SWEDEN'S ETHICAL DOG COMPANIES"
 
   SHF_name: &SHF_name "Swedish Dog Industry Association"
+  meta:
+    default:
+      title: "Find H-markt dog companies, dog training instructors, dog trainers, or dog entrepreneurs."
+      description: "Here you will find ethical Swedish dog companies that have earned the H-brand mark. Find dog trainers, dog training instructors, dog psychologists, dog day care, grooming and more."
+      keywords: 'dog, dog owner, dog instructor, dog entrepreneur, Swedish dog company, Swedish dog company, ethical, H-brand, H-mark, H-marked, dog training'
+      image_src: "Sveriges_hundforetagare_banner_sajt.jpg"
 
   home: Home
   about: About
@@ -56,6 +62,7 @@ en:
   shf_facebook_group_url: &shf_facebook_group_url https://www.facebook.com/groups/sverigeshundforetagare/
   shf_instagram_url: &shf_instagram_url https://instagram.com/sverigeshundforetagare
 
+  login_page: login page
 
   info:
     logged_in_as_admin: You are logged in as an admin.
@@ -992,6 +999,7 @@ en:
 
   mailers:
     login_here: "Click here to go to the login page."
+    may_need_to_login_first: "You may need to log in first.  Here's the login page:"
 
     application_mailer:
       greeting: &email_greeting "Hello %{greeting_name}"
@@ -1044,6 +1052,13 @@ en:
     member_mailer:
       member_account_link: "%{account_link} (You may need to login first before the link works.)"
 
+      app_no_uploaded_files:
+        subject: Please upload qualification files to your Sveriges Hundföretagare application
+        message_text: "This is a reminder that you need upload files for your SHF application so that it can be reviewed."
+        will_see_app_button: "After you log in, you will see a button that will take you to your application where you can upload your files."
+        thanks:  "Thank you for wanting to be a member and contributing to a Sweden with an ethical dog industry."
+        error_sending: *shf_email_error
+
       membership_granted:
         subject: &subject_welcome "Welcome to SHF! You are now a member"
         greeting: *email_greeting
@@ -1076,6 +1091,19 @@ en:
         message_text:
           expire_alert_html: "Your SHF membership term ended on <span class='date-warning'> %{expire_date}.</span>"
           renew_membership: You can renew your membership and keep taking advantage of SHF member benefits by logging in and paying your membership fee.
+
+
+      co_info_incomplete:
+        subject: Please complete the company information
+        greeting: *email_greeting
+        message_text:
+          complete_the_info: "You need to complete the info for %{co_identifier}. If you don't it won't show up on the map or in Google searches"
+          company_needs_name: "company number %{co_number}"
+          what_is_missing: "Here is what's missing:"
+          co_name_missing: "company name"
+          co_region_missing: "company address"
+          please_complete: "Please add the above information so the company information is complete."
+          company_link_login_msg: "Here's the link to the company so you can edit it: "
 
 
   devise:
