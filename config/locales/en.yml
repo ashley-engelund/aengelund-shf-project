@@ -1038,6 +1038,8 @@ en:
         your_submitted_info: "As a reminder, here is what you submitted:"
         review_after_recevied_files: *review_after_recevied_files
         upload_choice_intro: "Your choice for providing files: "
+        need_to_upload: "You need to upload your files."
+        can_upload_more: "You can upload more files."
         error_sending: &shf_email_error "There was a problem sending email to you at {%email} about your application."
 
       app_approved:
@@ -1045,7 +1047,7 @@ en:
         message_text:
           app_approved_and_next: "Your application is now approved. What is left before you are registered as a member in the system is to pay your membership fee.  Log in to the website and then pay at this link: "
           h_branding_not_paid: "When this is done you will need to finish your company page and pay your H-branding fee. More information about how to do that will come after you paid your membership fee."
-          thanks:  "Thank you for wanting to be a member and contributing to a Sweden with an ethical dog industry."
+          thanks: "Thank you for wanting to be a member and contributing to a Sweden with an ethical dog industry."
           error_sending: *shf_email_error
 
 
@@ -1055,8 +1057,8 @@ en:
       app_no_uploaded_files:
         subject: Please upload qualification files to your Sveriges Hundföretagare application
         message_text: "This is a reminder that you need upload files for your SHF application so that it can be reviewed."
-        will_see_app_button: "After you log in, you will see a button that will take you to your application where you can upload your files."
-        thanks:  "Thank you for wanting to be a member and contributing to a Sweden with an ethical dog industry."
+        will_see_app_button:  "After you log in, you will see a button that will take you to your application where you can upload your files."
+        thanks: "Thanks for wanting to be a member."
         error_sending: *shf_email_error
 
       membership_granted:
