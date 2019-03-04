@@ -24,8 +24,6 @@ module SchemaDotOrg
 
   module ToLdJson
 
-    UNQUALIFIED_CLASS_NAME_REGEX = /([^:]+)$/
-
     ROOT_ATTR = { "@context" => "http://schema.org" }.freeze
 
 
@@ -82,8 +80,7 @@ module SchemaDotOrg
 
     # @return the classname without the module namespace.
     def un_namespaced_classname
-      self.class.name =~ UNQUALIFIED_CLASS_NAME_REGEX
-      Regexp.last_match(1)
+      self.class.name.demodulize
     end
 
   end
