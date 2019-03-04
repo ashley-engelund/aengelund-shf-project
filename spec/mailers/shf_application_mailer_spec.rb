@@ -154,7 +154,7 @@ RSpec.describe ShfApplicationMailer, type: :mailer do
 
     end
 
-    it_behaves_like  'it has a link to the login page' do
+    it_behaves_like  'it provides a link to the login page' do
       let(:email_created) { email_sent }
     end
 
