@@ -213,13 +213,13 @@ module PageMetaTagsSetter
   #   - image_src
   #   - og:image (including the type, height, and width)
   #
-  # I use keyword params because I personally have to look up param order whenever there's
-  # both a width and height. Keywords solves that.
+  # I use keyword params for width and height because I personally have to
+  # look up param order whenever there's both a width and height to see what
+  # order is wanted. Keywords solve that.
   #
   # TODO: allow multiple images to be set for og.image
   #
-  # @param image_filename [String] - the filename of the image.  'assets' will be
-  #                 prepended to it and passed to asset_url()
+  # @param image_url [String] - the complete url to the image.
   # @param [String] image_type -  the string representing the image type, to tell OpenGraph the type (e.g. 'jpeg', 'png', etc.)
   # @param [Integer] width - width of the image if known; will be used if given
   # @param [Integer] height - height of the image if known; will be used if given
