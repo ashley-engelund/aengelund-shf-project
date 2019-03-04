@@ -67,7 +67,7 @@ RSpec.describe SchemaDotOrg::Place, type: :model do
                                                 "@type"=>"PostalAddress",
                                                 "streetAddress" => 'street address',
                                                 "addressCountry" => 'address country'
-                                            },
+                                            }
                                         })
   end
 

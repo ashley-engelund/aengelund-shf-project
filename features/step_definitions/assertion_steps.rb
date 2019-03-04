@@ -438,7 +438,7 @@ def expect_head_has_ld_json_script(negated: false)
     expect(ld_json['@type']).to eq 'LocalBusiness'
 
     expect(ld_json.key?('@id')).to be_truthy
-    end
+  end
 
   ld_json
 end
