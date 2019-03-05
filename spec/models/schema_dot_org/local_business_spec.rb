@@ -130,8 +130,6 @@ RSpec.describe SchemaDotOrg::LocalBusiness, type: :model do
 
 
     it 'multiple addresses' do
-      puts "#{mult_addr_co.inspect}"
-
       expect(mult_addr_co._to_json_struct).to eq({
                                                      "@type"         => "LocalBusiness",
                                                      "description"   => "multiple addresses",
