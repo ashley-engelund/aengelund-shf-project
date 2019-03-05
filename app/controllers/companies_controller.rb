@@ -55,10 +55,7 @@ class CompaniesController < ApplicationController
   def show
     setup_events_and_events_pagination
 
-    # set the meta information specifically for this company
-    set_meta_tags title:  @company.name,
-                  description: @company.description,
-                  keywords: @company.business_categories.map(&:name)
+    set_meta_tags_for_company(@company)
 
     show_events_list if request.xhr?
   end
@@ -301,6 +298,19 @@ class CompaniesController < ApplicationController
     end
 
     params
+  end
+
+
+  # set the meta tags for the this specific company
+  def set_meta_tags_for_company(company)
+    co_meta_info = CompanyPageMetaInfo.new(company)
+
+    set_meta_tags title: co_meta_info.title,
+                  description: co_meta_info.description,
+                  keywords: co_meta_info.keywords,
+                  og: { title: helpers.full_page_title( page_title: co_meta_info.title),
+                        description: co_meta_info.og[:description] }
+
   end
 
 end
