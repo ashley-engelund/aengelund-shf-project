@@ -163,4 +163,12 @@ module ApplicationHelper
     boolean_value ? content_tag(:span, t('yes'), class: 'yes') : content_tag(:span, t('no'), class: 'no')
   end
 
+
+  def full_page_title(page_title: SiteMetaInfoDefaults.title, site_name: SiteMetaInfoDefaults.site_name)
+    not_blank_title = page_title.blank? ? SiteMetaInfoDefaults.title : page_title
+    not_blank_sitename = site_name.blank? ? SiteMetaInfoDefaults.site_name : site_name
+    "#{not_blank_title} | #{not_blank_sitename}"
+  end
+
+
 end
