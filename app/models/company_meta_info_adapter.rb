@@ -3,20 +3,21 @@
 
 #--------------------------
 #
-# @class CompanyPageMetaInfo
+# @class CompanyMetaInfoAdapter
 #
-# @desc Responsibility: Given a company, can return page meta info for the company
+# @desc Responsibility: Given a company, knows how to convert (adapt) the info
+# into meta (tags) info for the company.
 #
 #
 # @author Ashley Engelund (ashley.engelund@gmail.com  weedySeaDragon @ github)
 # @date   2019-03-04
 #
-# @file company_page_meta_info.rb
+# @file company_meta_info_adapter.rb
 #
 #--------------------------
 
 
-class CompanyPageMetaInfo
+class CompanyMetaInfoAdapter
 
 
   def initialize(company)
@@ -49,5 +50,5 @@ class CompanyPageMetaInfo
     }
   end
 
-end # CompanyPageMetaInfo
+end # CompanyMetaInfoAdapter
 

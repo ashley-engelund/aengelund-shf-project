@@ -3,7 +3,7 @@ require 'rails_helper'
 require 'shared_context/companies'
 
 
-RSpec.describe CompanyPageMetaInfo do
+RSpec.describe CompanyMetaInfoAdapter do
 
   include_context 'create companies'
 

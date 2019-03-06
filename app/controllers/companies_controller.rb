@@ -303,7 +303,7 @@ class CompaniesController < ApplicationController
 
   # set the meta tags for the this specific company
   def set_meta_tags_for_company(company)
-    co_meta_info = CompanyPageMetaInfo.new(company)
+    co_meta_info = CompanyMetaInfoAdapter.new(company)
 
     set_meta_tags title: co_meta_info.title,
                   description: co_meta_info.description,
