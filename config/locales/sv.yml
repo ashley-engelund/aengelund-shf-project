@@ -1000,7 +1000,7 @@ sv:
       companies_incomplete: "companies with information not yet complete"
 
   mailers:
-    login_here: "Klicka här för att gå till inloggningssidan."
+    login_here: "Klicka här för att gå till inloggningssidan:"
     may_need_to_login_first: "Du kan behöva logga in först.  Här är inloggningssidan:"
 
     application_mailer:
@@ -1075,13 +1075,21 @@ sv:
           extend_membership: Du kan förlänga ditt medlemskap i ytterligare
                                   12 månader genom att betala medlemsavgiften.
 
+      h_branding_fee_will_be_due:
+        subject: The H-Branding fee for your company will be due soon
+        greeting: *email_greeting
+        message_text:
+          expire_alert_html: "Please note that your current H-branding fee period will expire on <span class='date-warning'>%{expire_date}</span>."
+          how_to_pay_fee:  &pay_hbrand_be_mapped  Betala den ett år till via länken nedan. Detta gör att du fortsätter synas på kartan och fortsätter ha ett H-märkt företag.
+          company_link_login_msg: "Once you are logged in, you will be able to see the license expiration date on the company page and see the button to pay:"
+
       h_branding_fee_past_due:
         subject: Ditt företags H-märkespremie är obetald.
         greeting: *email_greeting
         message_text:
           fee_is_unpaid: Observera att ditt företags H-märkespremie inte är betald.
-          how_to_pay_fee: Betala den ett år till via länken nedan. Detta gör att du fortsätter synas på kartan och fortsätter ha ett H-märkt företag.
-          company_link_login_msg: &co_link_login " (du kan behöva logga in först innan du ser knappen för att betala)."
+          how_to_pay_fee: *pay_hbrand_be_mapped
+          company_link_login_msg: " (Du kan behöva logga in först innan du ser knappen för att betala)."
 
       co_info_incomplete:
         subject: Var god färdigställ din företagssida
