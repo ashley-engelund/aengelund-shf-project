@@ -379,7 +379,7 @@ RSpec.describe MemberMailer, type: :mailer do
     end
 
     it 'tells you when the HBranding license will expire' do
-      expect(email_sent).to have_body_text(I18n.t('message_text.fee_expire_date',
+      expect(email_sent).to have_body_text(I18n.t('message_text.expire_alert_html',
                                                   scope:       HBRAND_FEE_WILLBE_SCOPE,
                                                   expire_date: company3.branding_expire_date))
     end
