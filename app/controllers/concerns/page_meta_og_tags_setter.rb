@@ -8,7 +8,6 @@
 # @desc Responsibility: Sets meta info for OpenGraph info for a page
 #
 # This encapsulates all of the logic and info needed to set image tags.
-# It's complicated enough to justify pulling out into its own module.
 #
 #
 # @author Ashley Engelund (ashley.engelund@gmail.com  weedySeaDragon @ github)

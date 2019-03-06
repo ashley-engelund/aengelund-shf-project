@@ -10,9 +10,10 @@ require 'site_meta_info_defaults'
 #
 # @module PageMetaImageTagsSetter
 #
-# @desc Responsibility: Set meta image information for a page
-#       Falls back to site defaults if an entry is not found
-#       in the locale files.
+# @desc Responsibility: Set meta information for images (for a page).
+# If no specific value is provided for a tag, information is looked up in
+# locale files. Falls back to site defaults if an entry is not found in
+# the locale files.
 #
 # This encapsulates all of the logic and info needed to set image tags.
 # It's complicated enough to justify pulling out into its own module.

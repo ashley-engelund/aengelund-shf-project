@@ -11,9 +11,9 @@ require 'page_meta_og_tags_setter'
 #
 # @module PageMetaInfoSetter
 #
-# @desc Responsibility: Sets the meta tags for a page using locale files.
-#       Falls back to site defaults if an entry is not found
-#       in the locale files.
+# @desc Responsibility: Sets the meta tags for a page. If no specific value is
+# provided for a tag, information is looked up in locale files.
+# Falls back to site defaults if an entry is not found in the locale files.
 #
 # @example In the CompaniesController, use the defaults for the :index action
 #     but set the title tag specifically for a company that is being displayed

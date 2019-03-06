@@ -5,7 +5,7 @@
 #
 # @class SiteMetaInfoDefaults
 #
-# @desc Responsibility: provides the default meta info for the site to any
+# @desc Responsibility: Provides the default meta info for the site to any
 # class/object that asks for it.
 #
 # This encapsulates the default data; other classes/objects don't need to know
