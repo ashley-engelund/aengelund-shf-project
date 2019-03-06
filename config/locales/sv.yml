@@ -1002,7 +1002,6 @@ sv:
   mailers:
     login_here: "Klicka här för att gå till inloggningssidan."
     may_need_to_login_first: "Du kan behöva logga in först.  Här är inloggningssidan:"
-    login_here: "Klicka här för att gå till SHF inloggningssidan."
 
     application_mailer:
       greeting: &email_greeting "Hej %{greeting_name}"

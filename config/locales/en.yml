@@ -999,8 +999,6 @@ en:
     login_here: "Click here to go to the login page."
     may_need_to_login_first: "You may need to log in first.  Here's the login page:"
 
-    login_here: "Click here to go to the SHF login page."
-
     application_mailer:
       greeting: &email_greeting "Hello %{greeting_name}"
 
