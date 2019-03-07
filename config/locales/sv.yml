@@ -1075,7 +1075,7 @@ sv:
           extend_membership: Du kan förlänga ditt medlemskap i ytterligare
                                   12 månader genom att betala medlemsavgiften.
 
-      h_branding_fee_will_be_due:
+      h_branding_fee_will_expire:
         subject: The H-Branding fee for your company will be due soon
         greeting: *email_greeting
         message_text:

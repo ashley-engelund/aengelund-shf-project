@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-RSpec.describe RequirementsForHBrandingFeeWillBeDue, type: :model do
+RSpec.describe RequirementsForHBrandingFeeWillExpire, type: :model do
 
-  let(:subject) { RequirementsForHBrandingFeeWillBeDue }
+  let(:subject) { RequirementsForHBrandingFeeWillExpire }
 
 
   describe '.has_expected_arguments?' do

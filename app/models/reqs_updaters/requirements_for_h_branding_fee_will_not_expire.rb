@@ -1,6 +1,6 @@
 #--------------------------
 #
-# @class RequirementsForHBrandingFeeWillNotBeDue
+# @class RequirementsForHBrandingFeeWillNotExpire
 #
 # @desc Responsibility: Knows when an H-Branding Fee will NOT be due for a company
 # (= the requirements are met)
@@ -14,15 +14,15 @@
 #
 # @author Ashley Engelund (ashley@ashleycaroline.com  weedySeaDragon @ github)
 # @date   2019-03-05
-# @file requirements_for_h_branding_fee_not_due.rb
+# @file requirements_for_h_branding_fee_will_not_expire.rb
 #
 #--------------------------
 
 
-class RequirementsForHBrandingFeeWillNotBeDue < AbstractOppositeRequirements
+class RequirementsForHBrandingFeeWillNotExpire < AbstractOppositeRequirements
 
   def self.opposite_class
-    RequirementsForHBrandingFeeWillBeDue
+    RequirementsForHBrandingFeeWillExpire
   end
 
 end

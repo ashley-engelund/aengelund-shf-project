@@ -14,7 +14,7 @@ namespace :shf do
           timing:     :before,
           config:     { days: std_reminder_before_schedule } },
 
-        { class_name: 'HBrandingFeeWillBeDueAlert',
+        { class_name: 'HBrandingFeeWillExpireAlert',
           timing:     :before,
           config:     { days: std_reminder_before_schedule } },
 

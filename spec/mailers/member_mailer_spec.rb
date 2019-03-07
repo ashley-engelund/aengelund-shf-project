@@ -346,9 +346,9 @@ RSpec.describe MemberMailer, type: :mailer do
   end
 
 
-  describe '#hbranding_fee_will_be_due' do
+  describe '#hbranding_fee_will_expire' do
 
-    HBRAND_FEE_WILLBE_SCOPE = 'mailers.member_mailer.h_branding_fee_will_be_due'
+    HBRAND_FEE_WILLEXPIRE_SCOPE = 'mailers.member_mailer.h_branding_fee_will_expire'
 
     let(:jan1_2020) { Date.new(2020, 1, 1) }
 
@@ -367,12 +367,12 @@ RSpec.describe MemberMailer, type: :mailer do
     let(:email_sent) do
       # create the company and members
       member1_exp_jan1
-      MemberMailer.h_branding_fee_will_be_due(company3, member1_exp_jan1)
+      MemberMailer.h_branding_fee_will_expire(company3, member1_exp_jan1)
     end
 
 
     it_behaves_like 'a successfully created email',
-                    I18n.t('subject', scope: HBRAND_FEE_WILLBE_SCOPE),
+                    I18n.t('subject', scope: HBRAND_FEE_WILLEXPIRE_SCOPE),
                     'only_member@example.com',
                     'Firstname Lastname' do
       let(:email_created) { email_sent }
@@ -380,13 +380,13 @@ RSpec.describe MemberMailer, type: :mailer do
 
     it 'tells you when the HBranding license will expire' do
       expect(email_sent).to have_body_text(I18n.t('message_text.expire_alert_html',
-                                                  scope:       HBRAND_FEE_WILLBE_SCOPE,
+                                                  scope:       HBRAND_FEE_WILLEXPIRE_SCOPE,
                                                   expire_date: company3.branding_expire_date))
     end
 
     it 'tells how to pay the fee' do
       expect(email_sent).to have_body_text(I18n.t('message_text.how_to_pay_fee',
-                                                  scope: HBRAND_FEE_WILLBE_SCOPE))
+                                                  scope: HBRAND_FEE_WILLEXPIRE_SCOPE))
     end
 
     it 'has a link to the company' do
@@ -395,7 +395,7 @@ RSpec.describe MemberMailer, type: :mailer do
 
     it 'says you may need to log in' do
       expect(email_sent).to have_body_text(I18n.t('message_text.company_link_login_msg',
-                                                  scope: HBRAND_FEE_WILLBE_SCOPE))
+                                                  scope: HBRAND_FEE_WILLEXPIRE_SCOPE))
     end
 
     it_behaves_like 'from address is correct' do

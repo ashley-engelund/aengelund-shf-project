@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-RSpec.describe RequirementsForHBrandingFeeWillNotBeDue, type: :model do
+RSpec.describe RequirementsForHBrandingFeeWillNotExpire, type: :model do
 
-  let(:subject) { RequirementsForHBrandingFeeWillNotBeDue }
+  let(:subject) { RequirementsForHBrandingFeeWillNotExpire }
 
   it '.opposite_class' do
-    expect(subject.opposite_class).to eq RequirementsForHBrandingFeeWillBeDue
+    expect(subject.opposite_class).to eq RequirementsForHBrandingFeeWillExpire
   end
 
 

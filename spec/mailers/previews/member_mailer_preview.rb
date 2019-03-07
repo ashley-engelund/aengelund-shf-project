@@ -20,10 +20,10 @@ class MemberMailerPreview < ActionMailer::Preview
   end
 
 
-  def h_branding_fee_will_be_due
+  def h_branding_fee_will_expire
     licensed_co = Company.branding_licensed.first
     co_member = licensed_co.users.last
-    MemberMailer.h_branding_fee_will_be_due(licensed_co, co_member)
+    MemberMailer.h_branding_fee_will_expire(licensed_co, co_member)
   end
 
 
