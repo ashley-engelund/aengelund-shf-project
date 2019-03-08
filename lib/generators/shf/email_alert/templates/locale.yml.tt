@@ -1,5 +1,5 @@
 ---
-<%= locale_file_name %>:
+<%= @current_locale_file %>:
 
   title: 'Medlemmar i Sveriges Hundföretagare'
 
