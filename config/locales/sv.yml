@@ -1082,12 +1082,12 @@ sv:
                                   12 månader genom att betala medlemsavgiften.
 
       h_branding_fee_will_expire:
-        subject: The H-Branding fee for your company will be due soon
+        subject: Det är snart dags att betala din H-märkningspremie
         greeting: *email_greeting
         message_text:
-          expire_alert_html: "Please note that your current H-branding fee period will expire on <span class='date-warning'>%{expire_date}</span>."
+          expire_alert_html: "Observera att din nuvarande H-märkningspremie löper ut den %{expire_date}."
           how_to_pay_fee:  &pay_hbrand_be_mapped  Betala den ett år till via länken nedan. Detta gör att du fortsätter synas på kartan och fortsätter ha ett H-märkt företag.
-          company_link_login_msg: "Once you are logged in, you will be able to see the license expiration date on the company page and see the button to pay:"
+          company_link_login_msg: "När du är inloggad ser du när din H-märkningspremie går ut och hur du betalar på din företagssida:"
 
       h_branding_fee_past_due:
         subject: Ditt företags H-märkespremie är obetald.
