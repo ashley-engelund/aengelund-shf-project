@@ -33,23 +33,26 @@ module Shf
       class_option :mailer_class,
                    type:    :string,
                    default: 'MemberMailer',
-                   desc:    'Mailer class that will call the alert. Class must already exist. Default = MemberMailer'
+                   desc:    "Mailer class that will call the alert. A minimal class will be created if it doesn't already exist."
 
       class_option :mailer_method,
                    type: :string,
-                   desc: 'method name in the Mailer class (and the view name by Rails convention). Default = <alert class name underscore>'
+                   desc: "Method name in the Mailer class (and the view name by Rails convention).\n" +
+                             '                                             #   Default = <alert class name underscore>'
 
       class_option :req_class,
                    type: :string,
-                   desc: 'Requirements class name.  Default = RequirementsFor<alert class name>'
+                   desc: "Requirements class name.  A class will be created.\n" +
+                             '                                             #   Default class name = RequirementsFor<alert class name>'
 
       class_option :req_class_opposite,
                    type: :string,
-                   desc: 'Opposite Requirements class name.  Default = RequirementsFor<alert class name>Not'
+                   desc: "Opposite Requirements class name. A class will be created.\n" +
+                             '                                             #   Default class name = RequirementsFor<alert class name>Not'
 
       class_option :timing,
                    type: :string,
-                   desc: 'Timing should be before or after.  Default = before'
+                   desc: 'Timing should be before or after. Default = before'
 
 
       def create_requirements_files
@@ -264,7 +267,7 @@ module Shf
       def created_locale_file?(locale)
 
         locale_abs_file = abs_locale_path(locale)
-        created_file = false
+        created_file    = false
 
         unless File.exist?(locale_abs_file)
           @current_locale_file = locale # so this can be accessed in the template
