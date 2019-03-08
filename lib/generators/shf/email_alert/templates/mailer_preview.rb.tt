@@ -7,12 +7,9 @@ class <%= mailer_class %>Preview < ActionMailer::Preview
 
   private
 
-
   # create a unique email address based on the Time right now
   def unique_email
     "user-#{Time.now.to_i}@example.com"
   end
-
-
 
 end
