@@ -11,6 +11,12 @@ RSpec.describe SchemaDotOrg::Thing, type: :model do
     thing
   }
 
+  let(:sub_thing) {
+    sub_t             = described_class.new
+    sub_t.name        = 'sub-t'
+    sub_t.description = 'sub-t desc'
+    sub_t
+  }
 
   describe 'validations' do
     it { is_expected.to(validate_presence_of :name) }
@@ -19,12 +25,13 @@ RSpec.describe SchemaDotOrg::Thing, type: :model do
 
   describe '_to_json_struct' do
 
-    it 'values for all attributes' do
+    it 'values for simple attributes' do
       expect(thing1._to_json_struct).to eq({ "@type"       => "Thing",
                                              'description' => 'description1',
                                              'name'        => 'thing1',
                                              'url'         => 'https:/thing1/' })
     end
+
 
     describe 'does not include entries if value is nil' do
 
@@ -45,11 +52,55 @@ RSpec.describe SchemaDotOrg::Thing, type: :model do
 
 
     describe 'sends .to_json_struct to get the value if an item responds to :to_json_struct' do
-      pending
+
+      it 'does not respond to :to_json_struct' do
+        thing             = described_class.new
+        thing.name        = 'thing1'
+        thing.description = [1, 2, 3]
+
+        expect(thing._to_json_struct).to eq({ "@type" => "Thing", "description" => [1, 2, 3], "name" => "thing1" })
+      end
+
+      it 'does respond to :to_json_struct' do
+        thing             = described_class.new
+        thing.name        = 'thing1'
+        thing.description = sub_thing
+        expect(thing._to_json_struct).to eq({ "@type"       => "Thing",
+                                              "description" => { "@type" => "Thing", "description" => "sub-t desc", "name" => "sub-t" },
+                                              "name"        => "thing1" })
+      end
     end
 
-    describe 'loops thru lists' do
-      pending
+
+    describe 'loops thru lists and gets the json for each' do
+
+
+      let(:sub_b) { ['b', 'B', 'bb'] }
+      let(:sub_a) { ['A', sub_b, sub_thing] }
+
+      let(:simple_list) { [1, 2, 3, 'z'] }
+
+      # We make the name and description lists.  Which is weird,
+      # but exercises the functionality.
+      let(:thing2) {
+        thing             = described_class.new
+        thing.name        = simple_list
+        thing.description = [sub_a, 9, 8, 7]
+        thing.url         = 'https:/thing2/'
+        thing
+      }
+
+      it 'lists are recursed down into' do
+        expect(thing2._to_json_struct['@type']).to eq 'Thing'
+        expect(thing2._to_json_struct['name']).to match_array([1, 2, 3, 'z'])
+        expect(thing2._to_json_struct['description']).to match_array([["A",
+                                                                       ["b", "B", "bb"],
+                                                                       { "name"        => "sub-t",
+                                                                         "description" => "sub-t desc" }
+                                                                      ],
+                                                                      9, 8, 7])
+        expect(thing2._to_json_struct['url']).to eq 'https:/thing2/'
+      end
     end
 
   end
