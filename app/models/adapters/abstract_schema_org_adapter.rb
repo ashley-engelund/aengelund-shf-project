@@ -1,33 +1,32 @@
 #!/usr/bin/ruby
 
 
-#--------------------------
-#
-# @class Adapters::AbstractSchemaOrgAdapter
-#
-# @desc Responsibility: abstract class that implements the minimum needed
-#   to _adapt_ one object to another.
-#
-#     Pattern: Adapter
-#       https://en.wikipedia.org/wiki/Software_design_pattern
-#       https://en.wikipedia.org/wiki/Adapter_pattern
-#       https://www.oodesign.com/
-#       https://bogdanvlviv.com/posts/ruby/patterns/design-patterns-in-ruby.html
-#
-#   Subclasses must implement:
-#       target_class
-#       set_target_attributes
-#
-#
-# @author Ashley Engelund (ashley.engelund@gmail.com  weedySeaDragon @ github)
-# @date   2019-02-19
-#
-# @file company_to_schema_org_adapter.rb
-#
-#--------------------------
-
 module Adapters
 
+  #--------------------------
+  #
+  # @class Adapters::AbstractSchemaOrgAdapter
+  #
+  # @desc Responsibility: abstract class that implements the minimum needed
+  #   to _adapt_ one object to another.
+  #
+  #     Pattern: Adapter
+  #       https://en.wikipedia.org/wiki/Software_design_pattern
+  #       https://en.wikipedia.org/wiki/Adapter_pattern
+  #       https://www.oodesign.com/
+  #       https://bogdanvlviv.com/posts/ruby/patterns/design-patterns-in-ruby.html
+  #
+  #   Subclasses must implement:
+  #       target_class
+  #       set_target_attributes
+  #
+  #
+  # @author Ashley Engelund (ashley.engelund@gmail.com  weedySeaDragon @ github)
+  # @date   2019-02-19
+  #
+  # @file company_to_schema_org_adapter.rb
+  #
+  #--------------------------
   class AbstractSchemaOrgAdapter
 
     def initialize(adaptee)

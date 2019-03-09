@@ -1,26 +1,25 @@
 #!/usr/bin/ruby
 
 
-#--------------------------
-#
-# @class Adapters::AddressToSchemaPostalAddress
-#
-# @desc Responsibility: (an Adapter) takes an Address and creates a
-#   schema.org PostalAddress
-#     Pattern: Adapter
-#       @adaptee: Address
-#       target: SchemaDotOrg::PostalAddress  https://schema.org/PostalAddress
-#
-#
-# @author Ashley Engelund (ashley.engelund@gmail.com  weedySeaDragon @ github)
-# @date   2019-02-19
-#
-# @file company_to_schema_postal_address.rb
-#
-#--------------------------
-
 module Adapters
 
+  #--------------------------
+  #
+  # @class Adapters::AddressToSchemaPostalAddress
+  #
+  # @desc Responsibility: (an Adapter) takes an Address and creates a
+  #   schema.org PostalAddress
+  #     Pattern: Adapter
+  #       @adaptee: Address
+  #       target: SchemaDotOrg::PostalAddress  https://schema.org/PostalAddress
+  #
+  #
+  # @author Ashley Engelund (ashley.engelund@gmail.com  weedySeaDragon @ github)
+  # @date   2019-02-19
+  #
+  # @file company_to_schema_postal_address.rb
+  #
+  #--------------------------
   class AddressToSchemaPostalAddress < AbstractSchemaOrgAdapter
 
 

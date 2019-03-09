@@ -1,27 +1,26 @@
 #!/usr/bin/ruby
 
 
-#--------------------------
-#
-# @class Adapters::AddressToSchemaPlace
-#
-# @desc Responsibility: (an Adapter) takes an Address and creates a
-#   schema.org Place
-#
-#     Pattern: Adapter
-#       @adaptee: Address
-#       target:  SchemaDotOrg::Place   https://schema.org/Place
-#
-#
-# @author Ashley Engelund (ashley.engelund@gmail.com  weedySeaDragon @ github)
-# @date   2019-02-19
-#
-# @file company_to_schema_org_place.rb
-#
-#--------------------------
-
 module Adapters
 
+  #--------------------------
+  #
+  # @class Adapters::AddressToSchemaPlace
+  #
+  # @desc Responsibility: (an Adapter) takes an Address and creates a
+  #   schema.org Place
+  #
+  #     Pattern: Adapter
+  #       @adaptee: Address
+  #       target:  SchemaDotOrg::Place   https://schema.org/Place
+  #
+  #
+  # @author Ashley Engelund (ashley.engelund@gmail.com  weedySeaDragon @ github)
+  # @date   2019-02-19
+  #
+  # @file company_to_schema_org_place.rb
+  #
+  #--------------------------
   class AddressToSchemaPlace < AbstractSchemaOrgAdapter
 
 
