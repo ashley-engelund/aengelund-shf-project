@@ -54,19 +54,7 @@ RSpec.describe SchemaDotOrg::ToLdJson do
 
   describe 'to_json' do
 
-    context 'as_root == true' do
-      it 'starts with  "@context" => "http://schema.org"' do
-        expect(test_json_ld.to_json).to match(/^{"@context":"http:\/\/schema.org"/)
-      end
-    end
-
-    context 'as_root == false' do
-      it 'does not have @context...' do
-        expect(test_json_ld.to_json(as_root: false)).to match(/^{"@type":"TestJsonLd"/)
-      end
-    end
-
-    it 'default is as_root == true' do
+    it 'starts with  "@context" => "http://schema.org"' do
       expect(test_json_ld.to_json).to match(Regexp.new(to_json_result))
     end
 
@@ -109,6 +97,12 @@ RSpec.describe SchemaDotOrg::ToLdJson do
     end
   end
 
+
+  describe 'to_json_sub' do
+    it 'does not have @context...' do
+      expect(test_json_ld.to_json_sub).to match(/^{"@type":"TestJsonLd"/)
+    end
+  end
 
   describe 'to_json_struct' do
 
