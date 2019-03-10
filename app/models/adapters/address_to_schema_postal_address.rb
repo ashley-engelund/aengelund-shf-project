@@ -32,7 +32,7 @@ module Adapters
       
       target.streetAddress = @adaptee.street_address
       target.postalCode = @adaptee.post_code
-      target.addressRegion = @adaptee.region.name
+      target.addressRegion = @adaptee.region.name unless @adaptee.region.nil?
       target.addressLocality = @adaptee.city
       target.addressCountry = @adaptee.country
 
