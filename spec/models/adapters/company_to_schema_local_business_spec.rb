@@ -10,7 +10,7 @@ RSpec.describe Adapters::CompanyToSchemaLocalBusiness do
     company
   end
 
-  let(:test_adapter) { Adapters::CompanyToSchemaLocalBusiness.new(co) }
+  let(:test_adapter) { Adapters::CompanyToSchemaLocalBusiness.new(co, url: 'shf page for the company') }
 
   let(:schema_local_business) { test_adapter.set_target_attributes(test_adapter.target_class.new) }
 
@@ -38,8 +38,8 @@ RSpec.describe Adapters::CompanyToSchemaLocalBusiness do
     expect(schema_local_business.email).to eq 'thiscompany@example.com'
   end
 
-  it 'url' do
-    expect(schema_local_business.url).to eq 'http://www.example.com'
+  it 'url is the SHF page for the company' do
+    expect(schema_local_business.url).to eq 'shf page for the company'
   end
 
   it 'telephone' do

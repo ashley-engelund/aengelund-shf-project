@@ -29,6 +29,11 @@ module Adapters
 
     include CompanyHMarktUrlGenerator
 
+    def initialize(adaptee, url: '')
+      super(adaptee)
+      @target_url = url
+    end
+
     def target_class
       SchemaDotOrg::LocalBusiness
     end
@@ -38,23 +43,22 @@ module Adapters
 
       target.name        = @adaptee.name
       target.description = @adaptee.description
-      target.url         = @adaptee.website
+      target.url         = @target_url
       target.email       = @adaptee.email
       target.telephone   = @adaptee.phone_number
-      target.image       = company_h_markt_url(@adaptee) # FIXME - this needs to be a permanent image and URL
+      target.image       = company_h_markt_url(@adaptee) # TODO this needs to be a permanent image and URL
 
-      target = AddressesIntoSchemaLocalBusiness.set_address_properties(@adaptee.addresses,
-                                                                       @adaptee.main_address,
-                                                                       target)
-
+      target               = AddressesIntoSchemaLocalBusiness.set_address_properties(@adaptee.addresses,
+                                                                                     @adaptee.main_address,
+                                                                                     target)
       target.knowsLanguage = 'sv-SE'
-
-      target.knowsAbout = BusinessCatsIntoKnowsString.knows_str(@adaptee.business_categories)
+      target.knowsAbout    = BusinessCatsIntoKnowsString.knows_str(@adaptee.business_categories)
 
       target
     end
 
 
+    # TODO - this should come from a helper or someplace else, not be hardcoded.  Fix when images are implemented
     def url_for_co_hbrand_image(company)
       "#{I18n.t('shf_medlemssystem_url')}/hundforetag/#{company.id}/company_h_brand"
     end

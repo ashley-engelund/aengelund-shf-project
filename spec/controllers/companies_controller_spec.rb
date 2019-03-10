@@ -525,10 +525,10 @@ RSpec.describe CompaniesController, type: :controller do
         # {
         #   "@context":"http://schema.org",
         #   "@type":"LocalBusiness",
-        #   "@id":"http://www.example.com",
+        #   "@id":"https://hitta.sverigeshundforetagre/hundforetag/1",
         #   "name":"Complete Company 1",
         #   "description":"This co has a 2 branding payments",
-        #   "url":"http://www.example.com",
+        #   "url":"https://hitta.sverigeshundforetagre/hundforetag/1",
         #   "email":"thiscompany@example.com",
         #   "telephone":"123123123",
         #   "image":"https://hitta.sverigeshundforetagare.se/hundforetag/1/company_h_brand",
@@ -565,6 +565,8 @@ RSpec.describe CompaniesController, type: :controller do
           # turn the matched string into a Hash so we can compare info no matter the order
           co_ld_json = JSON.parse(match.named_captures['company_ld_json'])
 
+          shf_company_url = /#{@controller.request.base_url}\/hundforetag\/#{complete_co1.id}/
+
           expect(co_ld_json.key?('@context')).to be_truthy
           expect(co_ld_json['@context']).to eq 'http://schema.org'
 
@@ -572,8 +574,7 @@ RSpec.describe CompaniesController, type: :controller do
           expect(co_ld_json['@type']).to eq 'LocalBusiness'
 
           expect(co_ld_json.key?('@id')).to be_truthy
-          expect(co_ld_json['@id']).to eq complete_co1.website
-          #TODO: or should this be equal to the SHF page for the company? == @controller.request.url
+          expect(co_ld_json['@id']).to match(shf_company_url)
 
           expect(co_ld_json.key?('name')).to be_truthy
           expect(co_ld_json['name']).to eq complete_co1.name
@@ -582,7 +583,7 @@ RSpec.describe CompaniesController, type: :controller do
           expect(co_ld_json['description']).to eq complete_co1.description
 
           expect(co_ld_json.key?('url')).to be_truthy
-          expect(co_ld_json['url']).to eq complete_co1.website
+          expect(co_ld_json['url']).to match(shf_company_url)
 
           expect(co_ld_json.key?('email')).to be_truthy
           expect(co_ld_json['email']).to eq complete_co1.email
