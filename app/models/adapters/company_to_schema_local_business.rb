@@ -43,7 +43,9 @@ module Adapters
       target.telephone   = @adaptee.phone_number
       target.image       = company_h_markt_url(@adaptee) # FIXME - this needs to be a permanent image and URL
 
-      target = AddressesIntoSchemaLocalBusiness.set_address_properties(@adaptee.addresses, target)
+      target = AddressesIntoSchemaLocalBusiness.set_address_properties(@adaptee.addresses,
+                                                                       @adaptee.main_address,
+                                                                       target)
 
       target.knowsLanguage = 'sv-SE'
 

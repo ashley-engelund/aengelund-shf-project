@@ -20,18 +20,16 @@ module Adapters
   class AddressesIntoSchemaLocalBusiness
 
 
-    def self.set_address_properties(addresses, local_biz)
+    def self.set_address_properties(addresses, main_address, local_biz)
+
+      local_biz = set_main_address(main_address, local_biz)
 
       unless addresses.empty?
-
-        local_biz = set_main_address(addresses.first, local_biz)
-
         # for multiple addresses, list multiple locations, each with an address and geo coordinates
         if addresses.size > 1
           local_biz.location = []
           addresses.each { |address| add_address_to_location(address, local_biz.location) }
         end
-
       end
 
       local_biz

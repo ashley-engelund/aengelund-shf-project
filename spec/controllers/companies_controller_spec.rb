@@ -640,7 +640,8 @@ RSpec.describe CompaniesController, type: :controller do
         end
 
 
-        it 'company with 3 addresses' do
+        it  'company with 3 addresses: uses main address for address, lists all 3 addresses as locations' do
+
           company_3_addrs
           get :show, params: show_co3_params
 
@@ -657,27 +658,26 @@ RSpec.describe CompaniesController, type: :controller do
           expect(co_ld_json.key?('address')).to be_truthy
           expect(co_ld_json['address']).to be_a Hash
 
-          # FIXME which address goes into this main address?
-          # It's non-determinate ATM.
-
           address_hash = co_ld_json['address']
           expect(address_hash.key?('@type')).to be_truthy
           expect(address_hash['@type']).to eq 'PostalAddress'
 
-          # expect(address_hash.key?('streetAddress')).to be_truthy
-          # expect(address_hash['streetAddress']).to eq 'Hundforetagarevägen 3'
-          #
-          # expect(address_hash.key?('postalCode')).to be_truthy
-          # expect(address_hash['postalCode']).to eq '310 40'
-          #
-          # expect(address_hash.key?('addressRegion')).to be_truthy
-          # expect(address_hash['addressRegion']).to eq 'MyString'
-          #
-          # expect(address_hash.key?('addressLocality')).to be_truthy
-          # expect(address_hash['addressLocality']).to eq 'Harplinge'
-          #
-          # expect(address_hash.key?('addressCountry')).to be_truthy
-          # expect(address_hash['addressCountry']).to eq 'Sverige'
+          main_addr = company_3_addrs.main_address
+
+          expect(address_hash.key?('streetAddress')).to be_truthy
+          expect(address_hash['streetAddress']).to eq main_addr.street_address
+
+          expect(address_hash.key?('postalCode')).to be_truthy
+          expect(address_hash['postalCode']).to eq main_addr.post_code
+
+          expect(address_hash.key?('addressRegion')).to be_truthy
+          expect(address_hash['addressRegion']).to eq main_addr.region.name
+
+          expect(address_hash.key?('addressLocality')).to be_truthy
+          expect(address_hash['addressLocality']).to eq main_addr.city  #main_addr.kommun.name
+
+          expect(address_hash.key?('addressCountry')).to be_truthy
+          expect(address_hash['addressCountry']).to eq main_addr.country
 
           expect(co_ld_json.key?('geo')).to be_truthy
           expect(co_ld_json['geo']).to be_a Hash
@@ -687,9 +687,9 @@ RSpec.describe CompaniesController, type: :controller do
           expect(geo_hash['@type']).to eq 'GeoCoordinates'
 
           expect(geo_hash.key?('longitude')).to be_truthy
-          expect(geo_hash['latitude']).to eq 60.128161
+          expect(geo_hash['latitude']).to eq main_addr.latitude
           expect(geo_hash.key?('longitude')).to be_truthy
-          expect(geo_hash['longitude']).to eq 18.643501
+          expect(geo_hash['longitude']).to eq main_addr.longitude
 
           location = co_ld_json['location']
           expect(location).to be_a Array
