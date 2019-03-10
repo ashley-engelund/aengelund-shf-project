@@ -640,7 +640,7 @@ RSpec.describe CompaniesController, type: :controller do
         end
 
 
-        it  'company with 3 addresses: uses main address for address, lists all 3 addresses as locations' do
+        it 'company with 3 addresses: uses main address for address, lists all 3 addresses as locations' do
 
           company_3_addrs
           get :show, params: show_co3_params
