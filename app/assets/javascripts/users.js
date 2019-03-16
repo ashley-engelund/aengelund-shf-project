@@ -14,4 +14,10 @@ $(function() {
   $('#editUserStatusSubmit').click(function() {
     $('#editStatusModal').modal('hide');
   });
+
+  $('#packetSentForm').on('ajax:success', function(e, data){
+    console.log('success!');
+    console.log(data)
+  } );
+
 });
