@@ -119,6 +119,13 @@ rescue Capybara::ElementNotFound
   page.execute_script("document.getElementById(\"#{element_id}\").click()")
 end
 
+When "I {action} the checkbox with id {capture_string} for the row with {capture_string}" do |check_action, checkbox_id, row_content|
+
+  checkbox = find(:xpath, "//tr[contains(.,'#{row_content}')]/td//input[@id='#{checkbox_id}']")
+  checkbox.send check_action
+end
+
+
 When "I click the radio button with id {capture_string}" do |element_id|
   find("##{element_id}").click
 end
