@@ -63,6 +63,11 @@
 
     - if current_user.admin?
 
+      %p{class: "membership-packet #{ @user.membership_packet_sent? ? 'sent' : 'not-sent'}",
+      id: 'date-membership-packet-sent'}
+        = membership_packet_str(@user)
+
+
       - if @user.last_sign_in_at.blank? && @user.current_sign_in_at.blank?
         #{@user.email} #{t('.user_has_never_signed_in')}
 
