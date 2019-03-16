@@ -1,4 +1,6 @@
-Feature: As an admin
+Feature: Admin sees user detail information
+
+  As an admin
   So that I can see the details for a user
   Show me all of the details about a user
 
@@ -7,16 +9,17 @@ Feature: As an admin
   Background:
 
     Given the following users exists
-      | email                   | admin | membership_number |
-      | emma@personal.com       |       | 100               |
-      | lars@personal.com       |       | 101               |
-      | hannah@personal.com     |       | 102               |
-      | nils@personal.se        |       |                   |
-      | anna@personal.se        |       |                   |
-      | sam@personal.se         |       |                   |
-      | admin@shf.se            | true  |                   |
-      | yesterday_admin@shf.se  | true  |                   |
-      | lazy_admin@shf.se       | true  |                   |
+      | email                  | admin | membership_number | member |
+      | emma@personal.com      |       | 100               | true   |
+      | lars@personal.com      |       | 101               | true   |
+      | hannah@personal.com    |       | 102               | true   |
+      | nils@personal.se       |       |                   |        |
+      | anna@personal.se       |       |                   |        |
+      | sam@personal.se        |       |                   |        |
+      | admin@shf.se           | true  |                   |        |
+      | yesterday_admin@shf.se | true  |                   |        |
+      | lazy_admin@shf.se      | true  |                   |        |
+      | rejected@personal.com  |       |                   |        |
 
     And the following regions exist:
       | name         |
@@ -30,11 +33,16 @@ Feature: As an admin
 
 
     And the following applications exist:
-      | user_email          | contact_email         | company_number | state    |
-      | lars@personal.com   | lars@happymutts.com   | 5560360793     | accepted |
-      | hannah@personal.com | hannah@happymutts.com | 5560360793     | accepted |
-      | emma@personal.com   | emma@bowsers.com      | 2120000142     | new      |
+      | user_email            | contact_email           | company_number | state    |
+      | lars@personal.com     | lars@happymutts.com     | 5560360793     | accepted |
+      | hannah@personal.com   | hannah@happymutts.com   | 5560360793     | accepted |
+      | emma@personal.com     | emma@bowsers.com        | 2120000142     | new      |
+      | rejected@personal.com | rejected@happymutts.com | 5560360793     | accepted |
 
+
+    And the following membership packets have been sent:
+      | user_email          | date_sent  |
+      | lars@personal.com   | 2019-03-01 |
 
 
     And I am logged in as "admin@shf.se"
@@ -151,3 +159,34 @@ Feature: As an admin
   Scenario: Do not show the membership number when there is none
     When I am on the "user details" page for "nils@personal.se"
     Then I should not see t("users.show.membership_number")
+
+
+  @focus
+  Scenario: Membership Package sent to a member: show that it was sent and the date
+    When I am on the "user details" page for "lars@personal.com"
+    Then I should see "Member packet sent 2019-03-01"
+
+  @focus
+  Scenario: Membership Package: If a member but no date sent, should show 'Membership Package not sent'
+    When I am on the "user details" page for "hannah@personal.com"
+    Then I should see "Member packet not sent"
+
+  @focus
+  Scenario: Membership Package info does not show for non-members
+    When I am on the "user details" page for "rejected@personal.com"
+    Then I should not see t("users.show.member_packet")
+
+
+  Scenario: A member cannot see membership packet info
+    When I am logged out
+    And I am logged in as "lars@personal.com"
+    And I am on the "user details" page for "lars@personal.com"
+    Then I should not see t("users.show.member_packet")
+
+
+  Scenario: A user cannot see membership packet info
+    When I am logged out
+    And I am logged in as "anna@personal.se"
+    And I am on the "user details" page for "anna@personal.se"
+    Then I should not see t("users.show.member_packet")
+
