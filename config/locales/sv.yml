@@ -161,6 +161,7 @@ sv:
         sign_in_count: &sign_in_count Inloggningar
         reset_password_sent_at: &user_reset_password_sent_at Information angående återställning av lösenord sändes
         member: &member Medlem
+        date_member_packet_sent: &date_member_packet_sent Date Member Packet sent
 
       payment:
         payment_type: Betalningstyp
@@ -409,7 +410,7 @@ sv:
       org_nr: *org_nr
       manage: *manage
       state: *state
-      no_search_results: Din sökning gav inget resultat, prova att ta bort något av dina val.
+      no_search_results: &no_search_results Din sökning gav inget resultat, prova att ta bort något av dina val.
 
     information:
       title: Om ansökan och medlemskap
@@ -612,7 +613,7 @@ sv:
       h_companies_listed_below: Nedan listas anslutna företag.
       how_to_search: Sök efter företag genom att använda sökfunktionen.
       confirm_are_you_sure: *are_you_sure_confirm
-      no_search_results: Din sökning gav inget resultat, prova att ta bort något av dina val.
+      no_search_results: *no_search_results
       delete: *delete
 
     destroy:
@@ -728,7 +729,7 @@ sv:
   users:
     index:
       title: Alla Användare
-      no_search_results: Din sökning gav inget resultat, prova att ta bort något av dina val.
+      no_search_results: *no_search_results
 
     delete_user: Radera %{user}
 
@@ -779,6 +780,9 @@ sv:
       show_image: Visa bild
       company_h_brand: Företaget H-märke för %{company}
       company_h_brand_describe: Detta är ditt företags H-märke.
+      member_packet: member packet
+      sent: sent
+      not_sent: not sent
 
     update:
       passwords_dont_match: De två lösenord du angivit matchar inte.
@@ -845,7 +849,10 @@ sv:
     export_ansokan_csv:
       success: Exporten lyckades. Du hittar filen bland din webbläsares nedladdade filer.
       error: Ett problem uppstod med exporten.
+      date_state_changed: Date State changed
+      member_fee_paid: M fee paid
       member_fee_expires: M Expires
+      branding_fee_paid: H-brand paid
       branding_fee_expires: H Expires
       paid: *paid
       never_paid: *never_paid
@@ -1048,7 +1055,7 @@ sv:
           shf_motto: KOMPETENS – GLÄDJE – OMTANKE
           email_sent_to: Det här mailet skickades till %{email_sent_to}
           why_you_are_receiving: Du får detta e-postmeddelande eftersom du är intresserad av medlemsskap i Sveriges Hundföretagare eller för att du redan är medlem.
-
+        no_search_results: *no_search_results
 
     admin_mailer:
       signoff: Tack
