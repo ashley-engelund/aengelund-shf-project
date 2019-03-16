@@ -129,6 +129,8 @@ RSpec.describe User, type: :model do
     it { is_expected.to have_db_column :member_photo_content_type }
     it { is_expected.to have_db_column :member_photo_file_size }
     it { is_expected.to have_db_column :member_photo_updated_at }
+    it { is_expected.to have_db_column :short_proof_of_membership_url }
+    it { is_expected.to have_db_column :date_membership_packet_sent }
   end
 
   describe 'Validations' do
@@ -1334,6 +1336,20 @@ RSpec.describe User, type: :model do
         expect(user.get_short_proof_of_membership_url(url)).to eq(url)
         expect(user.short_proof_of_membership_url).to eq(nil)
       end
+    end
+  end
+
+
+  describe '#membership_packet_sent?' do
+
+    it 'true if there is a date' do
+      user_sent_package = create(:user, date_membership_packet_sent: Date.current )
+      expect(user_sent_package.membership_packet_sent?).to be_truthy
+    end
+
+    it 'false if there is no date' do
+      user_sent_package = create(:user, date_membership_packet_sent: nil )
+      expect(user_sent_package.membership_packet_sent?).to be_falsey
     end
   end
 end
