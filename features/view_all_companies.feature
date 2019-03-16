@@ -176,13 +176,13 @@ Feature: Visitor sees all companies
     # Ensure the list is sorted by name so we will see Company02
     And I click on t("activerecord.attributes.company.name")
     And I should see "Company02"
-    And I should see "Västerbotten" in the row for "Company02"
-    And I should see "Norrbotten" in the row for "Company02"
-    And I should see "Uppsala" in the row for "Company02"
-    And I should see "Bromölla" in the row for "Company02"
-    And I should see "Alvesta" in the row for "Company02"
-    And I should see "Aneby" in the row for "Company02"
-    And I should not see "Stockholm" in the row for "Company02"
+    And I should see "Västerbotten" in the row for the company named "Company02"
+    And I should see "Norrbotten" in the row for the company named "Company02"
+    And I should see "Uppsala" in the row for the company named "Company02"
+    And I should see "Bromölla" in the row for the company named "Company02"
+    And I should see "Alvesta" in the row for the company named "Company02"
+    And I should see "Aneby" in the row for the company named "Company02"
+    And I should not see "Stockholm" in the row for the company named "Company02"
 
   @time_adjust
   Scenario: User sees all the companies

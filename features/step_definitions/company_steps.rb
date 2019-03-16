@@ -81,6 +81,14 @@ When "I click the {ordinal} address for company {capture_string}" do |ordinal, c
   click_link(addr_link)
 end
 
+
+
+Then "I should{negate} see {capture_string} in the row for the company named {capture_string}" do |negate, text, co_name|
+  row = find(:xpath, "//tr[contains(.,'#{co_name}')]")
+
+  expect(row.text).send (negate ? :not_to : :to), match(Regexp.new(text))
+end
+
 And(/I scroll so the top of the list of companies is visible/) do
   step %{I scroll so element with id "shf_applications_list" is visible}
 end
