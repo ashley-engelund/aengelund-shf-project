@@ -20,7 +20,7 @@ class ShfAppNoUploadedFilesAlert < UserEmailAlert
       # If the applicant has said they will email or (postal) mail the files,
       # don't send this alert.
 
-      if shf_app&.file_delivery_method&.email? || shf_app&.file_delivery_method&.mail?
+      if shf_app.file_delivery_method&.email? || shf_app.file_delivery_method&.mail?
         false
 
       else
