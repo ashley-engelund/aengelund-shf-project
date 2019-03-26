@@ -62,6 +62,41 @@ RSpec.describe SiteMetaInfoDefaults do
   end
 
 
+  describe 'Facebook app id' do
+
+    env_key =  'SHF_FB_APPID'
+
+    it "Facebook App id is ENV['#{env_key}']" do
+
+      # stub the value
+      RSpec::Mocks.with_temporary_scope do
+        # must stub this way so the rest of ENV is preserved
+        stub_const('ENV', ENV.to_hash.merge({ env_key => '123321' }))
+
+        expect(subject.faceboook_app_id).to eq(123321)
+
+      end
+    end
+
+
+    it "is 0 if ENV['#{env_key}'] does not exist" do
+
+      # stub the value
+      RSpec::Mocks.with_temporary_scope do
+        orig_id = ENV.fetch(env_key, nil)
+
+        # must stub this way so the rest of ENV is preserved
+        stub_const('ENV', ENV.to_hash)
+        ENV.delete(env_key)
+
+        expect(subject.faceboook_app_id).to eq(0)
+        ENV[env_key] = orig_id if orig_id
+      end
+    end
+
+  end
+
+
   it "twitter_card_type is 'summary'" do
     expect(subject.twitter_card_type).to eq 'summary'
   end

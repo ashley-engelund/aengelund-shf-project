@@ -188,6 +188,24 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
   end
 
 
+  describe 'set_facebook_meta_tags' do
+
+    it 'sets fb:app_id with the default value' do
+      @meta_setter.set_facebook_meta_tags
+      meta_tags_set = @meta_setter.send(:meta_tags)
+
+      expect(meta_tags_set['fb']['app_id']).to eq SiteMetaInfoDefaults.faceboook_app_id
+    end
+
+    it 'can specify the app_id' do
+      @meta_setter.set_facebook_meta_tags(app_id: 987654321)
+      meta_tags_set = @meta_setter.send(:meta_tags)
+
+      expect(meta_tags_set['fb']['app_id']).to eq 987654321
+    end
+
+  end
+
   describe 'set_twitter_meta_tags' do
 
     it 'default: card = SiteMetaInfoDefaults.twitter_card_type' do

@@ -103,14 +103,24 @@ module PageMetaTagsSetter
 
     set_page_meta_images
 
-    set_og_meta_tags(title: helpers.full_page_title(page_title: page_title),
+    set_og_meta_tags(site_name: SiteMetaInfoDefaults.site_name,
+                     title: helpers.full_page_title(page_title: page_title),
                      description: page_desc,
                      type: t(LOCALE_TYPE_KEY, default: SiteMetaInfoDefaults.og_type),
                      base_url: base_url,
                      fullpath: request_fullpath)
 
+    set_facebook_meta_tags
+
     set_twitter_meta_tags(card: t(LOCALE_TWITTER_CARD_KEY, default: SiteMetaInfoDefaults.twitter_card_type))
 
+  end
+
+
+  def set_facebook_meta_tags(app_id: SiteMetaInfoDefaults.faceboook_app_id)
+    set_meta_tags fb: {
+        app_id: app_id
+    }
   end
 
 

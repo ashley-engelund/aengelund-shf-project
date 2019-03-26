@@ -21,6 +21,9 @@
 
 class SiteMetaInfoDefaults
 
+  FB_APPID_KEY = 'SHF_FB_APPID'
+
+
   # These are all class methods
   class << self
 
@@ -67,6 +70,11 @@ class SiteMetaInfoDefaults
 
     def og_type
       'website'
+    end
+
+
+    def faceboook_app_id
+      ENV.fetch(FB_APPID_KEY, nil).to_i
     end
 
 
