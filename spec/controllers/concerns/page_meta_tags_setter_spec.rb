@@ -161,6 +161,7 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
           "description" => 'blorf',
           "keywords"    => 'blorf',
           "og"          => {
+              "site_name"   => "blorf",
               "title"       => 'blorf | blorf',
               "description" => 'blorf',
               "url"         => 'http://test.host/test-path',
@@ -172,6 +173,9 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
                   "type"   => default_image_type,
                   "width"  => default_image_width
               }
+          },
+          "fb" => {
+            "app_id" => 12345678909876
           },
           "twitter"     => {
               "card" => 'blorf'
