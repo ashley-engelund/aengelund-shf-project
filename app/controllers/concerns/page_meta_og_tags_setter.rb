@@ -7,7 +7,7 @@
 #
 # @desc Responsibility: Sets meta info for OpenGraph info for a page
 #
-# This encapsulates all of the logic and info needed to set image tags.
+# This encapsulates all of the logic and info needed to set OpenGraph (og) tags.
 #
 #
 # @author Ashley Engelund (ashley.engelund@gmail.com  weedySeaDragon @ github)
@@ -33,13 +33,15 @@ module PageMetaOgTagsSetter
 
 
 
-  def set_og_meta_tags(title: helpers.full_page_title,
+  def set_og_meta_tags(site_name: SiteMetaInfoDefaults.site_name,
+                       title: helpers.full_page_title,
                        description: SiteMetaInfoDefaults.description,
                        type: SiteMetaInfoDefaults.og_type,
                        base_url: self.request.base_url,
                        fullpath:  '/')
 
     set_meta_tags og: {
+        site_name:   site_name,
         title:       title,
         description: description,
         url:         base_url + fullpath,

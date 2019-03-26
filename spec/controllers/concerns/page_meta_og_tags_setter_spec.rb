@@ -33,6 +33,10 @@ RSpec.describe PageMetaOgTagsSetterTestController, type: :controller do
         @meta_tags_set = @meta_setter.send(:meta_tags)['og']
       end
 
+      it 'site_name' do
+        expect(@meta_tags_set['site_name']).to eq SiteMetaInfoDefaults.site_name
+      end
+
       it 'title' do
         expect(@meta_tags_set['title']).to eq "#{SiteMetaInfoDefaults.title} | #{SiteMetaInfoDefaults.site_name}"
       end
@@ -50,13 +54,19 @@ RSpec.describe PageMetaOgTagsSetterTestController, type: :controller do
 
       before(:all) do
         I18n.locale = :sv
-        @meta_setter.set_og_meta_tags(title:       'page title',
+        @meta_setter.set_og_meta_tags(site_name: 'site name',
+                                      title:       'page title',
                                       description: 'page description',
                                       type:        'the page type',
                                       base_url:    MOCK_BASE_URL,
                                       fullpath:    MOCK_REQ_PATH)
         @meta_tags_set = @meta_setter.send(:meta_tags)['og']
       end
+
+      it 'site_name' do
+        expect(@meta_tags_set['site_name']).to eq 'site name'
+      end
+
 
       it 'title' do
         expect(@meta_tags_set['title']).to eq 'page title'
