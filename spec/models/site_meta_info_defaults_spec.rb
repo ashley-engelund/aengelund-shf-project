@@ -73,7 +73,7 @@ RSpec.describe SiteMetaInfoDefaults do
         # must stub this way so the rest of ENV is preserved
         stub_const('ENV', ENV.to_hash.merge({ env_key => '123321' }))
 
-        expect(subject.faceboook_app_id).to eq(123321)
+        expect(subject.facebook_app_id).to eq(123321)
 
       end
     end
@@ -89,7 +89,7 @@ RSpec.describe SiteMetaInfoDefaults do
         stub_const('ENV', ENV.to_hash)
         ENV.delete(env_key)
 
-        expect(subject.faceboook_app_id).to eq(0)
+        expect(subject.facebook_app_id).to eq(0)
         ENV[env_key] = orig_id if orig_id
       end
     end

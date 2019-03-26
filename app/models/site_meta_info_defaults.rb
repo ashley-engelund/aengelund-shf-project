@@ -73,7 +73,7 @@ class SiteMetaInfoDefaults
     end
 
 
-    def faceboook_app_id
+    def facebook_app_id
       ENV.fetch(FB_APPID_KEY, nil).to_i
     end
 

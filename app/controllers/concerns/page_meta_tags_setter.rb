@@ -117,7 +117,7 @@ module PageMetaTagsSetter
   end
 
 
-  def set_facebook_meta_tags(app_id: SiteMetaInfoDefaults.faceboook_app_id)
+  def set_facebook_meta_tags(app_id: SiteMetaInfoDefaults.facebook_app_id)
     set_meta_tags fb: {
         app_id: app_id
     }

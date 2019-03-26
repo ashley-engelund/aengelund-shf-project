@@ -154,7 +154,8 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
       # the I18n.translate method so it always returns "blorf",
       # everything should be = "blorf"
 
-
+      allow(SiteMetaInfoDefaults).to receive(:facebook_app_id)
+                                          .and_return(12345678909876)
       expected_result = {
           "site"        => 'blorf',
           "title"       => 'blorf',
@@ -198,7 +199,7 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
       @meta_setter.set_facebook_meta_tags
       meta_tags_set = @meta_setter.send(:meta_tags)
 
-      expect(meta_tags_set['fb']['app_id']).to eq SiteMetaInfoDefaults.faceboook_app_id
+      expect(meta_tags_set['fb']['app_id']).to eq SiteMetaInfoDefaults.facebook_app_id
     end
 
     it 'can specify the app_id' do
