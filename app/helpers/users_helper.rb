@@ -60,8 +60,6 @@ module UsersHelper
   #   <'membership packet' translation> <sent | not sent>  <date if it was sent>
   def membership_packet_str(user)
 
-    return '' unless user.member?
-
     mem_packet    = t('member_packet', scope: I18N_USERS_SHOW).capitalize
     packet_status = membership_packet_status_str(user.membership_packet_sent?)
     add_on_date   = ''

@@ -105,12 +105,13 @@ RSpec.describe UsersHelper, type: :helper do
 
   describe '#membership_packet_str' do
 
-    it 'empty string if user is not a member' do
-      not_a_member = create(:user)
-      expect(membership_packet_str(not_a_member)).to be_empty
-    end
-
     let(:i18n_scope) { 'users.show' }
+
+
+    it 'not empty even if user is not a member' do
+      not_a_member = create(:user)
+      expect(membership_packet_str(not_a_member)).not_to be_empty
+    end
 
     context 'date_package_sent is nil' do
       it 'says not sent; has no date sent' do
