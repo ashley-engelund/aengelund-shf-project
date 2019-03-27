@@ -161,17 +161,16 @@ Feature: Admin sees user detail information
     Then I should not see t("users.show.membership_number")
 
 
-  @focus
   Scenario: Membership Package sent to a member: show that it was sent and the date
     When I am on the "user details" page for "lars@personal.com"
     Then I should see "Member packet sent 2019-03-01"
 
-  @focus
+
   Scenario: Membership Package: If a member but no date sent, should show 'Membership Package not sent'
     When I am on the "user details" page for "hannah@personal.com"
     Then I should see "Member packet not sent"
 
-  @focus
+
   Scenario: Membership Package info does not show for non-members
     When I am on the "user details" page for "rejected@personal.com"
     Then I should not see t("users.show.member_packet")
