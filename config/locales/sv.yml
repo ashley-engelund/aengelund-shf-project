@@ -161,7 +161,7 @@ sv:
         sign_in_count: &sign_in_count Inloggningar
         reset_password_sent_at: &user_reset_password_sent_at Information angående återställning av lösenord sändes
         member: &member Medlem
-        date_member_packet_sent: &date_member_packet_sent Date Member Packet sent
+        date_member_packet_sent: &date_member_packet_sent Datumpaket Skickat
 
       payment:
         payment_type: Betalningstyp
@@ -780,9 +780,9 @@ sv:
       show_image: Visa bild
       company_h_brand: Företaget H-märke för %{company}
       company_h_brand_describe: Detta är ditt företags H-märke.
-      member_packet: member packet
-      sent: sent
-      not_sent: not sent
+      member_packet: &member_packet medlemspaket
+      sent: skickat
+      not_sent: inte skickat
 
     update:
       passwords_dont_match: De två lösenord du angivit matchar inte.
@@ -824,6 +824,7 @@ sv:
       application: *application
       applications_tooltip: Användaren har en öppen ansökan
       expire_date: *expire_date
+      member_packet: *member_packet
 
     destroy:
       success: Användaren raderades framgångsrikt.

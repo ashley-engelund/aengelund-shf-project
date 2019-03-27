@@ -772,7 +772,7 @@ en:
                                 </span>"
       company_h_brand: Company H-Brand for %{company}
       company_h_brand_describe: This image is your company's H-Brand.
-      member_packet: member packet
+      member_packet: &member_packet member packet
       sent: sent
       not_sent: not sent
 
@@ -817,6 +817,7 @@ en:
       application: *application
       applications_tooltip: User has an open application
       expire_date: *expire_date
+      member_packet: *member_packet
 
     destroy:
       success: User deleted successfully.
