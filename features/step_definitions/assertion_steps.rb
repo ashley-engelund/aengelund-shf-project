@@ -58,10 +58,8 @@ module PathHelpers
         path = shf_documents_path
       when 'new shf document'
         path = new_shf_document_path
-      when 'user details', 'user account'
+      when 'user details', 'user profile'
         path = user_path(user)
-      when 'user profile'
-        path = edit_user_registration_path(user)
       when 'test exception notifications'
         path = test_exception_notifications_path
       when 'admin dashboard'
