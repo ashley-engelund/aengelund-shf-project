@@ -10,7 +10,7 @@
           %th
             = t('.application')
             = fas_tooltip(t('.applications_tooltip'))
-          %th= t('users.show.member_packet')
+          %th= sort_link(q, :date_membership_packet_sent, t('users.users_list.member_packet'), {}, { class: 'users_pagination member-packet', remote: true } )
           %th= t('.member')
           %th= t('.expire_date')
           %th
