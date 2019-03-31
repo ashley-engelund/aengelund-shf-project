@@ -1,10 +1,12 @@
+@import "shf-custom-colors";
+
 body {
   font-family: 'Open Sans', sans-serif;
   margin: 0;
 }
 
 #company-h-brand {
-  background-color: #e4e3df;
+  background-color: $co-hbrand-background;
   border: 1px solid black;
   box-sizing: border-box;
   display: block;
@@ -34,7 +36,7 @@ body {
 }
 
 .company-info-separator {
-  background-color: #b9b9b5;
+  background-color: $co-hbrand-info-separator;
   margin: 10px 5px 10px 5px;
 }
 

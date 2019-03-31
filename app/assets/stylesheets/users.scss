@@ -1,7 +1,8 @@
-$admin-color: #ff0000;
+@import "shf-custom-colors";
+
 
 .is-admin {
-  color: $admin-color;
+  color: $is-admin-color;
   font-weight: bold;
 }
 

@@ -1,3 +1,5 @@
+@import "shf-custom-colors";
+
 body {
   font-family: 'Open Sans', sans-serif;
   margin: 0;
@@ -16,7 +18,7 @@ body {
 }
 
 .proof-banner {
-  background-color: #7a7866;
+  background-color: $pom-banner-background;
   color: white;
   display: block;
   font-size: 18px;
@@ -63,7 +65,7 @@ body {
 }
 
 .proof-footer {
-  background-color: #1b3e70;
+  background-color: $pom-footer-background;
   color: white;
   display: block;
   height: 25px;
