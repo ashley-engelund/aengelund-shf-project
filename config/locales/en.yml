@@ -82,7 +82,7 @@ en:
     company_search_form:
       hide: &hide_search Hide search form
       show: &show_search Show search form
-    application_search_form:
+    application_search_form_toggler:
       hide: *hide_search
       show: *show_search
 

@@ -4,16 +4,18 @@
 
   .row.mb-4
     .col-6
-      .panel-group.m-2#accordion{ "aria-multiselectable" => "true", :role => "tablist" }
-      .panel.panel-default
-        .panel-heading#toggle-heading{ :role => "tab" }
-          %h4.panel-title.hide-toggler
-            %a{ "aria-controls" => "application-search-form", "aria-expanded" => "true",
-                "data-parent" => "#accordion", "data-toggle" => "collapse",
-                :href => "#application-search-form", :role => "button",
-                id: 'application_search_form' }
 
-              #{t('accordion_label.application_search_form.hide')}
+      - search_form_id = 'toggled_search_form'
+      .panel-group.m-2#accordion{ role: 'tablist' }
+      .panel.panel-default
+        .panel-heading#toggle-heading{ role: 'tab' }
+          %h4.panel-title.hide-toggler
+            %a{ 'aria-controls' => search_form_id, 'aria-expanded' => 'true',
+                'data-parent' => '#accordion', 'data-toggle' => 'collapse',
+                href: "##{search_form_id}", role: 'button',
+                id: 'application_search_form_toggler' }
+
+              #{t('accordion_label.application_search_form_toggler.hide')}
 
 
     .col-4.offset-2
@@ -22,7 +24,7 @@
 
   .clearfix
 
-  .panel.panel-default.search-form#application-search-form{ "aria-labelledby" => "toggle-heading", :role => "tabpanel" }
+  .panel.panel-default.search-form{id: search_form_id, 'aria-labelledby' => 'application_search_form_toggler', role: 'tabpanel' }
     = render 'search_form'
 
 
