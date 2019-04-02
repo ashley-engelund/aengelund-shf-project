@@ -2,9 +2,10 @@
   %h1.entry-title= t('.title')
 .entry-content
 
-  .row.mb-4
+  .row
     .col-6
-      = render 'application/accordion_showhide_toggle', toggler_id: 'application_search_form_toggler'
+      = render 'application/accordion_showhide_toggle',
+        toggler_id: 'application_search_form_toggler', search_form_id: 'toggled_search_form'
 
     .col-4.offset-2
       = render partial: 'administration_panel' if @current_user.admin?
@@ -12,8 +13,9 @@
 
   .clearfix
 
-  .panel.panel-default.search-form{id: 'toggled_search_form', 'aria-labelledby' => 'toggle-heading', role: 'tabpanel' }
-    = render 'search_form'
+  .panel-collapse.collapse.show#toggled_search_form{ 'aria-labelledby' => 'toggle-heading', role: 'tabpanel' }
+    .panel-body
+      = render 'search_form'
 
 
   - if @shf_applications.empty?

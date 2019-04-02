@@ -5,7 +5,7 @@
 -#
 -#  toggler_id = the id for a% element of the toggler; also used to look
 -#               the translation text from the locale files
--#               Will default to "search_form_toggler" if it is blank
+-#               Default = "search_form_toggler" if it is not provided
 -#
 -# The element to be shown/hidden (e.g. the search form)
 -# can then be written:
@@ -18,7 +18,12 @@
 - toggler_id = local_assigns.fetch(:toggler_id, false) ? local_assigns[:toggler_id] : 'search_form_toggler'
 - toggled_searchform_id = local_assigns.fetch(:search_form_id, false) ? local_assigns[:search_form_id] : 'toggled_search_form'
 
-.panel-group.m-2#accordion{ role: 'tablist' }
-  .panel.panel-default
-    = render 'application/accordion_showhide_toggle_panel_heading',
-     search_form_id: toggled_searchform_id, toggler_id: toggler_id
+.panel-heading#toggle-heading{ role: 'tab' }
+  %h4.panel-title.hide-toggler
+    %a{ 'aria-controls' => toggled_searchform_id, 'aria-expanded' => 'true',
+          'data-parent' => '#accordion', 'data-toggle' => 'collapse',
+          href: "##{toggled_searchform_id}", role: 'button',
+          id: toggler_id }
+
+      #{t("accordion_label.#{toggler_id}.hide")}
+
