@@ -94,3 +94,20 @@ end
 And "I show the companies search form" do
   step %{I click on t("accordion_label.company_search_form.hide")}
 end
+
+
+COMPANIES_LIST_ID = 'companies_list'
+
+# Find a string or not in the #companies_list
+# (= the list of companies on the #index page
+And "I should{negate} see {capture_string} in the list of companies" do | negated, expected_string |
+  step %{I should#{negated ? ' not' : ''} see "#{expected_string}" in the div with id "#{COMPANIES_LIST_ID}"}
+end
+
+
+# Find a string [x] times in the #companies_list table
+# (= the list of companies on the #index page
+And "I should see {capture_string} {digits} time(s) in the list of companies" do | expected_string, num_times|
+  step %{I should see "#{expected_string}" #{num_times} time in the div with id "#{COMPANIES_LIST_ID}"}
+end
+
