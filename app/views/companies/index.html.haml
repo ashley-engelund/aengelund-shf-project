@@ -24,4 +24,5 @@
     %strong
       #{t('.no_search_results')}
   - else
-    = render 'companies_list', companies: @companies, search_params: @search_params
+    #companies_list
+      = render 'companies_list', companies: @companies, search_params: @search_params
