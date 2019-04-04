@@ -168,7 +168,7 @@ sv:
         sign_in_count: &sign_in_count Inloggningar
         reset_password_sent_at: &user_reset_password_sent_at Information angående återställning av lösenord sändes
         member: &member Medlem
-        date_member_packet_sent: &date_member_packet_sent Datumpaket Skickat
+        date_member_packet_sent: &date_member_packet_sent Paket skickat
 
       payment:
         payment_type: Betalningstyp
