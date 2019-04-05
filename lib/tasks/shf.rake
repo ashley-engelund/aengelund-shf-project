@@ -46,17 +46,27 @@ namespace :shf do
   #     bundle exec rails shf:cuke_core_only['--format html features/user_account']
   #       will use the html format and run only the features in the features/user_account directory
   #
-  desc "run Cucumber 'core' features only (skip db_seeding, conditions, selenium_browser). [shf_core profile in config/cucumber.yml]"
-  task :cuke_core_only, [:args] => [:environment] do | _task, task_args |
+  desc "run Cucumber 'core' features only.Pass in other cucumber args as one string.(skip db_seeding, conditions, selenium_browser). [shf_core profile in config/cucumber.yml]"
+  task :cuke_core_only, [:cucumber_args_as_a_string] => [:environment] do | _task, task_args |
 
     require 'cucumber/rake/task'
 
-    Cucumber::Rake::Task.new('shf_core_only_cuke_task', 'Run only the SHF core features') do |cuke_t|
-      cuke_t.cucumber_opts = task_args[:args]
-      cuke_t.profile = 'shf_core'
+    usage = "\nshf:cuke_core_only runs the cucumber profile 'shf_core', which excludes 'non-core' and long-running features.\n shf_core is defined in config/cucumber.yml\n\n USAGE: rails shf:cuke_core_only['<any options for cucumber here>']\n    Ex: rails shf:cuke_core_only['--format html features/user_account']\n"
+
+    t_args = task_args[:cucumber_args_as_a_string]
+
+    if t_args == '--help' || t_args == '-H' || t_args == 'h'
+      puts usage
+
+    else
+      Cucumber::Rake::Task.new('shf_core_only_cuke_task', 'Run only the SHF core features') do |cuke_t|
+        cuke_t.cucumber_opts = t_args
+        cuke_t.profile = 'shf_core'
+      end
+
+      Rake::Task[:shf_core_only_cuke_task].invoke
     end
 
-    Rake::Task[:shf_core_only_cuke_task].invoke
   end
 
 
