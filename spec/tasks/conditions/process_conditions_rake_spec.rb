@@ -36,8 +36,11 @@ RSpec.describe 'conditions/process_conditions shf:process_conditions', type: :ta
       it 'logs the error but keeps going' do
 
         # Slack notification error will be raised:
-        allow_any_instance_of(Slack::Notifier).to receive(:post)
-                                                      .and_raise(Slack::Notifier::APIError)
+        allow(SHFNotifySlack).to receive(:notification)
+                                     .and_raise(Slack::Notifier::APIError)
+
+        # should never create a SlackNotifier during this test
+        expect(Slack::Notifier).not_to receive(:new)
 
         # precondition:
         # log should not have the Exception info
@@ -71,13 +74,14 @@ RSpec.describe 'conditions/process_conditions shf:process_conditions', type: :ta
 
         # error that will be raised:
         allow_any_instance_of(MembershipLapsedAlert).to receive(:condition_response)
-                                         .and_raise(EOFError)
+                                                            .and_raise(EOFError)
 
         # stub out the Slack notification methods
-        allow(SHFNotifySlack).to receive(:success_notification)
-                                      .and_return(true)
-        allow(SHFNotifySlack).to receive(:failure_notification)
+        allow(SHFNotifySlack).to receive(:notification)
                                      .and_return(true)
+
+        # should never create a SlackNotifier during this test
+        expect(Slack::Notifier).not_to receive(:new)
 
         expected_exception_log_entry = 'Exception: EOFError:  #<EOFError: EOFError>'
 
