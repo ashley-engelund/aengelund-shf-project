@@ -73,9 +73,11 @@ RSpec.describe 'conditions/process_conditions shf:process_conditions', type: :ta
         allow_any_instance_of(MembershipLapsedAlert).to receive(:condition_response)
                                          .and_raise(EOFError)
 
-        # stub out the Slack notification
-        allow(SHFNotifySlack).to receive(:notification)
+        # stub out the Slack notification methods
+        allow(SHFNotifySlack).to receive(:success_notification)
                                       .and_return(true)
+        allow(SHFNotifySlack).to receive(:failure_notification)
+                                     .and_return(true)
 
         expected_exception_log_entry = 'Exception: EOFError:  #<EOFError: EOFError>'
 
