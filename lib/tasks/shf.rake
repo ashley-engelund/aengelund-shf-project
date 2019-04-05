@@ -36,6 +36,30 @@ namespace :shf do
     tasks.each { |t| Rake::Task["#{t}"].invoke }
   end
 
+
+  # @desc rails/rake task that runs cucumber using the 'shf_core_only' profile
+  # (which is defined in config/cucumber.yml)
+  #
+  # @usage pass arguments from the command line as a string in an array:
+  #     bundle exec rails shf:cuke_core_only['features/user_account']
+  #       will run only the features in the features/user_account directory
+  #     bundle exec rails shf:cuke_core_only['--format html features/user_account']
+  #       will use the html format and run only the features in the features/user_account directory
+  #
+  desc "run Cucumber 'core' features only (skip db_seeding, conditions, selenium_browser). [shf_core profile in config/cucumber.yml]"
+  task :cuke_core_only, [:args] => [:environment] do | _task, task_args |
+
+    require 'cucumber/rake/task'
+
+    Cucumber::Rake::Task.new('shf_core_only_cuke_task', 'Run only the SHF core features') do |cuke_t|
+      cuke_t.cucumber_opts = task_args[:args]
+      cuke_t.profile = 'shf_core'
+    end
+
+    Rake::Task[:shf_core_only_cuke_task].invoke
+  end
+
+
   desc "import membership apps from csv file. Provide the full filename (with path)"
   task :import_membership_apps, [:csv_filename] => [:environment] do |t, args|
 
