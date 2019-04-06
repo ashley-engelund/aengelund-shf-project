@@ -54,7 +54,7 @@
   }
 
 
-%div#design-guide{ class: "#{controller.action_name}" }
+#design-guide{ class: "#{controller.action_name}" }
 
   %header.entry-header
     %h1.entry-title  Design Guide: Element Examples
@@ -63,8 +63,6 @@
     .row
       .col
         %p This shows examples of the typical elements and how they are and should be styled.
-        %p This needs a lot of formatting help. This has been quickly thrown together so that we can see the major elements (mostly the buttons) and record any standards or guidelines.
-
 
     .row
       .col
@@ -149,7 +147,7 @@
             'btn-sm'
           except Submit/Save buttons, which should be
           %code
-            'btn-block'
+            'form-control'
 
         %ul
 
@@ -159,9 +157,9 @@
               = link_to "#{t('companies.view_company')}", @company, class: 'btn btn-sm btn-primary'
 
           %li
-            %code btn-block:
+            %code form-control:
             .example
-              = link_to "#{t('companies.view_company')}", @company, class: 'btn btn-block btn-primary'
+              = link_to "#{t('companies.view_company')}", @company, class: 'btn form-control btn-primary'
 
 
 
@@ -344,7 +342,7 @@
                   %a{'href':"#buttons-pagination"}Next »
 
           .col-2
-            %select.companies_pagination{name:"items_count", id:"items_count",  style:"min-width: 50px;"}
+            %select.companies_pagination{ name:"items_count", id:"items_count",  style:"min-width: 50px;" }
               %option
                 10
               %option
@@ -354,7 +352,7 @@
               %option
                 All
             %span
-              %i.fas.fa-info-circle{data: {toggle:"tooltip", 'original-title': "Select number of items per page"}}
+              %i.fas.fa-info-circle{ data: { toggle:"tooltip", 'original-title': "Select number of items per page" } }
 
 
 
