@@ -35,12 +35,13 @@ $menu-light-gray: #ddd;
 $med-gray-border: #dee2e6;
 $menu-very-light-gray: #eee;
 $toggler-border-bottom: #e1e1e1;
+$nav-navbar-shadow: rgba(0, 0, 0, .12);
 
 $warn-red-text: #c51f1b;
 
 $shf-blue: $info;
 $border-light-blue: #8eadce;
-$pastel-blue-background: rgba(86,146,206,0.2);
+$pastel-blue-background: rgba(86, 146, 206, .2);
 
 
 $link-dark-brown: #232525;
@@ -65,19 +66,19 @@ $mailer-gray-text: #656565;
 
 $mailer-border-lighter-gray: #eaeaea;
 
-$mailer-dark-gray: #222222;
-$mailer-warning-yellow: #ffff00;
+$mailer-dark-gray: #222;
+$mailer-warning-yellow: #ff0;
 
-$mailer-no-files-uploaded-warn: #ff0000;
+$mailer-no-files-uploaded-warn: #f00;
 
 
 // -----------------------------------------------------
 // colors used in companies.scss:
 
-$btn-hover-color: #7EDD8B;
+$btn-hover-color: #7edd8b;
 $slider-checked: #2196f3;
 $slider-background-color: #f4f4f8;
-$slider-before-background-color: #ffffff;
+$slider-before-background-color: #fff;
 $dinkurs-fixed-table-border: #bfbfbf;
 
 
@@ -92,7 +93,7 @@ $co-hbrand-info-separator: #b9b9b5;
 // colors used in dashboard.scss:
 
 $total-color: #1b3e70;
-$not-working-color: #ff0000;
+$not-working-color: #f00;
 
 
 // -----------------------------------------------------
@@ -115,7 +116,7 @@ $reason-border-color:  #ff7f50;  // coral; picked sort of at random
 
 $paginate-background: #003a78;
 $paginate-li-a-border: #eee;
-$paginate-li-a-focus-shadow: rgba(0, 123, 255, 0.25);
+$paginate-li-a-focus-shadow: rgba(0, 123, 255, .25);
 $paginate-li-a-hover: $black;
 $paginate-li-a-hover-background: #e9ecef;
 
@@ -128,27 +129,27 @@ $pom-footer-background: #1b3e70;
 // -----------------------------------------------------
 // colors used in shf-application:
 
-$no-files-warn-color: #ff0000;
+$no-files-warn-color: #f00;
 
-$btn-background: #ffffff;
+$btn-background: #fff;
 
-$btn-choose-files-text: #ffffff;
+$btn-choose-files-text: #fff;
 
 $border-med-blue: rgb(86, 146, 206);
-$border-med-blue-a-light: rgba(86, 146, 206, 0.2);
+$border-med-blue-a-light: rgba(86, 146, 206, .2);
 
-$files-table-background: #ffffff;
+$files-table-background: #fff;
 
 $app-state-border-blue: rgb(142, 173, 206);
 
 // -----------------------------------------------------
 // colors used in shf-documents.scss:
 
-$shf-docs-table-not-striped-background: #ffffff;
+$shf-docs-table-not-striped-background: #fff;
 $shf-docs-table-striped-background: #fafafa;
 
 
 // -----------------------------------------------------
 // colors used in users.scss:
 
-$is-admin-color: #ff0000;
+$is-admin-color: #f00;
