@@ -1,4 +1,4 @@
-@import "shf-custom-colors";
+@import 'shf-custom-colors';
 
 
 #admin-change-status-buttons input {
@@ -16,6 +16,11 @@
   margin-bottom: 1rem;
   margin-top: 1rem;
 }
+
+#company-pay-modal p, #company-pay-modal pre {
+margin-bottom:0;
+}
+
 
 #companies_list {
   margin-top: 30px;
@@ -61,6 +66,11 @@
   background-color: $white;
 }
 
+.admin-note {
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-size: 87%;
+}
+
 .alert {
   margin: 1rem auto;
   max-width: 1160px;
@@ -76,8 +86,8 @@
 .app-section h2 {
   border-top: 3pt solid $pastel-blue-background;
   font-weight: 700;
-  margin-top: 0.9em;
-  padding-top: 0.7em;
+  margin-top: .9em;
+  padding-top: .7em;
 }
 
 .btco-menu .active a:focus,
@@ -117,11 +127,16 @@
 }
 
 .company p {
-  margin-bottom: 0.8em;
+  margin-bottom: .8em;
 }
 
 .company td {
   white-space: nowrap;
+}
+
+.company-story img {
+max-width:100%;
+height:auto!important;
 }
 
 .company_search {
@@ -172,6 +187,10 @@ nav.navbar .dropdown-menu li a {
   margin-bottom: 0;
 }
 
+.form-check-label {
+margin: 5px 0 0 0;
+}
+
 .files-to-upload-title {
   font-weight: 400;
   margin-bottom: 0;
@@ -193,17 +212,17 @@ nav.navbar .dropdown-menu li a {
 }
 
 .hide-toggler > a:after {
-  font-family: "Font Awesome 5 Free";
+  font-family: 'Font Awesome 5 Free';
   font-weight: 900;
-  content: "\f078"; /* fa-chevron-down */
+  content: '\f078'; /* fa-chevron-down */
   position: absolute;
   right: 0;
 }
 
-.hide-toggler > a[aria-expanded="true"]:after {
-  font-family: "Font Awesome 5 Free";
+.hide-toggler > a[aria-expanded='true']:after {
+  font-family: 'Font Awesome 5 Free';
   font-weight: 900;
-  content: "\f077"; /* fa-chevron-up */
+  content: '\f077'; /* fa-chevron-up */
 }
 
 .infotext p {
@@ -250,8 +269,8 @@ nav.navbar .dropdown-menu li a {
 }
 
 .no-files-uploaded-warn:before {
-  content: "\f071";
-  font-family: "Font Awesome 5 Free";
+  content: '\f071';
+  font-family: 'Font Awesome 5 Free';
   font-weight: 900;
 }
 
@@ -306,8 +325,14 @@ nav.navbar .dropdown-menu li a {
   font-weight: 700;
 }
 
+.table {
+margin-top:20px;
+}
+
+
 .table th {
-  border-top: 0;
+  border-top:none;
+  padding: .15rem .75rem;
 }
 
 .text-nicelabel {
@@ -328,7 +353,7 @@ nav.navbar .dropdown-menu li a {
   overflow: hidden;
   padding: 10px 20px 10px 10px;
   position: relative;
-  transition: all 0.2s;
+  transition: all .2s;
 }
 
 .text-nicelabel + label > span.nicelabel-unchecked,
@@ -341,14 +366,14 @@ nav.navbar .dropdown-menu li a {
 
 .text-nicelabel + label > span.nicelabel-unchecked-image,
 .text-nicelabel + label > span.nicelabel-checked-image {
-  -moz-transition: all 0.2s linear;
-  -o-transition: all 0.2s linear;
-  -webkit-transition: all 0.2s linear;
+  -moz-transition: all .2s linear;
+  -o-transition: all .2s linear;
+  -webkit-transition: all .2s linear;
   background-position: left center;
   background-repeat: no-repeat;
   display: inline-block;
   height: 16px;
-  transition: all 0.2s linear;
+  transition: all .2s linear;
   vertical-align: bottom;
   width: 16px;
 }
@@ -366,7 +391,7 @@ nav.navbar .dropdown-menu li a {
 }
 
 .text-nicelabel[disabled] + label {
-  opacity: 0.5;
+  opacity: .5;
 }
 
 .text_checkbox {
@@ -433,10 +458,15 @@ h6 {
   letter-spacing: -1px !important;
 }
 
+label {
+margin-bottom: 0;
+margin-top: .5rem;
+}
+
 nav.navbar {
   background-color: $white;
-  box-shadow: rgba(0, 0, 0, 0.12) 0 0 4px 0;
-  font-family: "Open Sans", serif;
+  box-shadow: $nav-navbar-shadow 0 0 4px 0;
+  font-family: 'Open Sans', serif;
   font-size: 11px;
   font-style: normal;
   font-weight: 400;
@@ -453,11 +483,11 @@ nav.navbar a {
   border-bottom-width: 0;
   color: $link-dark-brown;
   display: block;
-  font-family: "Open Sans", serif;
+  font-family: 'Open Sans', serif;
   font-size: 11px;
   font-style: normal;
   font-weight: 400;
-  letter-spacing: 0.5px;
+  letter-spacing: .5px;
   padding: 10px;
   text-transform: uppercase;
 }
@@ -499,12 +529,12 @@ button:focus {
 }
 
 p {
-  margin-bottom: 0.5rem;
+  margin-bottom: .5rem;
   margin-top: 0;
 }
 
 table {
-  font-size: 0.9em;
+  font-size: .9em;
 }
 
 
