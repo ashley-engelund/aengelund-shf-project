@@ -23,7 +23,7 @@
   }
 
 
-  p.ex { font-style: italic }
+  p.ex { font-style: italic; }
   p.q {
     font-style: italic;
     color: #9b009A;
@@ -69,32 +69,32 @@
         %h2 Contents
         %ul
           %li
-            %a{href: '#color-palette'}Color Palette
+            %a{ href: '#color-palette' }Color Palette
           %li
-            %a{href: '#buttons'}Buttons
+            %a{ href: '#buttons' }Buttons
             %ul
               %li
-                %a{href: '#btns-bootstrap'}Standard bootstrap buttons
+                %a{ href: '#btns-bootstrap' }Standard bootstrap buttons
               %li
-                %a{href: '#btns-size'}Size
+                %a{ href: '#btns-size' }Size
               %li
-                %a{href: '#btns-bottom'}Buttons at the bottom of a page
+                %a{ href: '#btns-bottom' }Buttons at the bottom of a page
               %li
-                %a{href: '#btns-in-body'}Buttons within the body of a page
+                %a{ href: '#btns-in-body' }Buttons within the body of a page
               %li
-                %a{href: '#btns-modal'}Buttons at the bottom of modals
+                %a {href: '#btns-modal' }Buttons at the bottom of modals
               %li
-                %a{href: '#btns-toggle'}Toggle buttons
+                %a{ href: '#btns-toggle' }Toggle buttons
               %li
-                %a{href: '#btns-pagination'}Pagination
+                %a{ href: '#btns-pagination' }Pagination
 
 
           %li
-            %a{href: '#alerts'}Alerts
+            %a{ href: '#alerts' }Alerts
           %li
-            %a{href: '#layout'}Layout
+            %a{ href: '#layout' }Layout
           %li
-            %a{href: '#text-and-headings'}Text and Headings
+            %a{ href: '#text-and-headings' }Text and Headings
 
 
 
@@ -245,8 +245,6 @@
                   data: { confirm: "Are you sure?}" }
 
 
-
-
     .row.dguide-section#btns-in-body
       .col
 
@@ -273,7 +271,6 @@
               = field_or_none('Categories', 'super mellow guy, squirrel lover, painter')
 
 
-
     .row.dguide-section#btns-modal
       .col
 
@@ -290,13 +287,13 @@
         .example
 
           .row
-            .col.offset-sm-3{style:"border: #5692ce 1pt solid;"}
+            .col.offset-sm-3{ style:"border: #5692ce 1pt solid;" }
 
               %p <b>This is some text in the modal.</b>
               %p This is more text in the modal.
               .modal-footer
 
-                %button{ type: 'button', class: "btn btn-primary form-control",}
+                %button{ type: 'button', class: "btn btn-primary form-control" }
                   = t('companies.create.create_submit')
                 %button{ type: 'button', class: 'btn btn-outline-secondary', data: { dismiss: 'modal' } }
                   = t('cancel')
@@ -324,22 +321,22 @@
             .companies_pagination
               %ul.pagination
                 %li.previous_page
-                  %a{'href':"#buttons-pagination"}
+                  %a{ 'href':"#buttons-pagination" }
                     « Previous
                 %li.active
-                  %a{'href':"#buttons-pagination"}
+                  %a{ 'href':"#buttons-pagination" }
                     1
                 %li
-                  %a{'href':"#buttons-pagination"}
+                  %a{ 'href':"#buttons-pagination" }
                     2
                 %li
-                  %a{'href':"#buttons-pagination"}3
+                  %a{ 'href':"#buttons-pagination" }3
                 %li
-                  %a{'href':"#buttons-pagination"}4
+                  %a{ 'href':"#buttons-pagination" }4
                 %li
-                  %a{'href':"#buttons-pagination"}5
+                  %a{ 'href':"#buttons-pagination" }5
                 %li.next.next_page
-                  %a{'href':"#buttons-pagination"}Next »
+                  %a{ 'href':"#buttons-pagination" }Next »
 
           .col-2
             %select.companies_pagination{ name:"items_count", id:"items_count",  style:"min-width: 50px;" }
@@ -431,4 +428,3 @@
         %h3.dguide-section non-heading text
 
         %p font family = ??
-
