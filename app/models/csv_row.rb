@@ -26,7 +26,7 @@ class CsvRow
 
 
   def append(element)
-    @elements.append  element
+    @elements.append element
     self
   end
 
