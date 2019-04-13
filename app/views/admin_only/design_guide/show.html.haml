@@ -189,7 +189,6 @@
 
 
           %li.example
-            %code div.text-right
             example:
 
             - addresses = @company.addresses
@@ -209,7 +208,7 @@
                     %td
                       = address.entire_address
 
-            .text-right
+            .text-center
               = link_to "#{t('companies.edit_company')}", @company, class: 'btn btn-sm btn-light'
 
 
@@ -234,7 +233,7 @@
                     %td
                       = address.entire_address
 
-            .text-right
+            .text-center
               = link_to "#{t('companies.edit_company')}", @company, class: 'btn btn-sm btn-light'
               = link_to "Delete", @company, method: :delete,
                   class:'btn btn-danger delete-company',
