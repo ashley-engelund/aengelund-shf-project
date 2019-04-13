@@ -72,9 +72,7 @@ And(/^the following applications exist:$/) do |table|
       # We save without validation - so, confirm that the **only** validation errors
       # would be associated with the missing file-delivery method.
       ma.valid?
-      expect(ma.errors.keys)
-        .to match_array [:file_delivery_method,
-                         :'user.shf_application.file_delivery_method']
+      expect(ma.errors.keys).to match_array [:file_delivery_method]
     end
 
     ma.save(validate: (legacy_app ? false : true))
@@ -100,4 +98,42 @@ When "I select files delivery radio button {capture_string}" do |option|
   # manually make the save button enabled:
   page.evaluate_script("$('.app-submit').prop('disabled', false)")
 
+end
+
+And "I should see {capture_string} files for the {capture_string} listed application" do |count, ordinal|
+  # Use to confirm uploaded files count in ShfApplication index view
+  # If more than one app then make sure the sort order supports the test step.
+  # Examples:
+  #  I should see "0" files for the "first" listed application
+  #  I should see "3" files for the "second" listed application
+
+  index = [0, 1, 2, 3, 4].send(ordinal.lstrip)
+
+  ele = all('#shf_applications_list table tr > td.number_of_files')[index]
+
+  expect(ele.text).to eq count
+end
+
+
+# Find a string or not in the #shf_applications table
+# (= the list of shf membership applications on the #index page
+And "I should{negate} see {capture_string} in the list of applications" do | negated, expected_string |
+  step %{I should#{negated ? ' not' : ''} see "#{expected_string}" in the div with id "shf_applications_list"}
+end
+
+
+# Find a string [x] times in the #shf_applications table
+# (= the list of shf membership applications on the #index page
+And "I should see {capture_string} {digits} time(s) in the list of applications" do | expected_string, num_times|
+  step %{I should see "#{expected_string}" #{num_times} time in the div with id "shf_applications_list"}
+end
+
+
+And "I hide the membership applications search form" do
+  step %{I click on t("accordion_label.application_search_form_toggler.hide")}
+end
+
+
+And "I show the membership applications search form" do
+  step %{I click on t("accordion_label.application_search_form_toggler.show")}
 end
