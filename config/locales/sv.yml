@@ -1059,16 +1059,16 @@ sv:
 
   mailers:
     login_here: "Klicka här för att gå till inloggningssidan."
-    your_login_email_is: "Your login email is "
+    your_login_email_is: "Din e-post för att logga in är: "
 
-    how_to_pay_membership: "How to Pay Your Membership Fee:"
-    pay_membership_step: "Once you are logged in, go to your account page to pay."
-    here_is_acct_page: "Here is your account page: "
+    how_to_pay_membership: "Så här betalar du medlemsavgiften:"
+    pay_membership_step: "När du är inloggad hittar du betalknappen på ditt konto."
+    here_is_acct_page: "Här är en länk till ditt konto: "
 
-    how_to_pay_hmarkt: "How to Pay the H-Markt License Fee:"
+    how_to_pay_hmarkt: "Så här betalar du H-märkespremien:"
     pay_hmarkt_step: "När du är inloggad ser du när din H-märkningspremie går ut och hur du betalar på din företagssida."
     here_is_co_page: "Här är länken där du kan redigera ditt företag: "
-    h_brand_exp_shown: "THE H-MARKT LICENSE EXPIRATION WILL BE ON THE COMPANY PAGE."
+    h_brand_exp_shown: "Du ser när din H-märkningspremie går ut på din företagssida."
 
 
     application_mailer:
