@@ -32,6 +32,7 @@ class EmailAlert < ConditionResponder
 
   include Singleton
 
+
   # pass the class method call to the singleton instance
   def self.condition_response(condition, log)
     self.instance.condition_response(condition, log)
@@ -44,23 +45,36 @@ class EmailAlert < ConditionResponder
     config = self.class.get_config(condition)
     timing = self.class.get_timing(condition)
 
-    entities_to_check.each do | entity |
-      send_email(entity, log) if send_alert_this_day?(timing, config, entity)
-    end
+    create_alert_logger(log)
+
+    process_entities(timing, config, entities_to_check, log)
 
   end
 
 
+  # By default, process each entity and take action on it.
+  #
+  def process_entities(timing, config, entities_to_check, log)
+    entities_to_check.each{ | entity | action_to_take(timing, config, entity, log) }
+  end
+
+
+  # The default action is to send email to the entity if an alert should be sent this day,
+  # given the configuration and timing.
+  #
+  def action_to_take(timing, config, entity, log)
+    send_email(entity, log) if send_alert_this_day?(timing, config, entity)
+  end
+
+
   # Send the email to the entity. Put an entry in the log file about it.
-  def send_email(entity, log)
+  def send_email(entity, log, email_args=[])
     begin
       mail_response = mail_message(entity).deliver_now
       log_mail_response(log, mail_response, entity)
 
     rescue => mailing_error
-      log_failure(log, log_msg_start,
-                  log_str_maker.failure_info([entity]),
-                  mailing_error)
+      @alert_logger.log_failure([entity], mailing_error)
     end
   end
 
@@ -69,7 +83,6 @@ class EmailAlert < ConditionResponder
   def mail_message(entity)
     mailer_class.send(mailer_method, *(mailer_args(entity)) )
   end
-
 
 
   # The list of entities that will be checked to see if an email needs to be sent
@@ -91,7 +104,6 @@ class EmailAlert < ConditionResponder
   def mailer_class
     raise NoMethodError, "Subclass must define the #{__method__} method and return the Mailer class to use", caller
   end
-
 
 
   # The arguments passed to the mailer method.
@@ -134,12 +146,8 @@ class EmailAlert < ConditionResponder
   #
   #    day_to_check = <determined somehow>
   #
-  #    if timing_is_repeat_every?(timing)
-  #       is_today_a_repeat_day?(config[:starting_date], config[:days])
-  #     else
-  #       day_to_check = Date.current - config[:starting_date]
-  #       send_on_day_number?(day_to_check, config)
-  #     end
+  #    day_to_check = Date.current - config[:starting_date]
+  #    send_on_day_number?(day_to_check, config)
   #
   # If so, we can abstract that to here and have subclasses just provide the
   # method for return_false_condition and for determining the day_to_check
@@ -167,10 +175,9 @@ class EmailAlert < ConditionResponder
   end
 
 
-  # Return a log string maker
-  #
-  def log_str_maker
-    @log_str_maker ||= AlertLogStrMaker.new(self, :success_str, :failure_str)
+  # create an AlertLogger to use to log success, failure, etc. about this alert
+  def create_alert_logger(log)
+    @alert_logger = AlertLogger.new(log, self)
   end
 
 
@@ -179,25 +186,11 @@ class EmailAlert < ConditionResponder
   # @param entity [Object] - the entity that was sent the email (a User; a Company; etc)
   #
   def log_mail_response(log, mail_response, entity )
-    mail_response.errors.empty? ? log_success(log, log_msg_start, log_str_maker.success_info(entity))
-        : log_failure(log, log_msg_start, log_str_maker.failure_info(entity))
-  end
+  #   mail_response.errors.empty? ? log_success(log, log_msg_start, log_str_maker.success_info(entity))
+  #       : log_failure(log, log_msg_start, log_str_maker.failure_info(entity))
 
-
-  def log_success(log, msg_start, info_str)
-    log.record('info', "#{msg_start} email sent #{info_str}.")
-  end
-
-
-  def log_failure(log, msg_start, info_str, error = '')
-    log.record('error', "#{msg_start} email ATTEMPT FAILED #{info_str}. #{error} Also see for possible info #{ApplicationMailer::LOG_FILE} ")
-  end
-
-
-  # This string is the start of the line logged to the Alert log when
-  # this condition sends out an email = the name of the class
-  def log_msg_start
-    self.class.name
+    mail_response.errors.empty? ? @alert_logger.log_success(entity)
+        : @alert_logger.log_failure(entity)
   end
 
 
