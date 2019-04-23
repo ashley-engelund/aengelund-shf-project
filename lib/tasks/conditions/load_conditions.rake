@@ -10,6 +10,10 @@ namespace :shf do
     #
     conditions_to_create = [
 
+        { alert_class_name: 'MemberUnpaidFor6MonthsAlert',
+            timing:     :day_of_month,
+            config:     { on_month_day: 12 } },
+
         { class_name: 'MembershipExpireAlert',
           timing:     :before,
           config:     { days: std_reminder_before_schedule } },
