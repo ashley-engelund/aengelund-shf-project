@@ -1089,6 +1089,15 @@ sv:
           view_app_here: "Du kan se medlemskapsansökan här: "
           must_be_logged_in: "(Du måste vara inloggad som en administratör för att se det.)"
 
+      member_unpaid_for_x_months:
+        subject: "Members unpaid for more than %{num_months} months"
+        message_text:
+          these_are_unpaid: "These members are unpaid. Their membership fee was due %{num_months} months ago, on %{fee_due_date}"
+          full_name: Namn
+
+        error_sending:  FIXME - need text to display if there is a problem sending this email
+
+
 
     shf_application_mailer:
       acknowledge_received:
@@ -1111,6 +1120,7 @@ sv:
 
 
     member_mailer:
+
       member_account_link: "%{account_link} (Du kan behöva logga in först innan länken fungerar.)"
 
       app_no_uploaded_files:
