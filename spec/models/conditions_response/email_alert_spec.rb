@@ -94,23 +94,23 @@ RSpec.describe EmailAlert, type: :model do
 
   describe 'process_entities' do
 
-    it 'loops through entities_to_check and calls action_to_take on each' do
+    it 'loops through entities_to_check and calls take_action on each' do
 
       # stub this method
-      allow(subject).to receive(:action_to_take).and_return(true)
+      allow(subject).to receive(:take_action).and_return(true)
 
-      expect(subject).to receive(:action_to_take).exactly(users.size).times
+      expect(subject).to receive(:take_action).exactly(users.size).times
 
       # actual test:
       Timecop.freeze(dec_1) do
-        subject.process_entities(timing, config, users, log)
+        subject.process_entities(users, log)
         log.close
       end
     end
   end
 
 
-  describe 'action_to_take' do
+  describe 'take_action' do
 
     let(:entity) { create(:member_with_membership_app) }
 
@@ -132,7 +132,7 @@ RSpec.describe EmailAlert, type: :model do
 
       # actual test:
       Timecop.freeze(dec_1) do
-       subject.action_to_take(timing, config, entity, log)
+       subject.take_action(entity, log)
         log.close
       end
     end
@@ -153,7 +153,7 @@ RSpec.describe EmailAlert, type: :model do
 
       # actual test:
       Timecop.freeze(dec_1) do
-       subject.action_to_take(timing, config, entity, log)
+       subject.take_action(entity, log)
         log.close
       end # Timecop
 

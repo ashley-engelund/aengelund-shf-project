@@ -27,10 +27,20 @@
 #  All dates used are a Date (not a Time or DateTime). This allows us to easily
 #  determine the number of days between two dates.
 #
+#  TODO - started using @timing and @config instance vars; complete by also
+#         refactoring/changing all subclasses
+#
+#  TODO - this class is still too big.  It has too many responsibilities.  Can the
+#  mailer-related responsibilities be factored out into a different class? (e.g.
+#  mailer_class, mailer_args, mail_message)
+#
 class EmailAlert < ConditionResponder
 
 
   include Singleton
+
+
+  attr_accessor :config, :timing
 
 
   # pass the class method call to the singleton instance
@@ -42,28 +52,27 @@ class EmailAlert < ConditionResponder
   # Loop through all 'entities' and send them an email if an alert should be sent today
   def condition_response(condition, log)
 
-    config = self.class.get_config(condition)
-    timing = self.class.get_timing(condition)
+    @config = self.class.get_config(condition)
+    @timing = self.class.get_timing(condition)
 
     create_alert_logger(log)
 
-    process_entities(timing, config, entities_to_check, log)
-
+    process_entities(entities_to_check, log)
   end
 
 
   # By default, process each entity and take action on it.
   #
-  def process_entities(timing, config, entities_to_check, log)
-    entities_to_check.each{ | entity | action_to_take(timing, config, entity, log) }
+  def process_entities(entities_to_check, log)
+    entities_to_check.each{ | entity | take_action(entity, log) }
   end
 
 
   # The default action is to send email to the entity if an alert should be sent this day,
   # given the configuration and timing.
   #
-  def action_to_take(timing, config, entity, log)
-    send_email(entity, log) if send_alert_this_day?(timing, config, entity)
+  def take_action(entity, log)
+    send_email(entity, log) if send_alert_this_day?(@timing, @config, entity)
   end
 
 
@@ -74,7 +83,7 @@ class EmailAlert < ConditionResponder
       log_mail_response(log, mail_response, entity)
 
     rescue => mailing_error
-      @alert_logger.log_failure([entity], mailing_error)
+      @alert_logger.log_failure(entity, error: mailing_error)
     end
   end
 
@@ -84,6 +93,42 @@ class EmailAlert < ConditionResponder
     mailer_class.send(mailer_method, *(mailer_args(entity)) )
   end
 
+
+  # create an AlertLogger to use to log success, failure, etc. about this alert
+  def create_alert_logger(log)
+    @alert_logger = AlertLogger.new(log, self)
+  end
+
+
+  # @param log [ActivityLog] - the log the message will be written to
+  # @param mail_response [Mail::Message] - checked to see if it was successful or not
+  # @param entity [Object] - the entity that was sent the email (a User; a Company; etc)
+  #
+  def log_mail_response(log, mail_response, *entities )
+
+    mail_response.errors.empty? ? @alert_logger.log_success(*entities)
+        : @alert_logger.log_failure(*entities)
+  end
+
+
+  # Method to improve readability. returns true if day_number is in config[:days]
+  #
+  # Expects config to include the :days key; returns false if it is not there
+  #
+  # If config is not a Hash, raises an Error because it really _should_ be a Hash
+  #  (it's a programming error to call this otherwise!)
+  #
+  # @param day_number [Integer] - the number of days away from today (before, after, or on)
+  # @param config [Hash] - other configuration info
+  def send_on_day_number?(day_number, config)
+    config.fetch(:days, false) ? config[:days].include?(day_number) : false
+  end
+
+
+  # ===========================================================================
+  #
+  # SUBCLASSES MUST DEFINE THESE METHODS
+  #
 
   # The list of entities that will be checked to see if an email needs to be sent
   #
@@ -117,17 +162,16 @@ class EmailAlert < ConditionResponder
   end
 
 
-  # method to improve readability. returns true if day_number is in config[:days]
+  # This is the method sent to the MemberMailer when this condition
+  # needs to send out an email.
   #
-  # Expects config to include the :days key; returns false if it is not there
-  #
-  # If config is not a Hash, raises an Error because it really _should_ be a Hash
-  #  (it's a programming error to call this otherwise!)
-  #
-  # @param day_number [Integer] - the number of days away from today (before, after, or on)
-  # @param config [Hash] - other configuration info
-  def send_on_day_number?(day_number, config)
-    config.fetch(:days, false) ? config[:days].include?(day_number) : false
+  # Subclasses must redefine this and return a symbol
+  # Ex:
+  #   def mailer_method
+  #     :membership_expiration_reminder
+  #   end
+  def mailer_method
+    raise NoMethodError, "Subclass must define the #{__method__} method and return a Symbol", caller
   end
 
 
@@ -159,38 +203,6 @@ class EmailAlert < ConditionResponder
   #
   def send_alert_this_day?(_timing, _config, _entity)
     raise NoMethodError, "Subclass must define the #{__method__} method and return true or false", caller
-  end
-
-
-  # This is the method sent to the MemberMailer when this condition
-  # needs to send out an email.
-  #
-  # Subclasses must redefine this and return a symbol
-  # Ex:
-  #   def mailer_method
-  #     :membership_expiration_reminder
-  #   end
-  def mailer_method
-    raise NoMethodError, "Subclass must define the #{__method__} method and return a Symbol", caller
-  end
-
-
-  # create an AlertLogger to use to log success, failure, etc. about this alert
-  def create_alert_logger(log)
-    @alert_logger = AlertLogger.new(log, self)
-  end
-
-
-  # @param log [ActivityLog] - the log the message will be written to
-  # @param mail_response [Mail::Message] - checked to see if it was successful or not
-  # @param entity [Object] - the entity that was sent the email (a User; a Company; etc)
-  #
-  def log_mail_response(log, mail_response, entity )
-  #   mail_response.errors.empty? ? log_success(log, log_msg_start, log_str_maker.success_info(entity))
-  #       : log_failure(log, log_msg_start, log_str_maker.failure_info(entity))
-
-    mail_response.errors.empty? ? @alert_logger.log_success(entity)
-        : @alert_logger.log_failure(entity)
   end
 
 
