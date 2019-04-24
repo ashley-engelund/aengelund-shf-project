@@ -1,18 +1,19 @@
 require 'rails_helper'
 
-RSpec.describe RequirementsForMemberUnpaidForXMonths, type: :model do
+RSpec.describe RequirementsForMemberUnpaidMoreThanXMonths, type: :model do
 
   let(:feb1_2018) { Date.new(2018, 2, 1) }
   let(:jun1_2018) { Date.new(2018, 6, 1) }
 
-  let(:subject) { RequirementsForMemberUnpaidForXMonths }
+  let(:subject) { RequirementsForMemberUnpaidMoreThanXMonths }
 
   let(:user) { create(:user) }
 
   let(:member) { create(:member_with_membership_app) }
 
-  let(:member_payment_exp_5_months_ago) do
+  let(:member_payment_exp_over_5_months_ago) do
     exp_date = Time.zone.now.months_ago(5).to_date
+    exp_date = exp_date - 1    # make this 1 day earlier; = 5 months and 1 day ago
     create(:membership_fee_payment,
            :successful,
            user:        member,
@@ -95,7 +96,7 @@ RSpec.describe RequirementsForMemberUnpaidForXMonths, type: :model do
 
       it 'has an approved application AND membership fee paid AND membership term has expired' do
 
-        member_payment_exp_5_months_ago
+        member_payment_exp_over_5_months_ago
         expect(subject.requirements_met?({ user: member, num_months: 5 })).to be_truthy
       end
 
@@ -107,7 +108,7 @@ RSpec.describe RequirementsForMemberUnpaidForXMonths, type: :model do
   describe '.satisfied?' do
 
     it '.has_expected_arguments? is true and requirements_met? is true' do
-      member_payment_exp_5_months_ago
+      member_payment_exp_over_5_months_ago
       expect(subject.satisfied?({ user: member, num_months: 5 })).to be_truthy
     end
 
@@ -116,7 +117,7 @@ RSpec.describe RequirementsForMemberUnpaidForXMonths, type: :model do
     end
 
     it '.has_expected_arguments? is false and requirements_met? is true' do
-      member_payment_exp_5_months_ago
+      member_payment_exp_over_5_months_ago
       expect(subject.satisfied?({ not_user: member, blorf: 'florb' })).to be_falsey
     end
 
