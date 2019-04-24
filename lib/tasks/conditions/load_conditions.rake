@@ -10,7 +10,7 @@ namespace :shf do
     #
     conditions_to_create = [
 
-        { alert_class_name: 'MemberUnpaidFor6MonthsAlert',
+        { class_name: 'MemberUnpaidOver6MonthsAlert',
             timing:     :every_day },
 
         { class_name: 'MembershipExpireAlert',

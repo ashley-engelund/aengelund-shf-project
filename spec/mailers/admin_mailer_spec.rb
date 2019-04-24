@@ -79,7 +79,7 @@ RSpec.describe AdminMailer, type: :mailer do
   end
 
 
-  describe '#member_unpaid_for_x_months' do
+  describe '#member_unpaid_over_x_months' do
 
     let(:new_app) { create(:shf_application, user: test_user)  }
 
@@ -111,7 +111,7 @@ RSpec.describe AdminMailer, type: :mailer do
     let(:admin) { create(:user, email: 'admin@example.com', admin: true) }
 
     let(:num_months) { 5 }
-    let(:email_sent) { AdminMailer.member_unpaid_for_x_months(admin, members_5_mon_overdue, num_months) }
+    let(:email_sent) { AdminMailer.member_unpaid_over_x_months(admin, members_5_mon_overdue, num_months) }
 
 
     describe 'number of months' do
@@ -125,10 +125,10 @@ RSpec.describe AdminMailer, type: :mailer do
         allow(I18n).to receive(:translate).with("mailers.application_mailer.greeting", anything).and_return('ok')
         allow(I18n).to receive(:translate).with("mailers.application_mailer.footer.text.email_sent_to", anything).and_return('ok')
 
-        expect(I18n).to receive(:translate).with('member_unpaid_for_x_months.subject',
+        expect(I18n).to receive(:translate).with('member_unpaid_over_x_months.subject',
                                                  {num_months: 6, scope: 'mailers.admin_mailer'})
 
-        subject.member_unpaid_for_x_months(admin, members_5_mon_overdue )
+        subject.member_unpaid_over_x_months(admin, members_5_mon_overdue )
       end
 
     end
@@ -161,7 +161,7 @@ RSpec.describe AdminMailer, type: :mailer do
     end
 
     it_behaves_like 'a successfully created email',
-                    I18n.t('mailers.admin_mailer.member_unpaid_for_x_months.subject', num_months: 5),
+                    I18n.t('mailers.admin_mailer.member_unpaid_over_x_months.subject', num_months: 5),
                     ENV['SHF_MEMBERSHIP_EMAIL'],
                     'Firstname Lastname',
                     I18n.t('mailers.admin_mailer.signoff') do

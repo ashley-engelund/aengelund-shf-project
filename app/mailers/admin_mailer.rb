@@ -18,7 +18,7 @@ class AdminMailer < ApplicationMailer
   end
 
 
-  def member_unpaid_for_x_months(admin, members_unpaid = [], num_months = 6)
+  def member_unpaid_over_x_months(admin, members_unpaid = [], num_months = 6)
 
     # need to set these manually because we do not have a User object for the recipient, just an email address
     @action_name = __method__.to_s
@@ -29,7 +29,7 @@ class AdminMailer < ApplicationMailer
     @fee_due_date = Date.current
     @num_months = num_months
 
-    mail to: recipient_email, subject: t('member_unpaid_for_x_months.subject', num_months: @num_months, scope: I18N_SCOPE)
+    mail to: recipient_email, subject: t('member_unpaid_over_x_months.subject', num_months: @num_months, scope: I18N_SCOPE)
   end
 
 end

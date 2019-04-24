@@ -1,26 +1,26 @@
 #--------------------------
 #
-# @class  MemberUnpaidFor6MonthsAlert
+# @class  RequirementsForMemberUnpaidMoreThanXMonths
 #
-# @desc Responsibility:  Sends an email alert if a Member is 6 months past the date they should have paid
+# @desc Responsibility:  Sends an email alert if a Member is > 6 months past the date they should have paid
 #
 #  Only 1 is needed for the system.
 #
 # @author Ashley Engelund ( weedySeaDragon @ Github )
 # @date 2019-04-12
-# @file member_unpaid_for_6_months_alert.rb
+# @file member_unpaid_over6_months_alert.rb
 #
 #--------------------------
 
 
-class MemberUnpaidFor6MonthsAlert < AdminEmailAlert
+class MemberUnpaidOver6MonthsAlert < AdminEmailAlert
 
 
   NUM_MONTHS = 6
 
   # add the entity iff it is a member unpaid for 6 months
   def add_entity_to_list?(user)
-    RequirementsForMemberUnpaidForXMonths.requirements_met?({ user: user, num_months: NUM_MONTHS })
+    RequirementsForMemberUnpaidMoreThanXMonths.requirements_met?({ user: user, num_months: NUM_MONTHS })
   end
 
 
@@ -34,7 +34,7 @@ class MemberUnpaidFor6MonthsAlert < AdminEmailAlert
 
 
   def mailer_method
-    :member_unpaid_for_x_months
+    :member_unpaid_over_x_months
   end
 
 

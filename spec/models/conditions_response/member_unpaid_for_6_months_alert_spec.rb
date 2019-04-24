@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 
-RSpec.describe MemberUnpaidFor6MonthsAlert, type: :model do
+RSpec.describe MemberUnpaidOver6MonthsAlert, type: :model do
 
   let(:subject) { described_class.instance }
 
@@ -13,19 +13,19 @@ RSpec.describe MemberUnpaidFor6MonthsAlert, type: :model do
   let(:condition) { create(:condition, timing: timing, config: config ) }
 
 
-  describe '.add_entity_to_list?(user) if the RequirementsForMemberUnpaidForXMonths is met' do
+  describe '.add_entity_to_list?(user) if the RequirementsForMemberUnpaidMoreThanXMonths is met' do
    
-    it 'RequirementsForMemberUnpaidForXMonths is not satisfied' do
+    it 'RequirementsForMemberUnpaidMoreThanXMonths is not satisfied' do
 
-      allow(RequirementsForMemberUnpaidForXMonths).to receive(:requirements_met?).and_return(false)
+      allow(RequirementsForMemberUnpaidMoreThanXMonths).to receive(:requirements_met?).and_return(false)
 
       expect(subject.add_entity_to_list?(user)).to be_falsey
     end
 
 
-    it 'RequirementsForMemberUnpaidForXMonths is satisfied' do
+    it 'RequirementsForMemberUnpaidMoreThanXMonths is satisfied' do
 
-      allow(RequirementsForMemberUnpaidForXMonths).to receive(:requirements_met?).and_return(true)
+      allow(RequirementsForMemberUnpaidMoreThanXMonths).to receive(:requirements_met?).and_return(true)
 
       expect(subject.add_entity_to_list?(user)).to be_truthy
     end
@@ -34,7 +34,7 @@ RSpec.describe MemberUnpaidFor6MonthsAlert, type: :model do
   
 
   it '.mailer_method' do
-    expect(subject.mailer_method).to eq :member_unpaid_for_x_months
+    expect(subject.mailer_method).to eq :member_unpaid_over_x_months
   end
 
 
