@@ -303,7 +303,7 @@ RSpec.describe ConditionResponder, type: :model do
 
     it 'raises TimingNotValidConditionResponderError and writes to log if timing is not in list of expected timings' do
       expect { described_class.validate_timing(:every_day, [:blorf], log) }
-          .to raise_error TimingNotValidError, "Received timing :every_day which is not in list of expected timings: #{[:blorf]}"
+          .to raise_error TimingNotValidError, "Received timing :every_day which is not in list of expected timings: [:blorf]"
     end
 
     it 'raises ExpectedTimingsCannotBeEmptyError and writes to log if list of expected timings is empty' do

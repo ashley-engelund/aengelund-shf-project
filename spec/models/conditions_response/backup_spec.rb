@@ -19,7 +19,7 @@ RSpec.describe Backup, type: :model do
   let(:expected_bucket_folder) { "production_backup/#{today_timestamp}/" }
 
   def create_faux_backup_file(backups_dir, file_prefix)
-    File.open(File.join(backups_dir, "#{file_prefix}-faux-backup.bak"), mode="w").path
+    File.open(File.join(backups_dir, "#{file_prefix}-faux-backup.bak"), 'w').path
   end
 
 
@@ -294,7 +294,7 @@ RSpec.describe Backup, type: :model do
         temp_backup_sourcefn2 = Tempfile.new('faux-otherfile.rb').path
 
         temp_backup_sourcedir = Dir.mktmpdir('faux-code-dir')
-        temp_backup_in_dir_fn = File.open(File.join(temp_backup_sourcedir, 'faux-codefile2.rb'), mode="w").path
+        temp_backup_in_dir_fn = File.open(File.join(temp_backup_sourcedir, 'faux-codefile2.rb'), 'w').path
 
         files_backup = FilesBackupMaker.new(backup_target_filebase: temp_backup_target,
                                          backup_sources: [temp_backup_sourcefn1,
