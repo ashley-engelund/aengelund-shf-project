@@ -159,8 +159,10 @@ class ConditionResponder
      raise ExpectedTimingsCannotBeEmptyError, msg
    end
 
-   unless expected_timings.include? timing
-     msg = "Received timing :#{timing} which is not in list of expected timings: #{expected_timings}"
+   valid_timings = expected_timings.is_a?(Enumerable) ? expected_timings : [expected_timings]
+
+   unless valid_timings.include? timing
+     msg = "Received timing :#{timing} which is not in list of expected timings: #{valid_timings}"
      log.record('error', msg)
      raise TimingNotValidError, msg
    end
