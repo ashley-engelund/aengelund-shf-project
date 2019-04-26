@@ -9,7 +9,12 @@ sv:
       title: "Hitta H-märkt hundföretag, hundinstruktör"
       description: "Här hittar du etiska, svenska, H-märkta hundföretag. Du hittar bland annat hundinstruktörer, hundpsykologer, hunddagis, trim med mera."
       keywords: 'hund, hundägare, hundinstruktör, hundentreprenör, Sveriges Hundföretagare, svenskt hundföretag, etisk, H-märkt, hundkurs'
-      image_src: "Sveriges_hundforetagare_banner_sajt.jpg"
+      image_src:
+        filename: "Sveriges_hundforetagare_banner_sajt.jpg"
+        image_type: 'jpeg'
+        width: 1245
+        height: 620
+
 
   dog: hund
 

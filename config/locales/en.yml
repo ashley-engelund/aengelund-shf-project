@@ -9,7 +9,11 @@ en:
       title: "Find H-markt dog companies, dog training instructors, dog trainers, or dog entrepreneurs."
       description: "Here you will find ethical Swedish dog companies that have earned the H-brand mark. Find dog trainers, dog training instructors, dog psychologists, dog day care, grooming and more."
       keywords: 'dog, dog owner, dog instructor, dog entrepreneur, Swedish dog company, Swedish dog company, ethical, H-brand, H-mark, H-marked, dog training'
-      image_src: "Sveriges_hundforetagare_banner_sajt.jpg"
+      image_src:
+        filename: "Sveriges_hundforetagare_banner_sajt.jpg"
+        image_type: 'jpeg'
+        width: 1245
+        height: 620
 
   dog: dog
 
