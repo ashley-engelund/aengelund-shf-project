@@ -238,6 +238,26 @@ RSpec.describe CompaniesController, type: :controller do
 
       describe 'meta tags' do
 
+        RSpec::Matchers.define :not_starting_with do | start_str |
+          match{ |actual| !((actual).start_with?(start_str))  }
+        end
+
+        RSpec::Matchers.define :starting_with do | start_str |
+          match{ |actual| ((actual).start_with?(start_str))  }
+        end
+
+
+        before(:each) do
+          allow(I18n).to receive(:translate)
+                             .with(starting_with('meta'), anything)
+                             .and_call_original
+
+          allow(I18n).to receive(:translate)
+                             .with(not_starting_with('meta'), anything)
+                             .and_return('blorf')
+        end
+
+
         # Create the Regexp to match meta tag="<tag>" content="<content>"
         def meta_tag_with_content(tag, content)
           Regexp.new("<meta name=\"#{tag}\" content=\"#{content}\">")
@@ -250,10 +270,11 @@ RSpec.describe CompaniesController, type: :controller do
 
 
         it 'description is from the locale file' do
-          # will return 'blorf' when it pretends (mocks) to look up something in a locale file
-          allow(I18n.config.backend).to receive(:translate)
-                                            .with(anything, anything, anything)
-                                            .and_return('blorf')
+
+          allow(I18n).to receive(:translate)
+                             .with('companies.index.meta.description', anything)
+                             .and_return('blorf')
+
           get :index
           expect(response.body).to match(meta_tag_with_content('description', 'blorf'))
         end
@@ -262,10 +283,7 @@ RSpec.describe CompaniesController, type: :controller do
         describe 'keywords' do
 
           it 'always has what is in the locale file ' do
-            # will return 'blorf' when it pretends (mocks) to look up something in a locale file
-            allow(I18n.config.backend).to receive(:translate)
-                                              .with(anything, anything, anything)
-                                              .and_return('blorf')
+
             get :index
             expect(response.body).to match(meta_tag_with_content('keywords', 'blorf'))
           end
@@ -274,19 +292,13 @@ RSpec.describe CompaniesController, type: :controller do
           describe 'appends the business categories after the locale file keywords' do
 
             it 'no business categories; is just the I18n keywords' do
-              # will return 'blorf' when it pretends (mocks) to look up something in a locale file
-              allow(I18n.config.backend).to receive(:translate)
-                                                .with(anything, anything, anything)
-                                                .and_return('blorf')
+
               get :index
               expect(response.body).to match(meta_tag_with_content('keywords', 'blorf'))
             end
 
             it 'some business categories' do
-              # will return 'blorf' when it pretends (mocks) to look up something in a locale file
-              allow(I18n.config.backend).to receive(:translate)
-                                                .with(anything, anything, anything)
-                                                .and_return('blorf')
+
               create(:business_category, name: 'Cat 1')
               create(:business_category, name: 'Cat 2')
               get :index
@@ -301,7 +313,7 @@ RSpec.describe CompaniesController, type: :controller do
         it 'link rel="image_src" is the banner image in assets/images' do
           get :index
 
-          image_src_match = "<link rel=\"image_src\" href=\"http(.*)/assets/Sveriges_hundforetagare_banner_sajt.jpg\">"
+          image_src_match = /<link rel="image_src" href="http(.*)\/assets\/Sveriges_hundforetagare_banner_sajt-(.*).jpg">/
           expect(response.body).to match(image_src_match)
         end
 
@@ -345,8 +357,12 @@ RSpec.describe CompaniesController, type: :controller do
           end
 
           it 'description is the same as the page description' do
+
+            allow(I18n).to receive(:translate)
+                               .with('companies.index.meta.description', anything)
+                               .and_return('this is the description')
             get :index
-            expect(response.body).to match(meta_property_with_content('og:description', 'Här hittar du etiska, svenska, H-märkta hundföretag. Du hittar bland annat hundinstruktörer, hundpsykologer, hunddagis, trim med mera.'))
+            expect(response.body).to match(meta_property_with_content('og:description', 'this is the description'))
           end
 
           it 'url is the url of the page' do
@@ -356,8 +372,11 @@ RSpec.describe CompaniesController, type: :controller do
           end
 
           it 'type is website' do
+            allow(I18n).to receive(:translate)
+                               .with('companies.index.meta.type', anything)
+                               .and_return('the locale file should have website')
             get :index
-            expect(response.body).to match(meta_property_with_content('og:type', 'website'))
+            expect(response.body).to match(meta_property_with_content('og:type', 'the locale file should have website'))
           end
 
           it 'locale = sv_SE' do
@@ -369,9 +388,8 @@ RSpec.describe CompaniesController, type: :controller do
           describe 'image' do
 
             it 'image is the same as the page image_src' do
-              # <meta property="og:image" content="http://0.0.0.0:3000/assets/Sveriges_hundforetagare_banner_sajt.jpg">
               get :index
-              expect(response.body).to match(meta_property_with_content('og:image', 'http(.*)/assets/Sveriges_hundforetagare_banner_sajt.jpg'))
+              expect(response.body).to match(meta_property_with_content('og:image', /http(.*)\/assets\/Sveriges_hundforetagare_banner_sajt-(.*)\.jpg/))
             end
 
             it 'type = image/jpeg' do
@@ -399,8 +417,12 @@ RSpec.describe CompaniesController, type: :controller do
         describe 'twitter' do
 
           it '<meta name="twitter:card" content="summary">' do
+
+            allow(I18n).to receive(:translate)
+                               .with('companies.index.meta.twitter.card', anything)
+                               .and_return('this is twitter')
             get :index
-            expect(response.body).to match(meta_tag_with_content('twitter:card', 'summary'))
+            expect(response.body).to match(meta_tag_with_content('twitter:card', 'this is twitter'))
           end
         end
       end
