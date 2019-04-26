@@ -31,8 +31,6 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
     @meta_setter.set_request! ActionDispatch::TestRequest.create
     @meta_setter.request.path = MOCK_REQ_PATH
 
-    @meta_image_setter = PageMetaImageTagsSetter
-
   end
 
   after(:all) { I18n.locale = @orig_locale }
@@ -104,22 +102,6 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
           end
         end
 
-
-        describe 'image' do
-          it 'name is the default image url' do
-            expect(@meta_tags_set['og']['image']['_']).to eq default_image_url
-          end
-          it 'height = default image height' do
-            expect(@meta_tags_set['og']['image']['height']).to eq default_image_height
-          end
-          it 'width = default image width' do
-            expect(@meta_tags_set['og']['image']['width']).to eq default_image_width
-          end
-
-          it 'type = default image type' do
-            expect(@meta_tags_set['og']['image']['type']).to eq default_image_type
-          end
-        end
       end
 
 
@@ -168,12 +150,6 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
               "url"         => 'http://test.host/test-path',
               "type"        => 'blorf',
               "locale"      => 'sv_SE',
-              "image"       => {
-                  "_"      => default_image_url,
-                  "height" => default_image_height,
-                  "type"   => default_image_type,
-                  "width"  => default_image_width
-              }
           },
           "fb" => {
             "app_id" => 12345678909876
@@ -181,7 +157,6 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
           "twitter"     => {
               "card" => 'blorf'
           },
-          "image_src"   => default_image_url
       }
 
       subject.set_meta_tags_for_url_path(MOCK_BASE_URL, MOCK_REQ_PATH)

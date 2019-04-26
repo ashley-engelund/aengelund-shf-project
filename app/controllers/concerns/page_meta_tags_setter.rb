@@ -3,7 +3,6 @@
 require 'mini_magick'
 
 require 'site_meta_info_defaults'
-require 'page_meta_image_tags_setter'
 require 'page_meta_og_tags_setter'
 
 
@@ -41,6 +40,12 @@ require 'page_meta_og_tags_setter'
 #
 #       end
 #
+#  NOTE:  This cannot be used to set images that must be served up from
+# the public assets directory because those filenames (= the end of the URL)
+# must be fingerprinted by Sprockets.  Sprockets can only be invoked (used) from
+# within *Views*.  If you need to include image URLs, use helper methods,
+# e.g. the /helpers/MetaTagsHelper module
+#
 #
 # @author Ashley Engelund (ashley.engelund@gmail.com  weedySeaDragon @ github)
 # @date   2019-02-07
@@ -52,10 +57,8 @@ require 'page_meta_og_tags_setter'
 
 module PageMetaTagsSetter
 
-  # needed so we can get the asset_url of the images needed for meta tags
   include ActionView::Helpers::AssetUrlHelper
 
-  include PageMetaImageTagsSetter
   include PageMetaOgTagsSetter
 
 
@@ -78,7 +81,6 @@ module PageMetaTagsSetter
   #   - title
   #   - description
   #   - keywords    (And will  append Business Categories to the keywords)
-  #   - image_src
   #
   # If a locale entry isn't found, a default value will be used instead
   #
@@ -100,8 +102,6 @@ module PageMetaTagsSetter
                   title:     page_title,
                   description: page_desc,
                   keywords:    create_keywords
-
-    set_page_meta_images
 
     set_og_meta_tags(site_name: SiteMetaInfoDefaults.site_name,
                      title: helpers.full_page_title(page_title: page_title),
