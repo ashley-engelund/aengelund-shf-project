@@ -1,4 +1,9 @@
+require 'meta_image_tags_helper'
+
 module ApplicationHelper
+
+  include MetaImageTagsHelper
+
 
   def flash_class(level)
     case level.to_sym
