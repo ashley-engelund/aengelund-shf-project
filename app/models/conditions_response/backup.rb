@@ -128,11 +128,7 @@ class Backup < ConditionResponder
 
   def self.condition_response(condition, log)
 
-    unless timing_is_every_day?(get_timing(condition))
-      msg = "Cannot handle timing other than #{TIMING_EVERY_DAY}"
-      log.record('error', msg)
-      raise ArgumentError, msg
-    end
+    validate_timing(get_timing(condition), [TIMING_EVERY_DAY], log)
 
     config = get_config(condition)
     backup_targets = create_backup_targets(config)

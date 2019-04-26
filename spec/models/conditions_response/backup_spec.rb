@@ -153,14 +153,6 @@ RSpec.describe Backup, type: :model do
       described_class.condition_response(condition, FakeLogger)
     end
 
-    describe 'can back up a single file' do
-      pending
-    end
-
-    describe 'can back up a directory' do
-      pending
-    end
-
 
     describe '.create_backup_targets' do
 
@@ -310,6 +302,7 @@ RSpec.describe Backup, type: :model do
                                                           temp_backup_sourcedir])
         files_backup.backup
 
+        # could also use the Gem::Package verify_entry method to verify each tar entry
         backup_file_list = %x<tar --list --file=#{temp_backup_target}>
         backup_file_list.gsub!(/\n/, ' ')
 
