@@ -1,8 +1,14 @@
 require 'rails_helper'
 require 'email_spec/rspec'
 
+require_relative File.join(__dir__, 'shared_examples','shared_condition_specs')
+
+require 'shared_context/activity_logger'
 
 RSpec.describe Backup, type: :model do
+
+  include_context 'create logger'
+
 
   let(:condition) { build(:condition, timing: Backup::TIMING_EVERY_DAY) }
   let(:today) { Time.now.strftime '%Y-%m-%d' }
@@ -128,15 +134,10 @@ RSpec.describe Backup, type: :model do
     end
 
 
-    it 'raises exception unless timing is :every_day' do
-
-      condition.timing = :not_every_day
-
-      expect do
-        described_class.condition_response(condition, FakeLogger)
-      end.to raise_exception ArgumentError, 'Cannot handle timing other than every_day'
-
+    it_behaves_like 'it validates timings in .condition_response', [:every_day] do
+      let(:tested_condition) { condition }
     end
+
 
     it 'calls S3 credentials once' do
       expect(described_class).to receive(:get_s3_objects)
@@ -150,6 +151,14 @@ RSpec.describe Backup, type: :model do
       expect(described_class).to receive(:upload_file_to_s3).exactly(2).times
 
       described_class.condition_response(condition, FakeLogger)
+    end
+
+    describe 'can back up a single file' do
+      pending
+    end
+
+    describe 'can back up a directory' do
+      pending
     end
 
 
