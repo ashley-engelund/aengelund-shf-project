@@ -49,7 +49,7 @@ class SiteMetaInfoDefaults
 
 
     def image_filename
-      I18n.t('meta.default.image_src')
+      I18n.t('meta.default.image_src.filename', default: 'Sveriges_hundforetagare_banner_sajt.jpg')
     end
 
 
