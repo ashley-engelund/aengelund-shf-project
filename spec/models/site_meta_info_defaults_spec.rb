@@ -38,9 +38,9 @@ RSpec.describe SiteMetaInfoDefaults do
     expect(subject.keywords).to eq 'default keywords from I18n'
   end
 
-  it "image_filename is I18n.t('meta.default.image_src')" do
+  it "image_filename is I18n.t('meta.default.image_src.filename')" do
     allow(I18n.config.backend).to receive(:translate)
-                                      .with(:sv, 'meta.default.image_src', anything)
+                                      .with(:sv, 'meta.default.image_src.filename', anything)
                                       .and_return('default image_src from I18n')
     expect(subject.image_filename).to eq 'default image_src from I18n'
   end
