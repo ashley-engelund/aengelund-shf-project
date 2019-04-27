@@ -12,12 +12,15 @@ RSpec.describe MetaImageTagsHelper, type: :helper do
 
   before(:all) do
     @orig_locale = I18n.locale
-    FileUtils.copy_file(file_fixture('image.png'), File.join(Rails.public_path, 'assets', 'image.png'))
+
+    @assets_path = File.join(Rails.public_path, 'assets')
+    FileUtils.mkdir_p @assets_path unless File.exist?(@assets_path)
+    FileUtils.copy_file(file_fixture('image.png'), File.join(@assets_path, 'image.png'))
   end
 
   after(:all) do
     I18n.locale = @orig_locale
-    FileUtils.rm(File.join(Rails.public_path, 'assets', 'image.png'))
+    FileUtils.rm(File.join(@assets_path, 'image.png'))
   end
 
 
