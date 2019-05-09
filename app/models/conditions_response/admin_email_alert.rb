@@ -3,14 +3,17 @@
 # Responsibility: sets the information needed so that the parent class(es) can
 #  process the condition for an email sent to Admins
 #
-#  SUBCLASSES MUST REDEFINE THESE METHODS:
-#     send_alert_this_day?
-#     mailer_method
+#  SUBCLASSES MUST IMPLEMENT SPECIFIC METHODS.
+#  They must be implemented to satisfy the interface for this abstract class.
+#  Any method that a subclass must implement will raise a NoMethod error
+#  here in this class unless a subclass implements it.
+#
 #
 class AdminEmailAlert < EmailAlert
 
   # add entities to the list that is used in the email sent to the Admins
   attr_accessor :entities_list
+
 
   def entities_list
     @entities_list ||= []

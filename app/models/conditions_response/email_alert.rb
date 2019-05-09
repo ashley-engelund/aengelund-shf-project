@@ -13,15 +13,10 @@
 # This is a Singleton because subclasses may need their own instance of an
 #  AlertLogStringMaker. (Cannot accomplish that with a class variable).
 #
-#  SUBCLASSES MUST REDEFINE THESE METHODS:
-#     entities_to_check
-#     mailer_class
-#     mailer_args
-#     success_str
-#     failure_str
-#
-#     send_alert_this_day?
-#     mailer_method
+#  SUBCLASSES MUST IMPLEMENT SPECIFIC METHODS.
+#  They must be implemented to satisfy the interface for this abstract class.
+#  Any method that a subclass must implement will raise a NoMethod error
+#  here in this class unless a subclass implements it.
 #
 #
 #  All dates used are a Date (not a Time or DateTime). This allows us to easily
