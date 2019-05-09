@@ -72,7 +72,8 @@ class EmailAlert < ConditionResponder
 
 
   # Send the email to the entity. Put an entry in the log file about it.
-  def send_email(entity, log, email_args=[])
+  # subclasses can use email_args if needed to put additional info the email.
+  def send_email(entity, log, _email_args=[])
     begin
       mail_response = mail_message(entity).deliver_now
       log_mail_response(log, mail_response, entity)
@@ -99,7 +100,9 @@ class EmailAlert < ConditionResponder
   # @param mail_response [Mail::Message] - checked to see if it was successful or not
   # @param entity [Object] - the entity that was sent the email (a User; a Company; etc)
   #
-  def log_mail_response(log, mail_response, *entities )
+  #  TODO - is the log really needed?  does the @alert_logger already have it?
+  #
+  def log_mail_response(_log, mail_response, *entities )
 
     mail_response.errors.empty? ? @alert_logger.log_success(*entities)
         : @alert_logger.log_failure(*entities)

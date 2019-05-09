@@ -28,7 +28,7 @@ class CompanyEmailAlert < EmailAlert
   #
   # @param company [Company] - the company whose recipients will receive the email alert
   # @param member [User] - the member of the company that is getting the email
-  # @param log [ActivityLog] - the log to record the response
+  # @param log [ActivityLog] - the log to record the response TODO use the @alert_logger
   #
   def send_email(company, member, log)
 

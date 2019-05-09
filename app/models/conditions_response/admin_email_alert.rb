@@ -54,7 +54,7 @@ class AdminEmailAlert < EmailAlert
 
 
   # Subclasses must define this
-  def add_entity_to_list?(entity)
+  def add_entity_to_list?(_entity)
     raise NoMethodError, "Subclass must define the #{__method__} method and return true or false", caller
   end
 
