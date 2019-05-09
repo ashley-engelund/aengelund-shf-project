@@ -226,7 +226,7 @@ RSpec.describe EmailAlert, type: :model do
       expect(subject).to receive(:log_mail_response)
 
       Timecop.freeze(dec_1)
-     subject.send_email(entity, log)
+      subject.send_email(entity, log)
       Timecop.return
 
       email = ActionMailer::Base.deliveries.last
