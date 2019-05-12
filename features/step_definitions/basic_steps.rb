@@ -151,6 +151,16 @@ Given(/^the date is set to "([^"]*)"$/) do |date|
   Timecop.freeze( Time.find_zone("UTC").parse(date))
 end
 
+
+# Note: the 'time_unit' must be a method (string) that is implemented
+# by a Duration (see active_support/time_with_zone.rb)
+#
+And("time advances by {digits} {capture_string}") do | amount, time_unit |
+  new_time = Time.zone.now + (amount.send(time_unit.to_sym))
+  Timecop.freeze(new_time)
+end
+
+
 # Hide (or show) the search form by clicking on the button
 #  This is frequently used to hide the search form on a page so that
 #  items in the select lists are not included in counts.
