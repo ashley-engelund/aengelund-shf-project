@@ -19,14 +19,4 @@ class CustomDeviseFailApp < Devise::FailureApp
     new_user_session_path
   end
 
-
-  # Need to override this so that warden recall is not involved
-  def respond
-    if http_auth?
-      http_auth
-    else
-      redirect
-    end
-  end
-
 end
