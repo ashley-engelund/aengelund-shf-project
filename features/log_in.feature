@@ -1,4 +1,5 @@
-Feature: As a registered user
+Feature: Logging in
+  As a registered user
   in order to access the functions of the site
   I need to be able to login
 
