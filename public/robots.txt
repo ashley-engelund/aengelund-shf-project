@@ -5,7 +5,16 @@
 # Disallow: /
 
 
-# --------------------
+# ------------------------------------------------------------------------------
+# Don't allow any spiders and bots access to these directories
+#  (There is no value to us having search enginers or other crawlers know about these files.
+#  It only takes up bandwidth and resources.)
+
+User-agent: *
+Disallow: /assets/font-awesome
+
+
+# ------------------------------------------------------------------------------
 # Ban known 'bad' bots
 
 User-agent: SEMrushBot
