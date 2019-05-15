@@ -1,5 +1,6 @@
 require 'active_support/logger'
 # require_relative './shf_notify_slack'
+require_relative File.join(__dir__, '..','..', 'app', 'models', 'logfile_namer')
 
 
 LOG_FILE         = 'log/backup.log' unless defined?(LOG_FILE)
