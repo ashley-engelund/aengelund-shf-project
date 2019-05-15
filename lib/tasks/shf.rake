@@ -1,18 +1,18 @@
 require 'active_support/logger'
+require_relative File.join(__dir__, '..','..', 'app', 'models', 'logfile_namer')
+
+ACCEPTED_STATE = 'accepted' unless defined?(ACCEPTED_STATE)
+SHF_TASKS_LOG_FILE = LogfileNamer.name_for('shf_tasks') unless defined?(SHF_TASKS_LOG_FILE)
+SHF_TASK_FACILITY = 'SHF_TASK' unless defined?(SHF_TASK_FACILITY)
 
 
 namespace :shf do
-
-  ACCEPTED_STATE = 'accepted' unless defined?(ACCEPTED_STATE)
-  LOG_FILE       = 'log/shf_tasks.log' unless defined?(LOG_FILE)
 
   # TODO removed shf:dinkurs_load task once response condition (DinkursFetch) is deployed
   desc 'load Dinkurs events for companies'
   task :dinkurs_load => [:environment] do
 
-    LOG = 'log/dinkurs_load_events.log'
-
-    ActivityLogger.open(LOG, 'SHF_TASK', 'Load Dinkurs Events') do |log|
+    ActivityLogger.open('log/dinkurs_load_events.log', SHF_TASK_FACILITY, 'Load Dinkurs Events') do |log|
 
       Company.where.not(dinkurs_company_id: [nil, '']).order(:id).each do |company|
 
@@ -30,10 +30,13 @@ namespace :shf do
     Rake::Task['db:drop'].invoke if database_exists?
 
     tasks = ['db:create', 'db:migrate', 'db:test:prepare',
+             'shf:create_member_num_seq',
              'shf:load_regions', 'shf:load_kommuns',
              'shf:load_file_delivery_methods']
 
     tasks.each { |t| Rake::Task[t].invoke }
+
+    puts "\n Logged to: #{SHF_TASKS_LOG_FILE}\n   unless otherwise noted."
 
     puts "\n DB is created with baseline data.\n"
     puts "\n Be sure to run 'rails db:seed' if you need seed data. \n\n"
@@ -109,7 +112,7 @@ namespace :shf do
         key_mapping:         headers_to_columns_mapping
     }
 
-    log = ActivityLogger.open(LOG_FILE, 'SHF_TASK', 'Import CSV')
+    log = ActivityLogger.open(SHF_TASKS_LOG_FILE, SHF_TASK_FACILITY,'Import CSV')
 
     if args.has_key? :csv_filename
 
@@ -154,7 +157,7 @@ namespace :shf do
   desc "load regions data (counties plus 'Sverige' and 'Online')"
   task :load_regions => [:environment] do
 
-    ActivityLogger.open(LOG_FILE, 'SHF_TASK', 'Load Regions') do |log|
+    ActivityLogger.open(SHF_TASKS_LOG_FILE, SHF_TASK_FACILITY,'Load Regions') do |log|
 
       # Populate the 'regions' table for Swedish regions (aka counties),
       # as well as 'Sverige' (Sweden) and 'Online'.  This is used to specify
@@ -174,13 +177,40 @@ namespace :shf do
     end
   end
 
+
+  desc "create membership_number sequence if it doesn't exist"
+  task create_member_num_seq: [:environment] do | t |
+
+    ActivityLogger.open(SHF_TASKS_LOG_FILE, SHF_TASK_FACILITY, t.name) do |log|
+
+      select_seq_count_sql = "SELECT Count(*) FROM pg_class where relname = 'membership_number_seq' AND relkind = 'S';"
+      sequence_exists = User.connection.execute(select_seq_count_sql).getvalue(0, 0).to_i
+
+      if sequence_exists > 0
+        log.info('Sequence already exists. No need to create it.')
+
+      else
+        create_sql = 'CREATE SEQUENCE IF NOT EXISTS membership_number_seq  START 101'
+        User.connection.execute(create_sql)
+        log.info("Sequence created with: #{create_sql}")
+
+        # see if we can get the next value
+        next_val = User.connection.execute("SELECT nextval('membership_number_seq')").getvalue(0, 0).to_s
+        log.info("  next value = #{next_val}")
+      end
+
+    end
+
+  end
+
+
   desc "load kommuns data (290 Swedish municipalities)"
   task :load_kommuns => [:environment] do
 
     require 'csv'
     require 'smarter_csv'
 
-    ActivityLogger.open(LOG_FILE, 'SHF_TASK', 'Load Kommuns') do |log|
+    ActivityLogger.open(SHF_TASKS_LOG_FILE, SHF_TASK_FACILITY,'Load Kommuns') do |log|
 
       if Kommun.exists?
         log.record('warn', 'Kommuns table not empty.')
@@ -197,7 +227,7 @@ namespace :shf do
   desc "Initialize app file delivery methods"
   task load_file_delivery_methods: :environment do
 
-    log_file = 'log/load_file_delivery_methods.log'
+    log_file = LogfileNamer.name_for('load_file_delivery_methods')
 
     ActivityLogger.open(log_file, 'App Files', 'set delivery methods') do |log|
 
@@ -286,7 +316,7 @@ namespace :shf do
 
     Geocoder.configure(timeout: 20) # geocoding service timeout (secs)
 
-    ActivityLogger.open(LOG_FILE, 'SHF_TASK', 'Geocode Addresses') do |log|
+    ActivityLogger.open(SHF_TASKS_LOG_FILE, SHF_TASK_FACILITY,'Geocode Addresses') do |log|
 
       not_geocoded = Address.not_geocoded
 
@@ -303,14 +333,14 @@ namespace :shf do
   end
 
 
-  MEMBER_PAGES_PATH = File.join(Rails.root, 'app', 'views', 'pages')
+  MEMBER_PAGES_PATH = File.join(Rails.root, 'app', 'views', 'pages') unless defined?(MEMBER_PAGES_PATH)
 
 
   desc 'add member page arg=[filename]'
   task :add_member_page, [:filename] => :environment do |task_name, args|
 
 
-    ActivityLogger.open(LogfileNamer.name_for(MemberPage), 'SHF_TASK', task_name) do |log|
+    ActivityLogger.open(LogfileNamer.name_for(MemberPage), SHF_TASK_FACILITY, task_name) do |log|
 
       filename = filename_from_args(args, log)
 
@@ -344,7 +374,7 @@ namespace :shf do
   desc 'delete a member page arg=[filename] (deletes the file from the filesystem)'
   task :delete_member_page, [:filename] => :environment do |task_name, args|
 
-    ActivityLogger.open(LogfileNamer.name_for(MemberPage), 'SHF_TASK', task_name) do |log|
+    ActivityLogger.open(LogfileNamer.name_for(MemberPage), SHF_TASK_FACILITY, task_name) do |log|
 
       filename = filename_from_args(args, log)
 
