@@ -1,39 +1,12 @@
 require 'rails_helper'
+require 'shared_context/mock_app_configuration'
 
 
 RSpec.describe MetaImageTagsHelper, type: :helper do
 
-  TEST_HOST      = 'http://test.host'
-  DEFAULT_IMG_BASE = 'default_image_filename'
-  DEFAULT_IMG_FN = "#{DEFAULT_IMG_BASE}.jpg"
-  STORAGE_PATH = File.join(Rails.public_path, 'storage', 'test')
-  IMG_PATH       = File.join(STORAGE_PATH, DEFAULT_IMG_FN)
-  IMG_URL        = "#{TEST_HOST}/storage/test/#{DEFAULT_IMG_FN}"
-
-
-  let(:given_image_file) { file_fixture('image.png') }
-
-
-  class FauxPathOnly
-    def self.path
-      IMG_PATH
-    end
-  end
-
-
-  class FauxUrl
-    def self.url
-      IMG_URL
-    end
-
-
-    def self.path
-      IMG_PATH
-    end
-  end
-
-
-  let(:faux_url_) { FauxUrl.new }
+  STORAGE_PATH     = File.join(Rails.public_path, 'storage', 'test')
+  DEFAULT_IMG_FN   = 'default_image_filename.png'
+  IMG_PATH         = File.join(STORAGE_PATH, DEFAULT_IMG_FN)
 
 
   before(:all) do
@@ -48,6 +21,7 @@ RSpec.describe MetaImageTagsHelper, type: :helper do
 
     FileUtils.copy_file(file_fixture('image.png'), File.join(@storage_test_path, DEFAULT_IMG_FN))
   end
+
 
   after(:all) do
     FileUtils.rm(File.join(@storage_test_path, DEFAULT_IMG_FN))
@@ -74,7 +48,7 @@ RSpec.describe MetaImageTagsHelper, type: :helper do
 
           it 'uses the Site defaults' do
             expect(helper).to receive(:use_site_defaults)
-            helper.page_meta_image_tags(FauxPathOnly)
+            helper.page_meta_image_tags(FauxPath)
           end
 
         end
@@ -85,13 +59,15 @@ RSpec.describe MetaImageTagsHelper, type: :helper do
 
             it 'uses given attachment' do
 
+              mock_attachment = MockAttachmentForFile.new(IMG_PATH)
+
               expect(helper).to receive(:meta_image_tags)
-                                    .with(FauxUrl.url,
+                                    .with(IMG_PATH,
                                           'png',
                                           width:  80,
                                           height: 80).and_call_original
 
-              helper.page_meta_image_tags(FauxUrl)
+              helper.page_meta_image_tags(mock_attachment)
             end
 
           end
