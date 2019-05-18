@@ -4,17 +4,6 @@ sv:
   title: 'Medlemmar i Sveriges Hundföretagare'
 
   SHF_name: &SHF_name Sveriges Hundföretagare
-  meta:
-    default:
-      title: "Hitta H-märkt hundföretag, hundinstruktör"
-      description: "Här hittar du etiska, svenska, H-märkta hundföretag. Du hittar bland annat hundinstruktörer, hundpsykologer, hunddagis, trim med mera."
-      keywords: 'hund, hundägare, hundinstruktör, hundentreprenör, Sveriges Hundföretagare, svenskt hundföretag, etisk, H-märkt, hundkurs'
-      image_src:
-        filename: "Sveriges_hundforetagare_banner_sajt.jpg"
-        image_type: 'jpeg'
-        width: 1245
-        height: 620
-
 
   dog: hund
 
@@ -248,6 +237,12 @@ sv:
         description_en: "Beskrivning (engelska)"
         is_custom: "Annan anledning"
 
+
+      app_configuration:
+        site_name: &site_name Site name
+        site_meta_title: &site_meta_title Site meta title
+        site_meta_description: &site_meta_description Site meta description
+        site_meta_keywords: &site_meta_keywords Site meta keywords
 
     errors:
       models:
@@ -999,6 +994,10 @@ sv:
         h_brand_logo: &h_branding_logo_title H-märkt Logo
         sweden_dog_trainers: &sweden_dog_trainers_logo_title Sveriges Hundtrainer
         admin_email_new_apps_enabled: &admin_email_new_apps_enabled Send emails to Admin when new app received
+        site_name: *site_name
+        site_meta_title: *site_meta_title
+        site_meta_description: *site_meta_description
+        site_meta_keywords: *site_meta_keywords
 
       show:
         title: *application_configuration
@@ -1007,6 +1006,10 @@ sv:
         h_brand_logo: *h_branding_logo_title
         sweden_dog_trainers: *sweden_dog_trainers_logo_title
         admin_email_new_apps_enabled: *admin_email_new_apps_enabled
+        site_name: *site_name
+        site_meta_title: *site_meta_title
+        site_meta_description: *site_meta_description
+        site_meta_keywords: *site_meta_keywords
 
       update:
         success: Programdata uppdaterades framgångsrikt

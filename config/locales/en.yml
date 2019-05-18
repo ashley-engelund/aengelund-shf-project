@@ -4,16 +4,6 @@ en:
   title: "SWEDEN'S ETHICAL DOG COMPANIES"
 
   SHF_name: &SHF_name "Swedish Dog Industry Association"
-  meta:
-    default:
-      title: "Find H-markt dog companies, dog training instructors, dog trainers, or dog entrepreneurs."
-      description: "Here you will find ethical Swedish dog companies that have earned the H-brand mark. Find dog trainers, dog training instructors, dog psychologists, dog day care, grooming and more."
-      keywords: 'dog, dog owner, dog instructor, dog entrepreneur, Swedish dog company, Swedish dog company, ethical, H-brand, H-mark, H-marked, dog training'
-      image_src:
-        filename: "Sveriges_hundforetagare_banner_sajt.jpg"
-        image_type: 'jpeg'
-        width: 1245
-        height: 620
 
   dog: dog
 
@@ -247,6 +237,12 @@ en:
         description_sv: "Description (Swedish)"
         description_en: "Description (English)"
         is_custom: "Custom reason"
+
+      app_configuration:
+        site_name: &site_name Site name
+        site_meta_title: &site_meta_title Site meta title
+        site_meta_description: &site_meta_description Site meta description
+        site_meta_keywords: &site_meta_keywords Site meta keywords
 
 
     errors:
@@ -997,6 +993,10 @@ en:
         h_brand_logo: &h_branding_logo_title H-Branding Logo
         sweden_dog_trainers: &sweden_dog_trainers_logo_title Sweden Dog Trainers
         admin_email_new_apps_enabled: &admin_email_new_apps_enabled Send emails to Admin when new app received
+        site_name: *site_name
+        site_meta_title: *site_meta_title
+        site_meta_description: *site_meta_description
+        site_meta_keywords: *site_meta_keywords
 
       show:
         title: *application_configuration
@@ -1005,6 +1005,10 @@ en:
         h_brand_logo: *h_branding_logo_title
         sweden_dog_trainers: *sweden_dog_trainers_logo_title
         admin_email_new_apps_enabled: *admin_email_new_apps_enabled
+        site_name: *site_name
+        site_meta_title: *site_meta_title
+        site_meta_description: *site_meta_description
+        site_meta_keywords: *site_meta_keywords
 
       update:
         success: Application data updated successfully
