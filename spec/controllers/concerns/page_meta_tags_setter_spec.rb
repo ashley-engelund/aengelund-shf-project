@@ -1,4 +1,6 @@
 require 'rails_helper'
+require 'shared_context/mock_app_configuration'
+
 
 class PageMetaTagsSetterTestController < ApplicationController
   include PageMetaTagsSetter
@@ -7,9 +9,10 @@ end
 
 RSpec.describe PageMetaTagsSetterTestController, type: :controller do
 
-  MOCK_BASE_URL   = 'http://test.host'
-  MOCK_REQ_PATH   = '/test-path'
-  MOCK_ASSET_PATH = '/assets'
+
+  MOCK_BASE_URL   = 'http://test.host' unless defined?(MOCK_BASE_URL)
+  MOCK_REQ_PATH   = '/test-path' unless defined?(MOCK_REQ_PATH)
+  MOCK_ASSET_PATH = '/assets' unless defined?(MOCK_ASSET_PATH)
 
   let(:expected_base_url) { "#{MOCK_BASE_URL}#{MOCK_ASSET_PATH}/" }
 
@@ -40,8 +43,7 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
 
     describe 'uses defaults if entries are not in the locale file' do
 
-      before(:all) do
-
+      def set_the_meta_tags
         @meta_setter.set_meta_tags_for_url_path(MOCK_BASE_URL, MOCK_REQ_PATH)
 
         # have to check results like this since the method calls set_meta_tags twice
@@ -51,14 +53,23 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
 
 
       it 'default title = SiteMetaInfoDefaults.title |  SiteMetaInfoDefaults.site ' do
+        allow(AdminOnly::AppConfiguration).to receive(:config_to_use).and_return(MockAppConfig)
+
+        set_the_meta_tags
         expect(@meta_tags_set['title']).to eq default_title
       end
 
       it 'default description = SiteMetaInfoDefaults.description' do
+        allow(AdminOnly::AppConfiguration).to receive(:config_to_use).and_return(MockAppConfig)
+
+        set_the_meta_tags
         expect(@meta_tags_set['description']).to eq default_desc
       end
 
       it "default keywords = SiteMetaInfoDefaults.keywords" do
+        allow(AdminOnly::AppConfiguration).to receive(:config_to_use).and_return(MockAppConfig)
+
+        set_the_meta_tags
         expect(@meta_tags_set['keywords']).to eq SiteMetaInfoDefaults.keywords
       end
 
@@ -66,18 +77,29 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
       describe 'Facebook OpenGraph (og)' do
 
         it 'title = default title' do
+          allow(AdminOnly::AppConfiguration).to receive(:config_to_use).and_return(MockAppConfig)
+
+          set_the_meta_tags
           expect(@meta_tags_set['og']['title']).to eq default_full_title
         end
 
         it 'description = default description' do
+          allow(AdminOnly::AppConfiguration).to receive(:config_to_use).and_return(MockAppConfig)
+
+          set_the_meta_tags
           expect(@meta_tags_set['og']['description']).to eq default_desc
         end
 
         it 'type = website' do
+          allow(AdminOnly::AppConfiguration).to receive(:config_to_use).and_return(MockAppConfig)
+
+          set_the_meta_tags
           expect(@meta_tags_set['og']['type']).to eq 'website'
         end
 
-        it 'url = http://test.host/test-path' do
+        it 'url = http://test.host/test-path' do        allow(AdminOnly::AppConfiguration).to receive(:config_to_use).and_return(MockAppConfig)
+
+        set_the_meta_tags
           expect(@meta_tags_set['og']['url']).to eq 'http://test.host/test-path'
         end
 
@@ -86,6 +108,9 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
 
           it "locale :sv = 'sv_SE'" do
             I18n.locale = :sv
+            allow(AdminOnly::AppConfiguration).to receive(:config_to_use).and_return(MockAppConfig)
+
+            #set_the_meta_tags
             subject.set_meta_tags_for_url_path(MOCK_BASE_URL, MOCK_REQ_PATH)
 
             expect(subject.send(:meta_tags)
@@ -94,6 +119,7 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
 
           it "locale :en = 'en_US'" do
             I18n.locale = :en
+            allow(AdminOnly::AppConfiguration).to receive(:config_to_use).and_return(MockAppConfig)
 
             subject.set_meta_tags_for_url_path(MOCK_BASE_URL, MOCK_REQ_PATH)
 
@@ -109,6 +135,7 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
 
 
     it 'appends Business Categories to list of keywords' do
+      allow(AdminOnly::AppConfiguration).to receive(:config_to_use).and_return(MockAppConfig)
 
       create(:business_category, name: 'category1')
       create(:business_category, name: 'category2')
@@ -123,6 +150,7 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
     it 'gets info from locale file' do
 
       I18n.locale = :sv
+      allow(AdminOnly::AppConfiguration).to receive(:config_to_use).and_return(MockAppConfig)
 
       # see https://github.com/rspec/rspec-mocks/issues/663 for more info on why
       # you cannot just stub I18n.t()
@@ -132,21 +160,17 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
                                         .with(anything, anything, anything)
                                         .and_return('blorf')
 
-      # Since we expect it to look up everything in the locale file, and we're stubbing
-      # the I18n.translate method so it always returns "blorf",
-      # everything should be = "blorf"
-
       allow(SiteMetaInfoDefaults).to receive(:facebook_app_id)
                                           .and_return(12345678909876)
       expected_result = {
-          "site"        => 'blorf',
-          "title"       => 'blorf',
-          "description" => 'blorf',
+          "site"        => 'site name',
+          "title"       => 'site title',
+          "description" => 'site meta description',
           "keywords"    => 'blorf',
           "og"          => {
-              "site_name"   => "blorf",
-              "title"       => 'blorf | blorf',
-              "description" => 'blorf',
+              "site_name"   => "site name",
+              "title"       => 'site title | site name',
+              "description" => 'site meta description',
               "url"         => 'http://test.host/test-path',
               "type"        => 'blorf',
               "locale"      => 'sv_SE',

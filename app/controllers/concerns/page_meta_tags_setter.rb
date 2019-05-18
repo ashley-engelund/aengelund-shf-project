@@ -63,6 +63,7 @@ module PageMetaTagsSetter
 
 
 
+  # TODO these should be app configuration information
   LOCALE_TITLE_KEY        = '.meta.title'
   LOCALE_DESCRIPTION_KEY  = '.meta.description'
   LOCALE_TYPE_KEY         = '.meta.type'
@@ -95,8 +96,8 @@ module PageMetaTagsSetter
   # be put into meta tags (e.g. og.url)
   def set_meta_tags_for_url_path(base_url, request_fullpath)
 
-    page_title = t(LOCALE_TITLE_KEY, default: SiteMetaInfoDefaults.title)
-    page_desc  = t(LOCALE_DESCRIPTION_KEY, default: SiteMetaInfoDefaults.description)
+    page_title = SiteMetaInfoDefaults.title
+    page_desc  = SiteMetaInfoDefaults.description
 
     set_meta_tags site: SiteMetaInfoDefaults.site_name,
                   title:     page_title,

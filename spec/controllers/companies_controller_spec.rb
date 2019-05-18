@@ -12,7 +12,7 @@ RSpec.describe CompaniesController, type: :controller do
 
   let(:no_query_params) { { "utf8" => "✓" } }
 
-  let(:full_page_title) { 'Hitta H-märkt hundföretag, hundinstruktör | Sveriges Hundföretagare' }
+  let(:full_page_title) {  'site title | site name' } #'Hitta H-märkt hundföretag, hundinstruktör | Sveriges Hundföretagare'
 
 
   describe '#index will fix_FB_changed_params' do
@@ -247,22 +247,11 @@ RSpec.describe CompaniesController, type: :controller do
       describe 'meta tags' do
 
         RSpec::Matchers.define :not_starting_with do |start_str|
-          match { |actual| !((actual).start_with?(start_str)) }
+          match { |actual| !((actual.to_s).start_with?(start_str)) }
         end
 
         RSpec::Matchers.define :starting_with do |start_str|
-          match { |actual| ((actual).start_with?(start_str)) }
-        end
-
-
-        before(:each) do
-          allow(I18n).to receive(:translate)
-                             .with(starting_with('meta'), anything)
-                             .and_call_original
-
-          allow(I18n).to receive(:translate)
-                             .with(not_starting_with('meta'), anything)
-                             .and_return('blorf')
+          match { |actual| ((actual.to_s).start_with?(start_str)) }
         end
 
 
@@ -278,51 +267,55 @@ RSpec.describe CompaniesController, type: :controller do
         end
 
 
-        it 'description is from the locale file' do
-
-          allow(I18n).to receive(:translate)
-                             .with('companies.index.meta.description', anything)
-                             .and_return('blorf')
+        it 'description is from the AppConfiguration' do
+    
 
           index_response_body
-          expect(index_response_body).to match(meta_tag_with_content('description', 'blorf'))
+          expect(index_response_body).to match(meta_tag_with_content('description', 'site meta description'))
         end
 
 
         describe 'keywords' do
 
-          it 'always has what is in the locale file ' do
+          it 'always has the site default keywords' do
+      
 
             index_response_body
-            expect(index_response_body).to match(meta_tag_with_content('keywords', 'blorf'))
+            expect(index_response_body).to match(meta_tag_with_content('keywords', MockAppConfig.site_meta_keywords))
           end
 
 
           describe 'appends the business categories after the locale file keywords' do
 
-            it 'no business categories; is just the I18n keywords' do
+            it 'no business categories; is just the site default keywords' do
+        
 
               index_response_body
-              expect(index_response_body).to match(meta_tag_with_content('keywords', 'blorf'))
+              expect(index_response_body).to match(meta_tag_with_content('keywords', MockAppConfig.site_meta_keywords))
             end
 
             it 'some business categories' do
+        
 
               create(:business_category, name: 'Cat 1')
               create(:business_category, name: 'Cat 2')
               index_response_body
 
-              meta_content = 'blorf' + ', Cat 1, Cat 2'
-              expect(index_response_body).to match(meta_tag_with_content('keywords', meta_content))
+              expected_keywords =  MockAppConfig.site_meta_keywords + ', Cat 1, Cat 2'
+              expect(index_response_body).to match(meta_tag_with_content('keywords', expected_keywords))
             end
           end
         end
 
 
-        it 'link rel="image_src" is the banner image in assets/images' do
+        it 'link rel="image_src" is the site meta image' do
+
+          # stub SiteMetaInfoDefaults
+          allow(SiteMetaInfoDefaults).to receive(:image_public_url).and_return MockAppConfig.default_image_file_url
+
           index_response_body
 
-          image_src_match = /<link rel="image_src" href="http(.*)\/assets\/Sveriges_hundforetagare_banner_sajt-(.*).jpg">/
+          image_src_match = /link rel="image_src" href="#{MockAppConfig.default_image_file_url}"/
           expect(index_response_body).to match(image_src_match)
         end
 
@@ -337,6 +330,9 @@ RSpec.describe CompaniesController, type: :controller do
 
           it 'default-x is <request.url> and has no language specifier in the path' do
 
+            # stub SiteMetaInfoDefaults
+            allow(SiteMetaInfoDefaults).to receive(:image_public_url).and_return MockAppConfig.default_image_file_url
+
             index_response_body # ensure this is created before we use it; gets around needing to call 'index_response_body' as a before_all
 
             default_hreflang_match = link_hreflang_with_href('x-default', @controller.request.url).match(index_response_body)
@@ -347,11 +343,19 @@ RSpec.describe CompaniesController, type: :controller do
           end
 
           it 'alt for sv is <base url>/sv/<request.fullpath>' do
+
+            # stub SiteMetaInfoDefaults
+            allow(SiteMetaInfoDefaults).to receive(:image_public_url).and_return MockAppConfig.default_image_file_url
+
             index_response_body # ensure this is created before we use it; gets around needing to call 'index_response_body' as a before_all
             expect(index_response_body).to match(link_hreflang_with_href('sv', "#{@controller.request.base_url}/sv#{request.fullpath}"))
           end
 
           it 'alt for en is <base url>/en/<request.fullpath>' do
+
+            # stub SiteMetaInfoDefaults
+            allow(SiteMetaInfoDefaults).to receive(:image_public_url).and_return MockAppConfig.default_image_file_url
+
             index_response_body # ensure this is created before we use it; gets around needing to call 'index_response_body' as a before_all
             expect(index_response_body).to match(link_hreflang_with_href('en', "#{@controller.request.base_url}/en#{request.fullpath}"))
           end
@@ -366,27 +370,42 @@ RSpec.describe CompaniesController, type: :controller do
             expect(index_response_body).to match(meta_property_with_content('og:title', full_page_title))
           end
 
-          it 'description is the same as the page description' do
+          it 'description is the same as the page description (= site meta info default)' do
+      
 
-            allow(I18n).to receive(:translate)
-                               .with('companies.index.meta.description', anything)
-                               .and_return('this is the description')
             index_response_body
-            expect(index_response_body).to match(meta_property_with_content('og:description', 'this is the description'))
+            expect(index_response_body).to match(meta_property_with_content('og:description', MockAppConfig.site_meta_description))
           end
 
           it 'url is the url of the page' do
+      
+
             # <meta property="og:url" content="http://0.0.0.0:3000/">
             index_response_body
             expect(index_response_body).to match(meta_property_with_content('og:url', request.url))
           end
 
-          it 'type is website' do
-            allow(I18n).to receive(:translate)
-                               .with('companies.index.meta.type', anything)
-                               .and_return('the locale file should have website')
-            index_response_body
-            expect(index_response_body).to match(meta_property_with_content('og:type', 'the locale file should have website'))
+          describe 'type is website and comes from I18n or the Site default (hardcoded!)' do
+            it 'is from I18n if it is in there' do
+        
+
+              allow(I18n).to receive(:translate)
+                                 .with(anything, anything)
+                                 .and_return('blorf')
+
+              index_response_body
+              expect(index_response_body).to match(meta_property_with_content('og:type', 'blorf'))
+            end
+
+            it 'comes from Site Defaults (hardcoded!) if not in I18n ' do
+        
+
+              expect(SiteMetaInfoDefaults).to receive(:og_type).and_return('site default type')
+
+
+              index_response_body
+              expect(index_response_body).to match(meta_property_with_content('og:type', 'site default type'))
+            end
           end
 
           it 'locale = sv_SE' do
@@ -397,46 +416,72 @@ RSpec.describe CompaniesController, type: :controller do
 
           describe 'image' do
 
-            it 'image is the same as the page image_src' do
+            it 'image is the public url to the AppConfiguration site_meta_image url' do
+        
+              allow(SiteMetaInfoDefaults).to receive(:image_public_url).and_return 'https://shfsite.se/site/image/public/url.jpg'
+
               index_response_body
-              expect(index_response_body).to match(meta_property_with_content('og:image', /http(.*)\/assets\/Sveriges_hundforetagare_banner_sajt-(.*)\.jpg/))
+              expect(index_response_body).to match(meta_property_with_content('og:image', SiteMetaInfoDefaults.image_public_url))
             end
 
-            it 'type = image/jpeg' do
+
+            it 'type is the site meta image content type' do
+        
+
               # <meta property="og:image:type" content="image/jpeg">
               index_response_body
-              expect(index_response_body).to match(meta_property_with_content('og:image:type', 'image/jpeg'))
+              expect(index_response_body).to match(meta_property_with_content('og:image:type', MockAppConfig.site_meta_image_content_type))
             end
 
-            it 'width is 1245 (the width of the asset banner image)' do
+            it 'width is the site meta image width' do
+        
+
               # <meta property="og:image:width" content="1245">
               index_response_body
-              expect(index_response_body).to match(meta_property_with_content('og:image:width', '1245'))
+              expect(index_response_body).to match(meta_property_with_content('og:image:width', MockAppConfig.site_meta_image_width))
             end
 
-            it 'height is 620 (the height of the asset banner image)' do
+            it 'height is the site meta image height' do
+        
+
               # <meta property="og:image:height" content="620">
               index_response_body
-              expect(index_response_body).to match(meta_property_with_content('og:image:height', '620'))
+              expect(index_response_body).to match(meta_property_with_content('og:image:height', MockAppConfig.site_meta_image_height))
             end
 
           end
 
         end
 
-        describe 'twitter' do
 
-          it '<meta name="twitter:card" content="summary">' do
+        describe 'twitter:card is summary and comes from I18n or the Site default (hardcoded!)' do
+
+          it 'is from I18n if it is in there' do
+      
 
             allow(I18n).to receive(:translate)
-                               .with('companies.index.meta.twitter.card', anything)
-                               .and_return('this is twitter')
+                               .with(starting_with('companies.meta.twitter.card'), anything)
+                               .and_return('meta-twitter-card')
+
+            allow(I18n).to receive(:translate)
+                               .with(not_starting_with('companies.meta.twitter.card'), anything)
+                               .and_call_original
+
             index_response_body
-            expect(index_response_body).to match(meta_tag_with_content('twitter:card', 'this is twitter'))
+            expect(index_response_body).to match(meta_tag_with_content('twitter:card', 'meta-twitter-card'))
+          end
+
+          it 'comes from Site Defaults (hardcoded!) if not in I18n ' do
+      
+
+            expect(SiteMetaInfoDefaults).to receive(:twitter_card_type).and_return('site default twitter card type')
+
+            index_response_body
+            expect(index_response_body).to match(meta_tag_with_content('twitter:card', 'site default twitter card type'))
           end
         end
-      end
 
+      end
 
     end
 
@@ -477,8 +522,7 @@ RSpec.describe CompaniesController, type: :controller do
     it 'page title has the company name and site name' do
       complete_co1
       show_co1_response_body
-
-      expect(show_co1_response_body).to match(/<title>#{complete_co1.name} \| Sveriges Hundföretagare<\/title>/)
+      expect(show_co1_response_body).to match(/<title>#{complete_co1.name} \| #{MockAppConfig.site_name}<\/title>/)
     end
 
 
@@ -823,6 +867,14 @@ RSpec.describe CompaniesController, type: :controller do
 
         describe 'image' do
 
+          # TODO: What is the definition of the 'main image for the company'? What image do we use?
+
+
+          describe 'if there is no image for the company, use the site meta image' do
+            pending
+          end
+
+
           it 'image is the same as the page image_src' do
             pending("og:image will be done in a separate story/PR")
             fail
@@ -871,18 +923,35 @@ RSpec.describe CompaniesController, type: :controller do
       end
 
 
-      describe 'twitter' do
+      describe 'twitter:card is summary and comes from I18n or the Site default (hardcoded!)' do
 
-        it '<meta name="twitter:card" content="summary">' do
+        it 'is from I18n if it is in there' do
+    
+
+          allow(I18n).to receive(:translate)
+                             .with(starting_with('companies.meta.twitter.card'), anything)
+                             .and_return('meta-twitter-card')
+
+          allow(I18n).to receive(:translate)
+                             .with(not_starting_with('companies.meta.twitter.card'), anything)
+                             .and_call_original
+
           complete_co1
           show_co1_response_body
+          expect(show_co1_response_body).to match(meta_tag_with_content('twitter:card', 'meta-twitter-card'))
+        end
 
-          expect(response.body).to match(meta_tag_with_content('twitter:card', 'summary'))
+        it 'comes from Site Defaults (hardcoded!) if not in I18n ' do
+
+          expect(SiteMetaInfoDefaults).to receive(:twitter_card_type).and_return('site default twitter card type')
+
+          complete_co1
+          show_co1_response_body
+          expect(show_co1_response_body).to match(meta_tag_with_content('twitter:card', 'site default twitter card type'))
         end
       end
 
     end
-
 
   end
 
