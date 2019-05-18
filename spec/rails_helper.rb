@@ -9,6 +9,7 @@ require 'paperclip/matchers'
 require 'support/data_creation_helper'
 
 require 'create_membership_seq_if_needed'
+require_relative File.join(__dir__, 'shared_context', 'mock_app_configuration')
 
 
 ActiveRecord::Migration.maintain_test_schema!
@@ -80,6 +81,13 @@ RSpec.configure do |config|
   config.before(:each) do
     DatabaseCleaner.start
     create_user_membership_num_seq_if_needed
+
+    # Don't force a load of this every time we run a test; mock the application configuration instead.
+    # Using the  MockAppConfig saves time because it means we don't ever call Paperclip.
+    # Calling and using Paperclip is very slow.
+    #
+    allow(AdminOnly::AppConfiguration).to receive(:config_to_use).and_return(MockAppConfig)
+
   end
 
   config.append_after(:each) do

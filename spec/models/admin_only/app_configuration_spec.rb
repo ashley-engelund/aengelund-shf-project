@@ -100,8 +100,6 @@ RSpec.describe AdminOnly::AppConfiguration, type: :model do
       allow_any_instance_of(MiniMagick::Image).to receive(:width).and_return(101)
       allow_any_instance_of(MiniMagick::Image).to receive(:height).and_return(102)
 
-     # app_config = create(:app_configuration)
-
       expect(app_configuration).to receive(:update_site_meta_image_dimensions).and_call_original
 
       app_configuration.site_meta_image = File.new(file_fixture('image.png'))
@@ -113,8 +111,6 @@ RSpec.describe AdminOnly::AppConfiguration, type: :model do
 
 
     it 'site_meta_image not changed' do
-
-      #app_config = create(:app_configuration)
 
       expect(app_configuration).not_to receive(:update_site_meta_image_dimensions)
 
