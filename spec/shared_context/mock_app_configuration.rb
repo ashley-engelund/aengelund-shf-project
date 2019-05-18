@@ -36,6 +36,21 @@ class MockAttachment
   end
 end
 
+class MockAttachmentForFile
+
+  # file_path is relative to Rails.root
+  def initialize(file_path)
+    @filepath = file_path
+  end
+
+  def path
+    @filepath
+  end
+
+  def url
+    @filepath
+  end
+end
 
 # add stubbed methods here as needed for testing
 class MockAppConfig
