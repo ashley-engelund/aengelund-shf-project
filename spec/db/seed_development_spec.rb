@@ -1,8 +1,14 @@
 require 'rails_helper'
 require 'create_membership_seq_if_needed'
 
+require_relative File.join(__dir__, '..', '..', 'db', 'app_configuration_seeder')
+
 require File.join(__dir__, 'shared_specs_db_seeding')
 
+# NOTE: We must stub AppConfigurationSeeder.seed so that Paperclip does not try to spawn processes.
+# Some of those spawned processes will Fail (or even SEGFAULT!).
+# This seems to do with running them under RSpec and the .load_seed method.
+# The AppConfigurationSeeder.seed method works fine in real life.
 
 
 ENV_ADMIN_EMAIL_KEY      = 'SHF_ADMIN_EMAIL' unless defined?(ENV_ADMIN_EMAIL_KEY)
@@ -21,6 +27,8 @@ RSpec.describe 'Dev DB is seeded with users, members, apps, and companies' do
     create_user_membership_num_seq_if_needed
 
     RSpec::Mocks.with_temporary_scope do
+
+      allow(AppConfigurationSeeder).to receive(:seed).and_return(true)
 
       allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('development'))
 
@@ -57,6 +65,9 @@ RSpec.describe 'Dev DB is seeded with users, members, apps, and companies' do
 
         # must stub this way so the rest of ENV is preserved
         stub_const('ENV', ENV.to_hash.merge({ ENV_NUM_SEEDED_USERS_KEY => seed_users }))
+
+        allow(AppConfigurationSeeder).to receive(:seed).and_return(true)
+
         SHFProject::Application.load_seed
       end
     end

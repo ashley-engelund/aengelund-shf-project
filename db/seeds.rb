@@ -6,6 +6,8 @@
 require 'ffaker'
 require 'rake'
 require_relative 'seed_helpers'
+require_relative 'app_configuration_seeder'
+
 include SeedHelper
 
 # The test of defined? is due to the rspec file that executes the seed file
@@ -103,10 +105,9 @@ if Rails.env.development? || Rails.env.staging? || ENV['HEROKU_STAGING']
     puts "  #{state}: #{ShfApplication.where(state: state).count }"
   end
 
-  if AdminOnly::AppConfiguration.count == 0
-    puts "\nCreating App Config Objects"
-    load_app_config
-  end
+
+  AppConfigurationSeeder.seed if AdminOnly::AppConfiguration.count == 0
+
 end
 
 puts SEED_COMPLETE_MSG

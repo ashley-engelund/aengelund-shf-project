@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_26_120854) do
+ActiveRecord::Schema.define(version: 2019_05_14_172102) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,6 +54,16 @@ ActiveRecord::Schema.define(version: 2019_03_26_120854) do
     t.integer "sweden_dog_trainers_file_size"
     t.datetime "sweden_dog_trainers_updated_at"
     t.boolean "email_admin_new_app_received_enabled", default: true
+    t.string "site_name", default: "", null: false
+    t.string "site_meta_title", default: "", null: false
+    t.string "site_meta_description", default: "", null: false
+    t.string "site_meta_keywords", default: "", null: false
+    t.integer "site_meta_image_width", default: 0, null: false
+    t.integer "site_meta_image_height", default: 0, null: false
+    t.string "site_meta_image_file_name"
+    t.string "site_meta_image_content_type"
+    t.integer "site_meta_image_file_size"
+    t.datetime "site_meta_image_updated_at"
   end
 
   create_table "business_categories", force: :cascade do |t|

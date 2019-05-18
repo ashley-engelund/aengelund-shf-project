@@ -90,7 +90,17 @@ CREATE TABLE public.app_configurations (
     sweden_dog_trainers_content_type character varying,
     sweden_dog_trainers_file_size integer,
     sweden_dog_trainers_updated_at timestamp without time zone,
-    email_admin_new_app_received_enabled boolean DEFAULT true
+    email_admin_new_app_received_enabled boolean DEFAULT true,
+    site_name character varying DEFAULT ''::character varying NOT NULL,
+    site_meta_title character varying DEFAULT ''::character varying NOT NULL,
+    site_meta_description character varying DEFAULT ''::character varying NOT NULL,
+    site_meta_keywords character varying DEFAULT ''::character varying NOT NULL,
+    site_meta_image_width integer DEFAULT 0 NOT NULL,
+    site_meta_image_height integer DEFAULT 0 NOT NULL,
+    site_meta_image_file_name character varying,
+    site_meta_image_content_type character varying,
+    site_meta_image_file_size integer,
+    site_meta_image_updated_at timestamp without time zone
 );
 
 
@@ -1491,6 +1501,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20190123144623'),
 ('20190128210825'),
 ('20190312204251'),
-('20190326120854');
+('20190326120854'),
+('20190514172102');
 
 
