@@ -1,60 +1,64 @@
 require 'rails_helper'
+require 'shared_context/mock_app_configuration'
 
 
 RSpec.describe SiteMetaInfoDefaults do
 
+  include_context 'mock AppConfiguration'
+
   subject { SiteMetaInfoDefaults }
 
 
-  # see https://github.com/rspec/rspec-mocks/issues/663 for more info on why
-  # you cannot just stub I18n.t()
-
-
-  it "site_name is I18n.t('SHF_name')" do
-    allow(I18n.config.backend).to receive(:translate)
-                                      .with(:sv, 'SHF_name', anything)
-                                      .and_return('site name from I18n')
-    expect(subject.site_name).to eq 'site name from I18n'
+  it "site_name is from the AppConfiguration" do
+    expect(MockAppConfig).to receive(:site_name).and_call_original
+    expect(subject.site_name).to eq 'site name'
   end
 
-  it "title is I18n.t('meta.default.title')" do
-    allow(I18n.config.backend).to receive(:translate)
-                                      .with(:sv, 'meta.default.title', anything)
-                                      .and_return('default title from I18n')
-    expect(subject.title).to eq 'default title from I18n'
+  it "title is from the AppConfiguration" do
+    expect(MockAppConfig).to receive(:site_meta_title).and_call_original
+    expect(subject.title).to eq 'site title'
   end
 
-  it "description is I18n.t('meta.default.description')" do
-    allow(I18n.config.backend).to receive(:translate)
-                                      .with(:sv, 'meta.default.description', anything)
-                                      .and_return('default description from I18n')
-    expect(subject.description).to eq 'default description from I18n'
+  it "description from the AppConfiguration" do
+    expect(MockAppConfig).to receive(:site_meta_description).and_call_original
+    expect(subject.description).to eq 'site meta description'
   end
 
-  it "keywords is I18n.t('meta.default.keywords')" do
-    allow(I18n.config.backend).to receive(:translate)
-                                      .with(:sv, 'meta.default.keywords', anything)
-                                      .and_return('default keywords from I18n')
-    expect(subject.keywords).to eq 'default keywords from I18n'
+  it "keywords are the AppConfiguration site_meta_keywords" do
+    expect(MockAppConfig).to receive(:site_meta_keywords).and_call_original
+    expect(subject.keywords).to eq 'site meta keywords'
   end
 
-  it "image_filename is I18n.t('meta.default.image_src.filename')" do
-    allow(I18n.config.backend).to receive(:translate)
-                                      .with(:sv, 'meta.default.image_src.filename', anything)
-                                      .and_return('default image_src from I18n')
-    expect(subject.image_filename).to eq 'default image_src from I18n'
+
+  it "image_filename is the path to the AppConfiguration site_meta_image file name (relative to Rails.root)" do
+    expect(MockAppConfig).to receive(:site_meta_image).twice.and_call_original
+    expect(subject.image_filename).to eq FauxPath.path
   end
 
-  it 'image_type is jpeg' do
-    expect(subject.image_type).to eq 'jpeg'
+  it 'image_public_url is the full url to the AppConfiguration site_meta_image (includes https: and the site name)' do
+    expect(mock_app_config).to receive(:site_meta_image).twice.and_call_original
+    expect(subject.image_public_url).to match(/https:\/\/hitta\.sverigeshundforetagare\.se\/public\/storage\/path\/to\/the\/image_filename\.jpg/)
   end
 
-  it 'image_width is 1245' do
-    expect(subject.image_width).to eq 1245
+  it "image_type is the end of AppConfiguration site_meta_image file type (does not include 'image/')" do
+
+    expect(mock_app_config).to receive(:site_meta_image_content_type).twice
+                                   .and_call_original
+
+    default_image_type = subject.image_type
+    expect(default_image_type).not_to eq 'image/blorf'
+    expect(default_image_type).to eq(MockAppConfig.site_meta_image_content_type.split('/').last)
+    expect(default_image_type).not_to match(/image\//)
   end
 
-  it 'image_height is 620' do
-    expect(subject.image_height).to eq 620
+  it 'image_width is the AppConfiguration site_meta_image width' do
+    expect(mock_app_config).to receive(:site_meta_image_width).and_call_original
+    expect(subject.image_width).to eq 80
+  end
+
+  it 'image_height is the AppConfiguration site_meta_image height' do
+    expect(mock_app_config).to receive(:site_meta_image_height).and_call_original
+    expect(subject.image_height).to eq 80
   end
 
   it "og_type is 'website'" do
@@ -64,7 +68,7 @@ RSpec.describe SiteMetaInfoDefaults do
 
   describe 'Facebook app id' do
 
-    env_key =  'SHF_FB_APPID'
+    env_key = 'SHF_FB_APPID'
 
     it "Facebook App id is ENV['#{env_key}']" do
 

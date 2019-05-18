@@ -11,6 +11,8 @@
 # This encapsulates the default data; other classes/objects don't need to know
 # where it comes from.
 #
+# TODO: this should get all information from the AppConfiguration so that the administrator can change them as needed.
+#
 # @author Ashley Engelund (ashley.engelund@gmail.com  weedySeaDragon @ github)
 # @date   2019-03-04
 #
@@ -28,43 +30,48 @@ class SiteMetaInfoDefaults
   class << self
 
     def site_name
-      I18n.t('SHF_name')
+      AdminOnly::AppConfiguration.config_to_use.site_name
     end
 
 
     def title
-      I18n.t('meta.default.title')
+      AdminOnly::AppConfiguration.config_to_use.site_meta_title
     end
 
 
     def description
-      I18n.t('meta.default.description')
+      AdminOnly::AppConfiguration.config_to_use.site_meta_description
     end
 
 
     def keywords
-      I18n.t('meta.default.keywords')
-
+      AdminOnly::AppConfiguration.config_to_use.site_meta_keywords
     end
 
 
     def image_filename
-      I18n.t('meta.default.image_src.filename', default: 'Sveriges_hundforetagare_banner_sajt.jpg')
+      meta_image.nil? ? '' : meta_image.path
+    end
+
+
+    def image_public_url
+      meta_image.nil? ? '' : "#{I18n.t('shf_medlemssystem_url')}#{meta_image.url}"
     end
 
 
     def image_type
-      'jpeg'
+      meta_content_type = AdminOnly::AppConfiguration.config_to_use.site_meta_image_content_type
+      meta_content_type.nil? ? '' : meta_content_type.split('/').last
     end
 
 
     def image_width
-      1245
+      AdminOnly::AppConfiguration.config_to_use.site_meta_image_width
     end
 
 
     def image_height
-      620
+      AdminOnly::AppConfiguration.config_to_use.site_meta_image_height
     end
 
 
@@ -87,6 +94,10 @@ class SiteMetaInfoDefaults
     #
     def use_default_if_blank(default_method, value)
       value.blank? ? self.send(default_method) : value
+    end
+
+    def meta_image
+      AdminOnly::AppConfiguration.config_to_use.site_meta_image
     end
   end
 
