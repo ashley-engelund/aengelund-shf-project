@@ -209,22 +209,22 @@ RSpec.describe CompanyInfoIncompleteAlert do
 
   describe 'delivers emails to all current company members' do
 
-    LOG_DIR      = 'tmp'
-    LOG_FILENAME = 'testlog.txt'
+    CO_INCOMPLETE_LOG_DIR      = 'tmp'  unless defined?(CO_INCOMPLETE_LOG_DIR)
+    CO_INCOMPLETE_LOG_FILENAME = 'testlog.txt'  unless defined?(CO_INCOMPLETE_LOG_FILENAME)
 
 
     before(:each) do
-      tmpfile = File.join(Rails.root, LOG_DIR, LOG_FILENAME)
+      tmpfile = File.join(Rails.root, CO_INCOMPLETE_LOG_DIR, CO_INCOMPLETE_LOG_FILENAME)
       File.delete(tmpfile) if File.exist?(tmpfile)
       subject.create_alert_logger(log)
     end
 
     after(:all) do
-      tmpfile = File.join(Rails.root, LOG_DIR, LOG_FILENAME)
+      tmpfile = File.join(Rails.root, CO_INCOMPLETE_LOG_DIR, CO_INCOMPLETE_LOG_FILENAME)
       File.delete(tmpfile) if File.exist?(tmpfile)
     end
 
-    let(:filepath) { File.join(Rails.root, LOG_DIR, LOG_FILENAME) }
+    let(:filepath) { File.join(Rails.root, CO_INCOMPLETE_LOG_DIR, CO_INCOMPLETE_LOG_FILENAME) }
     let(:log) { ActivityLogger.open(filepath, 'TEST', 'open', false) }
 
     let(:paid_member1) {

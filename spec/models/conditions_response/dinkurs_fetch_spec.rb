@@ -44,7 +44,7 @@ RSpec.describe DinkursFetch, type: :model do
 
         described_class.condition_response(condition, log)
 
-        expect(File.read(filepath))
+        expect(File.read(logfilepath))
           .to include "Company #{company_with_dinkurs_id.id}: " +
                       "#{company_with_dinkurs_id.events.count} events."
       end
@@ -54,7 +54,7 @@ RSpec.describe DinkursFetch, type: :model do
 
         described_class.condition_response(condition, log)
 
-        expect(File.read(filepath))
+        expect(File.read(logfilepath))
           .not_to include "Company #{company_without_dinkurs_id.id}: "
       end
 
