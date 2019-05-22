@@ -2,6 +2,7 @@ require 'rails_helper'
 require 'email_spec/rspec'
 require 'timecop'
 require 'shared_context/activity_logger'
+require 'shared_context/stub_email_rendering'
 
 
 # Note that the described class is _not_ an ActiveRecord, so the database is not
@@ -10,7 +11,6 @@ require 'shared_context/activity_logger'
 RSpec.describe CompanyEmailAlert do
 
   include_context 'create logger'
-
 
   # define subject this way since this is a Singleton
   let(:subject) { described_class.instance }
@@ -79,21 +79,10 @@ RSpec.describe CompanyEmailAlert do
 
   describe '.send_email' do
 
-    # let(:filepath) { File.join(Rails.root, LOG_DIR, LOG_FILENAME) }
-    # let(:log) { ActivityLogger.open(filepath, 'TEST', 'open', false) }
+    include_context 'stub email rendering'
+
 
     before(:each) do
-      # don't waste time rendering the emails out to the log
-      mock_html_part = begin
-        Mail::Part.new do
-          content_type "text/html"
-          body 'html version of the email here (stubbed in the test)'
-        end
-      end
-      allow_any_instance_of(Premailer::Rails::Hook).to receive(:generate_html_part)
-                                                           .and_return(mock_html_part)
-      allow_any_instance_of(ActionView::Renderer).to receive(:render).and_return(' rendered here (stubbed)')
-
       subject.create_alert_logger(log)
     end
 

@@ -1,6 +1,7 @@
 require 'rails_helper'
 require 'email_spec/rspec'
 require 'shared_context/activity_logger'
+require 'shared_context/stub_email_rendering'
 
 
 RSpec.describe MembershipExpireAlert do
@@ -162,19 +163,7 @@ RSpec.describe MembershipExpireAlert do
 
   describe 'delivers email to all members about their upcoming expiration date' do
 
-
-    before(:each) do
-      # don't waste time rendering the emails out to the log
-      mock_html_part = begin
-        Mail::Part.new do
-          content_type "text/html"
-          body 'html version of the email here (stubbed in the test)'
-        end
-      end
-      allow_any_instance_of(Premailer::Rails::Hook).to receive(:generate_html_part)
-                                                           .and_return(mock_html_part)
-      allow_any_instance_of(ActionView::Renderer).to receive(:render).and_return(' rendered here (stubbed)')
-    end
+    include_context 'stub email rendering'
 
 
     describe 'emails sent to all members and logged' do
