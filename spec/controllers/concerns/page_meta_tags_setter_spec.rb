@@ -7,9 +7,10 @@ end
 
 RSpec.describe PageMetaTagsSetterTestController, type: :controller do
 
-  MOCK_BASE_URL   = 'http://test.host'
-  MOCK_REQ_PATH   = '/test-path'
-  MOCK_ASSET_PATH = '/assets'
+
+  MOCK_BASE_URL   = 'http://test.host' unless defined?(MOCK_BASE_URL)
+  MOCK_REQ_PATH   = '/test-path' unless defined?(MOCK_REQ_PATH)
+  MOCK_ASSET_PATH = '/assets' unless defined?(MOCK_ASSET_PATH)
 
   let(:expected_base_url) { "#{MOCK_BASE_URL}#{MOCK_ASSET_PATH}/" }
 
@@ -32,7 +33,6 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
     @meta_setter.request.path = MOCK_REQ_PATH
 
     @meta_image_setter = PageMetaImageTagsSetter
-
   end
 
   after(:all) { I18n.locale = @orig_locale }
@@ -42,12 +42,8 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
 
     describe 'uses defaults if entries are not in the locale file' do
 
-      before(:all) do
-
+      before(:each) do
         @meta_setter.set_meta_tags_for_url_path(MOCK_BASE_URL, MOCK_REQ_PATH)
-
-        # have to check results like this since the method calls set_meta_tags twice
-        # and thus we could only check the second call with .to receive...
         @meta_tags_set = @meta_setter.send(:meta_tags).send(:meta_tags)
       end
 
@@ -88,6 +84,8 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
 
           it "locale :sv = 'sv_SE'" do
             I18n.locale = :sv
+
+            #set_the_meta_tags
             subject.set_meta_tags_for_url_path(MOCK_BASE_URL, MOCK_REQ_PATH)
 
             expect(subject.send(:meta_tags)
