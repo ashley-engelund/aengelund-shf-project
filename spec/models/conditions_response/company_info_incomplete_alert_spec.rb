@@ -1,8 +1,12 @@
 require 'rails_helper'
 require 'email_spec/rspec'
+require 'shared_context/activity_logger'
 
 
 RSpec.describe CompanyInfoIncompleteAlert do
+
+  include_context 'create logger'
+
 
   subject  { described_class.instance }
 
@@ -209,23 +213,22 @@ RSpec.describe CompanyInfoIncompleteAlert do
 
   describe 'delivers emails to all current company members' do
 
-    CO_INCOMPLETE_LOG_DIR      = 'tmp'  unless defined?(CO_INCOMPLETE_LOG_DIR)
-    CO_INCOMPLETE_LOG_FILENAME = 'testlog.txt'  unless defined?(CO_INCOMPLETE_LOG_FILENAME)
-
-
     before(:each) do
-      tmpfile = File.join(Rails.root, CO_INCOMPLETE_LOG_DIR, CO_INCOMPLETE_LOG_FILENAME)
-      File.delete(tmpfile) if File.exist?(tmpfile)
+      # don't waste time rendering the emails out to the log
+      mock_html_part = begin
+        Mail::Part.new do
+          content_type "text/html"
+          body 'html version of the email here (stubbed in the test)'
+        end
+      end
+      allow_any_instance_of(Premailer::Rails::Hook).to receive(:generate_html_part)
+          .and_return(mock_html_part)
+
+      allow_any_instance_of(ActionView::Renderer).to receive(:render).and_return(' rendered here (stubbed)')
+
       subject.create_alert_logger(log)
     end
 
-    after(:all) do
-      tmpfile = File.join(Rails.root, CO_INCOMPLETE_LOG_DIR, CO_INCOMPLETE_LOG_FILENAME)
-      File.delete(tmpfile) if File.exist?(tmpfile)
-    end
-
-    let(:filepath) { File.join(Rails.root, CO_INCOMPLETE_LOG_DIR, CO_INCOMPLETE_LOG_FILENAME) }
-    let(:log) { ActivityLogger.open(filepath, 'TEST', 'open', false) }
 
     let(:paid_member1) {
       member = create(:member_with_membership_app)
@@ -268,8 +271,8 @@ RSpec.describe CompanyInfoIncompleteAlert do
       end
 
       expect(ActionMailer::Base.deliveries.size).to eq 2
-      expect(File.read(filepath)).to include("[info] CompanyInfoIncompleteAlert email sent to user id: #{paid_member1.id} email: #{paid_member1.email} company id: #{incomplete_co.id} name: #{incomplete_co.name}.")
-      expect(File.read(filepath)).to include("[info] CompanyInfoIncompleteAlert email sent to user id: #{paid_member2.id} email: #{paid_member2.email} company id: #{incomplete_co.id} name: #{incomplete_co.name}.")
+      expect(File.read(logfilepath)).to include("[info] CompanyInfoIncompleteAlert email sent to user id: #{paid_member1.id} email: #{paid_member1.email} company id: #{incomplete_co.id} name: #{incomplete_co.name}.")
+      expect(File.read(logfilepath)).to include("[info] CompanyInfoIncompleteAlert email sent to user id: #{paid_member2.id} email: #{paid_member2.email} company id: #{incomplete_co.id} name: #{incomplete_co.name}.")
     end
 
   end
