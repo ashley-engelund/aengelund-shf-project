@@ -2,8 +2,8 @@ require 'rails_helper'
 
 require File.join(__dir__, 'shared_specs_db_seeding')
 
-ENV_ADMIN_EMAIL_KEY = 'SHF_ADMIN_EMAIL'
-ENV_ADMIN_PASSWORD_KEY = 'SHF_ADMIN_PWD'
+ENV_ADMIN_EMAIL_KEY = 'SHF_ADMIN_EMAIL' unless defined?(ENV_ADMIN_EMAIL_KEY)
+ENV_ADMIN_PASSWORD_KEY = 'SHF_ADMIN_PWD' unless defined?(ENV_ADMIN_PASSWORD_KEY)
 
 RSpec.describe 'Production db is seeded with minimal info' do
 
