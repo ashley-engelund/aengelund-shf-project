@@ -127,8 +127,6 @@ RSpec.describe PageMetaImageTagsSetterTestController, type: :controller do
         @meta_image_setter.set_page_meta_images
         @meta_og_tags = @meta_image_setter.send(:meta_tags)['og']
 
-        puts("@meta_og_tags_set = #{@meta_og_tags.inspect}")
-
         expect(@meta_og_tags['image']['_']).to eq "#{expected_base_url}#{@test_filename}"
         expect(@meta_og_tags['image']['type']).to eq 'image/png'
         expect(@meta_og_tags['image']['width']).to eq 80
