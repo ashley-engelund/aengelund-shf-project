@@ -21,8 +21,8 @@ RSpec.describe 'Dev DB is seeded with users, members, apps, and companies' do
     create_user_membership_num_seq_if_needed
 
     RSpec::Mocks.with_temporary_scope do
-
       allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('development'))
+      allow_any_instance_of(ActivityLogger).to receive(:show).and_return(false)
 
       # must stub this way so the rest of ENV is preserved
       stub_const('ENV', ENV.to_hash.merge({ ENV_ADMIN_EMAIL_KEY    => admin_email,
@@ -54,6 +54,7 @@ RSpec.describe 'Dev DB is seeded with users, members, apps, and companies' do
 
       RSpec::Mocks.with_temporary_scope do
         allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('development'))
+        allow_any_instance_of(ActivityLogger).to receive(:show).and_return(false)
 
         # must stub this way so the rest of ENV is preserved
         stub_const('ENV', ENV.to_hash.merge({ ENV_NUM_SEEDED_USERS_KEY => seed_users }))
@@ -120,7 +121,6 @@ RSpec.describe 'Dev DB is seeded with users, members, apps, and companies' do
     before(:each) do
       DatabaseCleaner.start
       create_user_membership_num_seq_if_needed
-
     end
 
     after(:each) do

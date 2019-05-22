@@ -20,6 +20,7 @@ RSpec.describe 'Production db is seeded with minimal info' do
       DatabaseCleaner.start
       RSpec::Mocks.with_temporary_scope do
         allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
+        allow_any_instance_of(ActivityLogger).to receive(:show).and_return(false)
 
         # must stub this way so the rest of ENV is preserved
         stub_const('ENV', ENV.to_hash.merge({ENV_ADMIN_EMAIL_KEY => admin_email,
