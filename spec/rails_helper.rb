@@ -87,6 +87,9 @@ RSpec.configure do |config|
     DatabaseCleaner.start
     create_user_membership_num_seq_if_needed
 
+    # shush the ActivityLogger: Don't have it show every message to STDOUT.
+    allow_any_instance_of(ActivityLogger).to receive(:show).and_return(false)
+
     # Don't force a load of the AppConfiguration every time we run a test; mock the application configuration instead.
     # Using the  MockAppConfig saves time because it means we don't ever call Paperclip.
     # Calling and using Paperclip is very slow.

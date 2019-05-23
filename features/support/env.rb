@@ -11,38 +11,11 @@ require 'webdrivers/chromedriver'
 # Put the Geocoder into test mode so no actual API calls are made and stub with fake data
 require_relative '../../spec/support/geocoder'
 
+# version required on SemaphoreCI as of 2018-12-13
+#
+# Chromedriver.set_version "2.24" unless ENV.has_key?('SEMAPHORECI')
 
 Webdrivers.install_dir = Rails.root.join('features', 'support', 'webdrivers')
-# -------------------------
-# Configure WebMock and VCR. Have to have them always configured (for all scenarios)
-# in case Webdrivers needs to update the driver, which will force a request.
-#
-# Do not use VCR or WebMock on sites that Webdrivers gem uses to download and update drivers:
-VCR.configure do |c|
-  c.ignore_hosts('chromedriver.storage.googleapis.com')
-end
-
-webdrivers_download_sites = [
-    "chromedriver.storage.googleapis.com",
-    "github.com/mozilla/geckodriver/releases",
-    "selenium-release.storage.googleapis.com",
-    "developer.microsoft.com/en-us/microsoft-edge/tools/webdriver"
-]
-WebMock.disable_net_connect!(allow_localhost: true, allow: webdrivers_download_sites)
-
-VCR.configure do |c|
-  c.hook_into :webmock
-  c.cassette_library_dir     = 'features/vcr_cassettes'
-  c.allow_http_connections_when_no_cassette = true
-  c.ignore_localhost = true
-  c.default_cassette_options = { allow_playback_repeats: true }
-
-  webdrivers_download_sites.each do | webdriver_download_site |
-    c.ignore_hosts(webdriver_download_site)
-  end
-end
-# -------------------------
-
 
 ActionController::Base.allow_rescue = false
 
@@ -56,9 +29,12 @@ Cucumber::Rails::Database.javascript_strategy = :truncation
 
 
 Before do
- # I18n.locale = 'en'
- ENV['SHF_BETA'] = 'no'
- WebMock.disable_net_connect!(allow_localhost: true)
+  # I18n.locale = 'en'
+  ENV['SHF_BETA'] = 'no'
+
+  # shush the ActivityLogger: Don't have it show every message to STDOUT.
+  allow_any_instance_of(ActivityLogger).to receive(:show).and_return(false)
+
 end
 
 

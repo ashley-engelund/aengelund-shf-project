@@ -7,7 +7,6 @@ end
 
 RSpec.describe PageMetaTagsSetterTestController, type: :controller do
 
-
   MOCK_BASE_URL   = 'http://test.host' unless defined?(MOCK_BASE_URL)
   MOCK_REQ_PATH   = '/test-path' unless defined?(MOCK_REQ_PATH)
   MOCK_ASSET_PATH = '/assets' unless defined?(MOCK_ASSET_PATH)
@@ -33,6 +32,7 @@ RSpec.describe PageMetaTagsSetterTestController, type: :controller do
     @meta_setter.request.path = MOCK_REQ_PATH
 
     @meta_image_setter = PageMetaImageTagsSetter
+
   end
 
   after(:all) { I18n.locale = @orig_locale }
