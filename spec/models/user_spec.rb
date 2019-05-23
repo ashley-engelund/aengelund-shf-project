@@ -42,11 +42,6 @@ RSpec.describe User, type: :model do
     allow_any_instance_of(Paperclip::Attachment).to receive(:post_process_file)
                                                         .with(any_args)
                                                         .and_call_original
-    #allow(Paperclip::Processor).to receive(:make).with(any_args).and_call_original
-    #allow_any_instance_of(Paperclip::Processor).to receive(:make).with(any_args).and_call_original
-    # allow_any_instance_of(Paperclip::Processor).to receive(:convert).with(any_args).and_call_original
-    # allow_any_instance_of(Paperclip::Processor).to receive(:identify).with(any_args).and_call_original
-    # allow_any_instance_of(Paperclip::Attachment).to receive(:post_process_file).with(any_args).and_call_original
   end
 
   let(:user) { create(:user) }

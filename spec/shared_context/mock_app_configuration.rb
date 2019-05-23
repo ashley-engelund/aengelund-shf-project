@@ -1,5 +1,5 @@
 # this needs to be require_relative because this file is also used by the Cucumber featers
-require_relative  '../spec_helper'
+require_relative '../spec_helper'
 
 # Mock for AdminOnly::AppConfiguration
 # Mock for attachments, urls, and paths used with AppConfiguration
