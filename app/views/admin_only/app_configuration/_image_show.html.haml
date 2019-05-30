@@ -1,3 +1,10 @@
-%h3
-  %strong= t("admin_only.app_configuration.edit.#{image_title}")
-= image_tag(app_config.send(image_title).url(:standard))
+-# this partial expects locals named
+  app_config
+  image_title
+
+- is_missing_class = app_config.send(image_title).present? ? '' : 'missing'
+.image
+  %div{class: "#{is_missing_class}"}
+    .card-header= t("admin_only.app_configuration.edit.#{image_title}")
+    .card-body
+      = image_tag(app_config.send(image_title).url)

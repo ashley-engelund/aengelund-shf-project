@@ -15,7 +15,7 @@ module AdminOnly
 
     def update
       if @app_configuration.update(app_config_params)
-        redirect_to root_path, notice: t('.success')
+        redirect_to @app_configuration, notice: t('.success')
       else
         flash.now[:alert] = t('.error')
         render :edit
@@ -43,7 +43,13 @@ module AdminOnly
       # "admin_only_admin_page" key (for those fields) in the params).
       params.fetch(:admin_only_app_configuration, {})
         .permit(:chair_signature, :shf_logo, :h_brand_logo, :sweden_dog_trainers,
-                :email_admin_new_app_received_enabled)
+                :email_admin_new_app_received_enabled,
+                :site_name,
+                :site_meta_title, :site_meta_description, :site_meta_keywords,
+                :og_type,
+                :twitter_card_type,
+                :facebook_app_id,
+                :site_meta_image)
     end
   end
 

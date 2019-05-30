@@ -1,34 +1,44 @@
 @import 'shf-custom-colors';
 
-.card {
-  margin: 3px;
-}
+.app_configuration {
 
 
-.image {
-  .missing {
-    .card-header {
-      //color: red;  // can use this to show that an image is not in the database (perhaps it's being read from the app/assets)
-    }
-  }
-
-  .card-header {
+  .field-label {
     font-weight: bold;
   }
 
-  img {
-    border: 1pt solid $light;
+  .card {
+    margin: 3px;
+  }
+
+
+  .image {
+    .missing {
+      .card-header {
+        //color: red;  // can use this to show that an image is not in the database (perhaps it's being read from the app/assets)
+      }
+    }
+
+    .card-header {
+      font-weight: bold;
+    }
+
+    img {
+      border: 1pt solid $light;
+    }
+
+  }
+
+
+  .field.upload-image {
+
+    margin-top: 1rem;
+
+    input {
+      border: 1pt solid $light;
+      font-size: smaller;
+    }
   }
 
 }
 
-
-.field.upload-image {
-
-  margin-top: 1rem;
-
-  input {
-    border: 1pt solid $light;
-    font-size: smaller;
-  }
-}
