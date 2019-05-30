@@ -30,8 +30,19 @@
 #
 And(/^the App Configuration is not mocked and is seeded$/) do
 
-  # If this has been stubbed (e.g. to use MockAppConfig), unstub it
+  require_relative File.join(Rails.root, 'db/seed_helpers/app_configuration_seeder')
+
+  # Do not stub the AppConfiguration
   allow(AdminOnly::AppConfiguration).to receive(:config_to_use).and_call_original
 
-  AdminOnly::AppConfiguration.create(email_admin_new_app_received_enabled: false)
+  # ensure we will seed a new configuration (One is not created if one already exists.)
+  AdminOnly::AppConfiguration.delete_all
+
+  SeedHelper::AppConfigurationSeeder.seed
+end
+
+
+And("the site meta image is available via a public url") do
+  meta_image_url = AdminOnly::AppConfiguration.config_to_use.site_meta_image.url
+  expect{visit "#{root_url}#{meta_image_url}"}.not_to raise_error
 end
