@@ -1,7 +1,7 @@
 # Tasks to run to deploy the application.  Tasks defined here can be called by capistrano.
 
 require 'active_support/logger'
-require_relative 'one_time_tasks_finder'
+require_relative '../one_time_task_runner/one_time_tasks_finder'
 
 
 namespace :shf do
@@ -14,12 +14,12 @@ namespace :shf do
     desc 'run any one_time tasks not yet run, for this quarter in this year'
     task run_onetime_tasks: [:environment] do |task_name|
 
-      logfile_name = LogfileNamer.name_for(OneTimeTasksFinder::SHFDEPLOY_LOG_NAME)
+      logfile_name = LogfileNamer.name_for(OneTimeTaskRunner::OneTimeTasksFinder::SHFDEPLOY_LOG_NAME)
       log          = ActivityLogger.open(logfile_name,
                                          SHFDEPLOY_LOG_FACILITY,
                                          task_name)
 
-      tasks_finder         = OneTimeTasksFinder.instance
+      tasks_finder         = OneTimeTaskRunner::OneTimeTasksFinder.instance
 
       # this is where the tasks_finder will look for tasks that have already been run
       tasks_finder.logfile = logfile_name

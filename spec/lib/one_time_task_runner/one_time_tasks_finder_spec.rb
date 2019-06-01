@@ -1,12 +1,12 @@
 require 'rails_helper'
-require_relative File.join(__dir__, '..', '..', '..', 'lib', 'tasks', 'one_time_tasks_finder')
+require_relative File.join(__dir__, '..', '..', '..', 'lib', 'one_time_task_runner', 'one_time_tasks_finder')
 require 'rake'
 
 require 'shared_context/activity_logger'
 require 'shared_context/simple_rake_task_maker'
 
 
-RSpec.describe OneTimeTasksFinder, type: :model do
+RSpec.describe OneTimeTaskRunner::OneTimeTasksFinder, type: :model do
 
   include_context 'create logger'
   include_context 'simple rake task maker'

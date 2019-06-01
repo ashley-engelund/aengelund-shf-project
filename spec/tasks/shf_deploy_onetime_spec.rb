@@ -10,7 +10,7 @@ RSpec.describe 'shf_deploy_onetime shf:deploy:run_onetime_tasks', type: :task do
   include_context 'create logger'
   include_context 'simple rake task maker'
 
-  let(:logfilepath) { LogfileNamer.name_for(OneTimeTasksFinder::SHFDEPLOY_LOG_NAME) }
+  let(:logfilepath) { LogfileNamer.name_for(OneTimeTaskRunner::OneTimeTasksFinder::SHFDEPLOY_LOG_NAME) }
   let(:simple_test_tasks_logfile) { LogfileNamer.name_for(SIMPLE_RAKE_TASK_LOGFILE) }
 
   before(:each) do
@@ -38,7 +38,7 @@ RSpec.describe 'shf_deploy_onetime shf:deploy:run_onetime_tasks', type: :task do
 
         it 'invokes each task and logs that each task ran' do
           temp_onetime_path = Dir.mktmpdir('test-run_onetime_tasks')
-          allow_any_instance_of(OneTimeTasksFinder).to receive(:onetime_tasks_path).and_return(temp_onetime_path)
+          allow_any_instance_of(OneTimeTaskRunner::OneTimeTasksFinder).to receive(:onetime_tasks_path).and_return(temp_onetime_path)
 
           # Create 3 .rake files in the 2019_Q2 directory
           make_simple_rakefiles_under_subdir(temp_onetime_path, '2019_Q2', 3)
@@ -60,7 +60,7 @@ RSpec.describe 'shf_deploy_onetime shf:deploy:run_onetime_tasks', type: :task do
 
         it 'logs the error, but not as entry that signifies that the task ran successfully (so it can be run again later).' do
           temp_onetime_path = Dir.mktmpdir('test-run_onetime_tasks')
-          allow_any_instance_of(OneTimeTasksFinder).to receive(:onetime_tasks_path).and_return(temp_onetime_path)
+          allow_any_instance_of(OneTimeTaskRunner::OneTimeTasksFinder).to receive(:onetime_tasks_path).and_return(temp_onetime_path)
 
           # Create 1 .rake file in the 2019_Q2 directory
           make_simple_rakefiles_under_subdir(temp_onetime_path, '2019_Q2', 1)
@@ -82,7 +82,7 @@ RSpec.describe 'shf_deploy_onetime shf:deploy:run_onetime_tasks', type: :task do
         it 'a task will be invoked next time if an error happened before' do
 
           temp_onetime_path = Dir.mktmpdir('test-run_onetime_tasks')
-          allow_any_instance_of(OneTimeTasksFinder).to receive(:onetime_tasks_path).and_return(temp_onetime_path)
+          allow_any_instance_of(OneTimeTaskRunner::OneTimeTasksFinder).to receive(:onetime_tasks_path).and_return(temp_onetime_path)
 
           # Create 1 .rake file in the 2019_Q2 directory
           make_simple_rakefiles_under_subdir(temp_onetime_path, '2019_Q2', 1)
@@ -121,7 +121,7 @@ RSpec.describe 'shf_deploy_onetime shf:deploy:run_onetime_tasks', type: :task do
 
     it 'nothing invoked' do
 
-      allow(OneTimeTasksFinder.instance).to receive(:names_of_tasks_to_run_today).and_return([])
+      allow(OneTimeTaskRunner::OneTimeTasksFinder.instance).to receive(:names_of_tasks_to_run_today).and_return([])
       Timecop.freeze(may_1_2019) do
         expect { subject.invoke }.not_to raise_error
       end
