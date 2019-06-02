@@ -1,4 +1,4 @@
-RSpec.shared_context 'simple rake task maker' do
+RSpec.shared_context 'simple rake task files maker' do
 
   SIMPLE_RAKE_TASK_LOGFILE = 'SimpleRakeTask-test'
 
@@ -15,6 +15,7 @@ RSpec.shared_context 'simple rake task maker' do
 
 
   # Make <num> .rake files in the directory; each rake file contains 1 simple task
+  # The name of the rake file is test<task number>.rake ("test" with the task number appended)
   # start_num = the first task number
   # @return [Array[String]] - list of file names created
   #
