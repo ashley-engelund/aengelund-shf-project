@@ -56,13 +56,6 @@ class SHFStepsError < StandardError
     end
   end
 
-  def message
-    if self.cause
-      "#{self.class.name}: This was raised after this error: #{self.cause.message}."
-    else
-      self.class.name
-    end
-  end
 end
 
 
