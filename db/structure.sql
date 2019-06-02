@@ -590,10 +590,11 @@ CREATE SEQUENCE public.membership_number_seq
 
 CREATE TABLE public.one_time_tasker_task_attempts (
     id bigint NOT NULL,
-    task_name character varying,
-    attempted_on timestamp without time zone,
-    was_successful boolean,
+    task_name character varying NOT NULL,
     task_source character varying,
+    attempted_on timestamp without time zone NOT NULL,
+    was_successful boolean DEFAULT false NOT NULL,
+    notes character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );

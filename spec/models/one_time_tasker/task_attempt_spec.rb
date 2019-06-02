@@ -16,6 +16,7 @@ RSpec.describe OneTimeTasker::TaskAttempt, type: :model do
     it { is_expected.to have_db_column :task_source }
     it { is_expected.to have_db_column :was_successful }
     it { is_expected.to have_db_column :attempted_on }
+    it { is_expected.to have_db_column :notes }
   end
 
 
@@ -25,42 +26,61 @@ RSpec.describe OneTimeTasker::TaskAttempt, type: :model do
     it { is_expected.to validate_presence_of :attempted_on }
 
 
-    describe 'was_successful must be a boolean' do
+    describe 'was_successful must be the right type and we must have an attempted_on time' do
 
       before(:each) do
         subject.task_name = 'blorf'
-        subject.attempted_on = Time.zone.now
+      end
+
+      describe 'was_successful must be a boolean' do
+
+        before(:each) do
+          subject.attempted_on = Time.zone.now
+        end
+
+
+        it 'calls the :was_successful_is_boolean method to validate' do
+          expect(subject).to receive(:was_successful_is_boolean).and_call_original
+          subject.was_successful = true
+          expect(subject.valid?).to be_truthy
+        end
+
+        # Rails will allow was_successful to be a String if you use the common validations per the Guides example
+        describe 'not valid if it is a String or Integer' do
+          invalid_values = [0, 1, 'blorf']
+          invalid_values.each do | invalid_value |
+            it "#{invalid_value} is valid" do
+              subject.was_successful = invalid_value
+              expect(subject.valid?).to be_truthy
+            end
+          end
+        end
+
+        describe 'valid only if it is a TrueClass or FalseClass' do
+
+          valid_values = [true, false]
+          valid_values.each do | valid_value |
+            it "#{valid_value} is valid" do
+              subject.was_successful = valid_value
+              expect(subject.valid?).to be_truthy
+            end
+          end
+        end
+
       end
 
 
-      it 'calls the :was_successful_is_boolean method to validate' do
-        expect(subject).to receive(:was_successful_is_boolean).and_call_original
+      it 'attempted_on is a time (is not nil)' do
         subject.was_successful = true
+        subject.attempted_on = Time.zone.now
         expect(subject.valid?).to be_truthy
       end
 
-      # Rails will allow was_successful to be a String if you use the common validations per the Guides example
-      describe 'not valid if it is a String or Integer' do
-        invalid_values = [0, 1, 'blorf']
-        invalid_values.each do | invalid_value |
-          it "#{invalid_value} is valid" do
-            subject.was_successful = invalid_value
-            expect(subject.valid?).to be_truthy
-          end
-        end
+      it 'attempted_on is nil' do
+        subject.was_successful = true
+        subject.attempted_on = nil
+        expect(subject.valid?).to be_falsey
       end
-
-      describe 'valid only if it is a TrueClass or FalseClass' do
-
-        valid_values = [true, false]
-        valid_values.each do | valid_value |
-          it "#{valid_value} is valid" do
-            subject.was_successful = valid_value
-            expect(subject.valid?).to be_truthy
-          end
-        end
-      end
-
     end
   end
 

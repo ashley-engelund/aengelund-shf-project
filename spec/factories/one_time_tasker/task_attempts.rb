@@ -5,6 +5,7 @@ FactoryBot.define do
     task_source { "task source" }
     attempted_on { Time.zone.now }
     was_successful { true }
+    notes { '' }
   end
 
   # cannot just use :successful because it creates a collision with
