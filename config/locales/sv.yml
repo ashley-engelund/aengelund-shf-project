@@ -150,6 +150,11 @@ sv:
         one: Användaren
         other: Användare
 
+      task_attempt:
+        one: Task Attempt
+        other: Task Attempts
+
+
     attributes:
 
       user:
@@ -243,6 +248,12 @@ sv:
         description_en: "Beskrivning (engelska)"
         is_custom: "Annan anledning"
 
+      task_attempt:
+        task_name: Task namn
+        task_source: Task source
+        was_successful: Was successful
+        attempted_on: Attempted on
+
 
     errors:
       models:
@@ -303,6 +314,12 @@ sv:
           attributes:
             timing:
               invalid: måste vara en symbol
+
+        task_attempt:
+          attributes:
+            was_successful:
+              invalid: "- %{value} must be true or false (a Boolean)"
+
 
       messages:
         record_invalid: 'Ett fel uppstod: %{errors}'

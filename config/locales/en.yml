@@ -150,6 +150,11 @@ en:
         one: User
         other: Users
 
+      task_attempt:
+        one: Task Attempt
+        other: Task Attempts
+
+
     attributes:
 
       user:
@@ -244,6 +249,12 @@ en:
         description_en: "Description (English)"
         is_custom: "Custom reason"
 
+      task_attempt:
+        task_name: Task name
+        task_source: Task source
+        was_successful: Was successful
+        attempted_on: Attempted on
+
 
     errors:
       models:
@@ -305,6 +316,10 @@ en:
             timing:
               invalid: must be a symbol
 
+        task_attempt:
+          attributes:
+            was_successful:
+              invalid: "- %{value} must be true or false (a Boolean)"
 
 
       messages:
