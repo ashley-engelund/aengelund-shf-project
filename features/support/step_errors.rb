@@ -7,6 +7,7 @@
 #
 #  See the RSpec in spec/features/support/cucumber_steps_errors_spec.rb for examples
 #
+# @ref https://www.honeybadger.io/blog/nested-errors-in-ruby-with-exception-cause/
 # @ref NestedExceptions: http://wiki.c2.com/?NestedException
 
 
@@ -30,39 +31,28 @@ module SHFMessageFormatter
 end
 
 
-
 # ---------------------------------------------
 #
 # @class SHFStepsError
 #
 # @description Parent class for all errors raised by any of our steps.
-#   This can track an 'original_error_message': an error that may have been raised
-#   this.  This can be used to help provide context when printing out the
-#   message for this error; it helps to keep errors from being 'swallowed'
+#   If a preceding error was raised (self.cause), the message from that one
+#   is displayed. This can be used to help provide context when printing
+#   out the message for this error; it helps to keep errors from being 'swallowed'
 #   or disappeared during a chain of errors.
 #
 class SHFStepsError < StandardError
+
   include SHFMessageFormatter
 
-  attr_reader :original_error_message
 
-  # If there is an error message in the global variable '$!' then this will
-  # use it. This enables the object to “magically” discover the originating
-  # exception message on initialization.
-  def initialize
-    super
-    @original_error_message = $! # This is the message of the last raised exception
-  end
-
-
-  # If the originating error message is blank or is this class, just show the name of this class
-  # else also show the originating error message.
-  #
+  # If there was a preceding error that was raised, show the message for that
+  # else just show the name of this class.
   def message
-    if original_error_message.blank? || original_error_message.class == self.class
-      self.class.name
+    if self.cause
+      "#{self.class.name}: This was raised after this error: #{self.cause.message}."
     else
-      "#{self.class.name}: This was raised after this error: #{self.original_error_message}."
+      self.class.name
     end
   end
 end
