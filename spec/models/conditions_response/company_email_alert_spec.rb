@@ -180,7 +180,7 @@ RSpec.describe CompanyEmailAlert do
     Timecop.return
   end
 
-  
+
   it '.success_str returns a string with member and company info' do
     expect(subject.success_str(c1_all_paid, member1_c1_exp_jun6))
         .to eq "to user id: #{member1_c1_exp_jun6.id} email: #{member1_c1_exp_jun6.email} company id: #{c1_all_paid.id} name: company1"
