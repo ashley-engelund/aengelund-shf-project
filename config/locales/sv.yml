@@ -251,8 +251,8 @@ sv:
       task_attempt:
         task_name: Task namn
         task_source: Task source
-        was_successful: Was successful
-        attempted_on: Attempted on
+        was_successful: was successful
+        attempted_on: attempted on
 
 
     errors:
@@ -319,6 +319,16 @@ sv:
           attributes:
             was_successful:
               invalid: "- %{value} must be true or false (a Boolean)"
+
+        successful_task_attempt:
+          attributes:
+            was_successful:
+              invalid: "kan bara vara sant (värdet var %{value})"
+
+        failed_task_attempt:
+          attributes:
+            was_successful:
+              invalid: "kan bara vara falskt (värdet var %{value})"
 
 
       messages:

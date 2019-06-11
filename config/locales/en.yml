@@ -321,6 +321,16 @@ en:
             was_successful:
               invalid: "- %{value} must be true or false (a Boolean)"
 
+        successful_task_attempt:
+          attributes:
+            was_successful:
+              invalid: "- %{value} can only be true"
+
+        failed_task_attempt:
+          attributes:
+            was_successful:
+              invalid: "- %{value} can only be false"
+
 
       messages:
         record_invalid: "Validation failed: %{errors}"
