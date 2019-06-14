@@ -71,13 +71,15 @@ namespace :deploy do
 
   desc 'run load_conditions task to put conditions into the DB'
   task run_load_conditions: [:set_rails_env] do | this_task |
-    run_task_from(this_task, 'shf:load_conditions')
+    info_if_not_found = "The Conditions will NOT be loaded into the database. (task #{this_task} in #{__FILE__ })"
+    run_task_from(this_task, 'shf:load_conditions', info_if_not_found)
   end
 
 
   desc 'run any one-time tasks for this year and this quaters'
   task run_one_time_tasks: [:set_rails_env] do | this_task |
-    run_task_from(this_task, 'shf:deploy:run_onetime_tasks')
+    info_if_not_found = "No 'one_time' tasks will be run! (task #{this_task} in #{__FILE__ })"
+    run_task_from(this_task, 'shf:one_time:run_onetime_tasks', info_if_not_found)
   end
 
 
@@ -92,7 +94,7 @@ namespace :deploy do
 
   # Note: another way to accomplish this would be to put an entry in .gitattributes for every file to ignore.
   # However, I don't like mixing deployment information into git files.  (That couples the two systems and mixes responsibilities.)
-  desc "Remove testing related files"
+  desc 'Remove testing related files'
   task :remove_test_files do
 
     on release_roles :all do
@@ -137,13 +139,19 @@ namespace :deploy do
 
 
   # execute a task and show an info line
-  def run_task_from(_calling_task, task_name_to_run)
+  # If the task is not defined, print out the warning with info_if_missing appended.
+  def run_task_from(_calling_task, task_name_to_run, info_if_missing = '')
 
     on release_roles :all do
       within release_path do
         with rails_env: fetch(:rails_env) do
-          #info task_invoking_info(calling_task.name, task_name_to_run)
-          execute :rake, task_name_to_run
+
+          if task_is_defined?(task_name_to_run)
+            #info task_invoking_info(calling_task.name, task_name_to_run)
+            execute :rake, task_name_to_run
+          else
+            puts "\n>> WARNING! No task named #{task_name_to_run}. #{info_if_missing}\n\n"
+          end
         end
       end
     end
@@ -171,6 +179,13 @@ namespace :deploy do
     else
       warn "Directory doesn't exist, so it could not be removed: #{full_dir_path}" # log and puts
     end
+  end
+
+
+  def task_is_defined?(task_name)
+    puts "( checking to see if #{task_name} is defined )"
+    result =  %x{bundle exec rake --tasks #{task_name} }
+    result.include?(task_name) ? true : false
   end
 
 end
