@@ -11,6 +11,8 @@ RSpec.describe OneTimeTasker::SuccessfulTaskAttempt, type: :model do
 
   it 'default_scope is where(was_successful: true)' do
 
+    OneTimeTasker::TaskAttempt.delete_all
+
     create(:one_time_tasker_task_attempt, :successful_task, task_name: 'success1')
     create(:one_time_tasker_task_attempt, :successful_task, task_name: 'success2')
     create(:one_time_tasker_task_attempt, :successful_task, task_name: 'success3')

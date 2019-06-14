@@ -88,6 +88,9 @@ RSpec.describe OneTimeTasker::TaskAttempt, type: :model do
   describe 'scopes' do
 
     before(:all) do
+
+      OneTimeTasker::TaskAttempt.delete_all
+
       # create some tasks
       create(:one_time_tasker_task_attempt, :successful_task)
       create(:one_time_tasker_task_attempt, :successful_task)
