@@ -1,6 +1,5 @@
 RSpec.shared_context 'simple rake task files maker' do
 
-  SIMPLE_RAKE_TASK_LOGFILE = 'SimpleRakeTask-test'
 
   # Create a subdirectory <subdir> under <directory if it doesn't already exist,
   # and then create <num> simple rake files in <subdir>
@@ -48,26 +47,36 @@ RSpec.shared_context 'simple rake task files maker' do
   end
 
 
-  # Code for a simple task that logs when it is invoked.
+  # Make rake tasks for  of the tasks in tasknames, in the file named filepath.
+  # Makes all directories needed for the filepath if they don't already exist.
+  #
+  def make_tasks_in_file(tasknames = [], filepath = '.', task_body = "\n")
+    filedir = File.dirname(filepath)
+    FileUtils.mkdir_p(filedir) unless Dir.exist?(filedir)
+
+    File.open(filepath, 'w') do |f|
+      tasknames.each do  | taskname |
+        f.puts simple_rake_task(taskname, task_body)
+      end
+    end
+
+    filepath
+  end
+
+
+  # Code for a simple task.
   # The body of the task is given :task_body
-  # Logs to a logfile named with SIMPLE_RAKE_TASK_LOGFILE
   #
   # @param task_name [String] - the task name
   # @param task_body [String] - the code for task. This is what will be run.
   #
-  def simple_rake_task(task_name = 'test-task', task_body = "\n")
-
-    "require 'active_support/logger'\n" +
+  def simple_rake_task(task_name = 'test_task', task_body = "\n")
         "namespace :shf do\n" +
         "  namespace :test do\n" +
         "    desc 'task named #{task_name}'\n" +
-        "    task #{task_name}: :environment do\n" +
-        "       logfile_name = LogfileNamer.name_for(SIMPLE_RAKE_TASK_LOGFILE)\n" +
-        "       ActivityLogger.open(logfile_name, 'SimpleRakeTask', 'Load Dinkurs Events') do |log|\n" +
+        "    task :#{task_name} do\n" +
         task_body +
-        "         log.record('info', 'Task #{__FILE__} #{task_name} has been invoked.')\n" +
-        "       end\n" +
-        "     end\n" +
+        "    end\n" +
         "  end\n " +
         "end\n"
   end
