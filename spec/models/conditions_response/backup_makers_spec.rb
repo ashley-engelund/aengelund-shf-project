@@ -1,12 +1,8 @@
 # Specs for AbstractBackupMaker and subclasses
 
 require 'rails_helper'
-require 'email_spec/rspec'
 
 require_relative File.join(Rails.root, 'app/models/conditions_response/backup')
-
-require 'shared_examples/shared_condition_specs'
-require 'shared_context/activity_logger'
 
 
 RSpec.describe AbstractBackupMaker do
@@ -21,18 +17,25 @@ RSpec.describe AbstractBackupMaker do
       expect(subject.backup_target_filebase).to match(/backup-AbstractBackupMaker\.tar/)
     end
 
-    it 'shell_cmd calls %x with the string passed in' do
-      # have to test with a subclass that implements :backup
-      test_file_backupmaker = FilesBackupMaker.new
+    describe 'shell_cmd' do
 
-      expect(test_file_backupmaker).to receive(:shell_cmd).with('tar -chzf backup-FilesBackupMaker.tar ')
+      it 'raises an error if one was encountered' do
+        allow(Open3).to receive(:capture3).and_raise(Errno::ENOENT, 'blorfo')
+        expect{ subject.shell_cmd('blorfo')}.to raise_error(Errno::ENOENT, 'No such file or directory - blorfo')
+      end
 
-      test_file_backupmaker.backup
+      it 'raises BackupCommandNotSuccessfulError and shows the command, status, stdout, and stderr if it was not successful' do
+        allow(Open3).to receive(:capture3).and_return(['output string', 'error string', nil])
+        expect{ subject.shell_cmd('blorfo')}.to raise_error(ShfConditionError::BackupCommandNotSuccessfulError,
+                                                            "Command: blorfo. return status:   Error: error string  Output: output string")
+      end
+
     end
 
     it 'backup raises NoMethodError Subclasses must define' do
       expect { subject.backup }.to raise_error(NoMethodError, 'Subclass must define the backup method')
     end
+
 
   end
 
@@ -52,7 +55,7 @@ RSpec.describe FilesBackupMaker do
 
     describe '#backup' do
 
-      it 'creates a tar with all entries in sources using tar -chzf}' do
+      it 'uses #shell_cmd to create a tar with all entries in sources using tar -chzf}' do
 
         temp_backup_target = Tempfile.new('code-backup.').path
         temp_backup_sourcefn1 = Tempfile.new('faux-codefile.rb').path
@@ -119,19 +122,36 @@ RSpec.describe DBBackupMaker do
     end
 
 
-    it '#backup dumps the dbs in sources and creates 1 backup gzipped file', focus: true do
+    describe '#backup' do
 
-      temp_backup_target = Tempfile.new('code-backup.').path
+      describe 'dumps the dbs in sources and creates 1 backup gzipped file' do
 
-      new_db_backup = described_class.new(backup_target_filebase: temp_backup_target, backup_sources: ['this1', 'that2'])
+        it 'using default target' do
 
-      expect(new_db_backup).to receive(:shell_cmd).with("touch #{temp_backup_target}")
-      expect(new_db_backup).to receive(:shell_cmd).with("pg_dump -d this1 | gzip > #{temp_backup_target}")
-      expect(new_db_backup).to receive(:shell_cmd).with("pg_dump -d that2 | gzip > #{temp_backup_target}")
+          new_db_backup = described_class.new(backup_sources: ['this1', 'that2'])
 
-      new_db_backup.backup
+          expect(new_db_backup).to receive(:shell_cmd).with("touch db_backup.sql")
+          expect(new_db_backup).to receive(:shell_cmd).with("pg_dump -d this1 | gzip > db_backup.sql")
+          expect(new_db_backup).to receive(:shell_cmd).with("pg_dump -d that2 | gzip > db_backup.sql")
 
+          new_db_backup.backup
+        end
+
+        it 'given a filename to use as the target' do
+
+          temp_backup_target = Tempfile.new('code-backup.').path
+
+          new_db_backup = described_class.new(backup_target_filebase: temp_backup_target, backup_sources: ['this1', 'that2'])
+
+          expect(new_db_backup).to receive(:shell_cmd).with("touch #{temp_backup_target}")
+          expect(new_db_backup).to receive(:shell_cmd).with("pg_dump -d this1 | gzip > #{temp_backup_target}")
+          expect(new_db_backup).to receive(:shell_cmd).with("pg_dump -d that2 | gzip > #{temp_backup_target}")
+
+          new_db_backup.backup
+        end
+      end
     end
+
 
   end
 end
