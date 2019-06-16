@@ -21,13 +21,13 @@ RSpec.describe AbstractBackupMaker do
 
       it 'raises an error if one was encountered' do
         allow(Open3).to receive(:capture3).and_raise(Errno::ENOENT, 'blorfo')
-        expect{ subject.shell_cmd('blorfo')}.to raise_error(Errno::ENOENT, 'No such file or directory - blorfo')
+        expect { subject.shell_cmd('blorfo') }.to raise_error(Errno::ENOENT, 'No such file or directory - blorfo')
       end
 
       it 'raises BackupCommandNotSuccessfulError and shows the command, status, stdout, and stderr if it was not successful' do
         allow(Open3).to receive(:capture3).and_return(['output string', 'error string', nil])
-        expect{ subject.shell_cmd('blorfo')}.to raise_error(ShfConditionError::BackupCommandNotSuccessfulError,
-                                                            "Command: blorfo. return status:   Error: error string  Output: output string")
+        expect { subject.shell_cmd('blorfo') }.to raise_error(ShfConditionError::BackupCommandNotSuccessfulError,
+                                                              "Backup Command Failed: blorfo. return status:   Error: error string  Output: output string")
       end
 
     end
@@ -55,34 +55,42 @@ RSpec.describe FilesBackupMaker do
 
     describe '#backup' do
 
-      it 'uses #shell_cmd to create a tar with all entries in sources using tar -chzf}' do
-
-        temp_backup_target = Tempfile.new('code-backup.').path
-        temp_backup_sourcefn1 = Tempfile.new('faux-codefile.rb').path
-        temp_backup_sourcefn2 = Tempfile.new('faux-otherfile.rb').path
+      it 'uses #shell_cmd to create a tar in the destination directory with all entries in sources using tar -chzf}' do
 
         temp_backup_sourcedir = Dir.mktmpdir('faux-code-dir')
-        temp_backup_in_dir_fn = File.open(File.join(temp_backup_sourcedir, 'faux-codefile2.rb'), 'w').path
+        temp_backup_sourcefn1 = File.open(File.join(temp_backup_sourcedir, 'faux-codefile.rb'), 'w').path
+        temp_backup_sourcefn2 = File.open(File.join(temp_backup_sourcedir, 'faux-otherfile.rb'), 'w').path
+        temp_subdir = File.join(temp_backup_sourcedir, 'subdir')
+        FileUtils.mkdir_p(temp_subdir)
+        temp_backup_in_subdir_fn = File.open(File.join(temp_backup_sourcedir, 'subdir', 'faux-codefile2.rb'), 'w').path
+
+        temp_backup_sourcedir2 = Dir.mktmpdir('faux-code-dir2')
+        temp_backup_source2fn1 = File.open(File.join(temp_backup_sourcedir2, 'dir2-faux-codefile.rb'), 'w').path
+
+        temp_backup_target = File.join(Dir.mktmpdir('temp-files-dir'), 'files_backup_fn.zzkx')
 
         files_backup = described_class.new(backup_target_filebase: temp_backup_target,
-                                           backup_sources: [temp_backup_sourcefn1,
-                                                            temp_backup_sourcefn2,
-                                                            temp_backup_sourcedir])
+                                           backup_sources: [temp_backup_sourcedir,
+                                                            temp_backup_source2fn1])
         files_backup.backup
+
+
+        expect(File.exist?(temp_backup_target)).to be_truthy
 
         # could also use the Gem::Package verify_entry method to verify each tar entry
         backup_file_list = %x<tar --list --file=#{temp_backup_target}>
         backup_file_list.gsub!(/\n/, ' ')
+        backup_files = backup_file_list.split(' ')
 
         # tar will remove leading "/" from source file names, so remove the leading "/"
-        expected = "#{temp_backup_sourcefn1.gsub(/^\//, '')} " +
-            "#{temp_backup_sourcefn2.gsub(/^\//, '')} " +
-            "#{temp_backup_sourcedir.gsub(/^\//, '')}/ " +
-            "#{temp_backup_in_dir_fn.gsub(/^\//, '')}"
+        expected = [temp_backup_sourcefn1.gsub(/^\//, ''),
+                    temp_backup_sourcefn2.gsub(/^\//, ''),
+                    temp_backup_in_subdir_fn.gsub(/^\//, ''),
+                    "#{temp_subdir.gsub(/^\//, '')}/",
+                    "#{temp_backup_sourcedir.gsub(/^\//, '')}/",
+                    temp_backup_source2fn1.gsub(/^\//, '')]
 
-        expect(backup_file_list.strip).to eq expected
-
-        FileUtils.remove_entry temp_backup_sourcedir
+        expect(backup_files).to match_array(expected)
       end
 
     end
@@ -126,32 +134,40 @@ RSpec.describe DBBackupMaker do
 
       describe 'dumps the dbs in sources and creates 1 backup gzipped file' do
 
+        before(:each) { @temp_dir = Dir.mktmpdir('db-backup-source-dir') }
+
         it 'using default target' do
 
           new_db_backup = described_class.new(backup_sources: ['this1', 'that2'])
 
-          expect(new_db_backup).to receive(:shell_cmd).with("touch db_backup.sql")
-          expect(new_db_backup).to receive(:shell_cmd).with("pg_dump -d this1 | gzip > db_backup.sql")
-          expect(new_db_backup).to receive(:shell_cmd).with("pg_dump -d that2 | gzip > db_backup.sql")
+          expected_backup_fname =  'db_backup.sql'
+          expect(new_db_backup).to receive(:shell_cmd).with("touch #{expected_backup_fname}").and_call_original
+          expect(new_db_backup).to receive(:shell_cmd).with("pg_dump -d this1 | gzip > #{expected_backup_fname}")
+          expect(new_db_backup).to receive(:shell_cmd).with("pg_dump -d that2 | gzip > #{expected_backup_fname}")
 
-          new_db_backup.backup
+          new_db_backup.backup()
+
+          expect(File.exist?(expected_backup_fname)).to be_truthy
+          File.delete(expected_backup_fname)
         end
 
         it 'given a filename to use as the target' do
 
-          temp_backup_target = Tempfile.new('code-backup.').path
+          temp_backup_target = File.join(@temp_dir, 'db_dumped.sql')
 
-          new_db_backup = described_class.new(backup_target_filebase: temp_backup_target, backup_sources: ['this1', 'that2'])
+          new_db_backup = described_class.new(backup_target_filebase: temp_backup_target,
+                                              backup_sources: ['this1', 'that2'])
 
-          expect(new_db_backup).to receive(:shell_cmd).with("touch #{temp_backup_target}")
-          expect(new_db_backup).to receive(:shell_cmd).with("pg_dump -d this1 | gzip > #{temp_backup_target}")
-          expect(new_db_backup).to receive(:shell_cmd).with("pg_dump -d that2 | gzip > #{temp_backup_target}")
+          expected_backup_fname = temp_backup_target
+          expect(new_db_backup).to receive(:shell_cmd).with("touch #{expected_backup_fname}").and_call_original
+          expect(new_db_backup).to receive(:shell_cmd).with("pg_dump -d this1 | gzip > #{expected_backup_fname}")
+          expect(new_db_backup).to receive(:shell_cmd).with("pg_dump -d that2 | gzip > #{expected_backup_fname}")
 
           new_db_backup.backup
+          expect(File.exist?(expected_backup_fname)).to be_truthy
         end
       end
     end
-
 
   end
 end
