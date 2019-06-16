@@ -67,43 +67,43 @@ RSpec.shared_context 'many task files' do
     # make_tasks_in_file(tasknames = [SET_WHEN_APPROVED_TASK], already_ran_approved)
 
     q1_sometasks = File.join(q1_dir(given_dir), SOME_TASKS_RAKEFILE)
-    make_tasks_in_file(tasknames = [SOMETASK1, SOMETASK2, SOMETASK3, SOMETASK4, SOMETASK5], q1_sometasks)
+    make_tasks_in_file([SOMETASK1, SOMETASK2, SOMETASK3, SOMETASK4, SOMETASK5], q1_sometasks)
 
 
     already_ran_city_names = File.join(q2_dir(given_dir), "#{FORMAT_CITYNAMES_RAKEFILE}.ran")
-    make_tasks_in_file(tasknames = [FORMAT_CITYNAMES_TASK], already_ran_city_names)
+    make_tasks_in_file([FORMAT_CITYNAMES_TASK], already_ran_city_names)
 
     already_ran_q2_goodtask = File.join(q2_dir(given_dir), "#{GOOD_TASK_RAKEFILE}.ran")
-    make_tasks_in_file(tasknames = [GOODTASK], already_ran_q2_goodtask)
+    make_tasks_in_file([GOODTASK], already_ran_q2_goodtask)
 
 
     blorf_goodtask = File.join(blorf_dir(given_dir), GOOD_TASK2_RAKEFILE)
-    make_tasks_in_file(tasknames = [GOODTASK], blorf_goodtask)
+    make_tasks_in_file([GOODTASK], blorf_goodtask)
 
     blorf_already_ran_approved = File.join(blorf_dir(given_dir), SET_WHEN_APPR2_RAKEFILE)
-    make_tasks_in_file(tasknames = [SET_WHEN_APPROVED_TASK], blorf_already_ran_approved)
+    make_tasks_in_file([SET_WHEN_APPROVED_TASK], blorf_already_ran_approved)
 
     blorf_simpletask = File.join(blorf_dir(given_dir), SIMPLE_TASK_RAKEFILE)
-    make_tasks_in_file(tasknames = [SIMPLETASK], blorf_simpletask)
+    make_tasks_in_file([SIMPLETASK], blorf_simpletask)
 
     already_ran_blorf_sometask1 = File.join(blorf_dir(given_dir), "#{SOMETASK1_RAKEFILE}.ran")
-    make_tasks_in_file(tasknames = [SOMETASK1], already_ran_blorf_sometask1)
+    make_tasks_in_file([SOMETASK1], already_ran_blorf_sometask1)
 
 
     already_ran_blorf2_task1 = File.join(blorf2_dir(given_dir), "#{SOMETASK1_RAKEFILE}.ran")
-    make_tasks_in_file(tasknames = [SOMETASK1], already_ran_blorf2_task1)
+    make_tasks_in_file([SOMETASK1], already_ran_blorf2_task1)
 
     blorf2_approved = File.join(blorf2_dir(given_dir), SET_WHEN_APPR_RAKEFILE)
-    make_tasks_in_file(tasknames = [SET_WHEN_APPROVED_TASK], blorf2_approved)
+    make_tasks_in_file([SET_WHEN_APPROVED_TASK], blorf2_approved)
 
     blorf2_simple_task5 = File.join(blorf2_dir(given_dir), SIMPLE_AND_SOME5_RAKEFILE)
-    make_tasks_in_file(tasknames = [SIMPLETASK, SOMETASK5], blorf2_simple_task5)
+    make_tasks_in_file([SIMPLETASK, SOMETASK5], blorf2_simple_task5)
 
     toplevel_simpletask = File.join(given_dir, SIMPLE_TASK_RAKEFILE)
-    make_tasks_in_file(tasknames = [SIMPLETASK], toplevel_simpletask)
+    make_tasks_in_file([SIMPLETASK], toplevel_simpletask)
 
     toplevel_run_this = File.join(given_dir, RUN_THIS_RAKEFILE)
-    make_tasks_in_file(tasknames = [RUNTHISTASK], toplevel_run_this)
+    make_tasks_in_file([RUNTHISTASK], toplevel_run_this)
   end
 
 

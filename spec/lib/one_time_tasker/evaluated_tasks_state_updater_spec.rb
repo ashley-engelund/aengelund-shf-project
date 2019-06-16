@@ -150,7 +150,7 @@ RSpec.describe OneTimeTasker::EvaluatedTasksStateUpdater do
         subject.log_already_ran(given_task, @successful_attempt)
         task_finder_spec_log.close
 
-        expect(File.exists?(logname)).to be_truthy
+        expect(File.exist?(logname)).to be_truthy
         @log_contents = File.read(logname)
         expect(@log_contents).to match(/\[error\] Task Already Ran\: Task named 'already_ran\:task_name' in the file source_filename1\: Task has already been successfully run on (.*) from source\: successful source/)
       end
@@ -177,7 +177,7 @@ RSpec.describe OneTimeTasker::EvaluatedTasksStateUpdater do
         subject.log_as_duplicate(given_task)
         task_finder_spec_log.close
 
-        expect(File.exists?(logname)).to be_truthy
+        expect(File.exist?(logname)).to be_truthy
         @log_contents = File.read(logname)
         expect(@log_contents).to match(/\[error\] Duplicate task name\! Task named 'dup\:task_name' in the file source_filename1\: This task is a duplicate: more than 1 task to be run has this task name\. This task cannot be run\./)
       end

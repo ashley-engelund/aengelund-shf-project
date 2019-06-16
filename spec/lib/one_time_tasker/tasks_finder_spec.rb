@@ -135,7 +135,7 @@ RSpec.describe OneTimeTasker::TasksFinder do
             expect { task_finder_with_log.files_with_tasks_to_run }.to raise_error(NoMethodError)
             task_finder_spec_log.close
 
-            if File.exists?(logname)
+            if File.exist?(logname)
               log_contents = File.read(logname)
               expect(log_contents).to match(/\[error\] Error during #{described_class}(\s+)files_with_tasks_to_run\!(\s+)NoMethodError/)
               File.delete(logname)
@@ -680,7 +680,7 @@ RSpec.describe OneTimeTasker::TasksFinder do
 
       include_context 'many task files'
 
-      logname = LogfileNamer.name_for(described_class)
+      LogfileNamer.name_for(described_class)
 
 
       let(:base_dir) { subject.tasks_directory }
