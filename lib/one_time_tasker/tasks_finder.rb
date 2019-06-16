@@ -61,7 +61,7 @@ module OneTimeTasker
 
     # tasks_directory -- This is the directory where the TasksFinder will look for .rake files.
     #                    It will search in this directory and all subdirectories.
-    attr_accessor :tasks_directory
+    attr_writer :tasks_directory
 
     attr_reader :tasks_updater
 
@@ -76,6 +76,10 @@ module OneTimeTasker
       set_or_create_log(given_log, logging: logging,
                         log_facility_tag: self.log_facility_tag,
                         log_activity_tag: self.log_activity_tag)
+    end
+
+    def tasks_directory
+      @tasks_directory ||=  File.absolute_path(DEFAULT_ONE_TIME_TASKS_DIR)
     end
 
 
@@ -284,10 +288,6 @@ module OneTimeTasker
     end
 
 
-    def tasks_directory
-      @tasks_directory ||=  File.absolute_path(DEFAULT_ONE_TIME_TASKS_DIR)
-    end
-
 
     # --------------------------------------------------------------------------
 
@@ -316,7 +316,7 @@ module OneTimeTasker
     # @return [nil | OneTimeTasker::SuccessfulTaskAttempt]
     #
     def find_successful_attempt_for_task(evaluated_task)
-      self.successful_task_attempts.find { |already_ran_task| already_ran_task.task_name == evaluated_task.name }
+      self.successful_task_attempts.detect { |already_ran_task| already_ran_task.task_name == evaluated_task.name }
     end
 
 

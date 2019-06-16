@@ -17,7 +17,8 @@ module OneTimeTasker
   #--------------------------
   class EvaluatedRakeFile
 
-    attr_accessor :filename, :all_tasks, :tasks_to_run
+    attr_accessor :filename, :tasks_to_run
+    attr_writer :all_tasks
 
 
     def initialize(filename = '', task_names: [], tasks_to_run: [])
@@ -25,6 +26,12 @@ module OneTimeTasker
       @all_tasks = []
       task_names.each { |task_name| add_eval_task_named(task_name) }
       @tasks_to_run = tasks_to_run
+    end
+
+
+    # All tasks in this .rake file
+    def all_tasks
+      @all_tasks ||= []
     end
 
 
@@ -65,10 +72,6 @@ module OneTimeTasker
       self.all_tasks.size
     end
 
-
-    def all_tasks
-      @all_tasks ||= []
-    end
 
   end
 

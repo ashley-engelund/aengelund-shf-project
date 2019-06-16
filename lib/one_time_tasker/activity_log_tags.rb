@@ -20,7 +20,7 @@ module ActivityLogTags
   DEFAULT_LOG_ACTIVITY_TAG = ''
 
 
-  attr_accessor :log_facility_tag, :log_activity_tag
+  attr_writer :log_facility_tag, :log_activity_tag
 
 
   def log_facility_tag

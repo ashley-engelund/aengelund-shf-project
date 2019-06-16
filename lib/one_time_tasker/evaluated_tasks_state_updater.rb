@@ -33,7 +33,7 @@ module OneTimeTasker
 
     # ==========================================================================
 
-    def initialize(given_log = nil, logging: logging)
+    def initialize(given_log = nil, logging: true)
       set_or_create_log(given_log, logging: logging,
                         log_facility_tag: self.log_facility_tag,
                         log_activity_tag: self.log_activity_tag)

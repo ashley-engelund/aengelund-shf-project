@@ -211,10 +211,6 @@ module OneTimeTasker
     end
 
 
-    # =====================================================================
-
-
-    private
 
     # Invoke the tasks in an Evaluated rake file.  If _all_ of the tasks
     # invoked pass and these are all of the tasks in the rake file,
