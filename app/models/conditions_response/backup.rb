@@ -30,7 +30,8 @@ class AbstractBackupMaker
   attr :backup_target_filebase, :backup_sources
 
   # Set the backup target and the backup sources
-  def initialize(backup_target_filebase: default_backup_filebase, backup_sources: default_sources)
+  def initialize(backup_target_filebase: default_backup_filebase,
+                 backup_sources: default_sources)
     @backup_target_filebase = backup_target_filebase
     @backup_sources = backup_sources
   end
@@ -57,7 +58,7 @@ class AbstractBackupMaker
   def shell_cmd(cmd)
     stdout_str, stderr_str, status = Open3.capture3(cmd)
     unless status&.success?
-      raise(ShfConditionError::BackupCommandNotSuccessfulError, "Command: #{cmd}. return status: #{status}  Error: #{stderr_str}  Output: #{stdout_str}")
+      raise(ShfConditionError::BackupCommandNotSuccessfulError, "Backup Command Failed: #{cmd}. return status: #{status}  Error: #{stderr_str}  Output: #{stdout_str}")
     end
   end
 
@@ -104,12 +105,11 @@ class DBBackupMaker < AbstractBackupMaker
   # Backup all Postgres databases in sources, then gzip them into the target
   def backup(target = backup_target_filebase, sources = backup_sources)
 
-    shell_cmd("touch #{target}")
+    shell_cmd("touch #{target}") # must ensure the file exists
 
     sources.each do |source|
       shell_cmd("pg_dump -d #{source} | gzip > #{target}")
     end
-
   end
 
 
@@ -154,10 +154,16 @@ class Backup < ConditionResponder
       backup_file = backup_target_fn(backup_dir, backup_maker[:backup_maker].backup_target_filebase)
       backup_files << backup_file
 
-      log.record('info', "Backing up to: #{backup_file}")
+      begin
+        log.record('info', "Backing up to: #{backup_file}")
 
-      # this will use the default source and target set when the backup maker was created
-      backup_maker[:backup_maker].backup
+        # this will use the default source and target set when the backup maker was created
+        backup_maker[:backup_maker].backup(backup_file)
+      rescue => backup_error
+        log.error(backup_error.to_s)
+        # Do NOT raise the error. This will let all other backup_maker.backups to run
+        next
+      end
     end
 
 
@@ -167,7 +173,14 @@ class Backup < ConditionResponder
 
     s3, bucket, bucket_folder = get_s3_objects(today_timestamp)
 
-    backup_files.each { |file| upload_file_to_s3(s3, bucket, bucket_folder, file) }
+    backup_files.each do |file|
+      begin
+        upload_file_to_s3(s3, bucket, bucket_folder, file)
+      rescue => backup_error
+        log.error backup_error.to_s
+        next
+      end
+    end
 
 
     # Prune older backups beyond "keep" (days) limit
@@ -175,11 +188,14 @@ class Backup < ConditionResponder
     log.record('info', 'Pruning older backups on local storage')
 
     backup_makers.each do |backup_maker|
+      begin
+        file_pattern = get_backup_files_pattern(backup_dir, backup_maker[:backup_maker].backup_target_filebase)
 
-      file_pattern = get_backup_files_pattern(backup_dir, backup_maker[:backup_maker].backup_target_filebase)
-
-      delete_excess_backup_files(file_pattern, backup_maker[:keep_num])
-
+        delete_excess_backup_files(file_pattern, backup_maker[:keep_num])
+      rescue => backup_error
+        log.error backup_error.to_s
+        next
+      end
     end
   end
 
@@ -190,7 +206,7 @@ class Backup < ConditionResponder
 
 
   def self.backup_target_fn(backup_dir, backup_base_fn)
-    File.join(backup_dir, backup_base_fn + today_timestamp + '.gz')
+    File.join(backup_dir, backup_base_fn + '.' + today_timestamp + '.gz')
   end
 
 
@@ -222,7 +238,7 @@ class Backup < ConditionResponder
 
 
   def self.get_backup_files_pattern(backup_dir, beginning_of_file_name)
-    File.join(backup_dir,beginning_of_file_name) + '.*'
+    File.join(backup_dir, beginning_of_file_name) + '.*'
   end
 
 
