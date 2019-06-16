@@ -132,5 +132,15 @@ class SHFNotifySlack
     "#{FOOTER_PREFIX}: #{f_text}"
   end
 
+
+  def self.failure_word
+    FAILURE_TEXT
+  end
+
+
+  def self.successful_word
+    SUCCESS_TEXT
+  end
+
 end # SHFNotifySlack
 

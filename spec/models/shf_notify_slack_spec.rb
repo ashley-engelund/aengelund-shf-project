@@ -91,7 +91,7 @@ end
 
 # ===============================================================
 
-RSpec.describe 'SHFNotifySlack', type: :model do
+RSpec.describe SHFNotifySlack, type: :model do
 
   before(:all) do
     # send the notifications to the _testing_ channel
@@ -691,6 +691,15 @@ RSpec.describe 'SHFNotifySlack', type: :model do
   end
 
   it '.footer_text has "SHF:" at the start' do
-    expect(SHFNotifySlack.footer_text('blorf')).to eq('SHF: blorf')
+    expect(described_class.footer_text('blorf')).to eq('SHF: blorf')
   end
+
+  it '.failure_word  is "Failure!"' do
+    expect(described_class.failure_word).to eq "Failure!"
+  end
+
+  it '.successful_word is "Success!"' do
+    expect(described_class.successful_word).to eq "Successful"
+  end
+
 end
