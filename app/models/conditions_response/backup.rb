@@ -142,7 +142,7 @@ class Backup < ConditionResponder
 
   def self.condition_response(condition, log)
 
-    @slack_error_already_logged = false  # keep us from logging a Slack error every time it percolates up through rescue blocks
+    @slack_error_already_logged = false # keep us from logging a Slack error every time it percolates up through rescue blocks
 
     validate_timing(get_timing(condition), [TIMING_EVERY_DAY], log)
 
@@ -153,7 +153,7 @@ class Backup < ConditionResponder
     backup_files = []
     backup_dir = backup_dir(config)
 
-    backup_makers.each do |backup_maker|
+    iterate_and_log_notify_errors(backup_makers, 'while in the backup_makers.each loop', log) do |backup_maker|
 
       # Create a full file path that will be in the backup_directory,
       # and have the filename and extension provided by the backup_maker,
@@ -161,73 +161,32 @@ class Backup < ConditionResponder
       backup_file = backup_target_fn(backup_dir, backup_maker[:backup_maker].target_filename)
       backup_files << backup_file
 
-      begin
-        log.record('info', "Backing up to: #{backup_file}")
+      log.record('info', "Backing up to: #{backup_file}")
 
-        # this will use the default backup sources set when the backup_maker was created
-        backup_maker[:backup_maker].backup(target: backup_file)
-
-      rescue Slack::Notifier::APIError => slack_error
-        # Halt the backup if we cannot write to Slack; log then raise the error
-        log_slack_error(slack_error, 'while in the backup_makers.each loop', log)
-        raise slack_error
-
-      rescue => backup_error
-        log_and_notify(backup_error, log)
-        # Do NOT raise the error. This will let all other backup_maker.backups to run
-        next
-      end
+      # this will use the default backup sources set when the backup_maker was created
+      backup_maker[:backup_maker].backup(target: backup_file)
     end
 
 
-    # Copy backup files to S3
     log.record('info', 'Moving backup files to AWS S3')
-
     s3, bucket, bucket_folder = get_s3_objects(today_timestamp)
 
-    backup_files.each do |file|
-      begin
-        upload_file_to_s3(s3, bucket, bucket_folder, file)
-
-      rescue Slack::Notifier::APIError => slack_error
-        # Halt the backup if we cannot write to Slack; log then raise the error
-        log_slack_error(slack_error,
-                        "in backup_files.each loop uploading_file_to_s3(#{s3}, #{bucket}, #{bucket_folder}, #{file})",
-                        log)
-        raise slack_error
-
-      rescue => backup_error
-        log_and_notify(backup_error, log)
-        next
-      end
+    iterate_and_log_notify_errors(backup_files, 'in backup_files loop, uploading_file_to_s3', log) do |backup_file|
+      upload_file_to_s3(s3, bucket, bucket_folder, backup_file)
     end
 
 
-    # Prune older backups beyond "keep" (days) limit
     log.record('info', 'Pruning older backups on local storage')
 
-    backup_makers.each do |backup_maker|
-      begin
-        file_pattern = get_backup_files_pattern(backup_dir, backup_maker[:backup_maker].target_filename)
-        delete_excess_backup_files(file_pattern, backup_maker[:keep_num])
-
-      rescue Slack::Notifier::APIError => slack_error
-        # Halt the backup if we cannot write to Slack; log then raise the error
-        log_slack_error(slack_error,
-                        "while pruning in the backup_makers.each loop backup_maker = #{backup_maker.pretty_inspect}, file_pattern = #{file_pattern}",
-                        log)
-        raise slack_error
-
-      rescue => backup_error
-        log_and_notify(backup_error, log)
-        next
-      end
+    iterate_and_log_notify_errors(backup_makers, 'while pruning in the backup_makers.each loop', log) do |backup_maker|
+      file_pattern = get_backup_files_pattern(backup_dir, backup_maker[:backup_maker].target_filename)
+      delete_excess_backup_files(file_pattern, backup_maker[:keep_num])
     end
 
 
   rescue Slack::Notifier::APIError => slack_error
     # Halt the backup if we cannot write to Slack; log then raise the error
-    log_slack_error(slack_error, '(not within a loop)', log)
+    log_slack_error(slack_error, log, '(not within a loop)')
     raise slack_error
 
   rescue => backup_error
@@ -328,6 +287,33 @@ class Backup < ConditionResponder
   end
 
 
+  # Iterate through the list, rescuing errors. If it's a Slack error,
+  # log and raise the error (stop iterating).
+  # For any other error, log  and send a notification
+  # and continue iterating via the 'next' keyword.
+  #
+  # @param [Enumerable] list - items we are iterating through
+  # @param [String] additional_error_info - additional information to include
+  #                  when logging or notifying
+  # @param [Log] log - the log to write to
+  #
+  def self.iterate_and_log_notify_errors(list, additional_error_info, log)
+
+    list.each do |item|
+      yield(item)
+
+    rescue Slack::Notifier::APIError => slack_error
+      # Halt the backup if we cannot write to Slack; log then raise the error
+      log_slack_error(slack_error, log, "#{additional_error_info}. Current item: #{item.inspect}")
+      raise slack_error
+
+    rescue => backup_error
+      log_and_notify(backup_error, log, "#{additional_error_info}. Current item: #{item.inspect}")
+      next
+    end
+  end
+
+
   # Record the error and additional_info to the given log and send a Slack notification.
   #
   # TODO  this seems like a general-purpose method that we need in many places.  Refactor into a class/module to be available all places
@@ -366,9 +352,11 @@ class Backup < ConditionResponder
     "Slack Notification failure during #{self.name}.#{during_method}"
   end
 
+
   # Only log the error if it has not already been logged.
-  def self.log_slack_error(slack_error, details, log)
+  def self.log_slack_error(slack_error, log, details = '')
     log.error("#{slack_error_encountered_str} #{details}: #{slack_error}") unless @slack_error_already_logged
     @slack_error_already_logged = true
   end
+
 end

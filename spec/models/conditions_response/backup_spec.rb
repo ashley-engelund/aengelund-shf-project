@@ -3,6 +3,8 @@ require 'rails_helper'
 require 'shared_examples/shared_condition_specs'
 require 'shared_context/activity_logger'
 
+# TODO mock logs with a FakeLogger + use 'expect(FakeLogger).to receive(...)' (= faster since no file I/O)
+
 
 RSpec.describe Backup, type: :model do
 
@@ -131,11 +133,6 @@ RSpec.describe Backup, type: :model do
                                                     .with(/touch/)
                                                     .and_raise(Errno::ENOENT, 'blorfo')
 
-        # Slack notification should be sent
-        expect(SHFNotifySlack).to receive(:failure_notification)
-                                     .with('Backup', text: 'No such file or directory - blorfo')
-
-
         expect(described_class).to receive(:upload_file_to_s3)
                                        .with(anything, anything, expected_aws_bucketname, File.join(@backup_dir, code_backup_fname))
         expect(described_class).to receive(:upload_file_to_s3)
@@ -150,6 +147,13 @@ RSpec.describe Backup, type: :model do
         expect(described_class).to receive(:delete_excess_backup_files)
                                        .with("#{File.join(@backup_dir, files_backup_basefn)}.*", 31)
 
+        expected_error_text = /No such file or directory - blorfo while in the backup_makers.each loop. Current item:/
+        # Slack notification should be sent
+        expect(SHFNotifySlack).to receive(:failure_notification)
+                                      .with('Backup', text: expected_error_text)
+                                 #     .with('Backup', text: 'No such file or directory - blorfo')
+
+
         class_name = backup_condition.class_name
         klass = class_name.constantize
 
@@ -159,7 +163,7 @@ RSpec.describe Backup, type: :model do
         end
 
         # There will be errors in the log file
-        expect(File.read(@logfilename)).to include('error')
+        expect(File.read(@logfilename)).to match(expected_error_text)
 
         # expect only the successful backup files to be in the backup directory
         expect(File.exist?(File.join(@backup_dir, code_backup_fname))).to be_truthy
@@ -187,8 +191,10 @@ RSpec.describe Backup, type: :model do
         expect(described_class).to receive(:delete_excess_backup_files)
                                        .with("#{File.join(@backup_dir, files_backup_basefn)}.*", 31)
 
+        expected_error_text = /#{@error_raised} in backup_files loop, uploading_file_to_s3. Current item:/
+
         # Slack notification should be sent
-        expect(SHFNotifySlack).to receive(:failure_notification).with(anything, text: @error_raised.to_s)
+        expect(SHFNotifySlack).to receive(:failure_notification).with(anything, text: expected_error_text)
 
         class_name = backup_condition.class_name
         klass = class_name.constantize
@@ -199,7 +205,7 @@ RSpec.describe Backup, type: :model do
         end
 
         # There will be errors in the log file
-        expect(File.read(@logfilename)).to include('error')
+        expect(File.read(@logfilename)).to match(expected_error_text)
 
         # expect the backup files to be in the backup directory
         expect(File.exist?(File.join(@backup_dir, code_backup_fname))).to be_truthy
@@ -209,7 +215,7 @@ RSpec.describe Backup, type: :model do
 
 
       it 'pruning the backup files fails' do
-        @error_raised = NoMethodError.new('flurb')
+        @error_raised = NoMethodError
 
         allow(described_class).to receive(:validate_timing)
         allow_any_instance_of(AbstractBackupMaker).to receive(:backup)
@@ -225,8 +231,10 @@ RSpec.describe Backup, type: :model do
         expect(described_class).to receive(:delete_excess_backup_files)
                                        .with("#{File.join(@backup_dir, files_backup_basefn)}.*", anything)
 
+        expected_error_text = /#{@error_raised} while pruning in the backup_makers.each loop. Current item:/
+
         # Slack notification should be sent
-        expect(SHFNotifySlack).to receive(:failure_notification).with(anything, text: @error_raised.to_s)
+        expect(SHFNotifySlack).to receive(:failure_notification).with(anything, text: expected_error_text)
 
         class_name = backup_condition.class_name
         klass = class_name.constantize
@@ -237,7 +245,7 @@ RSpec.describe Backup, type: :model do
         end
 
         # The error was recorded in the log
-        expect(File.read(@logfilename)).to include("#{@error_raised}")
+        expect(File.read(@logfilename)).to match(expected_error_text)
 
         # expect the backup files to be in the backup directory
         expect(File.exist?(File.join(@backup_dir, code_backup_fname))).to be_truthy
@@ -252,6 +260,8 @@ RSpec.describe Backup, type: :model do
       before(:each) do
         @slack_error = Slack::Notifier::APIError.new
       end
+
+      let(:start_of_error_text) { 'Slack Notification failure during Backup\.condition_response' }
 
 
       it 'not within a loop: logs "(not within a loop)"' do
@@ -271,8 +281,9 @@ RSpec.describe Backup, type: :model do
           expect{klass.condition_response(backup_condition, log)}.to raise_error(@slack_error,)
         end
 
+        expected_error_text = /#{start_of_error_text} \(not within a loop\): #{@slack_error}/
         # The Slack error was recorded in the log
-        expect(File.read(@logfilename)).to match(/Slack Notification failure during Backup\.condition_response \(not within a loop\)\: #{@slack_error}/)
+        expect(File.read(@logfilename)).to match(expected_error_text)
       end
 
 
@@ -294,8 +305,10 @@ RSpec.describe Backup, type: :model do
           expect{klass.condition_response(backup_condition, log)}.to raise_error(@slack_error,)
         end
 
+        expected_error_text = /#{start_of_error_text} while in the backup_makers\.each loop\. Current item:/
+
         # The Slack error was recorded in the log just once
-        expect(File.read(@logfilename)).to match(/Slack Notification failure during Backup\.condition_response while in the backup_makers\.each loop\: #{@slack_error}/)
+        expect(File.read(@logfilename)).to match(expected_error_text)
         expect(File.read(@logfilename)).not_to match(/not within a loop/) # the error is not also logged by final rescue clause
       end
 
@@ -317,8 +330,9 @@ RSpec.describe Backup, type: :model do
           expect{klass.condition_response(backup_condition, log)}.to raise_error(@slack_error,)
         end
 
+        expected_error_text = /#{start_of_error_text} in backup_files loop, uploading_file_to_s3\. Current item:/
         # The Slack error was recorded in the log just once
-        expect(File.read(@logfilename)).to match(/Slack Notification failure during Backup\.condition_response in backup_files.each loop uploading_file_to_s3\((.*), (.*), (.*), (.*)\)\: #{@slack_error}/)
+        expect(File.read(@logfilename)).to match(expected_error_text)
         expect(File.read(@logfilename)).not_to match(/not within a loop/) # the error is not also logged by final rescue clause
       end
 
@@ -340,15 +354,14 @@ RSpec.describe Backup, type: :model do
           expect{klass.condition_response(backup_condition, log)}.to raise_error(@slack_error,)
         end
 
-        # The Slack error was recorded in the log just once
-        expect(File.read(@logfilename)).to match(/Slack Notification failure during Backup\.condition_response while pruning in the backup_makers\.each loop backup_maker = (.*)CodeBackupMaker(.*),(\s*)file_pattern =(.*)\: #{@slack_error}/m)
+        expected_error_text = /#{start_of_error_text} while pruning in the backup_makers\.each loop\. Current item:/
 
+        # The Slack error was recorded in the log just once
+        expect(File.read(@logfilename)).to match(expected_error_text)
         expect(File.read(@logfilename)).not_to match(/not within a loop/) # the error is not also logged by final rescue clause
       end
 
-
     end
-
   end
 
 
@@ -902,6 +915,61 @@ RSpec.describe Backup, type: :model do
       end
     end
 
+
+    describe 'iterate_and_log_notify_errors(list, slack_error_details, log)' do
+
+      before(:each) do
+        allow(SHFNotifySlack).to receive(:failure_notification)
+                                     .with(anything, anything)
+
+        @strings = %w(a b c) # this is the list of items we'll iterate through
+        @result_str = ''
+      end
+
+
+      it 'iterates through each item in the list with the yield' do
+
+        described_class.iterate_and_log_notify_errors(@strings, 'error during iteration test', FakeLogger) do | s |
+          @result_str << s
+        end
+
+        expect(@result_str).to eq 'abc'
+      end
+
+
+      it 'Slack error: is logged with the detail message and raised' do
+
+        expect(FakeLogger).to receive(:error)
+                                  .with(/Slack Notification failure during Backup\.condition_response during iteration test. Current item: "b"\: #{Slack::Notifier::APIError}/)
+
+        expect{
+        described_class.iterate_and_log_notify_errors(@strings, 'during iteration test', FakeLogger) do | s |
+          raise Slack::Notifier::APIError if s == 'b'
+          @result_str << s
+        end}.to raise_error(Slack::Notifier::APIError)
+
+        expect(@result_str).to eq 'a'
+      end
+
+
+      it 'non-Slack error is logged, notification sent, iteration continues' do
+
+        some_error = NameError
+
+        expected_error_str = "#{some_error} error during iteration test. Current item: \"b\""
+
+        expect(SHFNotifySlack).to receive(:failure_notification).with(anything, text: expected_error_str)
+        expect(FakeLogger).to receive(:error).with(expected_error_str)
+
+        described_class.iterate_and_log_notify_errors(@strings, 'error during iteration test', FakeLogger) do | s |
+          raise some_error if s == 'b'
+          @result_str << s
+        end
+
+        expect(@result_str).to eq 'ac'
+      end
+
+    end
   end
 
 end
