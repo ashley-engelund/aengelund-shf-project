@@ -325,7 +325,7 @@ class Backup < ConditionResponder
   #
   def self.log_and_notify(error, log, additional_info = '')
 
-    log_string = additional_info&.empty? ? error.to_s : "#{error} #{additional_info}"
+    log_string = additional_info.blank? ? error.to_s : "#{error} #{additional_info}"
 
     log.error(log_string)
     SHFNotifySlack.failure_notification(self.name, text: log_string)
