@@ -133,7 +133,7 @@ RSpec.describe FilesBackupMaker do
       end
 
       it 'will fail unless sources are provided (tar will fail with an empty list)' do
-        expect{subject.backup}.to raise_error(ShfConditionError::BackupCommandNotSuccessfulError, /tar: no files or directories specified/)
+        expect{subject.backup}.to raise_error(ShfConditionError::BackupCommandNotSuccessfulError, /tar/)
       end
     end
 
