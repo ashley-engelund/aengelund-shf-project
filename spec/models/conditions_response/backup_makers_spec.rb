@@ -5,6 +5,46 @@ require 'rails_helper'
 require_relative File.join(Rails.root, 'app/models/conditions_response/backup')
 
 
+# =========================================================================
+# Shared examples
+
+RSpec.shared_examples 'it takes a backup target filename, with default =' do |default_filename|
+
+  before(:each) do
+    @temp_backup_sourcedir = Dir.mktmpdir('faux-code-dir')
+    @temp_backup_sourcefn1 = File.open(File.join(@temp_backup_sourcedir, 'some-sourcefile.txt'), 'w').path
+  end
+
+  describe 'target filename (the name of the backup file created)' do
+
+    it "default target backup file is '#{default_filename}'" do
+      files_backup = described_class.new(backup_sources: [@temp_backup_sourcefn1])
+      backup_created_fn = files_backup.backup
+
+      expect(backup_created_fn).to eq default_filename
+      expect(File.exist?(default_filename)).to be_truthy
+      File.delete(default_filename)
+    end
+
+    it 'can provide the name of the file' do
+      files_backup = described_class.new(backup_sources: [@temp_backup_sourcefn1])
+
+      target_dir = Dir.mktmpdir('backup-target-dir')
+      given_backup_target_fn = File.join(target_dir, 'some_filename.tar.zzzx')
+
+      files_backup.backup(target: given_backup_target_fn)
+
+      expect(File.exist?(given_backup_target_fn)).to be_truthy
+      File.delete(given_backup_target_fn)
+    end
+
+  end
+
+end
+
+# =========================================================================
+# =========================================================================
+
 RSpec.describe AbstractBackupMaker do
 
   describe 'Unit tests' do
@@ -14,7 +54,7 @@ RSpec.describe AbstractBackupMaker do
     end
 
     it 'default backup target base filename = backup-<class name>-<DateTime.current>.tar' do
-      expect(subject.backup_target_filebase).to match(/backup-AbstractBackupMaker\.tar/)
+      expect(subject.target_filename).to match(/backup-AbstractBackupMaker\.tar/)
     end
 
     describe 'shell_cmd' do
@@ -49,13 +89,14 @@ RSpec.describe FilesBackupMaker do
     let(:backup_using_defaults) { FilesBackupMaker.new }
 
     it 'default backup target base filename = backup-FilesBackupMaker.tar' do
-      expect(subject.backup_target_filebase).to eq 'backup-FilesBackupMaker.tar'
+      expect(subject.target_filename).to eq 'backup-FilesBackupMaker.tar'
     end
 
 
     describe '#backup' do
 
-      it 'uses #shell_cmd to create a tar in the destination directory with all entries in sources using tar -chzf}' do
+
+      it 'uses #shell_cmd to create a tar with all entries in sources using tar -chzf}' do
 
         temp_backup_sourcedir = Dir.mktmpdir('faux-code-dir')
         temp_backup_sourcefn1 = File.open(File.join(temp_backup_sourcedir, 'faux-codefile.rb'), 'w').path
@@ -69,11 +110,10 @@ RSpec.describe FilesBackupMaker do
 
         temp_backup_target = File.join(Dir.mktmpdir('temp-files-dir'), 'files_backup_fn.zzkx')
 
-        files_backup = described_class.new(backup_target_filebase: temp_backup_target,
+        files_backup = described_class.new(target_filename: temp_backup_target,
                                            backup_sources: [temp_backup_sourcedir,
                                                             temp_backup_source2fn1])
         files_backup.backup
-
 
         expect(File.exist?(temp_backup_target)).to be_truthy
 
@@ -93,6 +133,47 @@ RSpec.describe FilesBackupMaker do
         expect(backup_files).to match_array(expected)
       end
 
+
+      it_behaves_like 'it takes a backup target filename, with default =', 'backup-FilesBackupMaker.tar'
+
+
+      describe 'source files for the backup' do
+
+        it "default sources = [] (none)" do
+          expect(subject).to receive(:shell_cmd)
+                                 .with(/tar -chzf (.*) #{[].join(' ')}/)
+          subject.backup
+        end
+
+
+        it 'can provide the sources' do
+
+          files_backup = described_class.new
+
+          source_dir = Dir.mktmpdir('backup-sources-dir')
+          source_files = []
+          3.times do |i|
+            fn = File.join(source_dir, "source-#{i}.txt")
+            File.open(fn, 'w'){|f| f.puts "blorf"}
+            source_files << fn
+          end
+
+          expect(files_backup).to receive(:shell_cmd)
+                                      .with(/tar -chzf (.*) #{source_files.join(' ')}/)
+                                      .and_call_original
+
+          backup_created = files_backup.backup(sources: source_files)
+          puts "backup_created: #{backup_created}"
+
+          expect(File.exist?(backup_created)).to be_truthy
+          File.delete(backup_created)
+        end
+
+      end
+
+      it 'will fail unless sources are provided (tar will fail with an empty list)' do
+        expect{subject.backup}.to raise_error(ShfConditionError::BackupCommandNotSuccessfulError, /tar: no files or directories specified/)
+      end
     end
 
   end
@@ -104,13 +185,33 @@ RSpec.describe CodeBackupMaker do
   describe 'Unit tests' do
 
     it 'default backup target base filename = current.tar' do
-      expect(subject.backup_target_filebase).to eq 'current.tar'
+      expect(subject.target_filename).to eq 'current.tar'
     end
 
-    it 'default sources = [CODE_ROOT_DIRECTORY]' do
+    it 'default sources = [/var/www/shf/current/]' do
       expect(subject.backup_sources).to eq ['/var/www/shf/current/']
     end
 
+
+    describe 'backup' do
+
+      it 'will not fail if no sources specified (since default should have files in the directory)' do
+
+        source_dir = Dir.mktmpdir('backup-source-dir')
+        source_files = []
+        3.times do |i|
+          fn = File.join(source_dir, "source-#{i}.txt")
+          File.open(fn, 'w'){|f| f.puts "blorf"}
+          source_files << fn
+        end
+
+        allow(subject).to receive(:default_sources).and_return(source_files)
+
+        target_backup_fn = 'target.bak'
+        expect{subject.backup(target: target_backup_fn)}.not_to raise_error(ShfConditionError::BackupCommandNotSuccessfulError, /tar: no files or directories specified/)
+        File.delete(target_backup_fn)
+      end
+    end
   end
 end
 
@@ -122,13 +223,12 @@ RSpec.describe DBBackupMaker do
     let(:backup_using_defaults) { DBBackupMaker.new }
 
     it 'default backup target base filename = db_backup.sql' do
-      expect(subject.backup_target_filebase).to eq 'db_backup.sql'
+      expect(subject.target_filename).to eq 'db_backup.sql'
     end
 
     it 'default sources = [DB_NAME]' do
       expect(subject.backup_sources).to eq ['shf_project_production']
     end
-
 
     describe '#backup' do
 
@@ -140,7 +240,7 @@ RSpec.describe DBBackupMaker do
 
           new_db_backup = described_class.new(backup_sources: ['this1', 'that2'])
 
-          expected_backup_fname =  'db_backup.sql'
+          expected_backup_fname = 'db_backup.sql'
           expect(new_db_backup).to receive(:shell_cmd).with("touch #{expected_backup_fname}").and_call_original
           expect(new_db_backup).to receive(:shell_cmd).with("pg_dump -d this1 | gzip > #{expected_backup_fname}")
           expect(new_db_backup).to receive(:shell_cmd).with("pg_dump -d that2 | gzip > #{expected_backup_fname}")
@@ -155,7 +255,7 @@ RSpec.describe DBBackupMaker do
 
           temp_backup_target = File.join(@temp_dir, 'db_dumped.sql')
 
-          new_db_backup = described_class.new(backup_target_filebase: temp_backup_target,
+          new_db_backup = described_class.new(target_filename: temp_backup_target,
                                               backup_sources: ['this1', 'that2'])
 
           expected_backup_fname = temp_backup_target
@@ -167,6 +267,41 @@ RSpec.describe DBBackupMaker do
           expect(File.exist?(expected_backup_fname)).to be_truthy
         end
       end
+
+
+      it_behaves_like 'it takes a backup target filename, with default =', 'db_backup.sql'
+
+      describe 'source files for the backup' do
+
+        before(:each) { allow(subject).to receive(:shell_cmd).with(/touch (.*)/) }
+
+        it 'default sources = [shf_project_production]' do
+          expect(subject).to receive(:shell_cmd)
+                                 .with(/pg_dump (.*) shf_project_production/)
+          subject.backup
+        end
+
+
+        it 'can provide the sources' do
+
+          source_files = ['some.db', 'some-other.db', 'a-production.db']
+
+          expect(subject).to receive(:shell_cmd).with(/pg_dump (.*) some.db/)
+          expect(subject).to receive(:shell_cmd).with(/pg_dump (.*) some-other.db/)
+          expect(subject).to receive(:shell_cmd).with(/pg_dump (.*) a-production.db/)
+
+          subject.backup(sources: source_files)
+        end
+
+      end
+
+      it 'will not fail if no sources are specified since default is not empty' do
+        expect(subject).to receive(:shell_cmd).with(/touch (.*)/)
+        expect(subject).to receive(:shell_cmd)
+                               .with(/pg_dump (.*) shf_project_production/)
+        subject.backup
+      end
+
     end
 
   end

@@ -485,10 +485,10 @@ RSpec.describe Backup, type: :model do
 
 
       before(:each) do
-        @code_backup_maker = CodeBackupMaker.new(backup_target_filebase: 'code_backup_maker_target_file.tar')
-        @db_backup_maker1 = DBBackupMaker.new(backup_target_filebase: 'db_backup_maker_target_file.sql')
-        @db_backup_maker2 = DBBackupMaker.new(backup_target_filebase: 'another_db_backup_maker_target_file.flurb')
-        @file_backup_maker = FilesBackupMaker.new(backup_target_filebase: 'files_maker_target_file.tar',
+        @code_backup_maker = CodeBackupMaker.new(target_filename: 'code_backup_maker_target_file.tar')
+        @db_backup_maker1 = DBBackupMaker.new(target_filename: 'db_backup_maker_target_file.sql')
+        @db_backup_maker2 = DBBackupMaker.new(target_filename: 'another_db_backup_maker_target_file.flurb')
+        @file_backup_maker = FilesBackupMaker.new(target_filename: 'files_maker_target_file.tar',
                                                   backup_sources: ['file1.txt', 'file2.zip'])
         @created_backup_makers = [
             { backup_maker: @code_backup_maker, keep_num: 3 },

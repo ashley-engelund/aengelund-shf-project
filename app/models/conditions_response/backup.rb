@@ -18,32 +18,31 @@ end
 
 # @desc Abstract class for all backup classes.
 #   backup_sources = the list of files or glob pattern of the files to be backed up
-#   backup_target_filebase = the basic filename created by backing up the sources. Info
-#    is added to this basic filename (e.g. the date is added,
-#    perhaps another extension is appended like '.gz')
+#   target_filename = filename of the backup (=target) created by backing
+#   up the sources.
 #
 # Each Backup class must implement :backup(backup_target, sources) to do whatever
 # it needs to do to create the backup
 #
 class AbstractBackupMaker
 
-  attr :backup_target_filebase, :backup_sources
+  attr :target_filename, :backup_sources
 
   # Set the backup target and the backup sources
-  def initialize(backup_target_filebase: default_backup_filebase,
+  def initialize(target_filename: default_backup_filename,
                  backup_sources: default_sources)
-    @backup_target_filebase = backup_target_filebase
+    @target_filename = target_filename
     @backup_sources = backup_sources
   end
 
 
-  # Do the backup. Default target is the backup_target_filebase; default sources = the backup sources)
-  def backup(_target = backup_target_filebase, _sources = backup_sources)
+  # Do the backup. Default target is the target_filename; default sources = the backup sources)
+  def backup(target: target_filename, sources: backup_sources)
     raise NoMethodError, "Subclass must define the #{__method__} method", caller
   end
 
 
-  def default_backup_filebase
+  def default_backup_filename
     "backup-#{self.class.name}.tar"
   end
 
@@ -69,8 +68,10 @@ end
 class FilesBackupMaker < AbstractBackupMaker
 
   # use tar to compress all sources into the file named by target
-  def backup(target = backup_target_filebase, sources = backup_sources)
+  # @return [String] - the name of the backup target created
+  def backup(target: target_filename, sources: backup_sources)
     shell_cmd("tar -chzf #{target} #{sources.join(' ')}")
+    target
   end
 
 end
@@ -83,7 +84,7 @@ class CodeBackupMaker < FilesBackupMaker
   DEFAULT_BACKUP_FILEBASE = 'current.tar'
 
 
-  def default_backup_filebase
+  def default_backup_filename
     DEFAULT_BACKUP_FILEBASE
   end
 
@@ -103,17 +104,19 @@ class DBBackupMaker < AbstractBackupMaker
   DB_BACKUP_FILEBASE = 'db_backup.sql'
 
   # Backup all Postgres databases in sources, then gzip them into the target
-  def backup(target = backup_target_filebase, sources = backup_sources)
+  # @return [String] - filename of the backup target created
+  def backup(target: target_filename, sources: backup_sources)
 
     shell_cmd("touch #{target}") # must ensure the file exists
 
     sources.each do |source|
       shell_cmd("pg_dump -d #{source} | gzip > #{target}")
     end
+    target
   end
 
 
-  def default_backup_filebase
+  def default_backup_filename
     DB_BACKUP_FILEBASE
   end
 
@@ -152,14 +155,17 @@ class Backup < ConditionResponder
 
     backup_makers.each do |backup_maker|
 
-      backup_file = backup_target_fn(backup_dir, backup_maker[:backup_maker].backup_target_filebase)
+      # Create a full file path that will be in the backup_directory,
+      # and have the filename and extension provided by the backup_maker,
+      # but with with date and '.gz' appended.
+      backup_file = backup_target_fn(backup_dir, backup_maker[:backup_maker].target_filename)
       backup_files << backup_file
 
       begin
         log.record('info', "Backing up to: #{backup_file}")
 
-        # this will use the default source and target set when the backup maker was created
-        backup_maker[:backup_maker].backup(backup_file)
+        # this will use the default backup sources set when the backup_maker was created
+        backup_maker[:backup_maker].backup(target: backup_file)
 
       rescue Slack::Notifier::APIError => slack_error
         # Halt the backup if we cannot write to Slack; log then raise the error
@@ -202,7 +208,7 @@ class Backup < ConditionResponder
 
     backup_makers.each do |backup_maker|
       begin
-        file_pattern = get_backup_files_pattern(backup_dir, backup_maker[:backup_maker].backup_target_filebase)
+        file_pattern = get_backup_files_pattern(backup_dir, backup_maker[:backup_maker].target_filename)
         delete_excess_backup_files(file_pattern, backup_maker[:keep_num])
 
       rescue Slack::Notifier::APIError => slack_error
