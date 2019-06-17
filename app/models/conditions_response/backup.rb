@@ -17,19 +17,32 @@ module ShfConditionError
 end
 
 # @desc Abstract class for all backup classes.
-#   backup_sources = the list of files or glob pattern of the files to be backed up
-#   target_filename = filename of the backup (=target) created by backing
-#   up the sources.
+#
+# base_filename - the default target filename.
+#                 This does _not_ have a directory, it is only a filename
+#                 and extension.
+#                 This can be used to construct a full filename for the
+#                 target_filename for the backup.
+#
+# target_filename - the filename used for the backup file that is created
+#                   The default value for this is the base_filename.
+#
+# backup_sources - a list that is used as the source for the backups.
+#                  Subclasses use this list to create their backups.
+#                  This is what is backed up.
+
 #
 # Each Backup class must implement :backup(backup_target, sources) to do whatever
 # it needs to do to create the backup
 #
 class AbstractBackupMaker
 
+
   attr :target_filename, :backup_sources
 
+
   # Set the backup target and the backup sources
-  def initialize(target_filename: default_backup_filename,
+  def initialize(target_filename: base_filename,
                  backup_sources: default_sources)
     @target_filename = target_filename
     @backup_sources = backup_sources
@@ -42,7 +55,7 @@ class AbstractBackupMaker
   end
 
 
-  def default_backup_filename
+  def base_filename
     "backup-#{self.class.name}.tar"
   end
 
@@ -84,7 +97,7 @@ class CodeBackupMaker < FilesBackupMaker
   DEFAULT_BACKUP_FILEBASE = 'current.tar'
 
 
-  def default_backup_filename
+  def base_filename
     DEFAULT_BACKUP_FILEBASE
   end
 
@@ -116,7 +129,7 @@ class DBBackupMaker < AbstractBackupMaker
   end
 
 
-  def default_backup_filename
+  def base_filename
     DB_BACKUP_FILEBASE
   end
 
@@ -140,6 +153,7 @@ class Backup < ConditionResponder
   # -------------
 
 
+  # TODO: Slack notification may or may not be used (= the use_slack_notification flag).
   def self.condition_response(condition, log)
 
     @slack_error_already_logged = false # keep us from logging a Slack error every time it percolates up through rescue blocks
@@ -158,7 +172,7 @@ class Backup < ConditionResponder
       # Create a full file path that will be in the backup_directory,
       # and have the filename and extension provided by the backup_maker,
       # but with with date and '.gz' appended.
-      backup_file = backup_target_fn(backup_dir, backup_maker[:backup_maker].target_filename)
+      backup_file = backup_target_fn(backup_dir, backup_maker[:backup_maker].base_filename)
       backup_files << backup_file
 
       log.record('info', "Backing up to: #{backup_file}")
@@ -179,14 +193,14 @@ class Backup < ConditionResponder
     log.record('info', 'Pruning older backups on local storage')
 
     iterate_and_log_notify_errors(backup_makers, 'while pruning in the backup_makers.each loop', log) do |backup_maker|
-      file_pattern = get_backup_files_pattern(backup_dir, backup_maker[:backup_maker].target_filename)
+      file_pattern = get_backup_files_pattern(backup_dir, backup_maker[:backup_maker].base_filename)
       delete_excess_backup_files(file_pattern, backup_maker[:keep_num])
     end
 
 
   rescue Slack::Notifier::APIError => slack_error
     # Halt the backup if we cannot write to Slack; log then raise the error
-    log_slack_error(slack_error, log, '(not within a loop)')
+     log_slack_error(slack_error, log, '(in rescue at bottom of condition_response)')
     raise slack_error
 
   rescue => backup_error
@@ -232,8 +246,8 @@ class Backup < ConditionResponder
   end
 
 
-  def self.get_backup_files_pattern(backup_dir, beginning_of_file_name)
-    File.join(backup_dir, beginning_of_file_name) + '.*'
+  def self.get_backup_files_pattern(backup_dir, filename)
+    File.join(backup_dir, filename) + '.*'
   end
 
 
@@ -319,13 +333,13 @@ class Backup < ConditionResponder
   # TODO  this seems like a general-purpose method that we need in many places.  Refactor into a class/module to be available all places
   #
   #
-  # @param [Error] error - Error that needs to be recorded
+  # @param [Error] original_error - Error that needs to be recorded
   # @param [Log] log - the log to write to. Must respond to :error(message)
   # @param [String] additional_info - any additional information that should also be recorded. Default = ''
   #
-  def self.log_and_notify(error, log, additional_info = '')
+  def self.log_and_notify(original_error, log, additional_info = '')
 
-    log_string = additional_info.blank? ? error.to_s : "#{error} #{additional_info}"
+    log_string = additional_info.blank? ? original_error.to_s : "#{original_error} #{additional_info}"
 
     log.error(log_string)
     SHFNotifySlack.failure_notification(self.name, text: log_string)
@@ -340,10 +354,10 @@ class Backup < ConditionResponder
     # ... Otherwise, an exception was raised during writing to the log.
     # Send a slack notification about that and continue (do _not_ raise it).
   rescue => not_a_slack_error
-    # send the original notification
+    # send a notification about the original error
     SHFNotifySlack.failure_notification(self.name, text: log_string)
 
-    # send another notification about this error
+    # send another notification about the error that happened in this method
     SHFNotifySlack.failure_notification(self.name, text: "Error: Could not write to the log in #{self.name}.#{__method__}: #{not_a_slack_error}")
   end
 

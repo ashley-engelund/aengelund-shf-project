@@ -16,9 +16,11 @@ RSpec.describe AbstractBackupMaker do
       expect(subject.backup_sources).to eq []
     end
 
-    it 'default backup target base filename = backup-<class name>-<DateTime.current>.tar' do
-      expect(subject.target_filename).to match(/backup-AbstractBackupMaker\.tar/)
+    it 'base_filename = backup-<class name>-<DateTime.current>.tar' do
+      expect(subject.base_filename).to match(/backup-AbstractBackupMaker\.tar/)
     end
+
+
 
     describe 'shell_cmd' do
 
@@ -49,8 +51,8 @@ RSpec.describe FilesBackupMaker do
 
     let(:backup_using_defaults) { FilesBackupMaker.new }
 
-    it 'default backup target base filename = backup-FilesBackupMaker.tar' do
-      expect(subject.target_filename).to eq 'backup-FilesBackupMaker.tar'
+    it 'base_filename = backup-FilesBackupMaker.tar' do
+      expect(subject.base_filename).to eq 'backup-FilesBackupMaker.tar'
     end
 
 
@@ -145,8 +147,8 @@ RSpec.describe CodeBackupMaker do
 
   describe 'Unit tests' do
 
-    it 'default backup target base filename = current.tar' do
-      expect(subject.target_filename).to eq 'current.tar'
+    it 'base_filename = current.tar' do
+      expect(subject.base_filename).to eq 'current.tar'
     end
 
     it 'default sources = [/var/www/shf/current/]' do
@@ -183,8 +185,8 @@ RSpec.describe DBBackupMaker do
 
     let(:backup_using_defaults) { DBBackupMaker.new }
 
-    it 'default backup target base filename = db_backup.sql' do
-      expect(subject.target_filename).to eq 'db_backup.sql'
+    it 'base_filename = db_backup.sql' do
+      expect(subject.base_filename).to eq 'db_backup.sql'
     end
 
     it 'default sources = [DB_NAME]' do

@@ -264,7 +264,7 @@ RSpec.describe Backup, type: :model do
       let(:start_of_error_text) { 'Slack Notification failure during Backup\.condition_response' }
 
 
-      it 'not within a loop: logs "(not within a loop)"' do
+      it 'not within a loop: logs "(in rescue at bottom of condition_response)"' do
         allow(described_class).to receive(:backup_dir).and_raise(@slack_error)
 
         allow(described_class).to receive(:validate_timing)
@@ -281,7 +281,7 @@ RSpec.describe Backup, type: :model do
           expect{klass.condition_response(backup_condition, log)}.to raise_error(@slack_error,)
         end
 
-        expected_error_text = /#{start_of_error_text} \(not within a loop\): #{@slack_error}/
+        expected_error_text = /#{start_of_error_text} \(in rescue at bottom of condition_response\): #{@slack_error}/
         # The Slack error was recorded in the log
         expect(File.read(@logfilename)).to match(expected_error_text)
       end
@@ -517,12 +517,13 @@ RSpec.describe Backup, type: :model do
                                       .and_return('BACKUP_DIR')
         allow(described_class).to receive(:create_backup_makers)
                                       .and_return(@created_backup_makers)
-        allow(described_class).to receive(:backup_target_fn)
-                                      .and_return(%w(BACKUP_DIR/code_backup_maker_target_file.zzz BACKUP_DIR/db_backup_maker_target_file.sql BACKUP_DIR/another_db_backup_maker_target_file.flurb BACKUP_DIR/files_maker_target_file.tar))
+
+        # allow(described_class).to receive(:backup_target_fn)
+        #                               .and_return(%w(BACKUP_DIR/code_backup_maker_target_file.zzz BACKUP_DIR/db_backup_maker_target_file.sql BACKUP_DIR/another_db_backup_maker_target_file.flurb BACKUP_DIR/files_maker_target_file.tar))
 
         allow(described_class).to receive(:get_s3_objects)
         allow(described_class).to receive(:upload_file_to_s3)
-        allow(described_class).to receive(:get_backup_files_pattern)
+        allow(described_class).to receive(:get_backup_files_pattern).and_call_original
         allow(described_class).to receive(:delete_excess_backup_files)
       end
 
@@ -577,37 +578,45 @@ RSpec.describe Backup, type: :model do
 
       describe 'with each backup maker, it:' do
 
-        it 'gets the maker backup file name and adds it to the list of backup files created' do
+        it 'creates the target backup filename based on the "base_name" of the backup maker' do
 
           expect(described_class).to receive(:backup_target_fn)
-                                         .with('BACKUP_DIR', 'code_backup_maker_target_file.tar')
+                                         .with('BACKUP_DIR', 'current.tar')
           expect(described_class).to receive(:backup_target_fn)
-                                         .with('BACKUP_DIR', 'db_backup_maker_target_file.sql')
+                                         .with('BACKUP_DIR', 'db_backup.sql')
           expect(described_class).to receive(:backup_target_fn)
-                                         .with('BACKUP_DIR', 'another_db_backup_maker_target_file.flurb')
+                                         .with('BACKUP_DIR', 'db_backup.sql')
           expect(described_class).to receive(:backup_target_fn)
-                                         .with('BACKUP_DIR', 'files_maker_target_file.tar')
+                                         .with('BACKUP_DIR', 'backup-FilesBackupMaker.tar')
 
           described_class.condition_response(backup_condition, FakeLogger)
         end
 
-        it "logs a message that it is 'Backing up to: <the backup file>'" do
+        it "logs a message that it is 'Backing up to: <the backup file>.<YYYY-mm-dd>.gz'" do
           allow(FakeLogger).to receive(:record).with('info', /Moving (.*)/)
           allow(FakeLogger).to receive(:record).with('info', /Pruning (.*)/)
 
-          expect(FakeLogger).to receive(:record).with('info', /Backing up to: (.*)/)
-                                    .exactly(expected_num_makers).times
+          today_str = Time.now.strftime '%Y-%m-%d'
+
+          expect(FakeLogger).to receive(:record)
+                                    .with('info', /Backing up to: BACKUP_DIR\/current\.tar\.#{today_str}\.gz/)
+          # we created 2 DB backup makers
+          expect(FakeLogger).to receive(:record).twice
+                                    .with('info', /Backing up to: BACKUP_DIR\/db_backup\.sql\.#{today_str}\.gz/)
+          expect(FakeLogger).to receive(:record)
+                                    .with('info', /Backing up to: BACKUP_DIR\/backup-FilesBackupMaker\.tar\.#{today_str}\.gz/)
 
           described_class.condition_response(backup_condition, FakeLogger)
         end
 
-        it 'sends the backup method to each backup maker, which creates the backup file for the maker' do
+        it 'sends the backup method to each backup maker, which returns the name of the backup file created' do
           expect(@code_backup_maker).to receive(:backup)
           expect(@db_backup_maker1).to receive(:backup)
           expect(@db_backup_maker2).to receive(:backup)
           expect(@file_backup_maker).to receive(:backup)
 
           described_class.condition_response(backup_condition, FakeLogger)
+
         end
       end
 
@@ -647,41 +656,29 @@ RSpec.describe Backup, type: :model do
 
         describe 'for each backup_maker it:' do
 
-          it 'gets the file pattern to use to prune older backup files for the backup_maker' do
+          it 'gets the file pattern to use to prune older backup files, based on the base_file from the backup_maker' do
             expect(described_class).to receive(:get_backup_files_pattern)
-                                           .with('BACKUP_DIR', 'code_backup_maker_target_file.tar')
+                                           .with('BACKUP_DIR', 'current.tar')
             expect(described_class).to receive(:get_backup_files_pattern)
-                                           .with('BACKUP_DIR', 'db_backup_maker_target_file.sql')
+                                           .with('BACKUP_DIR', 'db_backup.sql')
             expect(described_class).to receive(:get_backup_files_pattern)
-                                           .with('BACKUP_DIR', 'another_db_backup_maker_target_file.flurb')
+                                           .with('BACKUP_DIR', 'db_backup.sql')
             expect(described_class).to receive(:get_backup_files_pattern)
-                                           .with('BACKUP_DIR', 'files_maker_target_file.tar')
+                                           .with('BACKUP_DIR', 'backup-FilesBackupMaker.tar')
 
             described_class.condition_response(backup_condition, FakeLogger)
           end
 
           it 'deletes excess backup files that were created by this backup_maker, keeping the number given in the configuration' do
-            allow(described_class).to receive(:get_backup_files_pattern)
-                                          .with('BACKUP_DIR', 'code_backup_maker_target_file.tar')
-                                          .and_return('code_backup_maker_target_file.tar.*')
-            allow(described_class).to receive(:get_backup_files_pattern)
-                                          .with('BACKUP_DIR', 'db_backup_maker_target_file.sql')
-                                          .and_return('db_backup_maker_target_file.sql.*')
-            allow(described_class).to receive(:get_backup_files_pattern)
-                                          .with('BACKUP_DIR', 'another_db_backup_maker_target_file.flurb')
-                                          .and_return('another_db_backup_maker_target_file.flurb.*')
-            allow(described_class).to receive(:get_backup_files_pattern)
-                                          .with('BACKUP_DIR', 'files_maker_target_file.tar')
-                                          .and_return('files_maker_target_file.tar.*')
 
             expect(described_class).to receive(:delete_excess_backup_files)
-                                           .with('code_backup_maker_target_file.tar.*', 3)
+                                           .with('BACKUP_DIR/current.tar.*', 3)
             expect(described_class).to receive(:delete_excess_backup_files)
-                                           .with('db_backup_maker_target_file.sql.*', 2)
+                                           .with('BACKUP_DIR/db_backup.sql.*', 2)
             expect(described_class).to receive(:delete_excess_backup_files)
-                                           .with('another_db_backup_maker_target_file.flurb.*', 1)
+                                           .with('BACKUP_DIR/db_backup.sql.*', 1)
             expect(described_class).to receive(:delete_excess_backup_files)
-                                           .with('files_maker_target_file.tar.*', 99)
+                                           .with('BACKUP_DIR/backup-FilesBackupMaker.tar.*', 99)
 
             described_class.condition_response(backup_condition, FakeLogger)
           end
