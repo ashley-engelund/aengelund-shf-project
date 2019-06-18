@@ -57,7 +57,9 @@ RSpec.describe ShfBackupMakers::DBBackupMaker do
       end
 
 
-      it_behaves_like 'it takes a backup target filename, with default =', 'db_backup.sql'
+      it_behaves_like 'it takes a backup target filename, with default =',
+                      described_class.new,
+                      'db_backup.sql'
 
       describe 'source files for the backup' do
 
