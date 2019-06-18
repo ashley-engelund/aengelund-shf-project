@@ -2,7 +2,7 @@ module ShfBackupMakers
 
   #--------------------------
   #
-  # @class ShfBackupMakers::FilesBackupMaker
+  # @class ShfBackupMakers::FileSetBackupMaker
   #
   # @desc Responsibility: Create a backup using tar to compress the sources together
   #
@@ -10,7 +10,7 @@ module ShfBackupMakers
   #  @date   2019-06-15
   #
   #--------------------------
-  class FilesBackupMaker < AbstractBackupMaker
+  class FileSetBackupMaker < AbstractBackupMaker
 
     CODE_ROOT_DIRECTORY = '/var/www/shf/current/'
     LOGS_ROOT_DIRECTORY = '/var/log'

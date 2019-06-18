@@ -14,7 +14,7 @@ module ShfBackupMakers
   #
   #--------------------------
   # Backup a list of code directories.  Create 1 resulting backup file 'current.tar'
-  class CodeBackupMaker < FilesBackupMaker
+  class CodeBackupMaker < FileSetBackupMaker
 
     # exclude:
     # - files in .gitignore (they should be backed up in other file sets, e.g. /config/secrets.yml, .env

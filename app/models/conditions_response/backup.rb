@@ -159,7 +159,7 @@ class Backup < ConditionResponder
   end
 
 
-  # TODO create 1 FilesBackupMaker for each definition in the config?
+  # TODO create 1 FileSetBackupMaker for each definition in the config?
   #   name of the files_backup (= 'set name')
   #   # days to keep
   #   list of source files
@@ -176,7 +176,7 @@ class Backup < ConditionResponder
   #
   #
   #
-  # only create a FilesBackupMaker if there is a list of files to be backed up
+  # only create a FileSetBackupMaker if there is a list of files to be backed up
   def self.create_files_backup_maker(config)
     files_backup_maker = nil
     if (backup_files = config.fetch(:files, false))
@@ -185,7 +185,7 @@ class Backup < ConditionResponder
         raise ShfConditionError::BackupConfigFilesBadFormatError.new('Backup Condition configuration for :files is bad.  Must be an Array.')
       end
 
-      files_backup_maker = ShfBackupMakers::FilesBackupMaker.new(backup_sources: backup_files) unless backup_files.empty?
+      files_backup_maker = ShfBackupMakers::FileSetBackupMaker.new(backup_sources: backup_files) unless backup_files.empty?
     end
 
     files_backup_maker

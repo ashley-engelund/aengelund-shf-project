@@ -4,15 +4,15 @@ require_relative File.join(Rails.root, 'app/models/conditions_response/backup')
 require 'shared_examples/backup_maker_target_filename_with_default_spec'
 
 
-RSpec.describe ShfBackupMakers::FilesBackupMaker do
+RSpec.describe ShfBackupMakers::FileSetBackupMaker do
 
 
   describe 'Unit tests' do
 
-    let(:backup_using_defaults) { ShfBackupMakers::FilesBackupMaker.new('backup using defaults') }
+    let(:backup_using_defaults) { ShfBackupMakers::FileSetBackupMaker.new('backup using defaults') }
 
-    it 'base_filename = backup-FilesBackupMaker.tar' do
-      expect(subject.base_filename).to eq 'backup-FilesBackupMaker.tar'
+    it 'base_filename = backup-FileSetBackupMaker.tar' do
+      expect(subject.base_filename).to eq 'backup-FileSetBackupMaker.tar'
     end
 
 
@@ -95,7 +95,7 @@ RSpec.describe ShfBackupMakers::FilesBackupMaker do
       end
 
 
-      it_behaves_like 'it takes a backup target filename, with default =', 'backup-FilesBackupMaker.tar'
+      it_behaves_like 'it takes a backup target filename, with default =', 'backup-FileSetBackupMaker.tar'
 
 
       describe 'source files for the backup' do
