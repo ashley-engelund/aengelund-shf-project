@@ -1,17 +1,17 @@
-# Backup code and DB data in production
-
+require_relative File.join(__dir__, 'shf_condition_error_backup_errors')
 
 # Errors
 module ShfConditionError
-  class BackupError < StandardError
-  end
 
   class BackupConfigFilesBadFormatError < BackupError
   end
 
-  class BackupCommandNotSuccessfulError < BackupError
-  end
 end
+
+
+
+# Backup code and DB data in production
+
 
 
 class Backup < ConditionResponder

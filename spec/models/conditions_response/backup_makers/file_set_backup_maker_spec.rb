@@ -1,5 +1,6 @@
 require 'rails_helper'
 require_relative File.join(Rails.root, 'app/models/conditions_response/backup')
+require_relative File.join(Rails.root, 'app/models/conditions_response/shf_condition_error_backup_errors.rb')
 
 require 'shared_examples/backup_maker_target_filename_with_default_spec'
 
