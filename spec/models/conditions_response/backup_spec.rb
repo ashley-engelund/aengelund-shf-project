@@ -68,9 +68,7 @@ RSpec.describe Backup, type: :model do
 
     let(:backup_condition) do
 
-      # FIXME add multiple FileSets (is a FileSet the same as a ShfBackupMakers::FileSetBackupMaker?
-      # TODO rename FilesBackupmaker to FileSetBackupMaker
-      #
+      # TODO add multiple  ShfBackupMakers::FileSetBackupMakers
 
       condition_info = { class_name: 'Backup',
                          timing: :every_day,
@@ -503,10 +501,12 @@ RSpec.describe Backup, type: :model do
 
 
       before(:each) do
-        @code_backup_maker = ShfBackupMakers::CodeBackupMaker.new(target_filename: 'code_backup_maker_target_file.tar')
+        @code_backup_maker = ShfBackupMakers::CodeBackupMaker.new(name: 'code',
+                                                                  target_filename: 'code_backup_maker_target_file.tar')
         @db_backup_maker1 = ShfBackupMakers::DBBackupMaker.new(target_filename: 'db_backup_maker_target_file.sql')
         @db_backup_maker2 = ShfBackupMakers::DBBackupMaker.new(target_filename: 'another_db_backup_maker_target_file.flurb')
-        @file_backup_maker = ShfBackupMakers::FileSetBackupMaker.new(target_filename: 'files_maker_target_file.tar',
+        @file_backup_maker = ShfBackupMakers::FileSetBackupMaker.new(name: 'files',
+                                                                     target_filename: 'files_maker_target_file.tar',
                                                                      backup_sources: ['file1.txt', 'file2.zip'])
         @created_backup_makers = [
             { backup_maker: @code_backup_maker, keep_num: 3 },
@@ -783,7 +783,7 @@ RSpec.describe Backup, type: :model do
 
         it 'a FileSetBackupMaker is created from config info' do
 
-          allow(described_class).to receive(:create_files_backup_maker).and_return(ShfBackupMakers::FileSetBackupMaker.new)
+          allow(described_class).to receive(:create_files_backup_maker).and_return(ShfBackupMakers::FileSetBackupMaker.new(name:'files'))
 
           makers = described_class.create_backup_makers({ files: ['thisfile'],
                                                           days_to_keep: { files_backup: 12 },

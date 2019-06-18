@@ -148,7 +148,7 @@ class Backup < ConditionResponder
     # :keep_num key defines how many daily backups to retain on _local_ storage (e.g. on the production machine)
     # AWS (S3) backup files are retained based on settings in AWS.
     backup_makers = [
-        { backup_maker: ShfBackupMakers::CodeBackupMaker.new, keep_num: num_code_backups_to_keep },
+        { backup_maker: ShfBackupMakers::CodeBackupMaker.new(name: 'code'), keep_num: num_code_backups_to_keep },
         { backup_maker: ShfBackupMakers::DBBackupMaker.new, keep_num: num_db_backups_to_keep }
     ]
 
@@ -185,7 +185,7 @@ class Backup < ConditionResponder
         raise ShfConditionError::BackupConfigFilesBadFormatError.new('Backup Condition configuration for :files is bad.  Must be an Array.')
       end
 
-      files_backup_maker = ShfBackupMakers::FileSetBackupMaker.new(backup_sources: backup_files) unless backup_files.empty?
+      files_backup_maker = ShfBackupMakers::FileSetBackupMaker.new(name: 'files', backup_sources: backup_files) unless backup_files.empty?
     end
 
     files_backup_maker

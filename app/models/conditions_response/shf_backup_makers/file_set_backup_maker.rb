@@ -1,10 +1,28 @@
+require_relative File.join(__dir__, '..', 'shf_condition_error_backup_errors.rb')
+
+#--------------------------
+# Errors
+module ShfConditionError
+
+  class BackupFileSetMissingNameError < BackupError
+  end
+
+  class BackupFileSetNameCantBeBlankError < BackupError
+  end
+
+end
+#--------------------------
+
+
 module ShfBackupMakers
 
   #--------------------------
   #
   # @class ShfBackupMakers::FileSetBackupMaker
   #
-  # @desc Responsibility: Create a backup using tar to compress the sources together
+  # @desc Responsibility: Create a backup using tar to compress the sources together.
+  #     The backup has a name and description to describe this set of files
+  #     that comprise the backup. It must have a name; description is optional.
   #
   #  @author Ashley Engelund (ashley.engelund@gmail.com  weedySeaDragon @ github)
   #  @date   2019-06-15
@@ -15,22 +33,24 @@ module ShfBackupMakers
     CODE_ROOT_DIRECTORY = '/var/www/shf/current/'
     LOGS_ROOT_DIRECTORY = '/var/log'
 
-   # attr_accessor :name, :description
+    attr_accessor :name, :description
 
-    # name is required, so it is a required argument here
-    # def initialize(name,
-    #                target_filename: base_filename,
-    #                backup_sources: default_sources)
-    #
-    #   raise ShfConditionError::BackupConfigFileBackupMissingName if name.blank?
-    #
-    #   @name = name
-    #   @description = ''
-    #
-    #   super(target_filename: target_filename,
-    #         backup_sources: backup_sources)
-    #
-    # end
+
+    # possible named arguments: (name:, description:, target_filename:, backup_sources:)
+    # name: is required
+    def initialize(args)
+
+      name = args.fetch(:name, false)
+      raise ShfConditionError::BackupFileSetMissingNameError unless name
+      raise ShfConditionError::BackupFileSetNameCantBeBlankError if name.blank?
+
+      @name = name
+      @description = args.fetch(:description, '')
+
+      super_args = args.reject{|key, _value| key == :name || key == :description}
+
+      super(super_args)
+    end
 
 
     # use tar to compress all sources into the file named by target

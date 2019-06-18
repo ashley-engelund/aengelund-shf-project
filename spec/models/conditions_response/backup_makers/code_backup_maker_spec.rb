@@ -6,6 +6,9 @@ require 'shared_examples/backup_maker_target_filename_with_default_spec'
 
 RSpec.describe ShfBackupMakers::CodeBackupMaker do
 
+  let(:subject) { described_class.new(name: 'code') }
+
+
   describe 'Unit tests' do
 
     it 'base_filename = current.tar' do

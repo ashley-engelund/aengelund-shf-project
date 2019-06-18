@@ -10,7 +10,10 @@ RSpec.describe ShfBackupMakers::FileSetBackupMaker do
 
   describe 'Unit tests' do
 
-    let(:backup_using_defaults) { ShfBackupMakers::FileSetBackupMaker.new('backup using defaults') }
+    let(:subject) { described_class.new(name: 'some set of files') }
+
+    let(:backup_using_defaults) { described_class.new(name: 'backup using defaults') }
+
 
     it 'base_filename = backup-FileSetBackupMaker.tar' do
       expect(subject.base_filename).to eq 'backup-FileSetBackupMaker.tar'
@@ -55,6 +58,20 @@ RSpec.describe ShfBackupMakers::FileSetBackupMaker do
     #
     # end
 
+    describe 'name is required' do
+
+      it 'must have a name' do
+        expect{  described_class.new(target_filename: 'some_filename',
+                                     backup_sources: ['source1.txt']) }.to raise_error(ShfConditionError::BackupFileSetMissingNameError)
+      end
+
+      it 'name cannot be blank' do
+        expect{  described_class.new(name: '',
+                                     target_filename: 'some_filename',
+                                     backup_sources: ['source1.txt']) }.to raise_error(ShfConditionError::BackupFileSetNameCantBeBlankError)
+      end
+
+    end
 
     describe '#backup' do
 
@@ -72,7 +89,8 @@ RSpec.describe ShfBackupMakers::FileSetBackupMaker do
 
         temp_backup_target = File.join(Dir.mktmpdir('temp-files-dir'), 'files_backup_fn.zzkx')
 
-        files_backup = described_class.new(target_filename: temp_backup_target,
+        files_backup = described_class.new(name: 'test shell_cmd',
+                                           target_filename: temp_backup_target,
                                            backup_sources: [temp_backup_sourcedir,
                                                             temp_backup_source2fn1])
         files_backup.backup
@@ -96,7 +114,9 @@ RSpec.describe ShfBackupMakers::FileSetBackupMaker do
       end
 
 
-      it_behaves_like 'it takes a backup target filename, with default =', 'backup-FileSetBackupMaker.tar'
+      it_behaves_like 'it takes a backup target filename, with default =',
+                      described_class.new(name: 'target files test'),
+                      'backup-FileSetBackupMaker.tar'
 
 
       describe 'source files for the backup' do
@@ -110,7 +130,7 @@ RSpec.describe ShfBackupMakers::FileSetBackupMaker do
 
         it 'can provide the sources' do
 
-          files_backup = described_class.new
+          files_backup = described_class.new(name: 'testing sources')
 
           source_dir = Dir.mktmpdir('backup-sources-dir')
           source_files = []
