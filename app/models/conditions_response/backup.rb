@@ -1,8 +1,5 @@
 # Backup code and DB data in production
 
-CODE_ROOT_DIRECTORY = '/var/www/shf/current/'
-DB_NAME = 'shf_project_production'
-LOGS_ROOT_DIRECTORY = '/var/log'
 
 # Errors
 module ShfConditionError
@@ -13,129 +10,6 @@ module ShfConditionError
   end
 
   class BackupCommandNotSuccessfulError < BackupError
-  end
-end
-
-# @desc Abstract class for all backup classes.
-#
-# base_filename - the default target filename.
-#                 This does _not_ have a directory, it is only a filename
-#                 and extension.
-#                 This can be used to construct a full filename for the
-#                 target_filename for the backup.
-#
-# target_filename - the filename used for the backup file that is created
-#                   The default value for this is the base_filename.
-#
-# backup_sources - a list that is used as the source for the backups.
-#                  Subclasses use this list to create their backups.
-#                  This is what is backed up.
-
-#
-# Each Backup class must implement :backup(backup_target, sources) to do whatever
-# it needs to do to create the backup
-#
-class AbstractBackupMaker
-
-
-  attr :target_filename, :backup_sources
-
-
-  # Set the backup target and the backup sources
-  def initialize(target_filename: base_filename,
-                 backup_sources: default_sources)
-    @target_filename = target_filename
-    @backup_sources = backup_sources
-  end
-
-
-  # Do the backup. Default target is the target_filename; default sources = the backup sources)
-  def backup(target: target_filename, sources: backup_sources)
-    raise NoMethodError, "Subclass must define the #{__method__} method", caller
-  end
-
-
-  def base_filename
-    "backup-#{self.class.name}.tar"
-  end
-
-
-  def default_sources
-    []
-  end
-
-
-  # Run the command using Open3 which allows us to capture the output and status
-  # Raise an error unless the return status is success
-  def shell_cmd(cmd)
-    stdout_str, stderr_str, status = Open3.capture3(cmd)
-    unless status&.success?
-      raise(ShfConditionError::BackupCommandNotSuccessfulError, "Backup Command Failed: #{cmd}. return status: #{status}  Error: #{stderr_str}  Output: #{stdout_str}")
-    end
-  end
-
-end
-
-
-# Backup a list of files using tar. Create 1 resulting backup file
-class FilesBackupMaker < AbstractBackupMaker
-
-  # use tar to compress all sources into the file named by target
-  # @return [String] - the name of the backup target created
-  def backup(target: target_filename, sources: backup_sources)
-    shell_cmd("tar -chzf #{target} #{sources.join(' ')}")
-    target
-  end
-
-end
-
-
-# Backup a list of code directories.  Create 1 resulting backup file 'current.tar'
-class CodeBackupMaker < FilesBackupMaker
-
-  DEFAULT_SOURCES = [CODE_ROOT_DIRECTORY]
-  DEFAULT_BACKUP_FILEBASE = 'current.tar'
-
-
-  def base_filename
-    DEFAULT_BACKUP_FILEBASE
-  end
-
-
-  def default_sources
-    [CODE_ROOT_DIRECTORY]
-  end
-end
-
-
-# Backup a list of databases. For each database: first use pg_dump to dump it,
-# then add it to a gzip file.
-# Create 1 resulting gzip file
-#
-class DBBackupMaker < AbstractBackupMaker
-
-  DB_BACKUP_FILEBASE = 'db_backup.sql'
-
-  # Backup all Postgres databases in sources, then gzip them into the target
-  # @return [String] - filename of the backup target created
-  def backup(target: target_filename, sources: backup_sources)
-
-    shell_cmd("touch #{target}") # must ensure the file exists
-
-    sources.each do |source|
-      shell_cmd("pg_dump -d #{source} | gzip > #{target}")
-    end
-    target
-  end
-
-
-  def base_filename
-    DB_BACKUP_FILEBASE
-  end
-
-
-  def default_sources
-    [DB_NAME]
   end
 end
 
@@ -200,7 +74,7 @@ class Backup < ConditionResponder
 
   rescue Slack::Notifier::APIError => slack_error
     # Halt the backup if we cannot write to Slack; log then raise the error
-     log_slack_error(slack_error, log, '(in rescue at bottom of condition_response)')
+    log_slack_error(slack_error, log, '(in rescue at bottom of condition_response)')
     raise slack_error
 
   rescue => backup_error
@@ -274,8 +148,8 @@ class Backup < ConditionResponder
     # :keep_num key defines how many daily backups to retain on _local_ storage (e.g. on the production machine)
     # AWS (S3) backup files are retained based on settings in AWS.
     backup_makers = [
-        { backup_maker: CodeBackupMaker.new, keep_num: num_code_backups_to_keep },
-        { backup_maker: DBBackupMaker.new, keep_num: num_db_backups_to_keep }
+        { backup_maker: ShfBackupMakers::CodeBackupMaker.new, keep_num: num_code_backups_to_keep },
+        { backup_maker: ShfBackupMakers::DBBackupMaker.new, keep_num: num_db_backups_to_keep }
     ]
 
     files_backup_maker = create_files_backup_maker(config)
@@ -285,6 +159,23 @@ class Backup < ConditionResponder
   end
 
 
+  # TODO create 1 FilesBackupMaker for each definition in the config?
+  #   name of the files_backup (= 'set name')
+  #   # days to keep
+  #   list of source files
+  #   base_backup_filename
+  #
+  #  - /public = DATA
+  #
+  #  - config and .env
+  #    /config (will include secrets.yml.
+  #      exclude config/initializers (this is code)
+  #    .env
+  #
+  #  - /docs keep: 1
+  #
+  #
+  #
   # only create a FilesBackupMaker if there is a list of files to be backed up
   def self.create_files_backup_maker(config)
     files_backup_maker = nil
@@ -294,7 +185,7 @@ class Backup < ConditionResponder
         raise ShfConditionError::BackupConfigFilesBadFormatError.new('Backup Condition configuration for :files is bad.  Must be an Array.')
       end
 
-      files_backup_maker = FilesBackupMaker.new(backup_sources: backup_files) unless backup_files.empty?
+      files_backup_maker = ShfBackupMakers::FilesBackupMaker.new(backup_sources: backup_files) unless backup_files.empty?
     end
 
     files_backup_maker

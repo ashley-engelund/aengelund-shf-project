@@ -55,11 +55,11 @@ RSpec.describe Backup, type: :model do
       @db_to_backup = 'shf_project_test'
       @db_sources = [@db_to_backup]
 
-      allow_any_instance_of(CodeBackupMaker).to receive(:default_sources)
+      allow_any_instance_of(ShfBackupMakers::CodeBackupMaker).to receive(:default_sources)
                                                     .and_return(@code_sources)
-      allow_any_instance_of(DBBackupMaker).to receive(:default_sources)
+      allow_any_instance_of(ShfBackupMakers::DBBackupMaker).to receive(:default_sources)
                                                   .and_return(@db_sources)
-      allow_any_instance_of(FilesBackupMaker).to receive(:default_sources)
+      allow_any_instance_of(ShfBackupMakers::FilesBackupMaker).to receive(:default_sources)
                                                      .and_return(@notes_sources)
       # destination for the backup files
       @backup_dir = Dir.mktmpdir('backup-dir')
@@ -67,6 +67,11 @@ RSpec.describe Backup, type: :model do
 
 
     let(:backup_condition) do
+
+      # FIXME add multiple FileSets (is a FileSet the same as a ShfBackupMakers::FilesBackupMaker?
+      # TODO rename FilesBackupmaker to FileSetBackupMaker
+      #
+
       condition_info = { class_name: 'Backup',
                          timing: :every_day,
                          config: { days_to_keep: { code_backup: 2,
@@ -127,9 +132,9 @@ RSpec.describe Backup, type: :model do
 
     describe 'errors happen - 1 error should not stop the entire backup' do
 
-      it 'one of the shell commands for the DBBackupMaker fails' do
+      it 'one of the shell commands for the ShfBackupMakers::DBBackupMaker fails' do
 
-        allow_any_instance_of(DBBackupMaker).to receive(:shell_cmd)
+        allow_any_instance_of(ShfBackupMakers::DBBackupMaker).to receive(:shell_cmd)
                                                     .with(/touch/)
                                                     .and_raise(Errno::ENOENT, 'blorfo')
 
@@ -218,7 +223,7 @@ RSpec.describe Backup, type: :model do
         @error_raised = NoMethodError
 
         allow(described_class).to receive(:validate_timing)
-        allow_any_instance_of(AbstractBackupMaker).to receive(:backup)
+        allow_any_instance_of(ShfBackupMakers::AbstractBackupMaker).to receive(:backup)
 
         allow(described_class).to receive(:upload_file_to_s3)
 
@@ -268,7 +273,7 @@ RSpec.describe Backup, type: :model do
         allow(described_class).to receive(:backup_dir).and_raise(@slack_error)
 
         allow(described_class).to receive(:validate_timing)
-        allow_any_instance_of(AbstractBackupMaker).to receive(:backup)
+        allow_any_instance_of(ShfBackupMakers::AbstractBackupMaker).to receive(:backup)
 
         allow(described_class).to receive(:upload_file_to_s3)
         allow(described_class).to receive(:delete_excess_backup_files)
@@ -290,9 +295,9 @@ RSpec.describe Backup, type: :model do
       it 'during backup_makers .backup loop; logs "while in the backup_makers.each loop"' do
         allow(described_class).to receive(:validate_timing)
 
-        allow_any_instance_of(FilesBackupMaker).to receive(:backup)
-        allow_any_instance_of(CodeBackupMaker).to receive(:backup)
-        allow_any_instance_of(DBBackupMaker).to receive(:backup).and_raise(@slack_error)
+        allow_any_instance_of(ShfBackupMakers::FilesBackupMaker).to receive(:backup)
+        allow_any_instance_of(ShfBackupMakers::CodeBackupMaker).to receive(:backup)
+        allow_any_instance_of(ShfBackupMakers::DBBackupMaker).to receive(:backup).and_raise(@slack_error)
 
         allow(described_class).to receive(:upload_file_to_s3)
         allow(described_class).to receive(:delete_excess_backup_files)
@@ -316,7 +321,7 @@ RSpec.describe Backup, type: :model do
       it 'during AWS loop; logs info for the current AWS items and "in backup_files.each loop uploading_file_to_s3"' do
         allow(described_class).to receive(:validate_timing)
 
-        allow_any_instance_of(AbstractBackupMaker).to receive(:backup)
+        allow_any_instance_of(ShfBackupMakers::AbstractBackupMaker).to receive(:backup)
 
         allow(described_class).to receive(:upload_file_to_s3).and_raise(@slack_error)
 
@@ -340,7 +345,7 @@ RSpec.describe Backup, type: :model do
       it 'during pruning backups loop; logs info about the backup maker and file pattern and "while pruning in the backup_makers.each loop backup_maker"' do
         allow(described_class).to receive(:validate_timing)
 
-        allow_any_instance_of(AbstractBackupMaker).to receive(:backup)
+        allow_any_instance_of(ShfBackupMakers::AbstractBackupMaker).to receive(:backup)
 
         allow(described_class).to receive(:upload_file_to_s3)
 
@@ -498,10 +503,10 @@ RSpec.describe Backup, type: :model do
 
 
       before(:each) do
-        @code_backup_maker = CodeBackupMaker.new(target_filename: 'code_backup_maker_target_file.tar')
-        @db_backup_maker1 = DBBackupMaker.new(target_filename: 'db_backup_maker_target_file.sql')
-        @db_backup_maker2 = DBBackupMaker.new(target_filename: 'another_db_backup_maker_target_file.flurb')
-        @file_backup_maker = FilesBackupMaker.new(target_filename: 'files_maker_target_file.tar',
+        @code_backup_maker = ShfBackupMakers::CodeBackupMaker.new(target_filename: 'code_backup_maker_target_file.tar')
+        @db_backup_maker1 = ShfBackupMakers::DBBackupMaker.new(target_filename: 'db_backup_maker_target_file.sql')
+        @db_backup_maker2 = ShfBackupMakers::DBBackupMaker.new(target_filename: 'another_db_backup_maker_target_file.flurb')
+        @file_backup_maker = ShfBackupMakers::FilesBackupMaker.new(target_filename: 'files_maker_target_file.tar',
                                                   backup_sources: ['file1.txt', 'file2.zip'])
         @created_backup_makers = [
             { backup_maker: @code_backup_maker, keep_num: 3 },
@@ -511,7 +516,7 @@ RSpec.describe Backup, type: :model do
         ]
 
         # Individual tests below might change or set an expectation
-        allow_any_instance_of(AbstractBackupMaker).to receive(:shell_cmd)
+        allow_any_instance_of(ShfBackupMakers::AbstractBackupMaker).to receive(:shell_cmd)
 
         allow(described_class).to receive(:backup_dir)
                                       .and_return('BACKUP_DIR')
@@ -694,72 +699,72 @@ RSpec.describe Backup, type: :model do
 
       describe 'number of code backups to keep' do
 
-        it 'CodeBackupMaker number to keep is from config if days_to_keep: {code_backup: N} exists' do
+        it 'ShfBackupMakers::CodeBackupMaker number to keep is from config if days_to_keep: {code_backup: N} exists' do
           makers = described_class.create_backup_makers({ days_to_keep: { code_backup: 12 } })
-          code_backupmaker = makers.select { |maker_entry| maker_entry[:backup_maker].is_a? CodeBackupMaker }.first
+          code_backupmaker = makers.select { |maker_entry| maker_entry[:backup_maker].is_a? ShfBackupMakers::CodeBackupMaker }.first
           expect(code_backupmaker[:keep_num]).to eq 12
         end
 
-        it 'CodeBackupMaker number to keep is 4 (default) if not in config' do
+        it 'ShfBackupMakers::CodeBackupMaker number to keep is 4 (default) if not in config' do
           makers = described_class.create_backup_makers({})
-          code_backupmaker = makers.select { |maker_entry| maker_entry[:backup_maker].is_a? CodeBackupMaker }.first
+          code_backupmaker = makers.select { |maker_entry| maker_entry[:backup_maker].is_a? ShfBackupMakers::CodeBackupMaker }.first
           expect(code_backupmaker[:keep_num]).to eq 4
         end
       end
 
       describe 'number of database backups to keep' do
 
-        it 'DBBackupMaker number to keep is from config if days_to_keep: {db_backup: N} exists' do
+        it 'ShfBackupMakers::DBBackupMaker number to keep is from config if days_to_keep: {db_backup: N} exists' do
           makers = described_class.create_backup_makers({ days_to_keep: { db_backup: 12 } })
-          db_backupmaker = makers.select { |maker_entry| maker_entry[:backup_maker].is_a? DBBackupMaker }.first
+          db_backupmaker = makers.select { |maker_entry| maker_entry[:backup_maker].is_a? ShfBackupMakers::DBBackupMaker }.first
           expect(db_backupmaker[:keep_num]).to eq 12
         end
 
-        it 'DBBackupMaker number to keep is 15 (default) if not in config' do
+        it 'ShfBackupMakers::DBBackupMaker number to keep is 15 (default) if not in config' do
           makers = described_class.create_backup_makers({})
-          db_backupmaker = makers.select { |maker_entry| maker_entry[:backup_maker].is_a? DBBackupMaker }.first
+          db_backupmaker = makers.select { |maker_entry| maker_entry[:backup_maker].is_a? ShfBackupMakers::DBBackupMaker }.first
           expect(db_backupmaker[:keep_num]).to eq 15
         end
       end
 
 
       describe 'number of file backups to keep' do
-        it 'FilesBackupMaker number to keep is from config if days_to_keep: {files_backup: N} exists' do
+        it 'ShfBackupMakers::FilesBackupMaker number to keep is from config if days_to_keep: {files_backup: N} exists' do
           makers = described_class.create_backup_makers({ files: ['thisfile'], days_to_keep: { files_backup: 12 } })
-          code_backupmaker = makers.select { |maker_entry| maker_entry[:backup_maker].class.name == 'FilesBackupMaker' }.first
+          code_backupmaker = makers.select { |maker_entry| maker_entry[:backup_maker].class.name == 'ShfBackupMakers::FilesBackupMaker' }.first
           expect(code_backupmaker[:keep_num]).to eq 12
         end
 
-        it 'FilesBackupMaker number to keep is 31 (default) if not in config' do
+        it 'ShfBackupMakers::FilesBackupMaker number to keep is 31 (default) if not in config' do
           makers = described_class.create_backup_makers({ files: ['thisfile'] })
-          code_backupmaker = makers.select { |maker_entry| maker_entry[:backup_maker].class.name == 'FilesBackupMaker' }.first
+          code_backupmaker = makers.select { |maker_entry| maker_entry[:backup_maker].class.name == 'ShfBackupMakers::FilesBackupMaker' }.first
           expect(code_backupmaker[:keep_num]).to eq 31
         end
       end
 
 
-      describe 'adds a CodeBackupMaker and a DBBackupMaker' do
+      describe 'adds a ShfBackupMakers::CodeBackupMaker and a ShfBackupMakers::DBBackupMaker' do
 
-        it 'creates a CodeBackupMaker with the number to keep, backup dir,default target filename and source' do
+        it 'creates a ShfBackupMakers::CodeBackupMaker with the number to keep, backup dir,default target filename and source' do
           allow(described_class).to receive(:create_files_backup_maker).and_return(nil)
 
           makers = described_class.create_backup_makers({ files: ['thisfile'],
                                                           days_to_keep: { files_backup: 12 },
                                                           backup_directory: 'backup/destination/dir' })
 
-          code_backup_makers = makers.select { |maker_entry| maker_entry[:backup_maker].is_a? CodeBackupMaker }
+          code_backup_makers = makers.select { |maker_entry| maker_entry[:backup_maker].is_a? ShfBackupMakers::CodeBackupMaker }
           expect(code_backup_makers.size).to eq 1
         end
 
 
-        it 'creates a DBBackupMaker with the number to keep, backup dir, default target filename and source' do
+        it 'creates a ShfBackupMakers::DBBackupMaker with the number to keep, backup dir, default target filename and source' do
           allow(described_class).to receive(:create_files_backup_maker).and_return(nil)
 
           makers = described_class.create_backup_makers({ files: ['thisfile'],
                                                           days_to_keep: { files_backup: 12 },
                                                           backup_directory: 'backup/destination/dir' })
 
-          db_backup_makers = makers.select { |maker_entry| maker_entry[:backup_maker].is_a? DBBackupMaker }
+          db_backup_makers = makers.select { |maker_entry| maker_entry[:backup_maker].is_a? ShfBackupMakers::DBBackupMaker }
           expect(db_backup_makers.size).to eq 1
         end
       end
@@ -771,20 +776,20 @@ RSpec.describe Backup, type: :model do
           allow(described_class).to receive(:create_files_backup_maker).and_return(nil)
 
           makers = described_class.create_backup_makers({ files: ['thisfile'], days_to_keep: { files_backup: 12 } })
-          files_backupmaker = makers.select { |maker_entry| maker_entry[:backup_maker].class.name == 'FilesBackupMaker' }
+          files_backupmaker = makers.select { |maker_entry| maker_entry[:backup_maker].class.name == 'ShfBackupMakers::FilesBackupMaker' }
 
           expect(files_backupmaker).to be_empty
         end
 
         it 'a FileBackupMaker is created from config info' do
 
-          allow(described_class).to receive(:create_files_backup_maker).and_return(FilesBackupMaker.new)
+          allow(described_class).to receive(:create_files_backup_maker).and_return(ShfBackupMakers::FilesBackupMaker.new)
 
           makers = described_class.create_backup_makers({ files: ['thisfile'],
                                                           days_to_keep: { files_backup: 12 },
                                                           backup_directory: 'backup/destination/dir' })
 
-          files_backupmaker = makers.select { |maker_entry| maker_entry[:backup_maker].class.name == 'FilesBackupMaker' }
+          files_backupmaker = makers.select { |maker_entry| maker_entry[:backup_maker].class.name == 'ShfBackupMakers::FilesBackupMaker' }
           expect(files_backupmaker.size).to eq 1
         end
 
