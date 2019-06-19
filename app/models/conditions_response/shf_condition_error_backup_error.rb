@@ -3,13 +3,8 @@
 # TODO Not a good sign that these are shared; should be distinct.
 
 module ShfConditionError
+
   class BackupError < StandardError
-  end
-
-  class BackupConfigFilesBadFormatError < BackupError
-  end
-
-  class BackupCommandNotSuccessfulError < BackupError
   end
 
 end
