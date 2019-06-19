@@ -1,6 +1,6 @@
 require 'rails_helper'
 require_relative File.join(Rails.root, 'app/models/conditions_response/backup')
-require_relative File.join(Rails.root, 'app/models/conditions_response/shf_condition_error_backup_errors.rb')
+#require_relative File.join(Rails.root, 'app/models/conditions_response/shf_condition_error_backup_errors.rb')
 
 require 'shared_examples/backup_maker_target_filename_with_default_spec'
 
@@ -15,50 +15,13 @@ RSpec.describe ShfBackupMakers::FileSetBackupMaker do
     let(:backup_using_defaults) { described_class.new(name: 'backup using defaults') }
 
 
-    it 'base_filename = backup-FileSetBackupMaker.tar' do
-      expect(subject.base_filename).to eq 'backup-FileSetBackupMaker.tar'
+    it 'default base_filename is "name.tar" where the name has been cleaned up' do
+      new_maker = described_class.new(name:'replace spaces with _ and remove non 0-9 a-zA-Z!&@\#$:!ä(ひらがな) characters')
+      expect(new_maker.base_filename).to eq 'replace_spaces_with___and_remove_non_0-9_a-zA-Z_characters.tar'
     end
 
 
-    # FIXME does this stuff really go in the backup_spec #create File Maker ?
-    # describe 'info provided by a Configuration' do
-    #
-    #   describe 'name (required)' do
-    #
-    #     it 'cannot be blank (there is no default)' do
-    #       expect{described_class.new('')}.to raise_error(ShfConditionError::BackupConfigFileBackupMissingName)
-    #     end
-    #
-    #     it 'can be read from a configuration' do
-    #       pending
-    #     end
-    #   end
-    #
-    #   describe 'description (optional)' do
-    #
-    #     it 'default is empty String' do
-    #       expect(subject.description).to eq ''
-    #     end
-    #
-    #     it 'can be read from a configuration' do
-    #       pending
-    #     end
-    #   end
-    #
-    #   describe 'base file name (optional)' do
-    #
-    #     it 'default is same as our parent class default' do
-    #       pending
-    #     end
-    #
-    #     it 'can be read from a configuration' do
-    #       pending
-    #     end
-    #   end
-    #
-    # end
-
-    describe 'name is required' do
+    describe 'name' do
 
       it 'must have a name' do
         expect{  described_class.new(target_filename: 'some_filename',
@@ -73,9 +36,28 @@ RSpec.describe ShfBackupMakers::FileSetBackupMaker do
 
     end
 
+
+    describe 'excludes' do
+
+      it 'creates a string with each one as an "--exclude=" option for the tar command' do
+        files_backup = described_class.new(name: 'excludes test', excludes: ['this.txt', 'blorf.*'])
+
+        exclude_opts_str = files_backup.send(:exclude_opts)
+        expect(exclude_opts_str).to eq("--exclude='this.txt' --exclude='blorf.*'")
+      end
+    end
+
+
+    it 'default days_to_keep is 3' do
+      expect(described_class.new(name: 'files').days_to_keep).to eq 3
+    end
+
+
     describe '#backup' do
 
-      it 'uses #shell_cmd to create a tar with all entries in sources using tar -chzf}' do
+      let(:tar_options) { '--create --gzip --dereference' }
+
+      it 'uses #shell_cmd to create a tar with all entries in sources, excluding any given' do
 
         temp_backup_sourcedir = Dir.mktmpdir('faux-code-dir')
         temp_backup_sourcefn1 = File.open(File.join(temp_backup_sourcedir, 'faux-codefile.rb'), 'w').path
@@ -116,14 +98,14 @@ RSpec.describe ShfBackupMakers::FileSetBackupMaker do
 
       it_behaves_like 'it takes a backup target filename, with default =',
                       described_class.new(name: 'target files test'),
-                      'backup-FileSetBackupMaker.tar'
+                      'target_files_test.tar'
 
 
       describe 'source files for the backup' do
 
         it "default sources = [] (none)" do
           expect(subject).to receive(:shell_cmd)
-                                 .with(/tar -chzf (.*) #{[].join(' ')}/)
+                                 .with(/tar #{tar_options} (.*) #{[].join(' ')}/)
           subject.backup
         end
 
@@ -141,11 +123,9 @@ RSpec.describe ShfBackupMakers::FileSetBackupMaker do
           end
 
           expect(files_backup).to receive(:shell_cmd)
-                                      .with(/tar -chzf (.*) #{source_files.join(' ')}/)
+                                      .with(/tar #{tar_options} (.*) #{source_files.join(' ')}/)
                                       .and_call_original
-
           backup_created = files_backup.backup(sources: source_files)
-          puts "backup_created: #{backup_created}"
 
           expect(File.exist?(backup_created)).to be_truthy
           File.delete(backup_created)
@@ -155,6 +135,45 @@ RSpec.describe ShfBackupMakers::FileSetBackupMaker do
 
       it 'will fail unless sources are provided (tar will fail with an empty list)' do
         expect { subject.backup }.to raise_error(ShfConditionError::BackupCommandNotSuccessfulError, /tar/)
+      end
+
+      it 'excludes provides a list of --exclude= patterns' do
+        source_dir = Dir.mktmpdir('backup-sources-dir')
+        subdir = File.join(source_dir, 'subdir')
+
+        files_backup = described_class.new(name: 'testing sources',
+                                           excludes: ['*-1.txt', 'subdir'])
+
+        source_files = []
+        3.times do |i|
+          fn = File.join(source_dir, "source-#{i}.txt")
+          File.open(fn, 'w') { |f| f.puts "blorf" }
+          source_files << fn
+        end
+        Dir.mkdir(subdir)
+        fn = File.join(subdir, "source.txt")
+        File.open(fn, 'w') { |f| f.puts "blorf" }
+        source_files << fn
+
+        expect(files_backup).to receive(:shell_cmd)
+                                    .with(/tar #{tar_options} (.*) #{source_files.join(' ')}/)
+                                    .and_call_original
+
+        backup_created = files_backup.backup(sources: source_files)
+
+        expect(File.exist?(backup_created)).to be_truthy
+
+        # could also use the Gem::Package verify_entry method to verify each tar entry
+        backup_file_list = %x<tar --list --file=#{backup_created}>
+        backup_file_list.gsub!(/\n/, ' ')
+        backup_files = backup_file_list.split(' ')
+
+        # tar will remove leading "/" from source file names, so remove the leading "/"
+        expected = [File.join(source_dir, 'source-0.txt').gsub(/^\//, ''),
+                    File.join(source_dir, 'source-2.txt').gsub(/^\//, '')]
+
+        expect(backup_files).to match_array(expected)
+        File.delete(backup_created)
       end
     end
 
