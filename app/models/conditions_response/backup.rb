@@ -1,17 +1,33 @@
-require_relative File.join(__dir__, 'shf_condition_error_backup_errors')
+#require_relative File.join(__dir__, 'shf_condition_error_backup_error')
+require_relative 'shf_condition_error_backup_error'
 
 # Errors
 module ShfConditionError
 
-  class BackupConfigFilesBadFormatError < BackupError
+  class BackupCommandNotSuccessfulError < BackupError
   end
 
+  class BackupConfigError < BackupError
+  end
+
+  class BackupConfigFileSetBadFormatError < BackupConfigError
+  end
+
+  class BackupConfigFileSetMissingNameError < BackupConfigError
+  end
+
+  class BackupConfigFileSetMissingBaseNameError < BackupConfigError
+  end
+
+  class BackupConfigFileSetMissingSourceFiles < BackupConfigError
+  end
+
+  class BackupConfigFileSetEmptySourceFiles < BackupConfigError
+  end
 end
 
 
-
-# Backup code and DB data in production
-
+# Backup files and DB data in production
 
 
 class Backup < ConditionResponder
@@ -143,7 +159,6 @@ class Backup < ConditionResponder
   def self.create_backup_makers(config)
     num_code_backups_to_keep = config.dig(:days_to_keep, :code_backup) || DEFAULT_CODE_BACKUPS_TO_KEEP
     num_db_backups_to_keep = config.dig(:days_to_keep, :db_backup) || DEFAULT_DB_BACKUPS_TO_KEEP
-    num_file_backups_to_keep = config.dig(:days_to_keep, :files_backup) || DEFAULT_FILE_BACKUPS_TO_KEEP
 
     # :keep_num key defines how many daily backups to retain on _local_ storage (e.g. on the production machine)
     # AWS (S3) backup files are retained based on settings in AWS.
@@ -152,43 +167,75 @@ class Backup < ConditionResponder
         { backup_maker: ShfBackupMakers::DBBackupMaker.new, keep_num: num_db_backups_to_keep }
     ]
 
-    files_backup_maker = create_files_backup_maker(config)
-    backup_makers << { backup_maker: files_backup_maker, keep_num: num_file_backups_to_keep } if files_backup_maker
+    fileset_backup_makers = create_fileset_backup_makers(config)
+    fileset_backup_makers.each do |fileset_backup_maker|
+      backup_makers << { backup_maker: fileset_backup_maker, keep_num: fileset_backup_maker.days_to_keep }
+    end
 
     backup_makers
   end
 
 
-  # TODO create 1 FileSetBackupMaker for each definition in the config?
-  #   name of the files_backup (= 'set name')
-  #   # days to keep
-  #   list of source files
-  #   base_backup_filename
+  # Create 1 FileSetBackupMaker for each definition in the config
   #
-  #  - /public = DATA
+  # @param [String] config - the configuration
+  # @return [Array[FileSetBackupMakers]] - a list of FileSetBackupMakers
+  #           instantiated based on entries in the config
   #
-  #  - config and .env
-  #    /config (will include secrets.yml.
-  #      exclude config/initializers (this is code)
-  #    .env
-  #
-  #  - /docs keep: 1
-  #
-  #
-  #
-  # only create a FileSetBackupMaker if there is a list of files to be backed up
-  def self.create_files_backup_maker(config)
-    files_backup_maker = nil
-    if (backup_files = config.fetch(:files, false))
+  def self.create_fileset_backup_makers(config)
 
-      unless backup_files.is_a?(Array)
-        raise ShfConditionError::BackupConfigFilesBadFormatError.new('Backup Condition configuration for :files is bad.  Must be an Array.')
-      end
+    return [] unless config.has_key?(:filesets)
 
-      files_backup_maker = ShfBackupMakers::FileSetBackupMaker.new(name: 'files', backup_sources: backup_files) unless backup_files.empty?
+    filesets = config.fetch(:filesets, false)
+    # new("Backup Condition configuration for fileset '#{fileset_name}' error. #{key}: must be an Array.")
+    raise ShfConditionError::BackupConfigFileSetBadFormatError.new("Backup Condition configuration error. fileset: must be an Array.") unless filesets.is_a?(Array)
+
+    filesets.map(&method(:new_fileset_backup_maker)).compact
+  end
+
+
+  # Create a new FileSetBackupMaker from information in the fileset_config
+  # Raise errors if information is missing or the format is bad.
+  #
+  # @return [ShfBackupMakers::FileSetBackupMaker] - the new FileSetBackupMaker
+  #
+  def self.new_fileset_backup_maker(fileset_config)
+
+    raise ShfConditionError::BackupConfigFileSetMissingNameError unless fileset_config.has_key?(:name)
+    fileset_name = fileset_config[:name]
+
+    raise ShfConditionError::BackupConfigFileSetMissingSourceFiles unless fileset_config.has_key?(:files)
+    sources = fileset_config_array_entry(fileset_config, :files, fileset_name)
+    raise ShfConditionError::BackupConfigFileSetEmptySourceFiles if sources.empty?
+
+    excludes = fileset_config_array_entry(fileset_config, :excludes, fileset_name)
+
+    fsb = ShfBackupMakers::FileSetBackupMaker.new(name: fileset_name,
+                                                  backup_sources: sources,
+                                                  excludes: excludes)
+
+    fsb.base_filename = fileset_config[:base_filename] if fileset_config.has_key?(:base_filename)
+    fsb.days_to_keep = fileset_config[:days_to_keep] if fileset_config.has_key?(:days_to_keep)
+
+    fsb
+  end
+
+
+  # Get the value for an entry in a hash and
+  # validate that the value is an Array.
+  # If it is not an Array, raise ShfConditionError::BackupConfigFileSetBadFormatError
+  # with an error message, specifying the fileset name and the key that should
+  # have had a value that was an array
+  #
+  # @return [Array] - the value from the array
+  #
+  def self.fileset_config_array_entry(hash, key, fileset_name)
+    array_entry = hash.fetch(key, [])
+    unless array_entry.is_a?(Array)
+      raise ShfConditionError::BackupConfigFileSetBadFormatError.new("Backup Condition configuration for fileset '#{fileset_name}' error. #{key}: must be an Array.")
     end
 
-    files_backup_maker
+    array_entry
   end
 
 
