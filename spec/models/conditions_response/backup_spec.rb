@@ -48,9 +48,43 @@ RSpec.describe Backup, type: :model do
 
     include_context 'create logger'
 
-    before(:each) do
 
-      @faux_app_dir = Dir.mktmpdir('faux-app-dir')
+    # Make the same directories as a Rails app under a temp dir and create
+    # at 1 file in each dir: blorf.txt
+    #
+    # @return [String] - the temp dir path
+    #
+    def make_faux_app_dirs
+      faux_app_dir = Dir.mktmpdir('faux-app-dir')
+
+      app_dirs = ['app', 'bin', 'config', 'db', 'features', 'lib', 'log', 'node_modules', 'public', 'script', 'spec', 'tmp', 'vendor']
+      app_dirs.each do |app_dir|
+        subdir = File.join(faux_app_dir, app_dir)
+        Dir.mkdir(subdir)
+        File.open(File.join(subdir, 'blorf.txt'), 'w') do |f|
+          f.puts 'blorf!'
+        end
+      end
+
+      faux_app_dir
+    end
+
+
+    # @return [Boolean] - true if a timestamped file exists matching file_basename
+    #    with granularity down to only to the minute
+    def timestamped_file_exists?(dir, matching_to_hour_name)
+      files_in_dir = Dir.children(dir)
+      files_in_dir.any? { |fname| fname =~ /#{matching_to_hour_name}\d\d-\d\d\d\d\d-Z\.gz/ }
+    end
+
+
+    def hourstamp
+      Time.now.strftime '%F-%H'
+    end
+
+
+    before(:each) do
+      @faux_app_dir = make_faux_app_dirs
 
       # set up files to be backed up: make 2 notes files:
       @notes_filenames = []
@@ -76,10 +110,9 @@ RSpec.describe Backup, type: :model do
       # db to be backed up
       @db_to_backup = 'shf_project_test'
       @db_sources = [@db_to_backup]
-
       allow_any_instance_of(ShfBackupMakers::DBBackupMaker).to receive(:default_sources)
                                                                    .and_return(@db_sources)
-      # FIXME
+
       allow_any_instance_of(ShfBackupMakers::FileSetBackupMaker).to receive(:default_sources)
                                                                         .and_return(@notes_sources)
       # destination for the backup files
@@ -95,48 +128,48 @@ RSpec.describe Backup, type: :model do
                                                    files_backup: 31 },
                                    backup_directory: @backup_dir,
                                    filesets: [
-                                       {name: 'misc files',
-                                        days_to_keep: 99,
-                                        files: @notes_sources
+                                       { name: 'misc files',
+                                         days_to_keep: 99,
+                                         files: @notes_sources
                                        },
-                                       {name: 'faux code',
-                                        days_to_keep: 3,
-                                        files: [@code_dir]
+                                       { name: 'faux code',
+                                         days_to_keep: 3,
+                                         files: [@code_dir]
                                        }
                                    ] } }
 
       Condition.new(condition_info)
     end
 
-    let(:yy_mm_dd_timestr) { Time.now.strftime '%Y-%m-%d' }
-    let(:expected_aws_bucketname) { "production_backup/#{yy_mm_dd_timestr}/" }
+    # match timestamped filenames just down to the hour
+    let(:fn_timestamp) { Time.now.strftime '%F-%H' }
+    let(:today_timestamp) { Time.now.strftime '%F' }
+
+    let(:expected_aws_bucketname) { "production_backup/#{today_timestamp}/" }
 
     let(:db_backup_basefn) { 'db_backup.sql' }
-    let(:db_backup_fname) { "#{db_backup_basefn}.#{yy_mm_dd_timestr}.gz" }
-
     let(:fileset_misc_files_backup_basefn) { 'misc_files.tar' }
-    let(:fileset_misc_files_backup_fname) { "#{fileset_misc_files_backup_basefn}.#{yy_mm_dd_timestr}.gz" }
-
     let(:fileset_code_backup_basefn) { 'faux_code.tar' }
-    let(:fileset_code_backup_fname) { "#{fileset_code_backup_basefn}.#{yy_mm_dd_timestr}.gz" }
-    
+
     # expected filenames
     let(:expected_db_backup_base_fn) { File.join(@backup_dir, db_backup_basefn) }
-    let(:expected_db_backup_fname) { File.join(@backup_dir, db_backup_fname) }
+    let(:expected_db_backup_fname) { /#{File.join(@backup_dir, db_backup_basefn)}\.#{fn_timestamp}\d\d-\d\d\d\d\d-Z\.gz/ }
     let(:expected_fset_misc_files_base_fname) { File.join(@backup_dir, fileset_misc_files_backup_basefn) }
-    let(:expected_fset_misc_files_backup_fname) { File.join(@backup_dir, fileset_misc_files_backup_fname) }
+    let(:expected_fset_misc_files_backup_fname) { /#{File.join(@backup_dir, fileset_misc_files_backup_basefn)}\.#{fn_timestamp}\d\d-\d\d\d\d\d-Z\.gz/ }
     let(:expected_fset_code_backup_base_fname) { File.join(@backup_dir, fileset_code_backup_basefn) }
-    let(:expected_fset_code_backup_fname) { File.join(@backup_dir, fileset_code_backup_fname) }
+    let(:expected_fset_code_backup_fname) { /#{File.join(@backup_dir, fileset_code_backup_basefn)}\.#{fn_timestamp}\d\d-\d\d\d\d\d-Z\.gz/ }
 
 
     it 'does the backup - everything works (HAPPY PATH)' do
-
       expect(described_class).to receive(:upload_file_to_s3)
-                                     .with(anything, anything, expected_aws_bucketname, expected_db_backup_fname)
+                                     .with(anything, anything,
+                                           expected_aws_bucketname, expected_db_backup_fname)
       expect(described_class).to receive(:upload_file_to_s3)
-                                     .with(anything, anything, expected_aws_bucketname, expected_fset_misc_files_backup_fname)
+                                     .with(anything, anything,
+                                           expected_aws_bucketname, expected_fset_misc_files_backup_fname)
       expect(described_class).to receive(:upload_file_to_s3)
-                                     .with(anything, anything, expected_aws_bucketname, expected_fset_code_backup_fname)
+                                     .with(anything, anything,
+                                           expected_aws_bucketname, expected_fset_code_backup_fname)
 
       expect(described_class).to receive(:delete_excess_backup_files)
                                      .with("#{expected_db_backup_base_fn}.*", 5)
@@ -145,10 +178,9 @@ RSpec.describe Backup, type: :model do
       expect(described_class).to receive(:delete_excess_backup_files)
                                      .with("#{expected_fset_code_backup_base_fname}.*", 3)
 
-
+      timestamp = hourstamp
       class_name = backup_condition.class_name
       klass = class_name.constantize
-
       ActivityLogger.open(@logfilename, 'SHF_TASK', 'Conditions') do |log|
         log.info("#{class_name} ...")
         klass.condition_response(backup_condition, log)
@@ -157,36 +189,28 @@ RSpec.describe Backup, type: :model do
       # no errors in the log file
       logfile_contents = File.read(@logfilename)
       expect(logfile_contents).not_to match(/error/),
-                                       "expected Logfile not to include 'error' but it does:\n#{logfile_contents}"
+                                      "expected Logfile not to include 'error' but it does:\n#{logfile_contents}"
 
       # expect the backup files to be in the backup directory
-      expect(File.exist?(expected_db_backup_fname)).to be_truthy
-      expect(File.exist?(expected_fset_misc_files_backup_fname)).to be_truthy
-      expect(File.exist?(expected_fset_code_backup_fname)).to be_truthy
+      expect(timestamped_file_exists?(@backup_dir,
+                                      "#{db_backup_basefn}.#{timestamp}")).to be_truthy
+      expect(timestamped_file_exists?(@backup_dir,
+                                      "#{fileset_misc_files_backup_basefn}.#{timestamp}")).to be_truthy
+      expect(timestamped_file_exists?(@backup_dir,
+                                      "#{fileset_code_backup_basefn}.#{timestamp}")).to be_truthy
     end
 
 
     describe 'errors happen - 1 error should not stop the entire backup' do
 
       it 'one of the shell commands for the ShfBackupMakers::DBBackupMaker fails' do
-
+        # Raise an error:
         allow_any_instance_of(ShfBackupMakers::DBBackupMaker).to receive(:shell_cmd)
                                                                      .with(/touch/)
                                                                      .and_raise(Errno::ENOENT, 'blorfo')
 
-        expect(described_class).to receive(:upload_file_to_s3)
-                                       .with(anything, anything, expected_aws_bucketname, File.join(@backup_dir, db_backup_fname))
-        expect(described_class).to receive(:upload_file_to_s3)
-                                       .with(anything, anything, expected_aws_bucketname, expected_fset_misc_files_backup_fname)
-        expect(described_class).to receive(:upload_file_to_s3)
-                                       .with(anything, anything, expected_aws_bucketname, expected_fset_code_backup_fname)
-
-        expect(described_class).to receive(:delete_excess_backup_files)
-                                       .with("#{File.join(@backup_dir, db_backup_basefn)}.*", 5)
-        expect(described_class).to receive(:delete_excess_backup_files)
-                                       .with("#{expected_fset_misc_files_base_fname}.*", 99)
-        expect(described_class).to receive(:delete_excess_backup_files)
-                                       .with("#{expected_fset_code_backup_base_fname}.*", 3)
+        allow(described_class).to receive(:upload_file_to_s3)
+        allow(described_class).to receive(:delete_excess_backup_files)
 
         expected_error_text = /No such file or directory - blorfo while in the backup_makers.each loop. Current item:/
         # Slack notification should be sent
@@ -196,6 +220,7 @@ RSpec.describe Backup, type: :model do
         class_name = backup_condition.class_name
         klass = class_name.constantize
 
+        timestamp = hourstamp
         ActivityLogger.open(@logfilename, 'SHF_TASK', 'Conditions') do |log|
           log.info("#{class_name} ...")
           klass.condition_response(backup_condition, log)
@@ -205,40 +230,40 @@ RSpec.describe Backup, type: :model do
         expect(File.read(@logfilename)).to match(expected_error_text)
 
         # expect only the successful backup files to be in the backup directory
-        expect(File.exist?(expected_fset_misc_files_backup_fname)).to be_truthy
-        expect(File.exist?(expected_fset_code_backup_fname)).to be_truthy
-
+        expect(timestamped_file_exists?(@backup_dir,
+                                        "#{fileset_misc_files_backup_basefn}.#{timestamp}")).to be_truthy
+        expect(timestamped_file_exists?(@backup_dir,
+                                        "#{fileset_code_backup_basefn}.#{timestamp}")).to be_truthy
         # no db backup was created:
-        expect(File.exist?(File.join(@backup_dir, db_backup_fname))).to be_falsey
+        expect(timestamped_file_exists?(@backup_dir,
+                                        "#{db_backup_basefn}.#{timestamp}")).to be_falsey
       end
 
 
       it 'writing to AWS fails for the FileSet code backup file' do
         @error_raised = NoMethodError.new('flurb')
 
+        # Raise an error:
         allow(described_class).to receive(:upload_file_to_s3)
-                                      .with(anything, anything, expected_aws_bucketname, expected_fset_code_backup_fname)
+                                      .with(anything, anything,
+                                            expected_aws_bucketname, expected_fset_code_backup_fname)
                                       .and_raise(@error_raised)
 
         expect(described_class).to receive(:upload_file_to_s3)
-                                       .with(anything, anything, expected_aws_bucketname, File.join(@backup_dir, db_backup_fname))
+                                       .with(anything, anything,
+                                             expected_aws_bucketname, expected_db_backup_fname)
         expect(described_class).to receive(:upload_file_to_s3)
-                                       .with(anything, anything, expected_aws_bucketname, expected_fset_misc_files_backup_fname)
-        expect(described_class).to receive(:upload_file_to_s3)
-                                       .with(anything, anything, expected_aws_bucketname, expected_fset_code_backup_fname)
+                                       .with(anything, anything,
+                                             expected_aws_bucketname, expected_fset_misc_files_backup_fname)
 
-        expect(described_class).to receive(:delete_excess_backup_files)
-                                       .with("#{File.join(@backup_dir, db_backup_basefn)}.*", 5)
-        expect(described_class).to receive(:delete_excess_backup_files)
-                                       .with("#{expected_fset_misc_files_base_fname}.*", 99)
-        expect(described_class).to receive(:delete_excess_backup_files)
-                                       .with("#{expected_fset_code_backup_base_fname}.*", 3)
+        allow(described_class).to receive(:delete_excess_backup_files)
 
         expected_error_text = /#{@error_raised} in backup_files loop, uploading_file_to_s3. Current item:/
 
         # Slack notification should be sent
         expect(SHFNotifySlack).to receive(:failure_notification).with(anything, text: expected_error_text)
 
+        timestamp = hourstamp
         class_name = backup_condition.class_name
         klass = class_name.constantize
 
@@ -251,9 +276,12 @@ RSpec.describe Backup, type: :model do
         expect(File.read(@logfilename)).to match(expected_error_text)
 
         # expect the backup files to be in the backup directory
-        expect(File.exist?(File.join(@backup_dir, db_backup_fname))).to be_truthy
-        expect(File.exist?(expected_fset_misc_files_backup_fname)).to be_truthy
-        expect(File.exist?(expected_fset_code_backup_fname)).to be_truthy
+        expect(timestamped_file_exists?(@backup_dir,
+                                        "#{fileset_misc_files_backup_basefn}.#{timestamp}")).to be_truthy
+        expect(timestamped_file_exists?(@backup_dir,
+                                        "#{fileset_code_backup_basefn}.#{timestamp}")).to be_truthy
+        expect(timestamped_file_exists?(@backup_dir,
+                                        "#{db_backup_basefn}.#{timestamp}")).to be_truthy
       end
 
 
@@ -261,12 +289,13 @@ RSpec.describe Backup, type: :model do
         @error_raised = NoMethodError
 
         allow(described_class).to receive(:validate_timing)
-        allow_any_instance_of(ShfBackupMakers::AbstractBackupMaker).to receive(:backup)
+        allow_any_instance_of(ShfBackupMakers::AbstractBackupMaker).to receive(:backup).and_call_original
 
         allow(described_class).to receive(:upload_file_to_s3)
 
         expect(described_class).to receive(:delete_excess_backup_files)
                                        .with("#{File.join(@backup_dir, db_backup_basefn)}.*", anything)
+        # Raise an error:
         expect(described_class).to receive(:delete_excess_backup_files)
                                        .with("#{expected_fset_misc_files_base_fname}.*", 99)
                                        .and_raise(NoMethodError)
@@ -278,6 +307,7 @@ RSpec.describe Backup, type: :model do
         # Slack notification should be sent
         expect(SHFNotifySlack).to receive(:failure_notification).with(anything, text: expected_error_text)
 
+        timestamp = hourstamp
         class_name = backup_condition.class_name
         klass = class_name.constantize
 
@@ -290,9 +320,12 @@ RSpec.describe Backup, type: :model do
         expect(File.read(@logfilename)).to match(expected_error_text)
 
         # expect the backup files to be in the backup directory
-        expect(File.exist?(File.join(@backup_dir, db_backup_fname))).to be_truthy
-        expect(File.exist?(expected_fset_misc_files_backup_fname)).to be_truthy
-        expect(File.exist?(expected_fset_code_backup_fname)).to be_truthy
+        expect(timestamped_file_exists?(@backup_dir,
+                                        "#{fileset_misc_files_backup_basefn}.#{timestamp}")).to be_truthy
+        expect(timestamped_file_exists?(@backup_dir,
+                                        "#{fileset_code_backup_basefn}.#{timestamp}")).to be_truthy
+        expect(timestamped_file_exists?(@backup_dir,
+                                        "#{db_backup_basefn}.#{timestamp}")).to be_truthy
       end
     end
 
@@ -442,7 +475,8 @@ RSpec.describe Backup, type: :model do
 
       it 'joins the given directory with the given filename, appends "." + a timestamp and .gz to the base filename' do
         timestamp = Time.now.strftime Backup::TIMESTAMP_FMT
-        expect(described_class.backup_target_fn('blorf-dir', 'blorf')).to eq(File.join('blorf-dir', "blorf.#{timestamp}.gz"))
+        time_to_mins_str = Time.now.strftime '%F-%H%M' # we can only check it to the minute
+        expect(described_class.backup_target_fn('blorf-dir', 'blorf')).to match(/blorf-dir\/blorf\.#{time_to_mins_str}-\d\d\d\d\d-Z\.gz/)
       end
 
     end
@@ -535,8 +569,8 @@ RSpec.describe Backup, type: :model do
                                               files_backup: 31 },
                               backup_directory: nil,
                               filesets: [
-                                  {name: 'files',
-                                   files: ['file1.txt', '/some/dir']
+                                  { name: 'files',
+                                    files: ['file1.txt', '/some/dir']
                                   },
                               ]
       } }
@@ -548,8 +582,8 @@ RSpec.describe Backup, type: :model do
         @db_backup_maker1 = ShfBackupMakers::DBBackupMaker.new(target_filename: 'db_backup_maker_target_file.sql')
         @db_backup_maker2 = ShfBackupMakers::DBBackupMaker.new(target_filename: 'another_db_backup_maker_target_file.flurb')
         @files_backup_maker = ShfBackupMakers::FileSetBackupMaker.new(name: 'files',
-                                                                     target_filename: 'files.tar',
-                                                                     backup_sources: ['file1.txt', 'file2.zip'])
+                                                                      target_filename: 'files.tar',
+                                                                      backup_sources: ['file1.txt', 'file2.zip'])
         @created_backup_makers = [
             { backup_maker: @db_backup_maker1, keep_num: 2 },
             { backup_maker: @db_backup_maker2, keep_num: 1 },
@@ -631,17 +665,17 @@ RSpec.describe Backup, type: :model do
           described_class.condition_response(backup_condition, FakeLogger)
         end
 
-        it "logs a message that it is 'Backing up to: <the backup file>.<YYYY-mm-dd>.gz'" do
+        it "logs a message that it is 'Backing up to: <the backup file>.<YYYY-mm-dd-HHMM-SSLLL-Z>.gz'" do
           allow(FakeLogger).to receive(:record).with('info', /Moving (.*)/)
           allow(FakeLogger).to receive(:record).with('info', /Pruning (.*)/)
 
-          today_str = Time.now.strftime '%Y-%m-%d'
+          time_to_mins_str = Time.now.strftime '%F-%H%M'
 
           # we created 2 DB backup makers
           expect(FakeLogger).to receive(:record).twice
-                                    .with('info', /Backing up to: BACKUP_DIR\/db_backup\.sql\.#{today_str}\.gz/)
+                                    .with('info', /Backing up to: BACKUP_DIR\/db_backup\.sql\.#{time_to_mins_str}-(.*)-Z\.gz/)
           expect(FakeLogger).to receive(:record)
-                                    .with('info', /Backing up to: BACKUP_DIR\/files\.tar\.#{today_str}\.gz/)
+                                    .with('info', /Backing up to: BACKUP_DIR\/files\.tar\.#{time_to_mins_str}-(.*)-Z\.gz/)
 
           described_class.condition_response(backup_condition, FakeLogger)
         end
@@ -784,13 +818,13 @@ RSpec.describe Backup, type: :model do
         }
 
         expect(described_class).to receive(:new_fileset_backup_maker)
-                                       .with({name: 'set 1',
-                                                 files: ['hund.rb', 'hammerhead.rb', 'hamster.rb']
+                                       .with({ name: 'set 1',
+                                               files: ['hund.rb', 'hammerhead.rb', 'hamster.rb']
                                              })
                                        .and_call_original
         expect(described_class).to receive(:new_fileset_backup_maker)
-                                       .with({name: 'set 2',
-                                              files: ['hund.rb', 'hammerhead.rb', 'hamster.rb']
+                                       .with({ name: 'set 2',
+                                               files: ['hund.rb', 'hammerhead.rb', 'hamster.rb']
                                              })
                                        .and_call_original
         created_makers = described_class.create_fileset_backup_makers(config)

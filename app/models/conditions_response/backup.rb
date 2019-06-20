@@ -38,7 +38,11 @@ class Backup < ConditionResponder
   DEFAULT_DB_BACKUPS_TO_KEEP = 15
   DEFAULT_FILE_BACKUPS_TO_KEEP = 31
 
-  TIMESTAMP_FMT = '%Y-%m-%d'
+  TIMESTAMP_FMT = '%F'
+
+  # YYYY-MM-DD-HHMM-SS<millisec)>-Z
+  # provide minutes, seconds, etc. so that multiple backups per day can be kept
+  FILENAME_SUFFIX_TIMESTAMP_FMT = '%F-%H%M-%S%L-Z'
 
   # -------------
 
@@ -105,12 +109,17 @@ class Backup < ConditionResponder
 
 
   def self.backup_target_fn(backup_dir, backup_base_fn)
-    File.join(backup_dir, backup_base_fn + '.' + today_timestamp + '.gz')
+    File.join(backup_dir, backup_base_fn + '.' + backup_timestamp + '.gz')
   end
 
 
   def self.today_timestamp
     Time.now.strftime TIMESTAMP_FMT
+  end
+
+
+  def self.backup_timestamp
+    Time.now.strftime FILENAME_SUFFIX_TIMESTAMP_FMT
   end
 
 
