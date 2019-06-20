@@ -163,7 +163,6 @@ class Backup < ConditionResponder
     # :keep_num key defines how many daily backups to retain on _local_ storage (e.g. on the production machine)
     # AWS (S3) backup files are retained based on settings in AWS.
     backup_makers = [
-        { backup_maker: ShfBackupMakers::CodeBackupMaker.new(name: 'code'), keep_num: num_code_backups_to_keep },
         { backup_maker: ShfBackupMakers::DBBackupMaker.new, keep_num: num_db_backups_to_keep }
     ]
 
