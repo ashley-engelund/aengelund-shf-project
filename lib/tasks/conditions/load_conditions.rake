@@ -50,8 +50,7 @@ namespace :shf do
         { class_name: 'Backup',
           timing:     :every_day,
           config:     { days_to_keep:     { code_backup: 4,
-                                            db_backup:   15,
-                                            files_backup: 31},
+                                            db_backup:   15 },
                         backup_directory: nil,
                         filesets: [
                             {name: 'logs',

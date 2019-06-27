@@ -177,8 +177,7 @@ RSpec.describe Backup, type: :model do
       condition_info = { class_name: 'Backup',
                          timing: :every_day,
                          config: { days_to_keep: { code_backup: 2,
-                                                   db_backup: 5,
-                                                   files_backup: 31 },
+                                                   db_backup: 5},
                                    backup_directory: @backup_dir,
                                    filesets: [
                                        { name: 'misc files',
@@ -705,8 +704,7 @@ RSpec.describe Backup, type: :model do
       let(:backup_config) { { class_name: 'Backup',
                               timing: Backup::TIMING_EVERY_DAY,
                               days_to_keep: { code_backup: 4,
-                                              db_backup: 15,
-                                              files_backup: 31 },
+                                              db_backup: 15},
                               backup_directory: nil,
                               filesets: [
                                   { name: 'files',
