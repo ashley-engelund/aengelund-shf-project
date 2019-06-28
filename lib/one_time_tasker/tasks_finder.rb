@@ -59,10 +59,13 @@ module OneTimeTasker
     DEFAULT_LOG_ACTIVITY_TAG = 'Find One Time Tasks' unless defined?(OneTimeTasker::TasksRunner::DEFAULT_LOG_ACTIVITY_TAG)
 
 
-    # tasks_directory -- This is the directory where the TasksFinder will look for .rake files.
+    # tasks_directory -- The directory where the TasksFinder will look for .rake files.
     #                    It will search in this directory and all subdirectories.
+    #                    The getter (read) method uses lazy initialization
     attr_writer :tasks_directory
 
+    # tasks_updater -- The updater that will set tasks as duplicates and/or
+    #                    as having been already run.
     attr_reader :tasks_updater
 
 
