@@ -68,14 +68,10 @@ module ShfBackupMakers
     #
     # @param [String] target - filename of the backup to be created. Should include the full path
     # @param [Array[String]] sources - list of the filenames to include.
-    # @param [Array[String]] excludes - list of glob patterns to exclude.
-    #          Acceptable strings are all patterns that the
-    #          tar command accepts for the --exclude option
     #
     # @return [String] - the name of the backup target created
     #
-    def backup(target: target_filename, sources: backup_sources, excludes: [])
-      #shell_cmd("tar -chzf #{target} #{sources.join(' ')}")
+    def backup(target: target_filename, sources: backup_sources)
       shell_cmd("tar #{tar_options} #{file_target_opt(target)} #{exclude_opts} #{sources.join(' ')}")
       target
     end
