@@ -76,7 +76,9 @@ module LogCreator
   def make_log(logging = false, log_facility_tag: '', log_activity_tag: '')
     @this_created_the_log = true
     if logging
-      logfile_name = ::LogfileNamer.name_for(self)
+      klass = self.class == Class ? self : self.class
+
+      logfile_name = ::LogfileNamer.name_for(klass)
       ::ActivityLogger.open(logfile_name,
                           log_facility_tag,
                           log_activity_tag)
