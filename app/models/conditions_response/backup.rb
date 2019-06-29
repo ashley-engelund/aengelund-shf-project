@@ -48,8 +48,9 @@ class Backup < ConditionResponder
 
 
   # TODO: Slack notification may or may not be used (= the use_slack_notification flag).
-  def self.condition_response(condition, log)
+  def self.condition_response(condition, log, use_slack_notification: true)
 
+    @use_slack_notification = use_slack_notification
     @slack_error_already_logged = false # keep us from logging a Slack error every time it percolates up through rescue blocks
 
     validate_timing(get_timing(condition), [TIMING_EVERY_DAY], log)
@@ -274,10 +275,9 @@ class Backup < ConditionResponder
   end
 
 
-  # Record the error and additional_info to the given log and send a Slack notification.
-  #
+  # Record the error and additional_info to the given log
+  # and send a Slack notification if we are using Slack notifications
   # TODO  this seems like a general-purpose method that we need in many places.  Refactor into a class/module to be available all places
-  #
   #
   # @param [Error] original_error - Error that needs to be recorded
   # @param [Log] log - the log to write to. Must respond to :error(message)
@@ -288,7 +288,7 @@ class Backup < ConditionResponder
     log_string = additional_info.blank? ? original_error.to_s : "#{original_error} #{additional_info}"
 
     log.error(log_string)
-    SHFNotifySlack.failure_notification(self.name, text: log_string)
+    SHFNotifySlack.failure_notification(self.name, text: log_string) if @use_slack_notification
 
     # If the problem is because of Slack Notification, log it and raise it
     #  so the caller can deal with it as needed.
@@ -300,11 +300,14 @@ class Backup < ConditionResponder
     # ... Otherwise, an exception was raised during writing to the log.
     # Send a slack notification about that and continue (do _not_ raise it).
   rescue => not_a_slack_error
-    # send a notification about the original error
-    SHFNotifySlack.failure_notification(self.name, text: log_string)
+    if @use_slack_notification
+      # send a notification about the original error
+      SHFNotifySlack.failure_notification(self.name, text: log_string)
 
-    # send another notification about the error that happened in this method
-    SHFNotifySlack.failure_notification(self.name, text: "Error: Could not write to the log in #{self.name}.#{__method__}: #{not_a_slack_error}")
+      # send another notification about the error that happened in this method
+      SHFNotifySlack.failure_notification(self.name, text: "Error: Could not write to the log in #{self.name}.#{__method__}: #{not_a_slack_error}")
+    end
+
   end
 
 
@@ -314,6 +317,9 @@ class Backup < ConditionResponder
 
 
   # Only log the error if it has not already been logged.
+  # If a Slack error happened during a loop within iterate_and_log_notify_errors,
+  # checking @slack_error_already_logged will ensure that it is not also raised
+  # by the rescue at the end of the condition_response method.
   def self.log_slack_error(slack_error, log, details = '')
     log.error("#{slack_error_encountered_str} #{details}: #{slack_error}") unless @slack_error_already_logged
     @slack_error_already_logged = true
