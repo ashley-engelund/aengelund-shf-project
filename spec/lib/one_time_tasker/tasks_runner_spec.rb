@@ -22,10 +22,14 @@ RSpec.describe OneTimeTasker::TasksRunner do
   before(:each) do
     @task_runner_logfile = LogfileNamer.name_for(described_class)
     File.delete(@task_runner_logfile) if File.file?(@task_runner_logfile)
+    evaluated_task_updater_logfn = LogfileNamer.name_for(OneTimeTasker::EvaluatedTasksStateUpdater)
+    File.delete(evaluated_task_updater_logfn) if File.file?(evaluated_task_updater_logfn)
   end
 
   after(:each) do
     File.delete(@task_runner_logfile) if File.file?(@task_runner_logfile)
+    evaluated_task_updater_logfn = LogfileNamer.name_for(OneTimeTasker::EvaluatedTasksStateUpdater)
+    File.delete(evaluated_task_updater_logfn) if File.file?(evaluated_task_updater_logfn)
   end
 
 
@@ -326,6 +330,7 @@ RSpec.describe OneTimeTasker::TasksRunner do
 
         described_class.run_onetime_tasks(log)
         log.close
+        File.delete(@logfilename) if File.exist?(@logfilename)
       end
 
 
@@ -390,6 +395,7 @@ RSpec.describe OneTimeTasker::TasksRunner do
         log = ActivityLogger.open(@logfilename, 'tasks_runner_spec', 'many rake files', 'second run')
         described_class.run_onetime_tasks(log)
         log.close
+        File.delete(@logfilename) if File.exist?(@logfilename)
       end
 
       it 'no tasks are run a 2nd time' do

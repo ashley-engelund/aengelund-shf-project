@@ -34,7 +34,8 @@ RSpec.describe OneTimeTasker::TasksFinder do
   before(:each) do
     @logfile_for_subject = LogfileNamer.name_for(described_class)
     File.delete(@logfile_for_subject) if File.file?(@logfile_for_subject)
-
+    evaluated_task_updater_logfn = LogfileNamer.name_for(OneTimeTasker::EvaluatedTasksStateUpdater)
+    File.delete(evaluated_task_updater_logfn) if File.file?(evaluated_task_updater_logfn)
     @tasks_directory = Dir.mktmpdir('test-onetime_rake_files')
     subject.tasks_directory = @tasks_directory
 
@@ -45,6 +46,8 @@ RSpec.describe OneTimeTasker::TasksFinder do
 
   after(:each) do
     File.delete(@logfile_for_subject) if File.file?(@logfile_for_subject)
+    evaluated_task_updater_logfn = LogfileNamer.name_for(OneTimeTasker::EvaluatedTasksStateUpdater)
+    File.delete(evaluated_task_updater_logfn) if File.file?(evaluated_task_updater_logfn)
   end
 
 
