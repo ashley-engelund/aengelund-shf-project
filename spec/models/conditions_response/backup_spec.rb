@@ -3,32 +3,7 @@ require 'rails_helper'
 require 'shared_examples/shared_condition_specs'
 require 'shared_context/activity_logger'
 require 'shared_context/expect_tar_has_entries'
-
-
-# TODO mock logs with a FakeLogger + use 'expect(FakeLogger).to receive(...)' (= faster since no file I/O)
-# TODO DRY Acceptance tests
-# TODO move matcher to matchers dir?
-
-# =========================================================================
-#  Matcher for FileSetBackupMakers
-
-RSpec::Matchers.define :eq_the_fileset_backup_maker do |expected|
-  match do |actual|
-    expected.name == actual.name &&
-        expected.days_to_keep == actual.days_to_keep &&
-        expected.base_filename == actual.base_filename &&
-        expected.excludes == actual.excludes &&
-        expected.target_filename == actual.target_filename &&
-        expected.backup_sources == actual.backup_sources
-  end
-
-  failure_message do |actual|
-    "      expected: #{expected.inspect}\nbut got actual: #{actual.inspect}"
-  end
-end
-
-# =========================================================================
-# =========================================================================
+require 'matchers/matcher_file_set_backup'
 
 
 RSpec.describe Backup, type: :model do
@@ -81,6 +56,17 @@ RSpec.describe Backup, type: :model do
       end
 
       faux_app_dir
+    end
+
+
+    # Run the Backup with the given backup_condition
+    def run_backup_condition(backup_condition)
+      class_name = backup_condition.class_name
+      klass = class_name.constantize
+
+      ActivityLogger.open(@logfilename, 'SHF_TASK', 'Conditions') do |log|
+        klass.condition_response(backup_condition, log)
+      end
     end
 
 
@@ -143,8 +129,7 @@ RSpec.describe Backup, type: :model do
     let(:backup_condition_all_dirs) do
       condition_info = { class_name: 'Backup',
                          timing: :every_day,
-                         config: { days_to_keep: { code_backup: 2,
-                                                   db_backup: 5},
+                         config: { days_to_keep: { db_backup: 5 },
                                    backup_directory: @backup_dir,
 
                                    filesets: [
@@ -155,7 +140,7 @@ RSpec.describe Backup, type: :model do
                                        { name: 'code',
                                          days_to_keep: 3,
                                          files: [@faux_app_dir],
-                                         excludes: ['public', 'docs', 'features', 'spec', 'tmp', '.yardoc'].map{|ex_dir| File.join(@faux_app_dir, ex_dir)}
+                                         excludes: ['public', 'docs', 'features', 'spec', 'tmp', '.yardoc'].map { |ex_dir| File.join(@faux_app_dir, ex_dir) }
                                        },
                                        { name: 'app-public',
                                          days_to_keep: 3,
@@ -176,8 +161,7 @@ RSpec.describe Backup, type: :model do
     let(:backup_condition) do
       condition_info = { class_name: 'Backup',
                          timing: :every_day,
-                         config: { days_to_keep: { code_backup: 2,
-                                                   db_backup: 5},
+                         config: { days_to_keep: { db_backup: 5 },
                                    backup_directory: @backup_dir,
                                    filesets: [
                                        { name: 'misc files',
@@ -233,13 +217,10 @@ RSpec.describe Backup, type: :model do
       expect(described_class).to receive(:delete_excess_backup_files)
                                      .with("#{expected_fset_code_backup_base_fname}.*", 3)
 
+      # Run the backup
       timestamp = hourstamp
-      class_name = backup_condition.class_name
-      klass = class_name.constantize
-      ActivityLogger.open(@logfilename, 'SHF_TASK', 'Conditions') do |log|
-        log.info("#{class_name} ...")
-        klass.condition_response(backup_condition, log)
-      end
+      run_backup_condition(backup_condition)
+
 
       # no errors in the log file
       logfile_contents = File.read(@logfilename)
@@ -278,13 +259,10 @@ RSpec.describe Backup, type: :model do
       expect(SHFNotifySlack).not_to receive(:new)
       expect(SHFNotifySlack).not_to receive(:notification)
 
+      # Run the backup
       timestamp = hourstamp
-      class_name = backup_condition.class_name
-      klass = class_name.constantize
-      ActivityLogger.open(@logfilename, 'SHF_TASK', 'Conditions') do |log|
-        log.info("#{class_name} ...")
-        klass.condition_response(backup_condition, log, use_slack_notification: false)
-      end
+      run_backup_condition(backup_condition)
+
 
       # no errors in the log file
       logfile_contents = File.read(@logfilename)
@@ -328,13 +306,10 @@ RSpec.describe Backup, type: :model do
       expect(described_class).to receive(:delete_excess_backup_files)
                                      .with("#{expected_db_backup_base_fn}.*", 5)
 
+      # Run the backup
       timestamp = hourstamp
-      class_name = backup_condition_all_dirs.class_name
-      klass = class_name.constantize
-      ActivityLogger.open(@logfilename, 'SHF_TASK', 'Conditions') do |log|
-        log.info("#{class_name} ...")
-        klass.condition_response(backup_condition_all_dirs, log)
-      end
+      run_backup_condition(backup_condition_all_dirs)
+
 
       # no errors in the log file
       logfile_contents = File.read(@logfilename)
@@ -352,15 +327,15 @@ RSpec.describe Backup, type: :model do
 
       logs_backup_ts_fn = "#{logs_basefn}.#{timestamp}"
       actual_log_backup_file = timestamped_file_in_dir(@backup_dir, logs_backup_ts_fn)
-      expected_entries = [ File.join(@faux_app_dir, 'log'), File.join(@faux_app_dir, 'log', 'blorf.txt') ]
+      expected_entries = [File.join(@faux_app_dir, 'log'), File.join(@faux_app_dir, 'log', 'blorf.txt')]
       expect_tar_has_these_entries(File.join(@backup_dir, actual_log_backup_file), expected_entries)
 
       code_backup_ts_fn = "#{code_basefn}.#{timestamp}"
       expected_dirs = %w(app bin config db lib log node_modules  script vendor )
       actual_code_env_secrets_backup_file = timestamped_file_in_dir(@backup_dir, code_backup_ts_fn)
 
-      expected_entries = expected_dirs.map do | dir |
-        [File.join(@faux_app_dir, dir), File.join(@faux_app_dir, dir, 'blorf.txt') ]
+      expected_entries = expected_dirs.map do |dir|
+        [File.join(@faux_app_dir, dir), File.join(@faux_app_dir, dir, 'blorf.txt')]
       end
 
       expected_entries << @faux_app_dir
@@ -373,41 +348,36 @@ RSpec.describe Backup, type: :model do
 
       public_backup_ts_fn = "#{public_basefn}.#{timestamp}"
       actual_app_public_backup_file = timestamped_file_in_dir(@backup_dir, public_backup_ts_fn)
-      expected_entries = [ File.join(@faux_app_dir, 'public'), File.join(@faux_app_dir, 'public', 'blorf.txt') ]
+      expected_entries = [File.join(@faux_app_dir, 'public'), File.join(@faux_app_dir, 'public', 'blorf.txt')]
       expect_tar_has_these_entries(File.join(@backup_dir, actual_app_public_backup_file), expected_entries)
 
       config_backup_ts_fn = "#{config_basefn}.#{timestamp}"
       actual_config_env_secrets_backup_file = timestamped_file_in_dir(@backup_dir, config_backup_ts_fn)
       config_dir = File.join(@faux_app_dir, 'config')
-      expected_entries = [File.join(config_dir, 'db.yml'), File.join(config_dir, 'secrets.yml'), File.join(@faux_app_dir, '.env') ]
+      expected_entries = [File.join(config_dir, 'db.yml'), File.join(config_dir, 'secrets.yml'), File.join(@faux_app_dir, '.env')]
       expect_tar_has_these_entries(File.join(@backup_dir, actual_config_env_secrets_backup_file), expected_entries)
     end
 
 
-    describe 'errors happen - 1 error should not stop the entire backup' do
+    describe 'Errors: logged, Slack notification sent, does not stop entire backup' do
 
-      it 'one of the shell commands for the ShfBackupMakers::DBBackupMaker fails' do
-        # Raise an error:
-        allow_any_instance_of(ShfBackupMakers::DBBackupMaker).to receive(:shell_cmd)
-                                                                     .with(/touch/)
-                                                                     .and_raise(Errno::ENOENT, 'blorfo')
+      it 'DBBackupMaker fails, no db backup is created' do
 
         allow(described_class).to receive(:upload_file_to_s3)
         allow(described_class).to receive(:delete_excess_backup_files)
 
+        # Raise an error:
         expected_error_text = /No such file or directory - blorfo while in the backup_makers.each loop. Current item:/
+        allow_any_instance_of(ShfBackupMakers::DBBackupMaker).to receive(:shell_cmd)
+                                                                     .with(/touch/)
+                                                                     .and_raise(Errno::ENOENT, 'blorfo')
         # Slack notification should be sent
         expect(SHFNotifySlack).to receive(:failure_notification)
                                       .with('Backup', text: expected_error_text)
 
-        class_name = backup_condition.class_name
-        klass = class_name.constantize
-
+        # Run the backup
         timestamp = hourstamp
-        ActivityLogger.open(@logfilename, 'SHF_TASK', 'Conditions') do |log|
-          log.info("#{class_name} ...")
-          klass.condition_response(backup_condition, log)
-        end
+        run_backup_condition(backup_condition)
 
         # There will be errors in the log file
         expect(File.read(@logfilename)).to match(expected_error_text)
@@ -424,36 +394,31 @@ RSpec.describe Backup, type: :model do
 
 
       it 'writing to AWS fails for the FileSet code backup file' do
-        @error_raised = NoMethodError.new('flurb')
-
-        # Raise an error:
-        allow(described_class).to receive(:upload_file_to_s3)
-                                      .with(anything, anything,
-                                            expected_aws_bucketname, expected_fset_code_backup_fname)
-                                      .and_raise(@error_raised)
-
         expect(described_class).to receive(:upload_file_to_s3)
                                        .with(anything, anything,
                                              expected_aws_bucketname, expected_db_backup_fname)
         expect(described_class).to receive(:upload_file_to_s3)
                                        .with(anything, anything,
                                              expected_aws_bucketname, expected_fset_misc_files_backup_fname)
-
         allow(described_class).to receive(:delete_excess_backup_files)
 
+        # Raise an error:
+        @error_raised = NoMethodError.new('flurb')
         expected_error_text = /#{@error_raised} in backup_files loop, uploading_file_to_s3. Current item:/
+
+        allow(described_class).to receive(:upload_file_to_s3)
+                                      .with(anything, anything,
+                                            expected_aws_bucketname, expected_fset_code_backup_fname)
+                                      .and_raise(@error_raised)
 
         # Slack notification should be sent
         expect(SHFNotifySlack).to receive(:failure_notification).with(anything, text: expected_error_text)
 
-        timestamp = hourstamp
-        class_name = backup_condition.class_name
-        klass = class_name.constantize
 
-        ActivityLogger.open(@logfilename, 'SHF_TASK', 'Conditions') do |log|
-          log.info("#{class_name} ...")
-          klass.condition_response(backup_condition, log)
-        end
+        # Run the backup
+        timestamp = hourstamp
+        run_backup_condition(backup_condition)
+
 
         # There will be errors in the log file
         expect(File.read(@logfilename)).to match(expected_error_text)
@@ -469,8 +434,6 @@ RSpec.describe Backup, type: :model do
 
 
       it 'pruning the backup files fails' do
-        @error_raised = NoMethodError
-
         allow(described_class).to receive(:validate_timing)
         allow_any_instance_of(ShfBackupMakers::AbstractBackupMaker).to receive(:backup).and_call_original
 
@@ -478,26 +441,23 @@ RSpec.describe Backup, type: :model do
 
         expect(described_class).to receive(:delete_excess_backup_files)
                                        .with("#{File.join(@backup_dir, db_backup_basefn)}.*", anything)
-        # Raise an error:
-        expect(described_class).to receive(:delete_excess_backup_files)
-                                       .with("#{expected_fset_misc_files_base_fname}.*", 99)
-                                       .and_raise(NoMethodError)
         expect(described_class).to receive(:delete_excess_backup_files)
                                        .with("#{expected_fset_code_backup_base_fname}.*", 3)
 
+        # Raise an error:
+        @error_raised = NoMethodError
         expected_error_text = /#{@error_raised} while pruning in the backup_makers.each loop. Current item:/
+
+        expect(described_class).to receive(:delete_excess_backup_files)
+                                       .with("#{expected_fset_misc_files_base_fname}.*", 99)
+                                       .and_raise(NoMethodError)
 
         # Slack notification should be sent
         expect(SHFNotifySlack).to receive(:failure_notification).with(anything, text: expected_error_text)
 
+        # Run the backup
         timestamp = hourstamp
-        class_name = backup_condition.class_name
-        klass = class_name.constantize
-
-        ActivityLogger.open(@logfilename, 'SHF_TASK', 'Conditions') do |log|
-          log.info("#{class_name} ...")
-          klass.condition_response(backup_condition, log)
-        end
+        run_backup_condition(backup_condition)
 
         # The error was recorded in the log
         expect(File.read(@logfilename)).to match(expected_error_text)
@@ -521,131 +481,96 @@ RSpec.describe Backup, type: :model do
 
       describe 'use_slack_notification is false; backup is not halted due to a Slack error' do
 
-        it 'not within a loop: logs "(in rescue at bottom of condition_response)"' do
-          allow(described_class).to receive(:backup_dir).and_raise(slack_error)
-
+        it 'not within a loop' do
           allow(described_class).to receive(:validate_timing)
           allow_any_instance_of(ShfBackupMakers::AbstractBackupMaker).to receive(:backup)
-
           allow(described_class).to receive(:upload_file_to_s3)
           allow(described_class).to receive(:delete_excess_backup_files)
 
-
+          # Raise a Slack notification error
+          allow(described_class).to receive(:backup_dir).and_raise(slack_error)
           expect(SHFNotifySlack).not_to receive(:notification)
+
 
           class_name = backup_condition.class_name
           klass = class_name.constantize
-
           ActivityLogger.open(@logfilename, 'SHF_TASK', 'Conditions') do |log|
-            log.info("#{class_name} ...")
             expect { klass.condition_response(backup_condition, log, use_slack_notification: false) }.to raise_error(slack_error)
           end
-
-          expected_error_text = /#{start_of_error_text} \(in rescue at bottom of condition_response\): #{slack_error}/
-          # The Slack error was recorded in the log
-          expect(File.read(@logfilename)).to match(expected_error_text)
         end
-
 
       end
 
 
-      describe 'use_slack_notification is true; backup is halted if we cannot send a Slack notification for an error' do
+      describe 'use_slack_notification is true; backup IS halted if we cannot send a Slack notification for an error' do
 
-        it 'not within a loop: logs "(in rescue at bottom of condition_response)"' do
+        it 'not within a loop' do
+          allow(described_class).to receive(:validate_timing)
+          allow_any_instance_of(ShfBackupMakers::AbstractBackupMaker).to receive(:backup)
+          allow(described_class).to receive(:upload_file_to_s3)
+          allow(described_class).to receive(:delete_excess_backup_files)
+
+          # Raise a Slack notification error
           allow(described_class).to receive(:backup_dir).and_raise(slack_error)
 
-          allow(described_class).to receive(:validate_timing)
-          allow_any_instance_of(ShfBackupMakers::AbstractBackupMaker).to receive(:backup)
-
-          allow(described_class).to receive(:upload_file_to_s3)
-          allow(described_class).to receive(:delete_excess_backup_files)
 
           class_name = backup_condition.class_name
           klass = class_name.constantize
-
           ActivityLogger.open(@logfilename, 'SHF_TASK', 'Conditions') do |log|
-            log.info("#{class_name} ...")
             expect { klass.condition_response(backup_condition, log) }.to raise_error(slack_error)
           end
-
-          expected_error_text = /#{start_of_error_text} \(in rescue at bottom of condition_response\): #{slack_error}/
-          # The Slack error was recorded in the log
-          expect(File.read(@logfilename)).to match(expected_error_text)
         end
 
 
-        it 'during backup_makers .backup loop; logs "while in the backup_makers.each loop"' do
+        it 'in backup_makers .backup loop' do
           allow(described_class).to receive(:validate_timing)
-
           allow_any_instance_of(ShfBackupMakers::FileSetBackupMaker).to receive(:backup)
+          allow(described_class).to receive(:upload_file_to_s3)
+          allow(described_class).to receive(:delete_excess_backup_files)
+
+
+          # Raise a Slack notification error
           allow_any_instance_of(ShfBackupMakers::DBBackupMaker).to receive(:backup).and_raise(slack_error)
 
-          allow(described_class).to receive(:upload_file_to_s3)
-          allow(described_class).to receive(:delete_excess_backup_files)
-
           class_name = backup_condition.class_name
           klass = class_name.constantize
-
           ActivityLogger.open(@logfilename, 'SHF_TASK', 'Conditions') do |log|
-            log.info("#{class_name} ...")
-            expect { klass.condition_response(backup_condition, log) }.to raise_error(slack_error,)
+            expect { klass.condition_response(backup_condition, log) }.to raise_error(slack_error)
           end
-
-          expected_error_text = /#{start_of_error_text} while in the backup_makers\.each loop\. Current item:/
-
-          # The Slack error was recorded in the log just once
-          expect(File.read(@logfilename)).to match(expected_error_text)
-          expect(File.read(@logfilename)).not_to match(/not within a loop/) # the error is not also logged by final rescue clause
         end
 
 
-        it 'during AWS loop; logs info for the current AWS items and "in backup_files.each loop uploading_file_to_s3"' do
+        it 'in AWS loop' do
           allow(described_class).to receive(:validate_timing)
-
           allow_any_instance_of(ShfBackupMakers::AbstractBackupMaker).to receive(:backup)
+          allow(described_class).to receive(:delete_excess_backup_files)
 
+          # Raise a Slack notification error
           allow(described_class).to receive(:upload_file_to_s3).and_raise(slack_error)
 
-          allow(described_class).to receive(:delete_excess_backup_files)
 
           class_name = backup_condition.class_name
           klass = class_name.constantize
-
           ActivityLogger.open(@logfilename, 'SHF_TASK', 'Conditions') do |log|
-            log.info("#{class_name} ...")
-            expect { klass.condition_response(backup_condition, log) }.to raise_error(slack_error,)
+            expect { klass.condition_response(backup_condition, log) }.to raise_error(slack_error)
           end
-
-          expected_error_text = /#{start_of_error_text} in backup_files loop, uploading_file_to_s3\. Current item:/
-          # The Slack error was recorded in the log just once
-          expect(File.read(@logfilename)).to match(expected_error_text)
-          expect(File.read(@logfilename)).not_to match(/not within a loop/) # the error is not also logged by final rescue clause
         end
 
 
-        it 'during pruning backups loop; logs info about the backup maker and file pattern and "while pruning in the backup_makers.each loop backup_maker"' do
+        it 'in pruning backups loop' do
           allow(described_class).to receive(:validate_timing)
-
           allow_any_instance_of(ShfBackupMakers::AbstractBackupMaker).to receive(:backup)
-
           allow(described_class).to receive(:upload_file_to_s3)
 
+
+          # Raise a Slack notification error
           allow(described_class).to receive(:delete_excess_backup_files).and_raise(slack_error)
 
           class_name = backup_condition.class_name
           klass = class_name.constantize
-
           ActivityLogger.open(@logfilename, 'SHF_TASK', 'Conditions') do |log|
-            log.info("#{class_name} ...")
-            expect { klass.condition_response(backup_condition, log) }.to raise_error(slack_error,)
+            expect { klass.condition_response(backup_condition, log) }.to raise_error(slack_error)
           end
-
-          expected_error_text = /#{start_of_error_text} while pruning in the backup_makers\.each loop\. Current item:/
-
-          # The Slack error was recorded in the log just once
-          expect(File.read(@logfilename)).to match(expected_error_text)
-          expect(File.read(@logfilename)).not_to match(/not within a loop/) # the error is not also logged by final rescue clause
         end
 
       end
@@ -653,6 +578,8 @@ RSpec.describe Backup, type: :model do
     end
 
   end
+
+  # =======================================================================
 
 
   describe 'Unit tests' do
@@ -781,7 +708,7 @@ RSpec.describe Backup, type: :model do
       let(:backup_config) { { class_name: 'Backup',
                               timing: Backup::TIMING_EVERY_DAY,
                               days_to_keep: { code_backup: 4,
-                                              db_backup: 15},
+                                              db_backup: 15 },
                               backup_directory: nil,
                               filesets: [
                                   { name: 'files',
@@ -1290,10 +1217,10 @@ RSpec.describe Backup, type: :model do
       end
 
 
-      it 'Slack error: is logged with the detail message and raised' do
+      it 'Slack error is raised so caller can do whatever is needed; iteration stops' do
 
-        expect(FakeLogger).to receive(:error)
-                                  .with(/Slack Notification failure during Backup\.condition_response during iteration test. Current item: "b"\: #{Slack::Notifier::APIError}/)
+        # We do not log the Slack error; caller can do that if appropriate
+        expect(FakeLogger).not_to receive(:error)
 
         expect {
           described_class.iterate_and_log_notify_errors(@strings, 'during iteration test', FakeLogger) do |s|
