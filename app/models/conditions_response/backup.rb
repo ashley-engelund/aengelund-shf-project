@@ -34,9 +34,7 @@ class Backup < ConditionResponder
 
 
   DEFAULT_BACKUP_FILES_DIR = '/home/deploy/SHF_BACKUPS/'
-  DEFAULT_CODE_BACKUPS_TO_KEEP = 4
   DEFAULT_DB_BACKUPS_TO_KEEP = 15
-  DEFAULT_FILE_BACKUPS_TO_KEEP = 31
 
   TIMESTAMP_FMT = '%F'
 
@@ -47,11 +45,9 @@ class Backup < ConditionResponder
   # -------------
 
 
-  # TODO: Slack notification may or may not be used (= the use_slack_notification flag).
   def self.condition_response(condition, log, use_slack_notification: true)
 
     @use_slack_notification = use_slack_notification
-    @slack_error_already_logged = false # keep us from logging a Slack error every time it percolates up through rescue blocks
 
     validate_timing(get_timing(condition), [TIMING_EVERY_DAY], log)
 
@@ -92,10 +88,8 @@ class Backup < ConditionResponder
       delete_excess_backup_files(file_pattern, backup_maker[:keep_num])
     end
 
-
   rescue Slack::Notifier::APIError => slack_error
-    # Halt the backup if we cannot write to Slack; log then raise the error
-    log_slack_error(slack_error, log, '(in rescue at bottom of condition_response)')
+    # Halt the backup if we cannot write to Slack; raise the error
     raise slack_error
 
   rescue => backup_error
@@ -167,7 +161,7 @@ class Backup < ConditionResponder
 
 
   def self.create_backup_makers(config)
-    num_code_backups_to_keep = config.dig(:days_to_keep, :code_backup) || DEFAULT_CODE_BACKUPS_TO_KEEP
+
     num_db_backups_to_keep = config.dig(:days_to_keep, :db_backup) || DEFAULT_DB_BACKUPS_TO_KEEP
 
     # :keep_num key defines how many daily backups to retain on _local_ storage (e.g. on the production machine)
@@ -185,18 +179,16 @@ class Backup < ConditionResponder
   end
 
 
-  # Create 1 FileSetBackupMaker for each definition in the config
+  # Create a FileSetBackupMaker for each definition in the config
   #
   # @param [String] config - the configuration
   # @return [Array[FileSetBackupMakers]] - a list of FileSetBackupMakers
   #           instantiated based on entries in the config
-  #
   def self.create_fileset_backup_makers(config)
 
     return [] unless config.has_key?(:filesets)
 
     filesets = config.fetch(:filesets, false)
-    # new("Backup Condition configuration for fileset '#{fileset_name}' error. #{key}: must be an Array.")
     raise ShfConditionError::BackupConfigFileSetBadFormatError.new("Backup Condition configuration error. fileset: must be an Array.") unless filesets.is_a?(Array)
 
     filesets.map(&method(:new_fileset_backup_maker)).compact
@@ -264,8 +256,7 @@ class Backup < ConditionResponder
       yield(item)
 
     rescue Slack::Notifier::APIError => slack_error
-      # Halt the backup if we cannot write to Slack; log then raise the error
-      log_slack_error(slack_error, log, "#{additional_error_info}. Current item: #{item.inspect}")
+      # Halt the backup if we cannot write to Slack; raise the error
       raise slack_error
 
     rescue => backup_error
@@ -313,16 +304,6 @@ class Backup < ConditionResponder
 
   def self.slack_error_encountered_str(during_method = 'condition_response')
     "Slack Notification failure during #{self.name}.#{during_method}"
-  end
-
-
-  # Only log the error if it has not already been logged.
-  # If a Slack error happened during a loop within iterate_and_log_notify_errors,
-  # checking @slack_error_already_logged will ensure that it is not also raised
-  # by the rescue at the end of the condition_response method.
-  def self.log_slack_error(slack_error, log, details = '')
-    log.error("#{slack_error_encountered_str} #{details}: #{slack_error}") unless @slack_error_already_logged
-    @slack_error_already_logged = true
   end
 
 end
