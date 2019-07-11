@@ -1,0 +1,52 @@
+// Customize styles provided by the cookies_eu gem
+@import 'shf-custom-colors';
+
+$cookies-eu-background-color: #fff; //$body-background;
+$cookies-eu-border-color: $primary;
+$cookies-eu-color: $toggler-hide-color;
+$cookies-eu-button-color: $primary; // $shf-blue;
+//$cookies-eu-button-border-color: #7095b9;
+
+
+.cookies-eu {
+  background: $cookies-eu-background-color;
+  border: 2px $cookies-eu-border-color solid;
+  border-radius: 5px;
+  color: $cookies-eu-color;
+  line-height: inherit;
+  margin: 10px;
+  padding: 0 10px;
+
+  @media ($cookies-eu-mobile) {
+    font-size: 12px;
+    line-height: inherit;
+    position: fixed;
+  }
+
+  a {
+    border-bottom: 1px dotted;
+    color: $cookies-eu-color;
+  }
+
+  p {
+    margin-top: .5rem;
+  }
+
+  .cookies-eu-content-holder {
+    padding: inherit;
+  }
+
+  .cookies-eu-button-holder {
+
+    .cookies-eu-ok {
+      background: $cookies-eu-button-color;
+      font-size: .75rem;
+
+      @media ($cookies-eu-mobile) {
+        font-size: 10px;
+      }
+    }
+
+  }
+
+}
