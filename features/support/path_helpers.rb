@@ -87,7 +87,6 @@ module PathHelpers
         path = cookies_path
 
       else
-        expect(path).not_to be_empty, "A step was called with path= '#{pagename}', but that path is not defined in #{__method__} \n    (which is in #{__FILE__}"
         raise PagenameUnknown.new(page_name: pagename)
     end
 
