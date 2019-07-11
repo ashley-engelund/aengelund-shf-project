@@ -158,8 +158,6 @@ Rails.application.routes.draw do
 
   get 'information', to: 'shf_applications#information'
 
-  get '/cookies', to: 'pages#show', id: 'cookies'
-
   root to: 'companies#index'
 
 end
