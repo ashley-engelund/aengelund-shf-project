@@ -83,8 +83,11 @@ module PathHelpers
         path = admin_only_edit_app_configuration_path
       when 'admin show app configuration'
         path = admin_only_app_configuration_path
+      when 'cookies'
+        path = cookies_path
 
       else
+        expect(path).not_to be_empty, "A step was called with path= '#{pagename}', but that path is not defined in #{__method__} \n    (which is in #{__FILE__}"
         raise PagenameUnknown.new(page_name: pagename)
     end
 
