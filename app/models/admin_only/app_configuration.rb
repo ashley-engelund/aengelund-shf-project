@@ -4,7 +4,7 @@ module AdminOnly
     # Aggregates discrete data items that are used to configure
     # various aspects of the system (app).
 
-    after_save :refresh_config_to_use_and_check_site_meta_image_change
+    after_save :update_site_meta_image_info
 
     has_attached_file :chair_signature,
                       url: :url_for_images,
@@ -100,9 +100,9 @@ module AdminOnly
     end
 
 
-    # If the site_meta_image changed,
+    # If the site_meta_image changed, update the image dimensions.
     # Have to do this _after_ the attachment has been saved
-    def refresh_config_to_use_and_check_site_meta_image_change
+    def update_site_meta_image_info
       update_site_meta_image_dimensions if saved_change_to_attribute?(:site_meta_image_updated_at)
     end
 

@@ -112,7 +112,7 @@ RSpec.describe AdminOnly::AppConfiguration, type: :model do
   end
 
 
-  describe 'refresh_config_to_use_and_check_site_meta_image_change' do
+  describe 'update_site_meta_image_info' do
 
     describe 'ensures that the .config_to_use refers to the last (latest) config' do
 
