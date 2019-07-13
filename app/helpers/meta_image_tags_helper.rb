@@ -5,16 +5,14 @@ require 'mini_magick'
 #
 # @module MetaImageTagsHelper
 #
-# @desc Responsibility: Set meta information for images for a page.
+# @desc Responsibility: Creates meta information for an image
 # If no specific value is provided for a tag, information is looked up in
 # the application configuration.
 #
-# This encapsulates all of the logic and info needed to set image tags.
+# This encapsulates all of the logic and info needed to create image tags.
 # It's complicated enough to justify pulling out into its own module.
 #
 # ImageMagick is used to get the image type, width, and height.
-#
-# TODO: handle more than 1 image for a page. get possible comma sep. list from locale
 #
 # @author Ashley Engelund (ashley.engelund@gmail.com  weedySeaDragon @ github)
 # @date   2019-04-25
@@ -25,7 +23,7 @@ require 'mini_magick'
 module MetaImageTagsHelper
 
 
-  # Return a Hash with meta tags for the page images.
+  # Return a Hash with meta tags for the image.
   # If no attachment_image is provided or if it doesn't exist,
   #   use the AppConfiguration meta image info
   #

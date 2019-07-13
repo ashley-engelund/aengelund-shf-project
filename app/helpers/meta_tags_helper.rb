@@ -8,22 +8,20 @@ require 'meta_og_tags_helper'
 #
 # @module MetaTagsHelper
 #
-# @desc Responsibility: Sets the meta tags for a page. If no specific value is
-# provided for a tag, information from AdminOnly::AppConfiguration is used.
-#
-# This calls #request and so must
+# @desc Responsibility: Creates the meta tags for a page. If no specific value is
+# provided for a tag, information from the current Application Configuration is used.
 #
 # @example In the CompaniesController, use the defaults for the :index action
 #     but set the title tag specifically for a company that is being displayed
-#     with the :show action.
+#     with the :show action:
 #      (Note there really would be more meta-tag info set for a Company.)
+#
 #     Set nofollow and noindex to true for the
 #     :edit action with the :meta_robots_none method
 #
 #       class CompaniesController
 #
 #         include PageMetaInfoSetter
-#
 #
 #         # Add this code in the :show method:
 #         def show

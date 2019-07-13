@@ -2,9 +2,10 @@
 #
 # @module MetaOgTagsHelper
 #
-# @desc Responsibility: Sets OpenGraph meta info info for a page
+# @desc Responsibility: creates OpenGraph (og) meta info for a page
 #
-# This encapsulates all of the logic and info needed to set OpenGraph (og) tags.
+# This encapsulates all of the logic and info needed to create
+# OpenGraph (og) tags for a page.
 #
 #
 # @author Ashley Engelund (ashley.engelund@gmail.com  weedySeaDragon @ github)
@@ -26,7 +27,7 @@ module MetaOgTagsHelper
   }
 
 
-  # @return [Hash] - hash of the tags used for Facebook OpenGraph (og)
+  # @return [Hash] - hash with key :og and value = the tags for Facebook OpenGraph (og)
   def og_meta_tags(site_name: AdminOnly::AppConfiguration.config_to_use.site_name,
                    title: full_page_title,
                    description: AdminOnly::AppConfiguration.config_to_use.site_meta_description,
@@ -48,6 +49,10 @@ module MetaOgTagsHelper
   end
 
 
+  # Set the OpenGraph (og) tags for a page.  Calls set_meta_tags and sets
+  # the information in the :og key.
+  #
+  # @return [Hash] - the meta tags, which now include the :og key and values
   def set_og_meta_tags(site_name: AdminOnly::AppConfiguration.config_to_use.site_name,
                        title: full_page_title,
                        description: AdminOnly::AppConfiguration.config_to_use.site_meta_description,
