@@ -990,6 +990,8 @@ en:
       delete_confirm: "Are you sure you want to delete the reason: %{name_sv} (%{name_en})?"
 
     app_configuration:
+      image_show:
+        missing: &missing Missing!
       edit:
         title: &application_configuration Application Configuration
         chair_signature: &chair_signature_title Chairperson Signature
@@ -1005,6 +1007,7 @@ en:
         og_type: *site_og_type
         twitter_card_type: *site_twitter_card_type
         facebook_app_id: *site_facebook_app_id
+        missing: *missing
 
       show:
         title: *application_configuration
@@ -1021,6 +1024,7 @@ en:
         og_type: *site_og_type
         twitter_card_type: *site_twitter_card_type
         facebook_app_id: *site_facebook_app_id
+        missing: *missing
 
       update:
         success: Application data updated successfully

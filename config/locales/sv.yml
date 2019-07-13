@@ -992,6 +992,8 @@ sv:
       delete_confirm: "Är du säker på att du vill radera anledningen: %{name_sv} (%{name_en})?"
 
     app_configuration:
+      image_show:
+        missing: &missing Saknas!
       edit:
         title:  &application_configuration Programkonfiguration
         chair_signature: &chair_signature_title Ordförandens underskrift
@@ -1007,7 +1009,7 @@ sv:
         og_type: *site_og_type
         twitter_card_type: *site_twitter_card_type
         facebook_app_id: *site_facebook_app_id
-
+        missing: *missing
 
       show:
         title: *application_configuration
@@ -1024,6 +1026,7 @@ sv:
         og_type: *site_og_type
         twitter_card_type: *site_twitter_card_type
         facebook_app_id: *site_facebook_app_id
+        missing: *missing
 
       update:
         success: Programdata uppdaterades framgångsrikt
