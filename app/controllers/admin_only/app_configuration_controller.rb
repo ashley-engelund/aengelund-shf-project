@@ -13,6 +13,7 @@ module AdminOnly
     def edit
     end
 
+
     def update
       if @app_configuration.update(app_config_params)
         redirect_to @app_configuration, notice: t('.success')
@@ -22,17 +23,22 @@ module AdminOnly
       end
     end
 
+
+    # =====================================================================
+
+
     private
+
 
     def authorize_admin
       authorize AdminOnly::AppConfiguration
     end
 
-    def get_app_configuration
-      return @app_configuration = AppConfiguration.last if AppConfiguration.any?
 
-      @app_configuration = AppConfiguration.new
+    def get_app_configuration
+      @app_configuration = AppConfiguration.any? ? AppConfiguration.last : AppConfiguration.new
     end
+
 
     def app_config_params
       # Need to use "fetch" here (instead of "require") as the edit form
@@ -42,14 +48,14 @@ module AdminOnly
       # not be added to the params, and there will be no
       # "admin_only_admin_page" key (for those fields) in the params).
       params.fetch(:admin_only_app_configuration, {})
-        .permit(:chair_signature, :shf_logo, :h_brand_logo, :sweden_dog_trainers,
-                :email_admin_new_app_received_enabled,
-                :site_name,
-                :site_meta_title, :site_meta_description, :site_meta_keywords,
-                :og_type,
-                :twitter_card_type,
-                :facebook_app_id,
-                :site_meta_image)
+          .permit(:chair_signature, :shf_logo, :h_brand_logo, :sweden_dog_trainers,
+                  :email_admin_new_app_received_enabled,
+                  :site_name,
+                  :site_meta_title, :site_meta_description, :site_meta_keywords,
+                  :og_type,
+                  :twitter_card_type,
+                  :facebook_app_id,
+                  :site_meta_image)
     end
   end
 
