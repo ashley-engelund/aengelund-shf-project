@@ -79,7 +79,7 @@ module AdminOnly
     # only update if the file exists
     def update_site_meta_image_dimensions
 
-      if File.exist?(site_meta_image.path)
+      if !site_meta_image.path.nil? && File.exist?(site_meta_image.path)
         image = MiniMagick::Image.open(site_meta_image.path)
         self.site_meta_image_height = image.height
         self.site_meta_image_width  = image.width
