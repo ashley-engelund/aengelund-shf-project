@@ -118,4 +118,4 @@ Feature: Admin edits application configuration
     And the page head should include meta "property" "og:image:width" with content = "80"
     And the page head should include meta "property" "og:image:height" with content = "80"
 
-    Then the site meta image is available via a public url
+    Then the "site_meta_image" attachment is available via a public url

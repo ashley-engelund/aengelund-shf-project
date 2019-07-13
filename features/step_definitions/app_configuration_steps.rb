@@ -42,7 +42,17 @@ And(/^the App Configuration is not mocked and is seeded$/) do
 end
 
 
-And("the site meta image is available via a public url") do
-  meta_image_url = AdminOnly::AppConfiguration.config_to_use.site_meta_image.url
-  expect{visit "#{root_url}#{meta_image_url}"}.not_to raise_error
+And("the {capture_string} attachment is available via a public url") do | attachment |
+  image_url = AdminOnly::AppConfiguration.config_to_use.send(attachment.to_sym).url
+  expect {
+    visit "#{root_url}#{image_url}"
+  }.not_to raise_error
+end
+
+
+# set the named attachment to nil in the ApplicationConfiguration
+And("the {capture_string} file is missing from the application configuration") do |missing_attachment|
+  app_config = AdminOnly::AppConfiguration.config_to_use
+  # update_attribute skips validations, which we must do because an ApplicationConfiguration validates_attachment_presence
+  app_config.update_attribute(missing_attachment.to_sym, nil) #  send("#{missing_attachment}=".to_sym, nil)
 end
