@@ -109,7 +109,8 @@ if Rails.env.development? || Rails.env.staging? || ENV['HEROKU_STAGING']
    puts "Seeding AppConfiguration..."
    SeedHelper::AppConfigurationSeeder.seed
  else
-   puts " No AppConfiguration seeded.  One already exists."
+   puts "No AppConfiguration seeded.  One already exists."
+   puts ' ... but there is no site meta image! You need to set one on the edit app configuration page (as an admin).' unless AdminOnly::AppConfiguration.last.site_meta_image.exists?
  end
 
 
