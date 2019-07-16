@@ -29,7 +29,7 @@ $cookies-eu-button-color: $primary; // $shf-blue;
   }
 
   p {
-    margin-top: .5rem;
+    margin-top: 0.5rem;
   }
 
   .cookies-eu-content-holder {
@@ -40,7 +40,7 @@ $cookies-eu-button-color: $primary; // $shf-blue;
 
     .cookies-eu-ok {
       background: $cookies-eu-button-color;
-      font-size: .75rem;
+      font-size: 0.75rem;
 
       @media ($cookies-eu-mobile) {
         font-size: 10px;
