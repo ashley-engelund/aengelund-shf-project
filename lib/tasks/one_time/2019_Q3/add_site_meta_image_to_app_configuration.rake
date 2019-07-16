@@ -9,7 +9,10 @@ namespace :shf do
 
       IMAGE_FNAME = 'Sveriges_hundforetagare_banner_sajt.jpg'
 
-      ActivityLogger.open(LogfileNamer.name_for(this_task.to_s), 'OneTimeRakeTask', this_task.to_s) do |log|
+      full_task_name = this_task.to_s
+      task_name = full_task_name.split(':').last  # the task name without the namespace(s)
+
+      ActivityLogger.open(LogfileNamer.name_for(task_name), 'OneTimeRakeTask', task_name) do |log|
 
         log.info("Setting the Application Configuration (config_to_use) site_meta_image to #{IMAGE_FNAME}.")
 
@@ -23,6 +26,9 @@ namespace :shf do
         app_config.update_site_meta_image_dimensions # ensure the dimensions are computed and saved
 
         log.info("The site_meta_image has been set to #{IMAGE_FNAME}.")
+
+      rescue => error
+        log.error(">> ERROR! Could not set the site_meta_image: #{error}")
       end
 
     end
