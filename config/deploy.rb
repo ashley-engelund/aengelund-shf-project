@@ -76,7 +76,7 @@ namespace :deploy do
   end
 
 
-  desc 'run any one-time tasks for this year and this quaters'
+  desc 'run any one-time tasks for this year and this quater'
   task run_one_time_tasks: [:set_rails_env] do | this_task |
     info_if_not_found = "No 'one_time' tasks will be run! (task #{this_task} in #{__FILE__ })"
     run_task_from(this_task, 'shf:one_time:run_onetime_tasks', info_if_not_found)
