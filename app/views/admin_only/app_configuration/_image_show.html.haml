@@ -2,13 +2,13 @@
   app_config
   image_title
 
-- is_missing = !app_config.send(image_title).exists?
-- is_missing_class = is_missing ? 'missing' : ''
+- image_is_missing = !app_config.send(image_title).present?
+- displayed_title_class = image_is_missing ? 'missing' : ''
 .image
-  %div{id: image_title, class: "#{is_missing_class}"}
+  %div{id: image_title, class: "#{displayed_title_class}"}
     .card-header= t("admin_only.app_configuration.edit.#{image_title}")
     .card-body
-      - if is_missing
+      - if image_is_missing
         = t('.missing')
       - else
-        = image_tag(app_config.send(image_title).url) unless is_missing
+        = image_tag(app_config.send(image_title).url)
