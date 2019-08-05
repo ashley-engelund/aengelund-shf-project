@@ -2,33 +2,35 @@
 
 .app_configuration {
 
-
   .field-label {
     font-weight: bold;
   }
 
   .card {
     margin: 3px;
-  }
 
+    .image {
 
-  .image {
-    .missing {
-      .card-header {
-        color: $missing-info-color;  // can use this to show that an image is not in the database (perhaps it's being read from the app/assets)
+      .missing {
+        .card-header {
+          color: $missing-info-color; // can use this to show that an image is not in the database (perhaps it's being read from the app/assets)
+        }
       }
-    }
 
-    .card-header {
-      font-weight: bold;
-    }
+      .card-header {
+        font-weight: bold;
+      }
 
-    img {
-      border: 1pt solid $light;
+      .card-body {
+        img {
+          border: 1pt solid $light;
+          width: 100%;
+        }
+      }
+
     }
 
   }
-
 
   .field.upload-image {
 
@@ -42,3 +44,9 @@
 
 }
 
+.app_configuration.edit {
+
+  .card {
+    margin-top: 2rem;
+  }
+}
