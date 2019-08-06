@@ -3,12 +3,16 @@
 #
 #
 
-
+# ---------------
+# <title >  (page title)
+#
 Then("the page title should{negate} be {capture_string}") do | negate, page_title |
   expect(page).send (negate ? :not_to : :to), have_title(page_title)
 end
 
-
+# ---------------
+# <head > </head>  (page head)
+#
 Then("the page head should{negate} include meta {capture_string} {capture_string} with content = {capture_string}") do | negate, meta_tag, value, meta_content|
   meta_xpath = "/html/head/meta[@#{meta_tag}=\"#{value}\"]/@content"
   found_meta_tag  = page.find(meta_xpath, visible: false)
@@ -43,7 +47,9 @@ Then("the page head should{negate} include meta {capture_string} {capture_string
   expect(page).send (negate ? :not_to : :to), have_xpath(meta_xpath, visible: false)
 end
 
-
+# ---------------
+# <link rel='alternate' hreflang=  href= >  (link hreflang href)
+#
 Then("the page head should{negate} include a link tag with hreflang = {capture_string} and href = {capture_string}") do | negate, hreflang, href |
   hreflang_xpath = "/html/head/link[@rel='alternate'][@hreflang='#{hreflang}'][@href='#{href}']"
   expect(page).send (negate ? :not_to : :to), have_xpath(hreflang_xpath, visible: false)
@@ -70,6 +76,9 @@ Then("the page head should{negate} include a link tag with rel = {capture_string
 end
 
 
+# ---------------
+# <script type='application/ld+json'>  (ld+json script tag)
+#
 And("the page head should{negate} include a ld+json script tag with key {capture_string}") do | negate, key |
   ld_json = expect_head_has_ld_json_script(negated: negate)
 
@@ -128,4 +137,19 @@ def expect_head_has_ld_json_script(negated: false)
   end
 
   ld_json
+end
+
+
+# ---------------
+# <html>  (html tag)
+#
+And("the html tag should{negate} include lang={capture_string}") do | negate,  lang_attrib|
+  lang_xpath = "/html[@lang=\"#{lang_attrib}\"]"
+  expect(page).send((negate ? :not_to : :to),  have_xpath(lang_xpath, visible: false))
+end
+
+
+And("the html tag should{negate} include xml\.lang={capture_string}") do | negate,  xml_lang_attrib|
+  lang_xpath = "/html[@xml.lang=\"#{xml_lang_attrib}\"]"
+  expect(page).send((negate ? :not_to : :to),  have_xpath(lang_xpath, visible: false))
 end
