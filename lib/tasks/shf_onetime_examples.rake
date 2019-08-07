@@ -54,15 +54,15 @@ namespace :shf do
   #   mine:task3  # task has a duplicate (will not run)
   #   mine:task4  # task will run
   #
-  # tasks_run_all.rake
-  #    task1_run_me  # task will run
-  #    task2_run_me  # task has a duplicate (will not run)
-  #    task3_run_me  # task has a duplicate (will not run)
-  #    task_not_run_yet  # task will run
+  # other_tasks_run_all.rake
+  #    other_task1_run_me  # task will run
+  #    other_task2_run_me  # task has a duplicate (will not run)
+  #    other_task3_run_me  # task has a duplicate (will not run)
+  #    other_task_not_run_yet  # task will run
   #
-  # tasks_mixed_duplicates.rake
-  #    task2_run_me  # task has a duplicate (will not run)
-  #    task3_run_me  # task has a duplicate (will not run)
+  # other_tasks_mixed_duplicates.rake
+  #    other_task2_run_me  # task has a duplicate (will not run)
+  #    other_task3_run_me  # task has a duplicate (will not run)
   #
   # task2_duplicate.rake
   #   mine:task2  # task has a duplicate (will not run)
@@ -81,11 +81,11 @@ namespace :shf do
     my_tasks_mine_fn = File.join(base_dir, 'my_tasks_all_mine.rake')
     make_tasks_in_file(['task1', 'task2', 'task3', 'task4'], my_tasks_mine_fn, namespace: 'mine') if ok_to_create?(my_tasks_mine_fn)
 
-    tasks_run_all_fn = File.join(base_dir, 'tasks_run_all.rake')
-    make_tasks_in_file(['task1_run_me', 'task2_run_me', 'task3_run_me', 'task_not_run_yet'], tasks_run_all_fn) if ok_to_create?(tasks_run_all_fn)
+    tasks_run_all_fn = File.join(base_dir, 'other_tasks_run_all.rake')
+    make_tasks_in_file(['other_task1_run_me', 'other_task2_run_me', 'other_task3_run_me', 'other_task_not_run_yet'], tasks_run_all_fn) if ok_to_create?(tasks_run_all_fn)
 
-    tasks_mixed_duplicates_fn = File.join(base_dir, 'tasks_mixed_duplicates.rake')
-    make_tasks_in_file(['task2_run_me', 'task3_run_me'], tasks_mixed_duplicates_fn) if ok_to_create?(tasks_mixed_duplicates_fn)
+    tasks_mixed_duplicates_fn = File.join(base_dir, 'other_tasks_mixed_duplicates.rake')
+    make_tasks_in_file(['other_task2_run_me', 'other_task3_run_me'], tasks_mixed_duplicates_fn) if ok_to_create?(tasks_mixed_duplicates_fn)
 
     task2_duplicate_fn = File.join(base_dir, 'task2_duplicate.rake')
     make_tasks_in_file(['task2'], task2_duplicate_fn, namespace: 'mine') if ok_to_create?(task2_duplicate_fn)
