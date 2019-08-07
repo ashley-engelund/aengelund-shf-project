@@ -112,10 +112,4 @@ Feature: Admin edits application configuration
     And I choose an application configuration "admin_only_app_configuration[site_meta_image]" file named "image.png" to upload
     And I click on t("submit") button
     Then I should see t("admin_only.app_configuration.update.success")
-
-    And the page head should include meta "property" "og:image" with content matching "image.png"
-    And the page head should include meta "property" "og:image:type" with content = "image/png"
-    And the page head should include meta "property" "og:image:width" with content = "80"
-    And the page head should include meta "property" "og:image:height" with content = "80"
-
-    Then the "site_meta_image" attachment is available via a public url
+    And the "site_meta_image" attachment is available via a public url
