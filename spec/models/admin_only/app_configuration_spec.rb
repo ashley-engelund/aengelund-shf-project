@@ -141,33 +141,22 @@ RSpec.describe AdminOnly::AppConfiguration, type: :model do
     describe 'updates the width and height if site_meta_image was changed' do
 
       it 'site_meta_image changed' do
-
-        allow_any_instance_of(MiniMagick::Image).to receive(:width).and_return(101)
-        allow_any_instance_of(MiniMagick::Image).to receive(:height).and_return(102)
-
-        expect(app_configuration).to receive(:update_site_meta_image_dimensions).and_call_original
+        expect(app_configuration).to receive(:update_site_meta_image_dimensions)
 
         app_configuration.site_meta_image = File.new(file_fixture('image.png'))
         app_configuration.save
-
-        expect(app_configuration.site_meta_image_width).to eq 101
-        expect(app_configuration.site_meta_image_height).to eq 102
       end
 
 
       it 'site_meta_image not changed' do
-
         expect(app_configuration).not_to receive(:update_site_meta_image_dimensions)
 
+        # make a change to the app_configuration that is not about the site image
         app_configuration.email_admin_new_app_received_enabled = false
         app_configuration.save
-
       end
-
     end
 
   end
-
-
 
 end
