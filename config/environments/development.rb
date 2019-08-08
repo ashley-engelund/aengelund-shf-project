@@ -76,6 +76,20 @@ Rails.application.configure do
   # LOGGING
   #
 
+  # Use the HIGHEST log level to ensure availability of diagnostic information
+  # when problems arise.
+  config.log_level = :debug
+
+  # Prepend all log lines with the following tags.
+  config.log_tags = [ :request_id ]
+
+  # Use default logging formatter so that PID and timestamp are not suppressed.
+  config.log_formatter = ::Logger::Formatter.new
+
+  # Use a different logger for distributed setups.
+  # require 'syslog/logger'
+  # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
+
   # Highlight code that triggered database queries in logs.
   config.active_record.verbose_query_logs = true
 
