@@ -33,8 +33,6 @@ Rails.application.configure do
   # Use sql schema to allow the use of functions, triggers and sequences
   config.active_record.schema_format = :sql
 
-  # Highlight code that triggered database queries in logs.
-  config.active_record.verbose_query_logs = true
 
   ###
   #
@@ -62,9 +60,6 @@ Rails.application.configure do
   #
   ###
 
-  # Print deprecation notices to the Rails logger.
-  config.active_support.deprecation = :log
-
   # Raise an error on page load if there are pending migrations.
   config.active_record.migration_error = :page_load
 
@@ -73,8 +68,23 @@ Rails.application.configure do
   # number of complex assets.
   config.assets.debug = true
 
+
+  # Raises error for missing translations
+  # config.action_view.raise_on_missing_translations = true
+
+  ########################################################################
+  # LOGGING
+  #
+
+  # Highlight code that triggered database queries in logs.
+  config.active_record.verbose_query_logs = true
+
   # Suppress logger output for asset requests.
   config.assets.quiet = true
+
+  # Print deprecation notices to the Rails logger.
+  config.active_support.deprecation = :log
+
 
   # To have the Rails log sent to the stdout and *not* a file,
   # define RAILS_LOG_TO_STDOUT as anything.
@@ -85,8 +95,10 @@ Rails.application.configure do
   end
 
 
-  # Raises error for missing translations
-  # config.action_view.raise_on_missing_translations = true
+  # end LOGGING
+  ########################################################################
+
+
 
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
