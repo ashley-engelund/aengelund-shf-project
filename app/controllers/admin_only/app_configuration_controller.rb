@@ -18,7 +18,7 @@ module AdminOnly
       if @app_configuration.update(app_config_params)
         redirect_to @app_configuration, notice: t('.success')
       else
-        flash.now[:alert] = t('.error')
+        helpers.flash_message(:alert, "#{t('.error')}: #{@app_configuration.errors.full_messages.join(', ')}")
         render :edit
       end
     end
