@@ -225,4 +225,19 @@ module ApplicationHelper
   end
 
 
+  PRESENCE_VALIDATORS = [
+      Paperclip::Validators::AttachmentPresenceValidator,
+      ActiveRecord::Validations::PresenceValidator
+  ]
+
+
+  def presence_required?(model_instance, attribute)
+    presence_validators = model_instance.class.validators.select{|v| is_a_presence_validator?(v)}
+    presence_validators.any?{|pv| pv.attributes.include?(attribute.to_sym)}
+  end
+
+
+  def is_a_presence_validator?(validator)
+    PRESENCE_VALIDATORS.include?(validator.class)
+  end
 end

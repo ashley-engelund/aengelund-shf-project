@@ -384,4 +384,31 @@ RSpec.describe ApplicationHelper, type: :helper do
       end
     end
   end
+
+
+  describe '#presence_required?' do
+
+    # the simplest model that has a presence validation
+    let(:biz_cat_model) { create(:business_category) }
+
+    describe 'model has no presence validators' do
+
+      it 'always false' do
+        allow(biz_cat_model.class).to receive(:validators).and_return([])
+        expect(helper.presence_required?(biz_cat_model, :name)).to be_falsey
+      end
+    end
+
+    describe 'model has at least 1 presence validator' do
+
+      it 'false if attribute does not have a presence validator' do
+        expect(helper.presence_required?(biz_cat_model, :description)).to be_falsey
+      end
+
+      it 'true if attribute does have a presence validator' do
+        expect(helper.presence_required?(biz_cat_model, :name)).to be_truthy
+      end
+    end
+  end
+
 end
