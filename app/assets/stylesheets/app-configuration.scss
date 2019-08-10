@@ -11,6 +11,10 @@
 
     .image {
 
+      a {
+        border: 0;
+      }
+
       .missing {
         .card-header {
           color: $missing-info-color; // can use this to show that an image is not in the database (perhaps it's being read from the app/assets)
