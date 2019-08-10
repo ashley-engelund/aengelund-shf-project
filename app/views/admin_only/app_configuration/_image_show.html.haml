@@ -6,7 +6,8 @@
 - displayed_title_class = image_is_missing ? 'missing' : ''
 .image
   %div{id: image_title, class: "#{displayed_title_class}"}
-    .card-header= t("admin_only.app_configuration.edit.#{image_title}")
+    - image_required_class = (presence_required?(app_config, image_title) ? ' required' : '')
+    .card-header{class: "#{image_required_class}" }= t("admin_only.app_configuration.edit.#{image_title}")
     .card-body
       - if image_is_missing
         = t('.missing')
