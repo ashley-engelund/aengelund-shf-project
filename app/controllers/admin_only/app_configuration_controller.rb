@@ -41,13 +41,7 @@ module AdminOnly
 
 
     def app_config_params
-      # Need to use "fetch" here (instead of "require") as the edit form
-      # currently contains only file_field(s), and if the user clicks
-      # "Submit" without changing any of those fields (that is, without
-      # specifying one or more files to upload), then those fields will
-      # not be added to the params, and there will be no
-      # "admin_only_admin_page" key (for those fields) in the params).
-      params.fetch(:admin_only_app_configuration, {})
+      params.require(:admin_only_app_configuration)
           .permit(:chair_signature, :shf_logo, :h_brand_logo, :sweden_dog_trainers,
                   :email_admin_new_app_received_enabled,
                   :site_name,
