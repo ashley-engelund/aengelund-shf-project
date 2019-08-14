@@ -35,7 +35,7 @@ namespace :shf do
             process_klass(klass, condition, log, use_slack_notification: use_slack_notification)
           end
         else
-          process_klass(klass, condition, log)
+          process_klass(klass, condition, log, use_slack_notification: use_slack_notification)
         end
 
       # If the problem is because of Slack Notification .... log it and continue.
