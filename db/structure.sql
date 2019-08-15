@@ -5,6 +5,7 @@ SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
 SET check_function_bodies = false;
+SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
@@ -103,7 +104,8 @@ CREATE TABLE public.app_configurations (
     site_meta_image_file_name character varying,
     site_meta_image_content_type character varying,
     site_meta_image_file_size integer,
-    site_meta_image_updated_at timestamp without time zone
+    site_meta_image_updated_at timestamp without time zone,
+    singleton_guard integer DEFAULT 0 NOT NULL
 );
 
 
@@ -1176,6 +1178,13 @@ CREATE INDEX index_addresses_on_region_id ON public.addresses USING btree (regio
 
 
 --
+-- Name: index_app_configurations_on_singleton_guard; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_app_configurations_on_singleton_guard ON public.app_configurations USING btree (singleton_guard);
+
+
+--
 -- Name: index_ckeditor_assets_on_company_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1505,6 +1514,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20190128210825'),
 ('20190312204251'),
 ('20190326120854'),
-('20190514172102');
+('20190514172102'),
+('20190815215041');
 
 
