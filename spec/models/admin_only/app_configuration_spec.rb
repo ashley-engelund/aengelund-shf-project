@@ -63,6 +63,7 @@ RSpec.describe AdminOnly::AppConfiguration, type: :model do
 
   describe 'Validations' do
 
+    it { is_expected.to validate_inclusion_of(:singleton_guard).in_array([0]) }
     it { is_expected.to validate_presence_of(:site_name) }
     it { is_expected.to validate_presence_of(:site_meta_title) }
 
@@ -112,31 +113,28 @@ RSpec.describe AdminOnly::AppConfiguration, type: :model do
   end
 
 
-  describe 'update_site_meta_image_info' do
+  describe 'is a Singleton' do
 
-    describe 'ensures that the .config_to_use refers to the last (latest) config' do
-
-      it 'new config was created; this should now be config_to_use' do
-        orig_config_to_use = app_configuration
-        expect(described_class.config_to_use.id).to eq orig_config_to_use.id
-
-        new_app_config = create(:app_configuration, site_meta_description: 'desc for new config')
-        expect(described_class.config_to_use.id).to eq new_app_config.id
-        expect(described_class.config_to_use.site_meta_description).to eq new_app_config.site_meta_description
-      end
-
-      it 'existing config was updated; config_to_use does not change' do
-        orig_config_to_use = app_configuration
-        expect(described_class.config_to_use.id).to eq orig_config_to_use.id
-
-        app_configuration.update(site_meta_description: 'description changed')
-        expect(described_class.config_to_use.id).to eq orig_config_to_use.id
-
-        app_configuration.twitter_card_type = 'twitter card type changed'
-        app_configuration.save
-        expect(described_class.config_to_use.id).to eq orig_config_to_use.id
-      end
+    it 'is always the same AppConfiguration no matter how you fetch it' do
+      app_configuration.save
+      expect(described_class.first).to eq(app_configuration)
+      expect(described_class.last).to eq(app_configuration)
+      expect(described_class.instance).to eq(app_configuration)
+      expect(described_class.config_to_use).to eq(app_configuration)
     end
+
+    it 'cannot create more than one' do
+      new_config = described_class.new
+
+      # we have to have a site_meta_image, so just use what already exists:
+      new_config.site_meta_image = app_configuration.site_meta_image
+
+      expect{new_config.save!}.to raise_error(ActiveRecord::RecordNotUnique)
+    end
+  end
+
+
+  describe 'update_site_meta_image_info' do
 
     describe 'updates the width and height if site_meta_image was changed' do
 

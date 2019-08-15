@@ -1,8 +1,39 @@
 module AdminOnly
 
+  #--------------------------
+  #
+  # @class AppConfiguration
+  #
+  # @desc Responsibility: Aggregates discrete data items that are used to configure
+  #  various aspects of the system (app).
+  #  "configure" means settings that are more about customizing the application;
+  # settings that can be changed after the application is running.
+  #
+  #  This is a Singleton. (Only 1 AppConfiguration instance exists/is needed.)
+  #  This is enforced in the following ways:
+  #    1. There is an index defined on the '' column in the table, and
+  #       this index
+  #       If the database detects an attempt to create more than 1 record
+  #       (e.g. more than 1 index entry), it will throw a
+  #       ActiveRecord::RecordNotUnique exception.
+  #       See the comments for validates_uniqueness_of {ActiveRecord::Validations::UniquenessValidator::ClassMethods#validates_uniqueness_of}.
+  #       Specifically, read the section "Concurrency and integrity"
+  #    2. validates_inclusion_of :singleton_guard, in: [0]
+  #       This ensures that the value of :singleton_guard can only be 0
+  #       Combined with the unique index above, this ensures that there can
+  #       only be 1 row in the table, and the singleton_guard value is always 0.
+  #
+  #
+  # @file admin_only/app_configuration.rb
+  #
+  #--------------------------
   class AppConfiguration < ApplicationRecord
-    # Aggregates discrete data items that are used to configure
-    # various aspects of the system (app).
+
+
+    # The "singleton_guard" column is a unique column which must always be set to '0'
+    # This ensures that only one AppSettings row is created
+    validates_inclusion_of :singleton_guard, in: [0]
+
 
     after_save :update_site_meta_image_info
 
@@ -37,7 +68,7 @@ module AdminOnly
     # This image _must be_ in the database; that's why there is no default for it
     # and  :validate_attachment_presence is used
     has_attached_file :site_meta_image,
-                      url:           :url_for_images
+                      url: :url_for_images
 
 
     validates_presence_of :site_name, :site_meta_title
@@ -56,17 +87,25 @@ module AdminOnly
                                    matches: [/png\z/, /jpe?g\z/]
 
 
-    scope :config_to_use, -> { last }
+
+    class << self
+
+      def instance
+        first_or_create!(singleton_guard: 0)
+      end
+      alias_method :config_to_use, :instance
 
 
-    # Helpful method to get all images for the configuration
-    def self.image_attributes
-      [:site_meta_image,
-       :chair_signature,
-       :sweden_dog_trainers,
-       :h_brand_logo,
-       :shf_logo
-      ].freeze
+      # Helpful method to get all images for the configuration
+      def image_attributes
+        [:site_meta_image,
+         :chair_signature,
+         :sweden_dog_trainers,
+         :h_brand_logo,
+         :shf_logo
+        ].freeze
+      end
+
     end
 
 
@@ -82,7 +121,7 @@ module AdminOnly
       if !site_meta_image.path.nil? && File.exist?(site_meta_image.path)
         image = MiniMagick::Image.open(site_meta_image.path)
         self.site_meta_image_height = image.height
-        self.site_meta_image_width  = image.width
+        self.site_meta_image_width = image.width
         self.save
       end
 
