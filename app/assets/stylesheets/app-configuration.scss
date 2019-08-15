@@ -15,14 +15,13 @@
         border: 0;
       }
 
-      .missing {
-        .card-header {
-          color: $missing-info-color; // can use this to show that an image is not in the database (perhaps it's being read from the app/assets)
-        }
-      }
-
       .card-header {
         font-weight: bold;
+      }
+
+      .card-header.required {
+        background-color: $shf-blue;
+        color: #ffffff;
       }
 
       .card-body {
@@ -31,6 +30,18 @@
           width: 100%;
         }
       }
+
+      .missing {
+        .card-header {
+          color: $missing-info-color; // can use this to show that an image is not in the database (perhaps it's being read from the app/assets)
+        }
+
+        .card-header.required {
+          background-color: $missing-info-color;
+          color: #ffffff;
+        }
+      }
+
 
     }
 
