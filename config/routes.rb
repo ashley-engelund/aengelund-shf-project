@@ -32,13 +32,14 @@ Rails.application.routes.draw do
     put 'dashboard_show_recent_activity', to: 'dashboard#show_recent_activity'
 
 
-    get 'app_configuration/(:id)', to: 'app_configuration#show',
-        as: :app_configuration
-
-    get 'app_configuration/:id/redigera', to: 'app_configuration#edit',
+    # AppConfiguration is a Singleton.
+    # Admins only view and edit the AppConfiguration.
+    # There is no need for index or destroy.
+    #
+    get 'app_configuration', to: 'app_configuration#show'
+    get 'app_configuration/redigera', to: 'app_configuration#edit',
         as: :edit_app_configuration
-    put 'app_configuration/:id', to: 'app_configuration#update',
-        as: :update_app_configuration
+    put 'app_configuration', to: 'app_configuration#update'
 
 
     get 'user_profile_edit/:id', to: 'user_profile#edit', as: :user_profile_edit
