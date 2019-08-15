@@ -36,7 +36,7 @@ module AdminOnly
 
 
     def get_app_configuration
-      @app_configuration = AppConfiguration.any? ? AppConfiguration.last : AppConfiguration.new
+      @app_configuration = AppConfiguration.instance
     end
 
 
