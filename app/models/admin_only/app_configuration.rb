@@ -23,6 +23,8 @@ module AdminOnly
   #       Combined with the unique index above, this ensures that there can
   #       only be 1 row in the table, and the singleton_guard value is always 0.
   #
+  #    @url https://stackoverflow.com/questions/399447/how-to-implement-a-singleton-model
+  #
   #
   # @file admin_only/app_configuration.rb
   #
@@ -90,23 +92,31 @@ module AdminOnly
 
     class << self
 
+      # Need to use class << self so that the alias_method works on this
+      # class method (:instance).
+      # :alias_method only works for _instance methods_.
+      # By using this style, the eigenclass (== the class of this class)
+      # is being referred do and :instance is an instance method of the
+      # eigenclass (the class of this class)
+
       def instance
         first_or_create!(singleton_guard: 0)
       end
       alias_method :config_to_use, :instance
 
-
-      # Helpful method to get all images for the configuration
-      def image_attributes
-        [:site_meta_image,
-         :chair_signature,
-         :sweden_dog_trainers,
-         :h_brand_logo,
-         :shf_logo
-        ].freeze
-      end
-
     end
+
+
+    # Helpful method to get all images for the configuration
+    def self.image_attributes
+      [:site_meta_image,
+       :chair_signature,
+       :sweden_dog_trainers,
+       :h_brand_logo,
+       :shf_logo
+      ].freeze
+    end
+
 
 
     def image_attributes
