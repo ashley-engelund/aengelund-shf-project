@@ -1,5 +1,6 @@
 require 'rails_helper'
 
+require File.join( 'shared_examples', 'condition_responder_timing_shared_spec')
 require 'shared_context/activity_logger'
 
 
@@ -217,73 +218,28 @@ RSpec.describe ConditionResponder, type: :model do
     let(:condition) { build(:condition) }
     let(:timing) { ConditionResponder.get_timing(condition) }
 
+
     describe '.timing_is_before?(timing)' do
-      it 'returns true if timing == :before' do
-        condition.timing = ConditionResponder::TIMING_BEFORE
-        expect(ConditionResponder.timing_is_before?(timing)).to be true
-      end
-
-      it 'returns false otherwise' do
-        condition.timing = ConditionResponder::DEFAULT_TIMING
-        expect(ConditionResponder.timing_is_before?(timing)).to be false
-      end
+      it_behaves_like 'timing method is true if timing matches, else false', :timing_is_before?, described_class.timing_before
     end
-
 
     describe '.timing_is_after?(timing)' do
-      it 'returns true if timing == :after' do
-        condition.timing = ConditionResponder::TIMING_AFTER
-        expect(ConditionResponder.timing_is_after?(timing)).to be true
-      end
-
-      it 'returns false otherwise' do
-        condition.timing = ConditionResponder::DEFAULT_TIMING
-        expect(ConditionResponder.timing_is_after?(timing)).to be false
-      end
+      it_behaves_like 'timing method is true if timing matches, else false', :timing_is_after?, described_class.timing_after
     end
-
 
     describe '.timing_is_on?(timing)' do
-      it 'returns true if timing == :on' do
-        condition.timing = ConditionResponder::TIMING_ON
-        expect(ConditionResponder.timing_is_on?(timing)).to be true
-      end
-
-      it 'returns false otherwise' do
-        condition.timing = :not_on
-        expect(ConditionResponder.timing_is_on?(timing)).to be false
-      end
+      it_behaves_like 'timing method is true if timing matches, else false', :timing_is_on?, described_class.timing_on
     end
 
-
     describe '.timing_is_every_day?(timing)' do
-
-      it 'returns true if timing == :every_day' do
-        condition.timing = ConditionResponder::TIMING_EVERY_DAY
-        expect(ConditionResponder.timing_is_every_day?(timing)).to be true
-      end
-
-      it 'returns false otherwise' do
-        condition.timing = ConditionResponder::DEFAULT_TIMING
-        expect(ConditionResponder.timing_is_every_day?(timing)).to be false
-      end
-
+      it_behaves_like 'timing method is true if timing matches, else false', :timing_is_every_day?, described_class.timing_every_day
     end
 
     describe '.timing_is_day_of_month?' do
-
-      it 'true if timing == :day_of_month' do
-        condition.timing = ConditionResponder::TIMING_DAY_OF_MONTH
-        expect(ConditionResponder.timing_is_day_of_month?(timing)).to be true
-      end
-
-      it 'false otherwise' do
-        condition.timing = ConditionResponder::DEFAULT_TIMING
-        expect(ConditionResponder.timing_is_day_of_month?(timing)).to be false
-      end
+      it_behaves_like 'timing method is true if timing matches, else false', :timing_is_day_of_month?, described_class.timing_day_of_month
     end
-
   end
+
 
   describe '.timing_matches_today?' do
 
