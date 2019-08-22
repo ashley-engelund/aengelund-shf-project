@@ -196,6 +196,11 @@ class ConditionResponder
   end
 
 
+  def self.default_timing
+    DEFAULT_TIMING
+  end
+
+
   def self.timing_on
     TIMING_ON
   end
