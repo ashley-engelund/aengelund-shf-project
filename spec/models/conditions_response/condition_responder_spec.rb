@@ -253,7 +253,7 @@ RSpec.describe ConditionResponder, type: :model do
 
     it 'true if today is timing day of month? and this is that day of the month' do
       condition.timing = described_class.timing_day_of_month
-      config = {on_month_day: Date.current.day}
+      config = {days: [Date.current.day]}
       expect(ConditionResponder.timing_matches_today?(described_class.timing_day_of_month, config)).to be_truthy
     end
 
@@ -266,24 +266,21 @@ RSpec.describe ConditionResponder, type: :model do
 
   describe '.today_is_timing_day_of_month?' do
 
-    let(:condition) { build(:condition) }
-    let(:timing) { ConditionResponder.get_timing(condition) }
+    let(:condition) { build(:condition, timing: described_class.timing_day_of_month) }
+    let(:timing) { described_class.get_timing(condition) }
 
-    it "true if timing is day of month AND config[:on_month_day] is today's day of the month" do
-      condition.timing = described_class.timing_day_of_month
-      config = {on_month_day: Date.current.day}
+    it "true if the timing is 'day of month' and config[:days] includes today's day of the month" do
+      config = {days: [Date.current.day]}
       expect(ConditionResponder.today_is_timing_day_of_month?(timing, config)).to be_truthy
     end
 
-    it 'false if :on_month_day is not in config' do
-      condition.timing = described_class.timing_day_of_month
+    it "false if :days is not in config" do
       config = {}
       expect(ConditionResponder.today_is_timing_day_of_month?(timing, config)).to be_falsey
     end
 
-    it "false if on_month_day is not today's date" do
-      condition.timing = described_class.timing_day_of_month
-      config = {on_month_day: Date.current.day - 1}
+    it "false if config[:days] does not include today's date" do
+      config = {days: [Date.current.day - 1,  Date.current.day + 1]}
       expect(ConditionResponder.today_is_timing_day_of_month?(timing, config)).to be_falsey
     end
 

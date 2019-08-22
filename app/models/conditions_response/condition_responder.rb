@@ -155,8 +155,8 @@ class ConditionResponder
   # and today is the day of the month specified in the config
   def self.today_is_timing_day_of_month?(timing, config)
     self.timing_is_day_of_month?(timing) &&
-        config.fetch(:on_month_day, false) &&
-        config[:on_month_day] == Date.current.day
+        config.fetch(:days, false) &&
+        config[:days].include?(Date.current.day)
   end
 
 
