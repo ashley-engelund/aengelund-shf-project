@@ -54,7 +54,7 @@ namespace :shf do
     desc 'Set all one-time task files to *.ran; add as SuccessfulTasks to db. Argument = directory of rakefiles; default = Rails.root/lib/tasks/one_time'
     task :set_prev_onetime_tasks_as_ran, [:rakefiles_dir] => [:environment] do |task, args|
 
-      if has_set_prev_onetime_task_already_run?
+      if set_prev_onetime_task_already_run?
         puts "#{task.name} has already been run so it will not be run this time. See #{full_filename_set_prev_run_task_has_run}"
 
       else
@@ -143,7 +143,7 @@ namespace :shf do
 
 
     # @return [Boolean] - has :set_prev_onetime_tasks_as_ran already been run?
-    def has_set_prev_onetime_task_already_run?
+    def set_prev_onetime_task_already_run?
       # check for the file
       File.exist?(full_filename_set_prev_run_task_has_run)
     end
