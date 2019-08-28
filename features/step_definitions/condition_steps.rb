@@ -43,7 +43,7 @@ end
 #   the condition has the days set to [1, 2, 3]
 #   the condition has days of the month set to [1, 2, 3]
 #   the condition has the days of the month set to [1, 2, 3]
-And(/the condition has (?:the )days (?:of the month )set to \[(?:(.*),)(.*)\]/) do |days_list, last_day|
+And(/the condition has(?: the)? days(?: of the month)? set to \[(?:(.*),)(.*)\s*\]/) do |days_list, last_day|
   days_arr = []
   days_arr = days_list.split(',').map(&:to_i) unless days_list.nil?
 
