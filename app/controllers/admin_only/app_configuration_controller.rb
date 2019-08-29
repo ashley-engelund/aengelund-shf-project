@@ -18,7 +18,7 @@ module AdminOnly
       if @app_configuration.update(app_config_params)
         # Do not specify the @app_configuration in the path so that the URL is
         # correct: we do _not_ want the :id in the URL. (The AppConfiguration is a singleton)
-        render :show, notice: t('.success')
+        redirect_to @app_configuration, notice: t('.success')
       else
         helpers.flash_message(:alert, "#{t('.error')}: #{@app_configuration.errors.full_messages.join(', ')}")
         render :edit
