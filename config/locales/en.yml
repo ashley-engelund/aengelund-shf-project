@@ -146,6 +146,11 @@ en:
         one: User
         other: Users
 
+      task_attempt:
+        one: Task Attempt
+        other: Task Attempts
+
+
     attributes:
 
       user:
@@ -251,6 +256,12 @@ en:
         facebook_app_id: &site_facebook_app_id Facebook Application ID
         payment_too_soon_days: &payment_too_soon_days Number of days that a user will be warned that a payment is 'too soon'
 
+      task_attempt:
+        task_name: Task name
+        task_source: Task source
+        was_successful: Was successful
+        attempted_on: Attempted on
+
 
     errors:
       models:
@@ -312,6 +323,20 @@ en:
             timing:
               invalid: must be a symbol
 
+        task_attempt:
+          attributes:
+            was_successful:
+              invalid: "- %{value} must be true or false (a Boolean)"
+
+        successful_task_attempt:
+          attributes:
+            was_successful:
+              invalid: "- %{value} can only be true"
+
+        failed_task_attempt:
+          attributes:
+            was_successful:
+              invalid: "- %{value} can only be false"
 
 
       messages:
@@ -793,15 +818,16 @@ en:
       proof_of_membership_describe: This image is your proof of membership in SHF.
       proof_of_membership_photo_needed: 'If you see "Photo Unavailable" then please
                                          upload a photo of yourself here: '
-      image_how_to_use_html: You can download the image (%{download_link}),
-                        take a screenshot, or link to it from your website
-                        (%{show_link}), and use it in social media or print to use in a
-                        physical context, for example, to show a customer.
+      image_how_to_use_html: You can download the image, take a screenshot,
+                            link to it from your website and use it in social media,
+                            or print it have and show (ex. show it to a customer/client).
       image_use_guidelines_html: Please note that your use of this image is subject to
                                  these %{use_guidelines_link}.
       use_guidelines: guidelines
       download_image: Download Image
-      show_image: Show Image
+      show_image: Show image
+      copy_image_url: Copy image link
+      copied: Copied
       image_dimensions_html: "The image width is <span id='%{width_id}'></span>
                              pixels and the height is
                              <span id='%{height_id}'></span> pixels."

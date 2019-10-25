@@ -1,6 +1,12 @@
 @import "shf-custom-colors";
 @import "payor";
 
+
+.is-admin {
+  color: $is-admin-color;
+  font-weight: bold;
+}
+
 .panel.admin-set-new-password-form {
   margin-left: 2em;
   margin-right: 2em;
