@@ -2,7 +2,7 @@
   = stylesheet_link_tag 'custom-menu', media: 'all'
 %header.entry-header
   - user_name = @user.full_name
-  %h1.entry-title.is-admin
+  %h1{class: with_admin_class_if_needed(@current_user, ['entry-title'])}
     = user_name.empty? ? @user.email : user_name
     - if @user.admin?
       %span.small
