@@ -96,7 +96,6 @@ module ApplicationHelper
   def field_or_default(label, value, default: '', tag: :p, tag_options: {}, separator: ': ',
                        label_class: 'field-label', value_class: 'field-value')
 
-
     if value.blank?
       default
     else
@@ -261,5 +260,23 @@ module ApplicationHelper
 
   def is_a_presence_validator?(validator)
     PRESENCE_VALIDATORS.include?(validator.class)
+  end
+
+
+
+  CSS_ADMIN_CLASS = 'is-admin'
+
+  def css_admin_class
+    CSS_ADMIN_CLASS
+  end
+
+
+  # If the user is an admin,
+  #   append the appropriate CSS class
+  #
+  # @param current_classes [Array[String]] - list of CSS classes
+  # @return [Array] - a list of the current_classes with the admin class appended if needed
+  def with_admin_class_if_needed(user, current_classes = [])
+    user.admin? ? (current_classes << css_admin_class) : current_classes
   end
 end
