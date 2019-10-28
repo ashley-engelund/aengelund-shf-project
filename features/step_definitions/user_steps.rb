@@ -69,3 +69,20 @@ When(/^I choose an application configuration "([^"]*)" file named "([^"]*)" to u
                              'app_configuration', filename), visible: false)
   # ^^ selenium won't find the upload button without visible: false
 end
+
+
+Then("the user is paid through {capture_string}") do | expected_expire_date_str |
+  expect(@user.membership_expire_date.to_s).to eq expected_expire_date_str
+end
+
+
+Then("user {capture_string} is paid through {capture_string}") do | user_email, expected_expire_datestr |
+  user = User.find_by(email: user_email)
+  expect_user_has_expire_date(user, expected_expire_datestr)
+end
+
+
+def expect_user_has_expire_date(user, expected_expire_date_str)
+  user.reload  # ensure the the object has the latest info from the db
+  expect(user.membership_expire_date.to_s).to eq expected_expire_date_str
+end
