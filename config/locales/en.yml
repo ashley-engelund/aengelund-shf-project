@@ -357,6 +357,12 @@ en:
     status: Status
     no_payment_due_now: &no_payment_due_now No payment is due now.
     term_paid_through: &term_paid_through Paid through
+    you_are_paid_until: You are already paid until
+    you_dont_own_until_then: You do not owe a payment until then.
+    paying_now_extends_until: "Making a %{fee_name} payment now will extend your %{term_name} to %{extended_end_date}."
+    do_you_want_to_pay_now: Do you really want to make a payment now?
+    yes_pay_answer: 'Yes, make a payment'
+    no_pay_answer: 'No. Nevermind'
 
 
   payment:
