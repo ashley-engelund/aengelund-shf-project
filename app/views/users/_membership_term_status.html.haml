@@ -1,4 +1,4 @@
-#userMemberStatus
+#user-member-status
   = render partial: 'payor/term_status', locals: { entity: user,
   status_text: user.member? ? t('users.show.is_a_member') : t('users.show.not_a_member'),
   term_name: 'membership',
@@ -9,4 +9,4 @@
    payment_action_path: payments_path(user_id: user.id, type: user.class::THIS_PAYMENT_TYPE),
   fee_name: 'membership fee',
   admin_edit_status_text: t('users.show.edit_member_status'),
-  admin_edit_target_id: '#editStatusModal' }
+  admin_edit_target_id: '#edit-status-modal' }
