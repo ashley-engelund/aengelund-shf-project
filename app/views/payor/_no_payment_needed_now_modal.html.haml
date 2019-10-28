@@ -15,26 +15,26 @@
       .payment-not-due
 
         .modal-header
-          %h4#payment-not-due-modal-title.modal-title
-            = t('payment.no_payment_due_now')
+          %h4.modal-title#payment-not-due-modal-title
+            = t('payors.no_payment_due_now')
 
           %button.close{data: {dismiss: 'modal'}, aria: {label: "#{t('close')}"} }
             %span{aria: {hidden: 'true'} } &times;
 
         .modal-body
           %p
-            You are already paid until
+            = t('payors.you_are_paid_until')
             %span.end-date= "#{end_date}."
             %br
-            You do not owe a payment until then.
-          %p= "Making a #{fee_name} payment now will extend your #{term_name} to #{extended_end_date}."
-          %p Do you really want to make a payment now?
+            = t('payors.you_dont_own_until_then')
+          %p= t('payors.paying_now_extends_until', fee_name: fee_name, term_name: term_name, extended_end_date: extended_end_date)
+          %p= t('payors.do_you_want_to_pay_now')
 
         .modal-footer
-          =link_to('Yes, make a payment', link_to_url,
+          = link_to(t('payors.yes_pay_answer'), link_to_url,
             {method: :post, class: 'btn btn-secondary btn-sm'})
 
           %button.btn-primary.btn-sm{data: {dismiss:'modal'}}
-            No. Nevermind.
+            = t('payors.no_pay_answer')
 
 
