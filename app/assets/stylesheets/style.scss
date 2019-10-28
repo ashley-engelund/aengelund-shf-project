@@ -298,9 +298,9 @@ margin: 5px 0 0 0;
 }
 
 .post-categories li {
+  display: inline-block;
   font-weight: bold;
   font-size: larger;
-  display: inline-block;
   list-style: none;
 }
 
@@ -339,6 +339,10 @@ margin-top:20px;
 .table th {
   border-top:none;
   padding: .15rem .75rem;
+}
+
+.table-sm th {
+  padding: 0.3rem;
 }
 
 .text-nicelabel {
