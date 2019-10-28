@@ -41,7 +41,7 @@
       - if can_make_payment
         .flex
           - if entity.too_early_to_pay?
-            = render partial: 'payments/no_payment_needed_now_modal',
+            = render partial: 'payor/no_payment_needed_now_modal',
               locals: {term_name: term_name,
                fee_name: fee_name,
                end_date: term_end,
