@@ -10,7 +10,7 @@ module PaymentsHelper
   def expire_date_label_and_value(entity)
 
     expire_date = entity_expire_date(entity)
-    t_scope = entity.is_a?(User) ? 'users' : 'companies'
+    t_scope = entity.is_a?(User) ? 'users' : 'companies' # TODO - should use polymorphism to handle this
 
     expire_after_tooltip_title = t("#{t_scope}.show.term_expire_date_tooltip")
     expire_label = t("#{t_scope}.show.term_paid_through")
