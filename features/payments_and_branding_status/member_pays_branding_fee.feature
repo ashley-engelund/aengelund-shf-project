@@ -1,4 +1,6 @@
-Feature: As a member
+Feature: Member pays branding license fee for a company
+
+  As a member
   So that my company can maintain my H-branding license rights
   I need to be able to pay my branding fee
 
@@ -35,7 +37,7 @@ Feature: As a member
     Then I click on t("menus.nav.company.pay_branding_fee")
     And I complete the branding payment for "HappyMutts"
     And I should see t("payments.success.success")
-    And I should see "2018-12-31"
+    Then company number "2120000142" is paid through "2018-12-31"
 
   @selenium @time_adjust
   Scenario: Member starts payment process then abandons it
@@ -45,9 +47,8 @@ Feature: As a member
     And I should see "HAPPYMUTTS"
     Then I click on t("menus.nav.company.pay_branding_fee")
     And I abandon the payment
-    And I should see "2017-12-31"
     And I should not see t("payments.success.success")
-    And I should not see "2018-12-31"
+    Then company number "2120000142" is paid through "2017-12-31"
 
   @time_adjust
   Scenario: Member incurs error in payment processing
@@ -58,5 +59,4 @@ Feature: As a member
     Then I click on t("menus.nav.company.pay_branding_fee")
     And I incur an error in branding payment processing for "HappyMutts"
     And I should see t("payments.error.error")
-    And I should see "2017-12-31"
-    And I should not see "2018-12-31"
+    Then company number "2120000142" is paid through "2017-12-31"

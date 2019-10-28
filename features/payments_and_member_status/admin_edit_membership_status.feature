@@ -1,4 +1,6 @@
-Feature: As an admin
+Feature: Admin can change membership expiration dates
+
+  As an admin
   I want to be able to change certain attributes associated with a member
   So that I have flexibility in managing membership status
 
@@ -26,11 +28,10 @@ Feature: As an admin
       | emma@mutts.com | 2017-10-1  | 2017-12-31  | member_fee   | betald | none    |
 
   @selenium @time_adjust
-  Scenario: Admin edits membership status
+  Scenario: Admin edits membership expiration date
     Given I am logged in as "admin@shf.se"
     Then I am on the "user details" page for "emma@mutts.com"
-    And I should see t("Yes")
-    And I should see "2017-12-31"
+    Then user "emma@mutts.com" is paid through "2017-12-31"
     Then I click on t("users.user.edit_member_status")
     And I should see t("users.user.edit_member_status")
     And I should see t("users.show.member")
@@ -40,8 +41,7 @@ Feature: As an admin
     And I select "2018" in select list "payment[expire_date(1i)]"
     Then I select "juni" in select list "payment[expire_date(2i)]"
     And I select "1" in select list "payment[expire_date(3i)]"
-    And I fill in t("activerecord.attributes.payment.notes") with "This is a note regarding this member."
+    And I fill in t("activerecord.attributes.payment.notes") with "Extended their membership to 1 juni 2018."
     Then I click on t("users.user.submit_button_label")
-    And I should see t("No")
-    And I should see "2018-06-01"
-    And I should see "This is a note regarding this member."
+    And I should see "Extended their membership to 1 juni 2018."
+    And user "emma@mutts.com" is paid through "2018-06-01"

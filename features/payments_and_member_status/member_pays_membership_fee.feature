@@ -1,4 +1,6 @@
-Feature: As a member
+Feature: Member pays membership fee
+
+  As a member
   So that I can maintain my membership
   I need to be able to pay my membership fee
 
@@ -6,6 +8,7 @@ Feature: As a member
     Given the App Configuration is not mocked and is seeded
 
     Given the date is set to "2017-01-10"
+
     Given the following users exist
       | email          | admin | member    | membership_number |
       | emma@mutts.com |       | true      | 1001              |
@@ -32,7 +35,8 @@ Feature: As a member
     Then I click on t("menus.nav.members.pay_membership")
     And I complete the membership payment
     And I should see t("payments.success.success")
-    And I should see "2019-02-11"
+    #And I should see t("payors.paying_now_extends_until", fee_name: 'membership fee', term_name: 'membership', extended_end_date: '2020-02-11')
+    Then the user is paid through "2019-02-11"
 
   @time_adjust
   Scenario: Member pays fee and extends membership
@@ -43,7 +47,8 @@ Feature: As a member
     Then I click on t("menus.nav.members.pay_membership")
     And I complete the membership payment
     And I should see t("payments.success.success")
-    And I should see "2018-12-31"
+    Then the user is paid through "2018-12-31"
+    #And I should see t("payors.paying_now_extends_until", fee_name: 'membership fee', term_name: 'membership', extended_end_date: '2019-12-31')
 
   @time_adjust
   Scenario: Membership expires and member cannot edit company
@@ -60,22 +65,20 @@ Feature: As a member
     And I should not see t("companies.show.add_address")
 
   @selenium
-  Scenario: Member starts payment process then abandons it
+  Scenario: Member starts payment process then abandons it so no payment is made
     Given I am logged in as "emma@mutts.com"
     And I am on the "user details" page for "emma@mutts.com"
     And I should see "1001"
     Then I click on t("menus.nav.members.pay_membership")
     And I abandon the payment
-    And I should see "2017-12-31"
     And I should not see t("payments.success.success")
-    And I should not see "2018-12-31"
+    Then the user is paid through "2017-12-31"
 
-  Scenario: Member incurs error in payment processing
+  Scenario: Member incurs error in payment processing so no payment is made
     Given I am logged in as "emma@mutts.com"
     And I am on the "user details" page for "emma@mutts.com"
     And I should see "1001"
     Then I click on t("menus.nav.members.pay_membership")
     And I incur an error in payment processing
     And I should see t("payments.error.error")
-    And I should see "2017-12-31"
-    And I should not see "2018-12-31"
+    Then the user is paid through "2017-12-31"
