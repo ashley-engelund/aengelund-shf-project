@@ -8,7 +8,7 @@
 #
 RSpec.shared_context 'named dates' do
 
-  THIS_YEAR = 2018
+  THIS_YEAR = 2018 unless defined?(THIS_YEAR)
 
   let(:jul_1) { Time.zone.local(THIS_YEAR, 7, 1) }
   let(:nov_29) { Time.zone.local(THIS_YEAR, 11, 29) }
