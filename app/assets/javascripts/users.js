@@ -8,7 +8,7 @@ $(function() {
     $('[data-toggle="tooltip"]').tooltip();
   });
 
-  $("#user-statusform").on("ajax:success", function(e, data) {
+  $("#user-status-form").on("ajax:success", function(e, data) {
     $("#user-member-status").html(data);
     $('[data-toggle="tooltip"]').tooltip();
   });
