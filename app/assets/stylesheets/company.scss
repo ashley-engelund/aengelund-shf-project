@@ -1,0 +1,23 @@
+.social-media {
+  display: flex;
+  justify-content: space-evenly;
+  width: 150px;
+  a {
+    border-bottom: none;
+  }
+  img {
+    width: 75%;
+    &:hover {
+      filter: saturate(3);
+    }
+  }
+}
+
+.grayscale {
+  filter: grayscale(100%);
+  opacity: 50%;
+  cursor: not-allowed;
+  &:hover {
+    filter: saturate(0) !important;
+  }
+}
