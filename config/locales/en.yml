@@ -673,6 +673,9 @@ en:
     telephone_number: Phone number
     operations_region: County of operations
     website_include_http: Company website
+    facebook_url: Facebook page
+    instagram_url: Instagram page
+    youtube_url: Youtube channel
     description: Customized Company Description
     address_visibility: Visibility
     show_dinkurs_events: Show Dinkurs Events

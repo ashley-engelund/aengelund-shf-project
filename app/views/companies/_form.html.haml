@@ -32,6 +32,17 @@
 
     .row
       .col.form-group
+        = f.label :facebook_url, "#{t('companies.facebook_url')}"
+        = f.text_field :facebook_url,  class: 'form-control'
+      .col.form-group
+        = f.label :instagram_url, "#{t('companies.instagram_url')}"
+        = f.text_field :instagram_url,  class: 'form-control'
+      .col.form-group
+        = f.label :youtube_url, "#{t('companies.youtube_url')}"
+        = f.text_field :youtube_url,  class: 'form-control'
+
+    .row
+      .col.form-group
         = f.label :description, "#{t('companies.description')}"
         = f.cktext_area :description,  class: 'form-control'
 

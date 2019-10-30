@@ -681,6 +681,9 @@ sv:
     telephone_number: Telefonnummer
     operations_region: *region
     website_include_http: Företagets webbplats
+    facebook_url: Facebook sida
+    instagram_url: Instagram sida
+    youtube_url: Youtube Kanal
     description: Beskrivning av företaget
     address_visibility: Synlighet
     show_dinkurs_events: Visa Dinkurs Händelser
