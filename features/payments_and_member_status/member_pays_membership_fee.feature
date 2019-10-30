@@ -30,7 +30,7 @@ Feature: Member pays membership fee
   Scenario: Member pays membership fee after prior payment expiration date
     Given the date is set to "2018-02-12"
     And I am logged in as "emma@mutts.com"
-    And I am on the "user details" page for "emma@mutts.com"
+    And I am on the "user account" page for "emma@mutts.com"
     And I should see "1001"
     Then I click on t("menus.nav.members.pay_membership")
     And I complete the membership payment
@@ -42,7 +42,7 @@ Feature: Member pays membership fee
   Scenario: Member pays fee and extends membership
     Given the date is set to "2017-12-01"
     And I am logged in as "emma@mutts.com"
-    And I am on the "user details" page for "emma@mutts.com"
+    And I am on the "user account" page for "emma@mutts.com"
     And I should see "1001"
     Then I click on t("menus.nav.members.pay_membership")
     And I complete the membership payment
@@ -67,7 +67,7 @@ Feature: Member pays membership fee
   @selenium
   Scenario: Member starts payment process then abandons it so no payment is made
     Given I am logged in as "emma@mutts.com"
-    And I am on the "user details" page for "emma@mutts.com"
+    And I am on the "user account" page for "emma@mutts.com"
     And I should see "1001"
     Then I click on t("menus.nav.members.pay_membership")
     And I abandon the payment
@@ -76,7 +76,7 @@ Feature: Member pays membership fee
 
   Scenario: Member incurs error in payment processing so no payment is made
     Given I am logged in as "emma@mutts.com"
-    And I am on the "user details" page for "emma@mutts.com"
+    And I am on the "user account" page for "emma@mutts.com"
     And I should see "1001"
     Then I click on t("menus.nav.members.pay_membership")
     And I incur an error in payment processing

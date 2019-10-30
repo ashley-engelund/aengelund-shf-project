@@ -1,4 +1,6 @@
-Feature: As a user
+Feature: User pays membership fee
+
+  As a user
   So that I can be approved for membership
   I need to be able to pay my membership fee
 
@@ -24,7 +26,7 @@ Feature: As a user
 
     When I am in "emma@mutts.com" browser
     And I am logged in as "emma@mutts.com"
-    And I am on the "user details" page for "emma@mutts.com"
+    And I am on the "user account" page for "emma@mutts.com"
     Then I should not see t("menus.nav.members.pay_membership")
 
     Then I am in "admin@shf.se" browser
@@ -47,7 +49,7 @@ Feature: As a user
 
     When I am in "emma@mutts.com" browser
     And I am logged in as "emma@mutts.com"
-    And I am on the "user details" page for "emma@mutts.com"
+    And I am on the "user account" page for "emma@mutts.com"
     Then I should not see t("menus.nav.members.pay_membership")
 
     Then I am in "admin@shf.se" browser
