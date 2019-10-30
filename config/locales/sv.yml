@@ -377,7 +377,7 @@ sv:
       member_fee: Medlemsavgift
       branding_fee: H-märkesavgift
     status:
-      betald: &paid Betald
+      paid: &paid Betald
       never_paid: &never_paid Aldrig betald
     processor_status: Processor Status
     status_from_payment_processor:
