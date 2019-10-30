@@ -37,11 +37,14 @@ sv:
   save: &save Spara
   back: &back Tillbaks
   search: &search Sök
+  close: Stänga
+  lastupdated: &last_updated Senast uppdaterad
+
   'yes': &yes Ja
   'no': &no Nej
   'Yes': *yes
   'No': *no
-  close: Stänga
+
 
   application: &application Ansökan
   user_activity: Användaraktivitet
@@ -69,6 +72,8 @@ sv:
   info:
     logged_in_as_admin: Du är inloggad som admin
     under_construction: Sidan är under uppbyggnad, mer information och funktioner kommer att komma efterhand.
+
+  membership: medlemskap
 
   apply_for_membership: Ansök om medlemskap
 
@@ -173,9 +178,12 @@ sv:
 
       payment:
         payment_type: Betalningstyp
+        status: Status
         start_date: Startdatum
         expire_date: &expire_date Utgångsdatum
         notes: Anteckningar
+        created: *created
+        last_updated: *last_updated
 
       shf_application:
         company_number: &company_number Organisationsnummer
@@ -355,8 +363,8 @@ sv:
 
   payors:
     status: Status
-    no_payment_due_now: &no_payment_due_now No payment is due now.
-    term_paid_through: &term_paid_through Paid through
+    no_payment_due_now: &no_payment_due_now Ingen betalning behöver göras nu.
+    term_paid_through: &term_paid_through Betald till och med
     you_are_paid_until: You are paid until
     you_dont_own_until_then: You do not owe a payment until then.
     paying_now_extends_until: "Making a %{fee_name} payment now will extend your %{term_name} to %{extended_end_date}."
@@ -369,8 +377,17 @@ sv:
       member_fee: Medlemsavgift
       branding_fee: H-märkesavgift
     status:
-      paid: &paid Betald
+      betald: &paid Betald
       never_paid: &never_paid Aldrig betald
+    processor_status: Processor Status
+    status_from_payment_processor:
+      skapad: skapad
+      avvaktan: avvaktan
+      betald: betald
+      utgånget: utgånget
+      väntar_på_betalning: "Väntar på betalning"
+    term_start_date: startdatum för terminen
+    term_expiry_date: slutdatum
     no_payment_due_now: *no_payment_due_now
 
   company_locator:

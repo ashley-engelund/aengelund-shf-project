@@ -37,11 +37,14 @@ en:
   save: &save Save
   back: &back Back
   search: &search Search
+  close: Close
+  lastupdated: &last_updated Last Updated
+
   'yes': &yes 'Yes'
   'no': &no 'No'
   'Yes': *yes
   'No': *no
-  close: Close
+
 
   application: &application Application
   user_activity: User Activity
@@ -69,6 +72,8 @@ en:
   info:
     logged_in_as_admin: You are logged in as an admin.
     under_construction: This page is under construction.  More information and features are coming.
+
+  membership: membership
 
   apply_for_membership: 'Apply for membership'
 
@@ -173,9 +178,12 @@ en:
 
       payment:
         payment_type: Payment Type
+        status: Status
         start_date: Start Date
         expire_date: &expire_date Expire Date
         notes: Notes
+        created: *created
+        last_updated: *last_updated
 
       shf_application:
         company_number: &company_number "Company number"
@@ -372,6 +380,15 @@ en:
     status:
       paid: &paid Paid
       never_paid: &never_paid Never Paid
+    processor_status: Processor Status
+    status_from_payment_processor:
+      skapad: created
+      avvaktan: pending
+      betald: successful
+      utgånget: expired
+      väntar_på_betalning: awaiting payments
+    term_start_date: Term Start Date
+    term_expiry_date: Term Expiry Date
     no_payment_due_now: *no_payment_due_now
 
 
