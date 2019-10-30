@@ -102,7 +102,10 @@ Then "the field {capture_string} should{negate} have a required field indicator"
 end
 
 
-Then(/^I should see (\d+) (.*?) rows$/) do |n, css_class_name|
+# Examples of what this will match:
+#  I should see 3 a_css_class rows
+#  I should see 1 some_css_class row
+Then(/^I should see (\d+) (.*?) rows?$/) do |n, css_class_name|
   n = n.to_i
   expect(page).to have_selector(".#{css_class_name}", count: n)
   expect(page).not_to have_selector(".#{css_class_name}", count: n+1)

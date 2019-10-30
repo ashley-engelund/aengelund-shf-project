@@ -86,3 +86,13 @@ def expect_user_has_expire_date(user, expected_expire_date_str)
   user.reload  # ensure the the object has the latest info from the db
   expect(user.membership_expire_date.to_s).to eq expected_expire_date_str
 end
+
+
+Then("I should{negate} see membership status is {capture_string}") do | negate, membership_status |
+
+  status_xpath = "//div[contains(@class,'status')]/span[contains(@class,'value')]"
+  expect(page).send (negate ? :not_to : :to), have_xpath(status_xpath)
+
+  actual_status_element = page.find(:xpath, status_xpath)
+  expect(actual_status_element).to have_text(membership_status)
+end
