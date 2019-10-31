@@ -43,7 +43,8 @@ Feature: Admin uploads meeting PDFs
       | Uploaded tred.exe        | some description              |
     And I choose a shf-document named "tred.exe" to upload
     When I click on t("submit") button
-    Then I should see t("shf_documents.invalid_upload_type")
+    Then I should see t("shf_documents.create.error", document_title: 'Uploaded tred.exe')
+    And I should see t("shf_documents.invalid_upload_type")
     When I am on the "all SHF documents" page
     Then I should not see "Uploaded diploma"
 
