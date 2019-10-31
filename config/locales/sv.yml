@@ -217,6 +217,9 @@ sv:
         phone_number: &company_phone Telefonnummer till företaget
         email: Företagets email
         website: Webbplats
+        facebook_url: Facebook bildadress
+        instagram_url: Instagram bildadress
+        youtube_url: Youtube Kanal
         org_nr: *org_nr
         post_code: *post_code
         city: *city
@@ -620,6 +623,8 @@ sv:
 
     edit:
       title: 'Redigera företag: %{company_name}'
+      social_media_links: Sociala Medielänkar
+
     show:
       company_number: *org_nr
       name: *name
@@ -684,9 +689,6 @@ sv:
     telephone_number: Telefonnummer
     operations_region: *region
     website_include_http: Företagets webbplats
-    facebook_url: Facebook sida
-    instagram_url: Instagram sida
-    youtube_url: Youtube Kanal
     description: Beskrivning av företaget
     address_visibility: Synlighet
     show_dinkurs_events: Visa Dinkurs Händelser

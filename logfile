@@ -594,3 +594,8 @@
 2019-10-08 12:25:30.505 EAT [21929] STATEMENT:  ALTER USER postgres WITH SUPERUSER;
 2019-10-08 12:26:53.701 EAT [22663] ERROR:  role "myuser" does not exist
 2019-10-08 12:26:53.701 EAT [22663] STATEMENT:  ALTER USER myuser WITH SUPERUSER;
+2019-10-31 11:57:53.819 EAT [3435] LOG:  listening on IPv6 address "::1", port 5432
+2019-10-31 11:57:53.820 EAT [3435] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2019-10-31 11:57:53.821 EAT [3435] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2019-10-31 11:57:53.869 EAT [3436] LOG:  database system was shut down at 2019-10-30 21:09:03 EAT
+2019-10-31 11:57:53.883 EAT [3435] LOG:  database system is ready to accept connections
