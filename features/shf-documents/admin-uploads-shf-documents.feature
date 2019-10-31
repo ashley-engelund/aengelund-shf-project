@@ -23,6 +23,8 @@ Feature: Admin uploads meeting PDFs
 
     And I am logged in as "admin@shf.se"
 
+
+
   @admin
   Scenario: Upload a meeting PDF
     Given I am on the "new SHF document" page
