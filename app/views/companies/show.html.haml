@@ -41,9 +41,9 @@
           = field_or_none t('.website'), link_to(@company.website, sanitize(full_uri(@company)), target: '_blank'), tag_options: {class: 'website'}
 
           .social-media
-            = icon_link(@company.facebook_url, "facebook.svg")
-            = icon_link(@company.instagram_url, "instagram.svg")
-            = icon_link(@company.youtube_url, "youtube.svg")
+            = icon_link(@company.facebook_url, "facebook") if !@company.facebook_url.blank?
+            = icon_link(@company.instagram_url, "instagram") if !@company.instagram_url.blank?
+            = icon_link(@company.youtube_url, "youtube-square") if !@company.youtube_url.blank?
 
 
         .col-md-7

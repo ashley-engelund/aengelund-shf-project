@@ -221,6 +221,9 @@ en:
         region: *region
         region_short: *region_short
         website: Website
+        facebook_url: Facebook URL
+        instagram_url: Instagram URL
+        youtube_url: Youtube channel
         org_nr: *org_nr
         dinkurs_key: &dinkurs_company_key Dinkurs Company key
         dinkurs_company_id: Dinkurs company key
@@ -605,6 +608,7 @@ en:
       success_with_dinkurs_problem: THE COMPANY WAS CREATED, BUT PLEASE NOTE PROBLEM(S) BELOW
     edit:
       title: 'Editing: %{company_name}'
+      social_media_links: Social Media Links
     update:
       error: There was a problem updating the company.
       success: The company was updated.
@@ -673,9 +677,6 @@ en:
     telephone_number: Phone number
     operations_region: County of operations
     website_include_http: Company website
-    facebook_url: Facebook page
-    instagram_url: Instagram page
-    youtube_url: Youtube channel
     description: Customized Company Description
     address_visibility: Visibility
     show_dinkurs_events: Show Dinkurs Events

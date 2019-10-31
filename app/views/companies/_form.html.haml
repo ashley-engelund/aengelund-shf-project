@@ -30,15 +30,18 @@
         = fas_tooltip(t('.dinkurs_show_tooltip'))
         = f.check_box :show_dinkurs_events, { class: 'toggle', data: { toggle: 'toggle', onstyle: 'success', offstyle: 'danger'} }, "true", "false"
 
+    %p
+    %strong #{t('companies.edit.social_media_links')}
+    %hr
     .row
       .col.form-group
-        = f.label :facebook_url, "#{t('companies.facebook_url')}"
+        = f.label :facebook_url, "#{t('activerecord.attributes.company.facebook_url')}"
         = f.text_field :facebook_url,  class: 'form-control'
       .col.form-group
-        = f.label :instagram_url, "#{t('companies.instagram_url')}"
+        = f.label :instagram_url, "#{t('activerecord.attributes.company.instagram_url')}"
         = f.text_field :instagram_url,  class: 'form-control'
       .col.form-group
-        = f.label :youtube_url, "#{t('companies.youtube_url')}"
+        = f.label :youtube_url, "#{t('activerecord.attributes.company.youtube_url')}"
         = f.text_field :youtube_url,  class: 'form-control'
 
     .row

@@ -63,9 +63,8 @@ module ApplicationHelper
                      label_class: label_class, value_class: value_class)
   end
 
-  def icon_link(url, icon, classes = '')
-    classes = 'grayscale' if url.blank?
-    link_to image_tag(icon, class: classes), url, target: '_blank'
+  def icon_link(url, icon)
+    link_to raw("<i class='fab fa-#{icon} fa-2x'></i>"), url, target: '_blank'
   end
   
 
