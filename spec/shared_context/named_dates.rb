@@ -14,6 +14,7 @@ RSpec.shared_context 'named dates' do
   let(:jan_2) { Time.zone.local(2018, 1, 2) }
   let(:jan_3) { Time.zone.local(2018, 1, 3) }
   let(:jan_30) { Time.zone.local(THIS_YEAR, 1, 30) }
+  let(:jan_31) { Time.zone.local(THIS_YEAR, 1, 31) }
 
   let(:feb_1) { Time.zone.local(THIS_YEAR, 2, 1) }
   let(:feb_2) { Time.zone.local(THIS_YEAR, 2, 2) }
@@ -41,6 +42,7 @@ RSpec.shared_context 'named dates' do
   let(:lastyear_dec_3) { Time.zone.local(THIS_YEAR - 1, 12, 3) }
   let(:lastyear_dec_8) { Time.zone.local(THIS_YEAR - 1, 12, 8) }
   let(:lastyear_dec_9) { Time.zone.local(THIS_YEAR - 1, 12, 9) }
+  let(:lastyear_dec_10) { Time.zone.local(THIS_YEAR - 1, 12, 10) }
 
   #
   # Next year
