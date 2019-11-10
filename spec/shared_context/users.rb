@@ -20,8 +20,6 @@ require 'shared_context/named_dates'
 # user_membership_expires_EOD_dec8 - member with membership app; membership term and branding fee term expire end of day (EOD) Dec 8 next year
 # user_membership_expires_EOD_dec9 - member with membership app; membership term and branding fee term expire end of day (EOD) Dec 8 next year
 #
-# TODO - DRY up by defining a method that creates the user, payments, company for a given start day (and any other arguments needed)
-#
 RSpec.shared_context 'create users' do
 
   include_context 'named dates'
@@ -142,4 +140,7 @@ RSpec.shared_context 'create users' do
   let(:user_membership_expires_EOD_jan31) { create_member_with_payments_on([feb_1]) }
   let(:user_membership_expires_EOD_feb1) { create_member_with_payments_on([feb_2]) }
 
+  let(:user_membership_expires_EOD_dec7) { create_member_with_payments_on([lastyear_dec_8]) }
+  let(:user_membership_expires_EOD_dec8) { create_member_with_payments_on([lastyear_dec_9]) }
+  let(:user_membership_expires_EOD_dec9) { create_member_with_payments_on([lastyear_dec_10]) }
 end
