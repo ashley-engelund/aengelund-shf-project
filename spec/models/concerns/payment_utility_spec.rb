@@ -82,9 +82,9 @@ RSpec.describe User, type: :model do
 
     it 'is the notes of the most recent payment' do
       most_recent_membership_payment = user_pays_every_nov30.payment_notes(membership_fee)
-      expect(most_recent_membership_payment).to eq('nov_30 membership')
+      expect(most_recent_membership_payment).to eq('membership starts 2018-11-30, expires 2019-11-29')
       most_recent_membership_payment = user_pays_every_nov30.payment_notes(branding_license_fee)
-      expect(most_recent_membership_payment).to eq('nov_30 branding')
+      expect(most_recent_membership_payment).to eq('branding license starts 2018-11-30, expires 2019-11-29')
     end
   end
 
