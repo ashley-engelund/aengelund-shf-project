@@ -9,7 +9,7 @@ Feature: Admin sees user account information
   Background:
     Given the App Configuration is not mocked and is seeded
 
-    Given the following users exists
+    Given the following users exist:
       | email                           | admin | membership_number | member |
       | emma-new-app@bowsers.com        |       |                   |        |
       | lars-member@happymutts.com      |       | 101               | true   |
