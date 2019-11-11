@@ -68,26 +68,28 @@ class User < ApplicationRecord
   scope :current_members, -> { User.joins(:payments).where("payments.status = '#{Payment::SUCCESSFUL}' AND payments.payment_type = ? AND  payments.expire_date > ?", Payment::PAYMENT_TYPE_MEMBER, Date.current).joins(:shf_application).where(shf_applications: {state: 'accepted'}) }
 
 
+  THIS_PAYMENT_TYPE = Payment::PAYMENT_TYPE_MEMBER
+
   def most_recent_membership_payment
-    most_recent_payment(Payment::PAYMENT_TYPE_MEMBER)
+    most_recent_payment(THIS_PAYMENT_TYPE)
   end
 
 
   # TODO this should not be the responsibility of the User class.
   def membership_start_date
-    payment_start_date(Payment::PAYMENT_TYPE_MEMBER)
+    payment_start_date(THIS_PAYMENT_TYPE)
   end
 
 
   # TODO this should not be the responsibility of the User class.
   def membership_expire_date
-    payment_expire_date(Payment::PAYMENT_TYPE_MEMBER)
+    payment_expire_date(THIS_PAYMENT_TYPE)
   end
 
 
   # TODO this should not be the responsibility of the User class.
   def membership_payment_notes
-    payment_notes(Payment::PAYMENT_TYPE_MEMBER)
+    payment_notes(THIS_PAYMENT_TYPE)
   end
 
 
@@ -129,7 +131,7 @@ class User < ApplicationRecord
 
   # TODO this should not be the responsibility of the User class.
   def self.next_membership_payment_dates(user_id)
-    next_payment_dates(user_id, Payment::PAYMENT_TYPE_MEMBER)
+    next_payment_dates(user_id, THIS_PAYMENT_TYPE)
   end
 
 
@@ -145,6 +147,7 @@ class User < ApplicationRecord
 
 
   def member_fee_payment_due?
+    # TODO should member? be used here?
     member? && !membership_current?
   end
 
