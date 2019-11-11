@@ -136,14 +136,30 @@ class User < ApplicationRecord
   end
 
 
+  # Business rule: user can pay membership fee if:
+  # 1. the user is not the admin (an admin cannot make a payment for a member or user)
+  #      AND
+  # 2, the user is a member
+  #     OR
+  #    user has at least one application with status == :accepted
+  # What if a payment has already been made?  any check for that?
   # TODO this should not be the responsibility of the User class.
-  def allow_pay_member_fee?
-    # Business rule: user can pay membership fee if:
-    # 1. user == member, or
-    # 2. user has at least one application with status == :accepted
-    # What if a payment has already been made?  any check for that?
+  def allowed_to_pay_member_fee?
+    # TODO use membership_current? instead of member?
+    !admin? && (member? || shf_application&.accepted? )
+  end
 
-    member? || shf_application&.accepted?
+
+  # Business rule: user can pay h-brand license fee if:
+  # 1. user is an admin
+  # OR
+  # 2. user is a member AND user is in the company
+  #
+  # TODO this should not be the responsibility of the User class.
+  #
+  # @return [Boolean]
+  def allowed_to_pay_hbrand_fee?(company)
+    admin? || in_company?(company) #|| has_approved_app_for_company?(company)
   end
 
 
