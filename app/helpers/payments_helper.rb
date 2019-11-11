@@ -4,31 +4,49 @@ module PaymentsHelper
   # set based on whether or not the date has expired and a tooltip that explains it.
   #
   # @param entity [User | Object]- the entity that provides the expiration date. If a User,
-  # must respond to :membership_expire_date; else must respond to :branding_expire_date
+  # must respond to :entity_expire_date
   #
   # @return [String] - the HTML <span> string
   def expire_date_label_and_value(entity)
-    if entity.is_a? User
-      expire_date = entity.membership_expire_date
-      expire_after_tooltip_title = "#{t('users.show.membership_expire_date_tooltip')}"
+
+    expire_date = entity_expire_date(entity)
+    t_scope = entity.is_a?(User) ? 'users' : 'companies' # TODO - should use polymorphism to handle this
+
+    expire_after_tooltip_title = t("#{t_scope}.show.term_expire_date_tooltip")
+    expire_label = t("#{t_scope}.show.term_paid_through")
+
+    if expire_date
+      tag.div do
+        concat tag.span "#{expire_label}: ", class: 'standard-label'
+        concat tag.span "#{expire_date}", class: payment_should_be_made_class(entity)
+        concat ' '
+        concat fas_tooltip(expire_after_tooltip_title)
+      end
     else
-      expire_date = entity.branding_expire_date # Company
-      expire_after_tooltip_title = "#{t('companies.show.branding_fee_expire_date_tooltip')}"
-    end
-
-    unless expire_date
-      return field_or_none("#{t('activerecord.attributes.payment.expire_date')}",
-                           "#{t('none_t')}", label_class: 'standard-label')
-    end
-
-    tag.p do
-      concat tag.span "#{t('activerecord.attributes.payment.expire_date')}: ",
-                      class: 'standard-label'
-      concat tag.span "#{expire_date}", class: expire_date_css_class(expire_date)
-      concat ' '
-      concat fas_tooltip(expire_after_tooltip_title)
+      field_or_none(expire_label, t('none_t'), label_class: 'standard-label')
     end
   end
+
+
+  # @param entity [User or Company] - the entity with a possible membership expiration date
+  # @return [nil | date] - return nil if there is no expiration date (e.g. not a member), else
+  # the Date that the current membership term expires
+  def entity_expire_date(entity)
+    (entity.is_a? User) ? entity.membership_expire_date : entity.branding_expire_date
+  end
+
+
+  def payment_should_be_made_class(entity)
+    # TODO use the classes defined in ApplicationHelper
+    if entity.term_expired?
+      'No'
+    elsif entity.too_early_to_pay?
+      'Yes'
+    else
+      'Maybe'
+    end
+  end
+
 
   def expire_date_css_class(expire_date)
     today = Time.zone.today
@@ -42,18 +60,28 @@ module PaymentsHelper
     value_class
   end
 
-  def payment_notes_label_and_value(entity)
-    if entity.is_a? User
-      notes = entity.membership_payment_notes
-    else
-      notes = entity.branding_payment_notes
-    end
 
-    if !notes || notes.empty?
-      return field_or_none("#{t('activerecord.attributes.payment.notes')}",
-                           "#{t('none_plur')}", label_class: 'standard-label')
-    end
-    return field_or_none("#{t('activerecord.attributes.payment.notes')}",
-                         notes, label_class: 'standard-label')
+  def payment_button_classes(additional_classes = [])
+    %w(btn btn-secondary btn-sm) + additional_classes
+  end
+
+
+  def payment_button_tooltip_text(t_scope: 'users', payment_due_now: true)
+    translation_scope = I18n.exists?(t_scope) ? t_scope : 'users'
+    pay_button_tooltip = t("#{translation_scope}.show.payment_tooltip")
+    pay_button_tooltip += " #{t('payors.no_payment_due_now')}" unless payment_due_now
+    pay_button_tooltip
+  end
+
+
+  # TODO abstract out to Payor
+  def payment_notes_label_and_value(entity)
+
+    notes = entity.payment_notes(entity.class::THIS_PAYMENT_TYPE)
+    display_text = notes.blank? ? t('none_plur') : notes
+
+    field_or_none("#{t('activerecord.attributes.payment.notes')}",
+                  display_text, tag: :div, label_class: 'standard-label')
+
   end
 end
