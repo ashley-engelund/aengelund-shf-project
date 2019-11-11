@@ -599,3 +599,12 @@
 2019-10-31 11:57:53.821 EAT [3435] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
 2019-10-31 11:57:53.869 EAT [3436] LOG:  database system was shut down at 2019-10-30 21:09:03 EAT
 2019-10-31 11:57:53.883 EAT [3435] LOG:  database system is ready to accept connections
+2019-10-31 20:25:21.338 EAT [3435] LOG:  received smart shutdown request
+2019-10-31 20:25:21.341 EAT [3435] LOG:  background worker "logical replication launcher" (PID 3442) exited with exit code 1
+2019-10-31 20:25:21.341 EAT [3437] LOG:  shutting down
+2019-10-31 20:25:21.353 EAT [3435] LOG:  database system is shut down
+2019-11-11 17:10:46.531 EAT [3863] LOG:  listening on IPv4 address "127.0.0.1", port 5432
+2019-11-11 17:10:46.532 EAT [3863] LOG:  listening on IPv6 address "::1", port 5432
+2019-11-11 17:10:46.532 EAT [3863] LOG:  listening on Unix socket "/tmp/.s.PGSQL.5432"
+2019-11-11 17:10:46.610 EAT [3864] LOG:  database system was shut down at 2019-11-09 01:04:26 EAT
+2019-11-11 17:10:46.637 EAT [3863] LOG:  database system is ready to accept connections

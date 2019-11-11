@@ -64,7 +64,9 @@ module ApplicationHelper
   end
 
   def icon_link(url, icon)
-    link_to raw("<i class='fab fa-#{icon} fa-2x'></i>"), url, target: '_blank'
+    if !url.blank? && !icon.nil?
+      link_to raw("<i class='fab fa-#{icon} fa-2x'></i>"), url, target: '_blank'
+    end
   end
   
 

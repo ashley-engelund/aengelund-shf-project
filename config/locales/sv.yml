@@ -217,7 +217,7 @@ sv:
         phone_number: &company_phone Telefonnummer till företaget
         email: Företagets email
         website: Webbplats
-        facebook_url: Facebook bildadress
+        facebook_url: Facebook sida bildadress
         instagram_url: Instagram bildadress
         youtube_url: Youtube Kanal
         org_nr: *org_nr

@@ -221,7 +221,7 @@ en:
         region: *region
         region_short: *region_short
         website: Website
-        facebook_url: Facebook URL
+        facebook_url: Facebook page URL
         instagram_url: Instagram URL
         youtube_url: Youtube channel
         org_nr: *org_nr
