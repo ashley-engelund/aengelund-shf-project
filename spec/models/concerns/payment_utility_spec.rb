@@ -3,6 +3,7 @@ require 'shared_context/users'
 require 'shared_context/companies'
 
 # We use the User class to test most instance methods since it includes the PaymentUtility class
+# Note that most specs/test also actually check the Company class since it also includes the PaymentUtility class.
 
 RSpec.describe User, type: :model do
 
@@ -85,6 +86,159 @@ RSpec.describe User, type: :model do
       expect(most_recent_membership_payment).to eq('membership starts 2018-11-30, expires 2019-11-29')
       most_recent_membership_payment = user_pays_every_nov30.payment_notes(branding_license_fee)
       expect(most_recent_membership_payment).to eq('branding license starts 2018-11-30, expires 2019-11-29')
+    end
+  end
+
+
+  describe '#term_expired?' do
+
+    it 'true if no payments have been made' do
+      expect(user_no_payments.term_expired?(membership_fee)).to be_truthy
+      expect(user_no_payments.term_expired?).to be_truthy
+      expect(user_no_payments.term_expired?(branding_license_fee)).to be_truthy
+    end
+
+    it 'true if today is after the latest expire time (expire time < today)' do
+      expect(user_paid_lastyear_nov_29.term_expired?(membership_fee)).to be_truthy
+      expect(user_paid_lastyear_nov_29.term_expired?).to be_truthy
+      u_co = user_paid_lastyear_nov_29.companies.first
+      expect(u_co.term_expired?(branding_license_fee)).to be_truthy
+      expect(u_co.term_expired?).to be_truthy
+    end
+
+    it 'true if today = latest expire time' do
+      expect(user_paid_only_lastyear_dec_2.term_expired?(membership_fee)).to be_truthy
+      expect(user_paid_only_lastyear_dec_2.term_expired?).to be_truthy
+      u_co = user_paid_only_lastyear_dec_2.companies.first
+      expect(u_co.term_expired?(branding_license_fee)).to be_truthy
+      expect(u_co.term_expired?).to be_truthy
+    end
+
+    it 'false if today is before (<) latest expire time' do
+      expect(user_membership_expires_EOD_feb1.term_expired?(membership_fee)).to be_falsey
+      expect(user_membership_expires_EOD_feb1.term_expired?).to be_falsey
+      u_co = user_membership_expires_EOD_feb1.companies.first
+      expect(u_co.term_expired?(branding_license_fee)).to be_falsey
+      expect(u_co.term_expired?).to be_falsey
+    end
+  end
+
+
+  describe '#should_pay_now?' do
+    # today = dec_1 per the Timecop.freeze in the around(:each) block for this whole RSpec
+
+    it 'always true if no payments have been made (no matter the dates, cutoff, etc.)' do
+      expect(user_no_payments.should_pay_now?).to be_truthy
+      expect(build(:company).should_pay_now?).to be_truthy
+    end
+
+    it 'always true of the term has expired' do
+      expect(user_paid_lastyear_nov_29.should_pay_now?).to be_truthy
+      u_co = user_paid_lastyear_nov_29.companies.first
+      expect(u_co.should_pay_now?).to be_truthy
+    end
+
+    describe 'cutoff date for being "too early" = expiration - cutoff days' do
+      # today = dec 1
+      # today + 60 days = jan 30
+
+      it 'false if today is before the cutoff date' do
+        expect(user_membership_expires_EOD_feb1.should_pay_now?).to be_falsey
+        u_co = user_membership_expires_EOD_feb1.companies.first
+        expect(u_co.should_pay_now?).to be_falsey
+      end
+
+      it 'true if today is on the cutoff date' do
+        expect(user_membership_expires_EOD_jan30.should_pay_now?).to be_truthy
+        u_co = user_membership_expires_EOD_jan30.companies.first
+        expect(u_co.should_pay_now?).to be_truthy
+      end
+
+      it 'true if today is after the cutoff date' do
+        expect(user_membership_expires_EOD_jan29.should_pay_now?).to be_truthy
+        u_co = user_membership_expires_EOD_jan29.companies.first
+        expect(u_co.should_pay_now?).to be_truthy
+      end
+
+      describe 'can give a cutoff duration to add to Today' do
+        # today = dec 1
+        # today + 1 week = dec 8
+
+        let(:custom_cutoff_duration) { 1.week }
+
+        it 'always true if no payments have been made (no matter the dates, cutoff, etc.)' do
+          expect(user_no_payments.should_pay_now?(custom_cutoff_duration)).to be_truthy
+          expect(build(:company).should_pay_now?(custom_cutoff_duration)).to be_truthy
+        end
+
+        it 'always true of the term has expired' do
+          expect(user_paid_lastyear_nov_29.should_pay_now?(custom_cutoff_duration)).to be_truthy
+          u_co = user_paid_lastyear_nov_29.companies.first
+          expect(u_co.should_pay_now?(custom_cutoff_duration)).to be_truthy
+        end
+
+        it 'false if before the cutoff date' do
+          expect(user_membership_expires_EOD_dec9.should_pay_now?(custom_cutoff_duration)).to be_falsey
+          u_co = user_membership_expires_EOD_dec9.companies.first
+          expect(u_co.should_pay_now?(custom_cutoff_duration)).to be_falsey
+        end
+
+        it 'true if on the cutoff date' do
+          expect(user_membership_expires_EOD_dec8.should_pay_now?(custom_cutoff_duration)).to be_truthy
+          u_co = user_membership_expires_EOD_dec8.companies.first
+          expect(u_co.should_pay_now?(custom_cutoff_duration)).to be_truthy
+        end
+
+        it 'true if after the cutoff date' do
+          expect(user_membership_expires_EOD_dec7.should_pay_now?(custom_cutoff_duration)).to be_truthy
+          u_co = user_membership_expires_EOD_dec7.companies.first
+          expect(u_co.should_pay_now?(custom_cutoff_duration)).to be_truthy
+        end
+      end
+    end
+  end
+
+
+  # TODO There should be a more sensible way to do this test in relation to should_pay_now?
+  describe '#too_early_to_pay? is the opposite of should_pay_now?' do
+    # today = dec_1 per the Timecop.freeze in the around(:each) block for this whole RSpec
+    # today = dec 1
+    # today + 60 days = jan 30
+
+    it 'always false if no payments have been made' do
+      expect(user_no_payments.too_early_to_pay?).to eq(!user_no_payments.should_pay_now?)
+      co_no_payments = build(:company)
+      expect(co_no_payments.too_early_to_pay?).to eq(!co_no_payments.should_pay_now?)
+    end
+
+    it 'always false if the term has expired' do
+      expect(user_paid_lastyear_nov_29.too_early_to_pay?).to eq !user_paid_lastyear_nov_29.should_pay_now?
+      u_co = user_paid_lastyear_nov_29.companies.first
+      expect(u_co.too_early_to_pay?).to eq !u_co.should_pay_now?
+    end
+
+    describe 'cutoff date for being "too early" = expiration - cutoff days' do
+      # today = dec_1 per the Timecop.freeze in the around(:each) block for this whole RSpec
+      # today = dec 1
+      # today + 60 days = jan 30
+
+      it 'true if today is before the cutoff date' do
+        expect(user_membership_expires_EOD_feb1.too_early_to_pay?).to eq !user_membership_expires_EOD_feb1.should_pay_now?
+        u_co = user_membership_expires_EOD_feb1.companies.first
+        expect(u_co.too_early_to_pay?).to eq !u_co.should_pay_now?
+      end
+
+      it 'false if today is on the cutoff date' do
+        expect(user_membership_expires_EOD_jan30.too_early_to_pay?).to eq !user_membership_expires_EOD_jan30.should_pay_now?
+        u_co = user_membership_expires_EOD_jan30.companies.first
+        expect(u_co.too_early_to_pay?).to eq !u_co.should_pay_now?
+      end
+
+      it 'false if today is after the cutoff date' do
+        expect(user_membership_expires_EOD_jan29.too_early_to_pay?).to eq !user_membership_expires_EOD_jan29.should_pay_now?
+        u_co = user_membership_expires_EOD_jan29.companies.first
+        expect(u_co.too_early_to_pay?).to eq !u_co.should_pay_now?
+      end
     end
   end
 
@@ -191,12 +345,13 @@ RSpec.describe User, type: :model do
   describe 'start_date_for_expire_date' do
 
     it 'is expire date minus 1 year + 1 day' do
-
+      dec_31_2018 = Date.new(2018, 12, 31)
+      expect(described_class.start_date_for_expire_date(dec_31_2018)).to eq (dec_31_2018 - 1.year + 1.day)
     end
 
 
     it 'handles leap year' do
-
+      expect(described_class.start_date_for_expire_date(Date.new(2021, 2, 28))).to eq (Date.new(2020, 2, 29))
     end
   end
 
@@ -233,5 +388,4 @@ RSpec.describe User, type: :model do
     end
 
   end
-
 end
