@@ -230,7 +230,7 @@ margin: 5px 0 0 0;
 }
 
 .infotext p {
-  margin: 0.5rem 0 0.5rem 0;
+  margin-bottom: 1rem; // margin: 0.5rem 0 0.5rem 0;
 }
 
 .login {
@@ -299,6 +299,8 @@ margin: 5px 0 0 0;
 
 .post-categories li {
   display: inline-block;
+  font-weight: bold;
+  font-size: larger;
   list-style: none;
 }
 
@@ -337,6 +339,10 @@ margin-top:20px;
 .table th {
   border-top:none;
   padding: .15rem .75rem;
+}
+
+.table-sm th {
+  padding: 0.3rem;
 }
 
 .text-nicelabel {
@@ -566,7 +572,7 @@ table {
 }
 
 @media (max-width: 768px) {
-  .dropdown-menu a, 
+  .dropdown-menu a,
   nav.navbar .dropdown-menu li a {
     border: 0;
   }
