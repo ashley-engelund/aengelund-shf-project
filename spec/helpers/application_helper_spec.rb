@@ -411,4 +411,46 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
+
+  describe '#with_admin_class_if_needed' do
+
+    describe 'user is not an admin: always returns the list of CSS classes given' do
+
+      let(:not_admin) { create(:user) }
+
+      it 'no list given' do
+        expect(helper.with_admin_class_if_needed(not_admin)). to eq([])
+      end
+
+      it 'empty list given' do
+        expect(helper.with_admin_class_if_needed(not_admin, [])). to eq([])
+      end
+
+      it 'given a list of CSS classes' do
+        given_list_of_classes = ['this-css-class', 'that-css-class']
+        expect(helper.with_admin_class_if_needed(not_admin, given_list_of_classes)). to eq(given_list_of_classes)
+      end
+    end
+
+    describe 'user is an admin' do
+
+      let(:admin) { create(:admin) }
+
+      it 'no list given' do
+        expect(helper.with_admin_class_if_needed(admin)). to match_array([helper.css_admin_class])
+      end
+
+      it 'empty list given' do
+        expect(helper.with_admin_class_if_needed(admin, [])). to match_array([helper.css_admin_class] )
+      end
+
+      it 'given a list of CSS classes' do
+        given_list_of_classes = ['this-css-class', 'that-css-class']
+        expected_list_of_classes = given_list_of_classes + [helper.css_admin_class]
+        expect(helper.with_admin_class_if_needed(admin, given_list_of_classes)). to match_array( expected_list_of_classes )
+      end
+    end
+
+  end
+
 end

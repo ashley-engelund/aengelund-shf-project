@@ -2,6 +2,13 @@ require 'meta_image_tags_helper'
 
 module ApplicationHelper
 
+  # TODO refactor these and methods to access them into a small module that can be used (e.g. also in the PaymentsHelper)
+  CSS_CLASS_YES = 'yes' unless defined?(CSS_CLASS_YES)
+  CSS_CLASS_NO = 'no' unless defined?(CSS_CLASS_NO)
+  CSS_CLASS_MAYBE = 'maybe' unless defined?(CSS_CLASS_MAYBE)
+  CSS_ADMIN_CLASS = 'is-admin' unless defined?(CSS_ADMIN_CLASS)
+
+
   include MetaTagsHelper
   include MetaImageTagsHelper
 
@@ -91,7 +98,6 @@ module ApplicationHelper
   def field_or_default(label, value, default: '', tag: :p, tag_options: {}, separator: ': ',
                        label_class: 'field-label', value_class: 'field-value')
 
-
     if value.blank?
       default
     else
@@ -167,7 +173,24 @@ module ApplicationHelper
 
   # return a span tag with class yes || no and text = t('yes')||t('no') depending on the boolean value
   def yes_no_span(boolean_value)
-    boolean_value ? content_tag(:span, t('yes'), class: 'yes') : content_tag(:span, t('no'), class: 'no')
+    # boolean_value ? content_tag(:span, t('yes'), class: 'yes') : content_tag(:span, t('no'), class: 'no')
+    span_with_yes_no_class((boolean_value ? t('yes'): t('no')), boolean_value)
+  end
+
+
+  # Return a span tag with text = text, and class = the yes or no CSS class
+  # depending on the boolean_value
+  # This ensures that we are always using the same CSS classes for styling
+  # yes and no
+  #
+  # Ex:
+  #   span_with_yes_no_class('surround this text', true)
+  #    => "<span class: 'yes'>surround this text</span>"
+  #
+  #   span_with_yes_no_class('surround this text', false)
+  #    => "<span class: 'no'>surround this text</span>"
+  def span_with_yes_no_class(text, boolean_value)
+    content_tag(:span, text, class: (boolean_value ? CSS_CLASS_YES : CSS_CLASS_NO))
   end
 
 
@@ -239,5 +262,20 @@ module ApplicationHelper
 
   def is_a_presence_validator?(validator)
     PRESENCE_VALIDATORS.include?(validator.class)
+  end
+
+
+  def css_admin_class
+    CSS_ADMIN_CLASS
+  end
+
+
+  # If the user is an admin,
+  #   append the appropriate CSS class
+  #
+  # @param current_classes [Array[String]] - list of CSS classes
+  # @return [Array] - a list of the current_classes with the admin class appended if needed
+  def with_admin_class_if_needed(user, current_classes = [])
+    user.admin? ? (current_classes << css_admin_class) : current_classes
   end
 end
