@@ -95,6 +95,7 @@ class User < ApplicationRecord
 
   # TODO this should not be the responsibility of the User class.
   def membership_current?
+    # TODO can use term_expired?(THIS_PAYMENT_TYPE)
     membership_expire_date&.future?
   end
 
@@ -167,8 +168,57 @@ class User < ApplicationRecord
   end
 
 
+  def in_company?(company)
+    in_company_numbered?(company.company_number)
+  end
+
+
   def in_company_numbered?(company_num)
-    member? && shf_application&.companies&.where(company_number: company_num)&.any?
+    member? && has_approved_app_for_company_number?(company_num)
+  end
+
+
+  def has_approved_app_for_company?(company)
+    has_approved_app_for_company_number?(company.company_number)
+  end
+
+
+  def has_approved_app_for_company_number?(company_num)
+    has_app_for_company_number?(company_num) && apps_for_company_number(company_num).first.accepted?
+  end
+
+
+  def has_app_for_company?(company)
+    has_app_for_company_number?(company.company_number)
+  end
+
+
+  def has_app_for_company_number?(company_num)
+    apps_for_company_number(company_num)&.any?
+  end
+
+
+  # @return [Array] all shf_applications that contain the company, sorted by the application with the expire_date furthest in the future
+  def apps_for_company(company)
+    apps_for_company_number(company.company_number)
+  end
+
+
+  # @return [Array] all shf_applications that contain a company with the company_num, sorted by the application with the expire_date furthest in the future
+  #   Note that right now a User can have only 1 ShfApplication, but in the future
+  #   if a User can have more than 1, we want to be sure they are sorted by expire_date with the
+  #    expire_date in the future as the first one and the expire_date in the past as the last one
+  def apps_for_company_number(company_num)
+    result = shf_application&.companies&.find_by(company_number: company_num)
+    result.nil? ? [] : [shf_application].sort(&sort_apps_by_when_approved)
+  end
+
+
+  SORT_BY_MOST_RECENT_APPROVED_DATE = lambda { | app1, app2 | app2.when_approved <=> app1.when_approved }
+
+  # @return [Lambda] - the block (lambda) to use to sort shf_applications by the when_approved date
+  def sort_apps_by_when_approved
+    SORT_BY_MOST_RECENT_APPROVED_DATE
   end
 
 
