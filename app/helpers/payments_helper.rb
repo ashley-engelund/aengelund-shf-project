@@ -31,8 +31,21 @@ module PaymentsHelper
   # @param entity [User or Company] - the entity with a possible membership expiration date
   # @return [nil | date] - return nil if there is no expiration date (e.g. not a member), else
   # the Date that the current membership term expires
-  def entity_expire_date(entity)
-    (entity.is_a? User) ? entity.membership_expire_date : entity.branding_expire_date
+  # TODO - this is a smell (checking the class): polymorphism should be used instead. Default implementation should be in a parent class for User and Company
+  def entity_expire_date(entity = nil)
+    if entity && (entity.is_a?(User) || entity.is_a?(Company))
+      entity.is_a?(User) ? entity.membership_expire_date : entity.branding_expire_date
+    else
+      nil
+    end
+  end
+
+
+  # @return [String] - the scope (= key) to use when looking up I18n translations
+  # for this entity.  Default = 'users'
+  # TODO - this is a smell (checking the class): polymorphism should be used instead. Default implementation should be in a parent class for User and Company
+  def entity_i18n_scope(entity = nil)
+    (entity && entity.is_a?(Company)) ? 'companies' : 'users'
   end
 
 

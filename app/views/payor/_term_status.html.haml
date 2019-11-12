@@ -56,7 +56,7 @@
             = link_to(payment_text, payment_action_path,
               { method: :post, class: payment_button_classes })
 
-          = fas_tooltip(payment_button_tooltip_text(payment_due_now: entity.should_pay_now?))
+          = fas_tooltip(payment_button_tooltip_text(payment_due_now: entity.should_pay_now?, t_scope: entity_i18n_scope(entity)))
           .no-payment-needed= t('payors.no_payment_due_now') if entity.too_early_to_pay?
 
     - if current_user.admin?

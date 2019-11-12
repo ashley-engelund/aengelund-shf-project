@@ -1,5 +1,6 @@
 require 'rails_helper'
 require 'shared_context/users'
+require 'shared_context/named_dates'
 
 include ApplicationHelper
 
@@ -102,6 +103,50 @@ RSpec.describe PaymentsHelper, type: :helper do
         response = /.*#{t('companies.show.term_paid_through')}.*#{t('none_t')}/
         expect(helper.expire_date_label_and_value(co_no_payments)).to match response
       end
+    end
+  end
+
+
+  describe 'entity_expire_date' do
+
+    include_context 'create users'
+    include_context 'named dates'
+
+    it 'default is nil (if entity is nil)' do
+      expect(entity_expire_date).to be_nil
+    end
+
+    it 'nil if entity is not a User or Company' do
+      expect(entity_expire_date(7)).to be_nil
+    end
+
+    it 'entity.membership_expire_date if entity is a User' do
+      expect(entity_expire_date(member_expired)).to eq(Time.zone.yesterday)
+    end
+
+    it 'entity.branding_expire_date if entity is a Company' do
+      co_expired_yesterday = user_membership_expires_EOD_jan30.companies.first
+      expect(entity_expire_date(co_expired_yesterday)).to eq(co_expired_yesterday.branding_expire_date)
+    end
+  end
+
+
+  describe 'entity_i18n_scope' do
+
+    it 'default is "users"' do
+      expect(entity_i18n_scope).to eq 'users'
+    end
+
+    it '"users" if the entity is a User' do
+      expect(entity_i18n_scope(create(:user))).to eq 'users'
+    end
+
+    it '"companies" if the entity is a Company' do
+      expect(entity_i18n_scope(create(:company))).to eq 'companies'
+    end
+
+    it '"users" if the entity is not a Company or User' do
+      expect(entity_i18n_scope(7)).to eq 'users'
     end
   end
 
