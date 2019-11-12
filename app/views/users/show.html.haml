@@ -6,14 +6,14 @@
     = user_name.empty? ? @user.email : user_name
     - if @user.admin?
       %span.small
-        (#{t('.is_an_admin')})
+        (#{ t('.is_an_admin') })
 
 .entry-content.container
 
   .login-name
     .row
       .col
-        = field_or_none("#{t('.email')}", mail_to(@user.email),
+        = field_or_none("#{ t('.email') }", mail_to(@user.email),
                         label_class: 'standard-label',
                         value_class: 'login-email')
 
@@ -23,7 +23,7 @@
         %h3.section-title= t("membership").capitalize
     .row
       .col
-        = field_or_none("#{t('.membership_number')}", @user.membership_number,
+        = field_or_none("#{ t('.membership_number') }", @user.membership_number,
                         label_class: 'standard-label',
                         value_class: 'membership-number')
 
@@ -34,12 +34,12 @@
     .row.section-title
       .col.mt-2
         - has_none = @user.shf_application.blank? ? t('none_n') : ''
-        %h3= "#{t('application')}: #{has_none}"
+        %h3= "#{ t('application') }: #{ has_none }"
 
     - unless @user.shf_application.blank?
       .row
         .col.mt-2
-          = render partial: 'shf_applications/shf_application_min_info_as_table', locals: {application: @user.shf_application}
+          = render partial: 'shf_applications/shf_application_min_info_as_table', locals: { application: @user.shf_application }
 
 
   - if current_user.admin?
@@ -53,31 +53,31 @@
         .row
           .col.admin-note
 
-            %p{class: "membership-packet #{ @user.membership_packet_sent? ? 'sent' : 'not-sent' }",
+            %p{ class: "membership-packet #{ @user.membership_packet_sent? ? 'sent' : 'not-sent' }",
             id: 'date-membership-packet-sent'}
               = membership_packet_str(@user)
 
             %p
-              #{t('.created')} #{i18n_time_ago_in_words(@user.created_at)}.
+              #{ t('.created') } #{ i18n_time_ago_in_words(@user.created_at) }.
             - if @user.last_sign_in_at.blank? && @user.current_sign_in_at.blank?
               %p
-                #{@user.email} #{t('.user_has_never_signed_in')}
+                #{ @user.email } #{ t('.user_has_never_signed_in') }
             - else
               %p
-                #{t('.last_login')}:
-                #{most_recent_login_time @user}
-                (#{i18n_time_ago_in_words(most_recent_login_time @user)})
+                #{ t('.last_login') }:
+                #{ most_recent_login_time @user }
+                (#{ i18n_time_ago_in_words(most_recent_login_time @user) })
               %p
-                #{t('.logged_in_count')}:
+                #{ t('.logged_in_count') }:
                 = @user.sign_in_count
             - if @user.reset_password_sent_at.blank?
               %p
                 = t('.password_never_reset')
             - else
               %p
-                %b #{t('.reset_password_sent_at')}:
-                #{@user.reset_password_sent_at}
-                #{i18n_time_ago_in_words(@user.reset_password_sent_at)})
+                %b #{ t('.reset_password_sent_at') }:
+                #{ @user.reset_password_sent_at }
+                #{ i18n_time_ago_in_words(@user.reset_password_sent_at) })
 
       %hr
 
@@ -137,5 +137,6 @@
                 class: 'underlined_link'))
 
 = render partial: 'edit_status_modal', locals: { user: @user }
+
 - if "#proof-of-membership"
   = render partial: 'companies/custom_context_menu'

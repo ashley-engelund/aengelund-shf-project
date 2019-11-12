@@ -655,7 +655,7 @@ RSpec.describe User, type: :model do
        expect(create(:user).member_or_admin?).to be_falsey
     end
 
-    it  'false for user: 1 saved application' do
+    it 'false for user: 1 saved application' do
       expect(create(:user_with_membership_app).member_or_admin?).to be_falsey
     end
 
@@ -713,9 +713,6 @@ RSpec.describe User, type: :model do
 
   describe '#allowed_to_pay_hbrand_fee?' do
 
-    all_app_states = ShfApplication.all_states
-
-
     it 'true if the admin' do
       admin = create(:admin)
       expect(admin.allowed_to_pay_hbrand_fee?(given_co)).to be_truthy
@@ -758,10 +755,10 @@ RSpec.describe User, type: :model do
         ShfApplication.all_states.each do | app_state |
 
           it "#{app_state} application state" do
-            app1 = create(:shf_application,
-                          user: user_with_app,
-                          state: app_state,
-                          company_number: given_co.company_number)
+            create(:shf_application,
+                      user: user_with_app,
+                      state: app_state,
+                      company_number: given_co.company_number)
 
             expect(user_with_app.allowed_to_pay_hbrand_fee?(given_co)).to be_falsey
           end

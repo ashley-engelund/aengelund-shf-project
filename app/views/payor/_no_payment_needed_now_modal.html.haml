@@ -8,23 +8,22 @@
 -# This is a Bootstrap 4 modal.
 -# @url https://getbootstrap.com/docs/4.2/components/modal/
 -#
-#payment-not-due-modal.modal.fade{tabindex:'-1', role:'dialog', aria: { labelledby: 'payment-not-due-modal-title', hidden: 'true'} }
+#payment-not-due-modal.modal.fade{ tabindex:'-1', role:'dialog', aria: { labelledby: 'payment-not-due-modal-title', hidden: 'true' } }
 
-  .modal-dialog{role:'document'}
+  .modal-dialog{ role:'document' }
     .modal-content
       .payment-not-due
 
         .modal-header
-          %h4.modal-title#payment-not-due-modal-title
-            = t('payors.no_payment_due_now')
+          %h4.modal-title#payment-not-due-modal-title= t('payors.no_payment_due_now')
 
-          %button.close{data: {dismiss: 'modal'}, aria: {label: "#{t('close')}"} }
-            %span{aria: {hidden: 'true'} } &times;
+          %button.close{ data: { dismiss: 'modal'}, aria: { label: "#{ t('close') }" } }
+            %span{ aria: { hidden: 'true' } } &times;
 
         .modal-body
           %p
             = t('payors.you_are_paid_until')
-            %span.end-date= "#{end_date}."
+            %span.end-date= "#{ end_date }."
             %br
             = t('payors.you_dont_owe_until_then')
           %p= t('payors.paying_now_extends_until', fee_name_payment: fee_name_payment, term_name: term_name, extended_end_date: extended_end_date)
@@ -32,9 +31,9 @@
 
         .modal-footer
           = link_to(t('payors.yes_pay_answer'), link_to_url,
-            {method: :post, class: 'btn btn-secondary btn-sm'})
+            { method: :post, class: 'btn btn-secondary btn-sm' })
 
-          %button.btn-primary.btn-sm{data: {dismiss:'modal'}}
+          %button.btn-primary.btn-sm{ data: { dismiss:'modal' } }
             = t('payors.no_pay_answer')
 
 

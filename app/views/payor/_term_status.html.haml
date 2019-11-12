@@ -42,14 +42,14 @@
         .flex
           - if entity.too_early_to_pay?
             = render partial: 'payor/no_payment_needed_now_modal',
-              locals: {term_name: term_name,
+              locals: { term_name: term_name,
                fee_name_payment: fee_name_payment,
                end_date: term_end,
                extended_end_date: next_term_end,
                link_to_url: payment_action_path }
 
-            %button{class: payment_button_classes(['grayed-btn-colors']),
-              data: {toggle: 'modal', target: '#payment-not-due-modal'}}
+            %button{ class: payment_button_classes(['grayed-btn-colors']),
+              data: { toggle: 'modal', target: '#payment-not-due-modal' } }
               = payment_text
 
           - else

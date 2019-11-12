@@ -139,7 +139,7 @@ class User < ApplicationRecord
   # Business rule: user can pay membership fee if:
   # 1. the user is not the admin (an admin cannot make a payment for a member or user)
   #      AND
-  # 2, the user is a member
+  # 2. the user is a member
   #     OR
   #    user has at least one application with status == :accepted
   # What if a payment has already been made?  any check for that?
