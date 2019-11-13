@@ -15,6 +15,15 @@ RSpec.shared_examples 'it creates an ActivityLogger log' do
 
 end
 
+RSpec.shared_examples 'it returns an ActivityLogger' do
+  it 'an ActivityLogger is returned' do
+    log_returned = ActivityLogger.open(logfilepath, 'TEST', 'open', false) do |_log|
+      expect(File).to exist(logfilepath)
+    end
+    expect(log_returned).to be_a ActivityLogger
+  end
+end
+
 
 # ===========================================================================
 
@@ -25,22 +34,23 @@ RSpec.describe ActivityLogger do
   describe 'log file' do
 
     before(:each) do
-      File.delete(filepath) if File.file?(filepath)
+      File.delete(logfilepath) if File.file?(logfilepath)
     end
 
     context 'open without a block' do
 
       it_behaves_like 'it creates an ActivityLogger log' do
-        let(:streamname) { filepath }
+        let(:streamname) { logfilepath }
         let(:activity_log) { log }
       end
 
       it 'records message to log file' do
         log.record('info', 'this is a test message')
-        expect(File.read(filepath))
+        expect(File.read(logfilepath))
             .to include '[TEST] [open] [info] this is a test message'
       end
 
+      it_behaves_like 'it returns an ActivityLogger'
 
     end # context 'open without a block'
 
@@ -48,19 +58,23 @@ RSpec.describe ActivityLogger do
     context 'open with a block' do
 
       it 'creates log file' do
-        ActivityLogger.open(filepath, 'TEST', 'open', false) do |_log|
-          expect(File).to exist(filepath)
+        ActivityLogger.open(logfilepath, 'TEST', 'open', false) do |_log|
+          expect(File).to exist(logfilepath)
         end
       end
-      it 'returns instance of ActivityLogger' do
-        ActivityLogger.open(filepath, 'TEST', 'open', false) do |log|
+
+      it 'the log in the block is an instance of ActivityLogger' do
+        ActivityLogger.open(logfilepath, 'TEST', 'open', false) do |log|
           expect(log).to be_an_instance_of(ActivityLogger)
         end
       end
+
+      it_behaves_like 'it returns an ActivityLogger'
+
       it 'records message to log file' do
-        ActivityLogger.open(filepath, 'TEST', 'open', false) do |log|
+        ActivityLogger.open(logfilepath, 'TEST', 'open', false) do |log|
           log.record('info', 'this is another test message')
-          expect(File.read(filepath))
+          expect(File.read(logfilepath))
               .to include '[TEST] [open] [info] this is another test message'
         end
       end
@@ -142,7 +156,6 @@ RSpec.describe ActivityLogger do
 
 
   end #  describe 'log file'
-
 
 
   context 'using stdout or stderr as the log' do

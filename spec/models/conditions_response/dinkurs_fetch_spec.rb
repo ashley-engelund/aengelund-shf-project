@@ -1,7 +1,9 @@
 require 'rails_helper'
 require 'email_spec/rspec'
 
+require 'shared_examples/shared_condition_specs'
 require 'shared_context/activity_logger'
+
 
 RSpec.describe DinkursFetch, type: :model do
 
@@ -17,18 +19,11 @@ RSpec.describe DinkursFetch, type: :model do
 
   describe '.condition_response' do
 
-    it 'raises exception and writes to log file unless timing is :every_day' do
 
-      condition.timing = :not_every_day
-
-      expect do
-        described_class.condition_response(condition, log)
-      end.to raise_exception ArgumentError,
-                             'Received timing: not_every_day but expected: every_day'
-
-      expect(File.read(filepath))
-        .to include 'Received timing: not_every_day but expected: every_day'
+    it_behaves_like 'it validates timings in .condition_response', [:every_day] do
+      let(:tested_condition) { condition }
     end
+
 
     context 'Fetch Dinkurs events', vcr: { cassette_name: 'dinkurs/company_events' } do
 
@@ -49,7 +44,7 @@ RSpec.describe DinkursFetch, type: :model do
 
         described_class.condition_response(condition, log)
 
-        expect(File.read(filepath))
+        expect(File.read(logfilepath))
           .to include "Company #{company_with_dinkurs_id.id}: " +
                       "#{company_with_dinkurs_id.events.count} events."
       end
@@ -59,7 +54,7 @@ RSpec.describe DinkursFetch, type: :model do
 
         described_class.condition_response(condition, log)
 
-        expect(File.read(filepath))
+        expect(File.read(logfilepath))
           .not_to include "Company #{company_without_dinkurs_id.id}: "
       end
 

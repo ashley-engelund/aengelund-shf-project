@@ -37,6 +37,8 @@ This project runs on a Ruby on Rails stack with postgreSQL as the repository.
 Required for integration tests (cucumber + capybara):
 - chromedriver 2.32.498537 or higher https://sites.google.com/a/chromium.org/chromedriver/downloads
 
+**NOTE**: The developer (*you*) don't need to download chromedriver explicitly.  We use
+a gem (webdrivers) that downloads (and updates) chromedriver when needed.
 
 ## Installation
 
@@ -77,11 +79,7 @@ $ git remote add upstream https://github.com/AgileVentures/shf-project
 ```shell
 $ bundle install
 ```
-2. Some of our cucumber tests use Google Chrome as the web browser (with selenium
-  as the webdriver).  For that, you'll need to [download chromedriver](https://sites.google.com/a/chromium.org/chromedriver/downloads)
-  to your local machine.
-
-3. Make sure you have the correct "locale" file present on your local machine -
+2. Make sure you have the correct "locale" file present on your local machine -
   Since our user base primarily works in Swedish, we need to confirm that the
   database will correctly sort (collate) text in that language.
 
@@ -115,11 +113,12 @@ private message in Slack, or general message in the project's Slack channel).
 
 ### Step 4: Set up the database
 ```shell
-$ bundle exec rake shf:db_recreate
+$ bundle exec rake shf:db_prep
+$ bundle exec rake db:seed
 ```
-The rake task `shf:db_recreate` creates or recreates the development and test DBs, creates the application
-schema, loads foundation data table (e.g. list of Swedish counties) and then
-runs seed.db to populate the DB with data for development.
+The rake task `shf:db_prep` creates or recreates the development and test DBs, creates the application
+schema, loads foundation data table (e.g. list of Swedish counties).
+Then, run seed.db to populate the DB with data for development.
 
 When this completes, initialize the test DB:
 ```shell

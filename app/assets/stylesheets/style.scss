@@ -132,6 +132,10 @@ margin-bottom:0;
 
 .company td {
   white-space: nowrap;
+
+  &.name {
+    white-space: normal;
+  }
 }
 
 .company-story img {
@@ -226,7 +230,7 @@ margin: 5px 0 0 0;
 }
 
 .infotext p {
-  margin-bottom: 1rem;
+  margin: 0.5rem 0 0.5rem 0;
 }
 
 .login {
@@ -558,6 +562,13 @@ table {
 
   .navbar-expand-md .navbar-nav .dropdown-menu .dropdown-menu {
     position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .dropdown-menu a, 
+  nav.navbar .dropdown-menu li a {
+    border: 0;
   }
 }
 

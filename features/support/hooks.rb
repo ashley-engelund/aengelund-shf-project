@@ -1,6 +1,4 @@
-Before do
-  load_default_data
-end
+# Tag hooks
 
 Before('@selenium') do
   # Use this hook for running headless tests using Chrome
@@ -19,6 +17,7 @@ Before('@dinkurs_fetch or @dinkurs_invalid_key') do
     c.allow_http_connections_when_no_cassette = true
     c.ignore_localhost = true
     c.default_cassette_options = { allow_playback_repeats: true }
+    c.ignore_hosts('chromedriver.storage.googleapis.com')
   end
 end
 
@@ -31,8 +30,4 @@ end
 
 After('@time_adjust') do
   Timecop.return
-end
-
-def load_default_data
-  FactoryBot.create(:app_configuration)
 end

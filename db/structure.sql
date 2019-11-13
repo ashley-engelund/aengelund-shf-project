@@ -5,22 +5,9 @@ SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
 SET check_function_bodies = false;
+SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
-
---
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
-
-
---
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
-
 
 SET default_tablespace = '';
 
@@ -90,7 +77,21 @@ CREATE TABLE public.app_configurations (
     sweden_dog_trainers_content_type character varying,
     sweden_dog_trainers_file_size integer,
     sweden_dog_trainers_updated_at timestamp without time zone,
-    email_admin_new_app_received_enabled boolean DEFAULT true
+    email_admin_new_app_received_enabled boolean DEFAULT true,
+    site_name character varying DEFAULT 'Sveriges Hundföretagare'::character varying NOT NULL,
+    site_meta_title character varying DEFAULT 'Hitta H-märkt hundföretag, hundinstruktör'::character varying NOT NULL,
+    site_meta_description character varying DEFAULT 'Här hittar du etiska, svenska, H-märkta hundföretag. Du hittar bland annat hundinstruktörer, hundpsykologer, hunddagis, trim med mera.'::character varying NOT NULL,
+    site_meta_keywords character varying DEFAULT 'hund, hundägare, hundinstruktör, hundentreprenör, Sveriges Hundföretagare, svenskt hundföretag, etisk, H-märkt, hundkurs'::character varying NOT NULL,
+    site_meta_image_width integer DEFAULT 0 NOT NULL,
+    site_meta_image_height integer DEFAULT 0 NOT NULL,
+    og_type character varying DEFAULT 'website'::character varying NOT NULL,
+    twitter_card_type character varying DEFAULT 'summary'::character varying NOT NULL,
+    facebook_app_id bigint DEFAULT 0 NOT NULL,
+    site_meta_image_file_name character varying,
+    site_meta_image_content_type character varying,
+    site_meta_image_file_size integer,
+    site_meta_image_updated_at timestamp without time zone,
+    singleton_guard integer DEFAULT 0 NOT NULL
 );
 
 
@@ -585,6 +586,41 @@ CREATE SEQUENCE public.membership_number_seq
 
 
 --
+-- Name: one_time_tasker_task_attempts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.one_time_tasker_task_attempts (
+    id bigint NOT NULL,
+    task_name character varying NOT NULL,
+    task_source character varying,
+    attempted_on timestamp without time zone NOT NULL,
+    was_successful boolean DEFAULT false NOT NULL,
+    notes character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: one_time_tasker_task_attempts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.one_time_tasker_task_attempts_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: one_time_tasker_task_attempts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.one_time_tasker_task_attempts_id_seq OWNED BY public.one_time_tasker_task_attempts.id;
+
+
+--
 -- Name: payments; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -925,6 +961,13 @@ ALTER TABLE ONLY public.member_pages ALTER COLUMN id SET DEFAULT nextval('public
 
 
 --
+-- Name: one_time_tasker_task_attempts id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.one_time_tasker_task_attempts ALTER COLUMN id SET DEFAULT nextval('public.one_time_tasker_task_attempts_id_seq'::regclass);
+
+
+--
 -- Name: payments id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1079,6 +1122,14 @@ ALTER TABLE ONLY public.member_pages
 
 
 --
+-- Name: one_time_tasker_task_attempts one_time_tasker_task_attempts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.one_time_tasker_task_attempts
+    ADD CONSTRAINT one_time_tasker_task_attempts_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: payments payments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1160,6 +1211,13 @@ CREATE INDEX index_addresses_on_latitude_and_longitude ON public.addresses USING
 --
 
 CREATE INDEX index_addresses_on_region_id ON public.addresses USING btree (region_id);
+
+
+--
+-- Name: index_app_configurations_on_singleton_guard; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_app_configurations_on_singleton_guard ON public.app_configurations USING btree (singleton_guard);
 
 
 --
@@ -1491,6 +1549,9 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20190123144623'),
 ('20190128210825'),
 ('20190312204251'),
-('20190326120854');
+('20190326120854'),
+('20190514172102'),
+('20190601004310'),
+('20190815215041');
 
 

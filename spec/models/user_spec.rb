@@ -1,5 +1,7 @@
 require 'rails_helper'
 require 'email_spec/rspec'
+require 'shared_context/unstub_paperclip_all_run_commands'
+require 'shared_context/named_dates'
 
 # ================================================================================
 
@@ -32,6 +34,17 @@ end
 # ================================================================================
 
 RSpec.describe User, type: :model do
+
+  # These are required to get the content type and validate it
+  include_context 'unstub Paperclip all run commands'
+
+  include_context 'named dates'
+
+  before(:each) do
+    allow_any_instance_of(Paperclip::Attachment).to receive(:post_process_file)
+                                                        .with(any_args)
+                                                        .and_call_original
+  end
 
   let(:user) { create(:user) }
   let(:user_with_member_photo) { create(:user, :with_member_photo) }
@@ -89,24 +102,6 @@ RSpec.describe User, type: :model do
            expire_date:    expire_date)
   end
 
-  let(:jan_1) { Time.zone.local(2018, 1, 1) }
-
-  let(:nov_29) { Time.zone.local(2018, 11, 29) }
-  let(:nov_30) { Time.zone.local(2018, 11, 30) }
-  let(:dec_1) { Time.zone.local(2018, 12, 1) }
-  let(:dec_2) { Time.zone.local(2018, 12, 2) }
-  let(:dec_3) { Time.zone.local(2018, 12, 3) }
-  let(:dec_31) { Time.zone.local(2018, 12, 31) }
-
-  let(:nov_29_last_year) { Time.zone.local(2017, 11, 29) }
-  let(:nov_30_last_year) { Time.zone.local(2017, 11, 30) }
-  let(:dec_1_last_year) { Time.zone.local(2017, 12, 1) }
-  let(:dec_2_last_year) { Time.zone.local(2017, 12, 2) }
-  let(:dec_3_last_year) { Time.zone.local(2017, 12, 3) }
-
-  let(:nov_30_next_year) { Time.zone.local(2019, 11, 30) }
-
-
   describe 'Factory' do
     it 'has valid factories' do
       expect(create(:user)).to be_valid
@@ -161,6 +156,7 @@ RSpec.describe User, type: :model do
         user_with_member_photo.member_photo = ico_file
         expect(user_with_member_photo).not_to be_valid
       end
+
       it 'rejects if content OK but file type wrong' do
         user_with_member_photo.member_photo = xyz_file
         expect(user_with_member_photo).not_to be_valid
@@ -288,23 +284,19 @@ RSpec.describe User, type: :model do
 
     describe 'current_members' do
 
-      # set today to January 1, 2019 for every example run
+      # set today to January 1 for every example run
       around(:each) do |example|
-        Timecop.freeze(Date.new(2019, 1, 1))
+        Timecop.freeze(jan_1)
         example.run
         Timecop.return
       end
 
-      let(:jan1) { Date.new(2019, 1, 1) }
-      let(:jan2) { Date.new(2019, 1, 2) }
-      let(:jan3) { Date.new(2019, 1, 3) }
-
       let(:user_no_app) { create(:user) }
       let(:user_app_not_accepted) { create(:user_with_membership_app) }
 
-      let(:member_exp_jan1_today)   { create(:member_with_expiration_date, expiration_date: jan1) }
-      let(:member_current_exp_jan2) { create(:member_with_expiration_date, expiration_date: jan2) }
-      let(:member_current_exp_jan3) { create(:member_with_expiration_date, expiration_date: jan3) }
+      let(:member_exp_jan1_today)   { create(:member_with_expiration_date, expiration_date: jan_1) }
+      let(:member_current_exp_jan2) { create(:member_with_expiration_date, expiration_date: jan_2) }
+      let(:member_current_exp_jan3) { create(:member_with_expiration_date, expiration_date: jan_3) }
 
 
       it 'all applications are accepted' do
@@ -341,7 +333,7 @@ RSpec.describe User, type: :model do
         payments_expire_after_today = expires_dates.select{|date| date > Date.current}
 
         expect(payments_expire_today_or_before).to be_empty
-        expect(payments_expire_after_today).to match_array([jan2, jan3])
+        expect(payments_expire_after_today).to match_array([jan_2, jan_3])
       end
 
     end
@@ -881,8 +873,8 @@ RSpec.describe User, type: :model do
         create(:membership_fee_payment,
                :successful,
                user:        member,
-               start_date:  dec_3_last_year,
-               expire_date: User.expire_date_for_start_date(dec_3_last_year))
+               start_date:  lastyear_dec_3,
+               expire_date: User.expire_date_for_start_date(lastyear_dec_3))
         member
       }
 
@@ -953,8 +945,8 @@ RSpec.describe User, type: :model do
         create(:membership_fee_payment,
                :successful,
                user:        member,
-               start_date:  dec_3_last_year,
-               expire_date: User.expire_date_for_start_date(dec_3_last_year))
+               start_date:  lastyear_dec_3,
+               expire_date: User.expire_date_for_start_date(lastyear_dec_3))
         member
       }
 
@@ -1026,8 +1018,8 @@ RSpec.describe User, type: :model do
           create(:membership_fee_payment,
                  :successful,
                  user:        member,
-                 start_date:  dec_3_last_year,
-                 expire_date: User.expire_date_for_start_date(dec_3_last_year))
+                 start_date:  lastyear_dec_3,
+                 expire_date: User.expire_date_for_start_date(lastyear_dec_3))
           member
         }
 
@@ -1123,8 +1115,8 @@ RSpec.describe User, type: :model do
           create(:membership_fee_payment,
                  :successful,
                  user:        user,
-                 start_date:  dec_3_last_year,
-                 expire_date: User.expire_date_for_start_date(dec_3_last_year))
+                 start_date:  lastyear_dec_3,
+                 expire_date: User.expire_date_for_start_date(lastyear_dec_3))
           user
         }
 
@@ -1203,8 +1195,8 @@ RSpec.describe User, type: :model do
           create(:membership_fee_payment,
                  :successful,
                  user:        member,
-                 start_date:  dec_3_last_year,
-                 expire_date: User.expire_date_for_start_date(dec_3_last_year))
+                 start_date:  lastyear_dec_3,
+                 expire_date: User.expire_date_for_start_date(lastyear_dec_3))
           member
         }
 
@@ -1283,8 +1275,8 @@ RSpec.describe User, type: :model do
           create(:membership_fee_payment,
                  :successful,
                  user:        user,
-                 start_date:  dec_3_last_year,
-                 expire_date: User.expire_date_for_start_date(dec_3_last_year))
+                 start_date:  lastyear_dec_3,
+                 expire_date: User.expire_date_for_start_date(lastyear_dec_3))
           user
         }
 

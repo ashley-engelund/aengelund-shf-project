@@ -76,6 +76,7 @@ gem 'mini_magick'
 
 gem 'counter_culture', '~> 2.0'
 
+gem 'cookies_eu'
 
 group :development, :test do
   gem 'rspec-rails'
@@ -130,10 +131,7 @@ group :test do
   gem 'email_spec'
   gem 'selenium-webdriver'
 
-  # chromedriver-helper is conflicting with the Chrome version on
-  # SemaphoreCI.  The ENV variable below excludes the gem on SemaphoreCI
-  # and fixes that problem. (2018-12-12 ashley e/weedySeaDragon)
-  gem 'chromedriver-helper' unless ENV.key?('SEMAPHORECI')
+  gem 'webdrivers', '~> 3.0'
 
   gem 'webmock'  # to mock web (HTTP) interactions.  Required by the vcr gem
   gem 'vcr'      # to record and 'playback' (mock) http requests
@@ -141,4 +139,5 @@ group :test do
   gem 'timecop'
   gem 'rubocop-rspec'
 
+  gem "show_me_the_cookies"
 end

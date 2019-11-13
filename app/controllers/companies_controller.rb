@@ -10,14 +10,15 @@ class CompaniesController < ApplicationController
   before_action :authorize_company, only: [:update, :show, :edit, :destroy]
   before_action :set_app_config, only: [:company_h_brand]
   before_action :allow_iframe_request, only: [:company_h_brand]
-  before_action :set_page_meta_tags, only: [:index, :show]
   before_action :set_page_meta_robots_none, only: [:edit]
+
 
   def index
     authorize Company
 
     self.params = fix_FB_changed_q_params(self.params)
     self.params = remove_sort_by_business_categories(self.params)
+    self.params = adjust_city_match_names(self.params)
 
     action_params, @items_count, items_per_page = process_pagination_params('company')
 
@@ -34,9 +35,24 @@ class CompaniesController < ApplicationController
     # allowing sorting on an associated table column ("region" in this case)
     # https://github.com/activerecord-hackery/ransack#problem-with-distinct-selects
 
-    @all_companies = @all_companies.searchable unless current_user.admin?
+    if current_user.admin?
+      @all_visible_companies = @all_companies
+      @addresses_select_list = Address.select(:city).distinct
+                                 .sort { |a,b| a.city.downcase.strip <=> b.city.downcase.strip }
+    else
+      @all_companies = @all_companies.searchable
+      @all_visible_companies = @all_companies.address_visible
 
-    @all_visible_companies = @all_companies.address_visible
+      addresses = []
+      @all_visible_companies.each do |company|
+        company.addresses.where.not(visibility: 'none').select(:city).each do |address|
+          addresses << address
+        end
+      end
+
+      @addresses_select_list = addresses.uniq { |a| a.city.downcase.strip }
+                                .sort { |a,b| a.city.downcase.strip <=> b.city.downcase.strip }
+    end
 
     @all_visible_companies.each { |co| geocode_if_needed co }
 
@@ -47,8 +63,27 @@ class CompaniesController < ApplicationController
 
     @companies = @all_companies.page(params[:page]).per_page(items_per_page)
 
-    render partial: 'companies_list', locals: { companies: @companies,
-                    search_params: @search_params } if request.xhr?
+    respond_to do |format|
+      format.html
+
+      format.js do
+        list_html = render_to_string(partial: 'companies_list',
+                                     locals: { companies: @companies,
+                                               search_params: @search_params })
+
+        if params[:page]  # handling a pagination request - update companies list
+          render json: { list_html: list_html }
+        else              # handling a search request
+
+          markers = helpers.location_and_markers_for(@all_visible_companies)
+
+          map_html = render_to_string(partial: 'map_companies',
+                                      locals: { markers: markers })
+
+          render json: { list_html: list_html, map_html: map_html }
+        end
+      end
+    end
   end
 
 
@@ -136,7 +171,7 @@ class CompaniesController < ApplicationController
 
     # XHR request from modal in ShfApplication create view (to create company)
     if saved
-      status = 'success'
+      status = 'ok'
       id = 'shf_application_company_number'
       value = @company.company_number
     else
@@ -297,6 +332,21 @@ class CompaniesController < ApplicationController
       params['q'] = params['q'].except('s')
     end
 
+    params
+  end
+
+  def adjust_city_match_names(params)
+    # Remove leading and trailing whitespace for city names and set up "LIKE" match
+
+    return params unless (city_matches = params[:q]&.[]('addresses_city_matches_any'))
+
+    params[:q]['addresses_city_matches_any'] = city_matches.map do |v|
+      if v.empty?
+        v
+      else
+        '%' + v.strip + '%'
+      end
+    end
     params
   end
 

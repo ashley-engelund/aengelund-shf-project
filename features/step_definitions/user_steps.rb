@@ -1,4 +1,7 @@
-Given(/^the following users exist(?:s|)$/) do |table|
+# This should match any of the following
+#  the following users exist
+#  the following users exist:
+Given(/^the following users exist(?:[:])?$/) do |table|
 
   # Hash value "is_legacy" indicates a user account that was created before we
   # migrated the user's name attributes (first_name, last_name) from the
@@ -63,7 +66,7 @@ When(/^I choose a "([^"]*)" file named "([^"]*)" to upload$/) do | fieldname, fi
   # ^^ selenium won't find the upload button without visible: false
 end
 
-When(/^I choose an SHF "([^"]*)" file named "([^"]*)" to upload$/) do | fieldname, filename |
+When(/^I choose an application configuration "([^"]*)" file named "([^"]*)" to upload$/) do | fieldname, filename |
   page.attach_file(fieldname,
                    File.join(Rails.root, 'spec', 'fixtures',
                              'app_configuration', filename), visible: false)

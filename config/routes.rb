@@ -32,11 +32,23 @@ Rails.application.routes.draw do
     put 'dashboard_show_recent_activity', to: 'dashboard#show_recent_activity'
 
 
-    get 'app_configuration', to: 'app_configuration#show'
-    put 'app_configuration', to: 'app_configuration#update'
+    # AppConfiguration is a Singleton.
+    # Admins only view and edit the AppConfiguration.
+    # There is no need for index or destroy.
+    #
+    # :id is an optional parameter so that view buttons, etc., work fine
+    # with the Rails conventions
+    #
+    # as: :..app_configuration..  is needed when the id is an optional parameter
 
-    get 'app_configuration/redigera', to: 'app_configuration#edit',
+    get 'app_configuration(/:id)/redigera', to: 'app_configuration#edit',
         as: :edit_app_configuration
+
+    # must use the as: :put_app_configuration so that the method does not conflict with get 'app_configuration(/:id)' route (#show)
+    put 'app_configuration(/:id)', to: 'app_configuration#update', as: :put_app_configuration
+
+    get 'app_configuration(/:id)', to: 'app_configuration#show', as: :app_configuration
+
 
     get 'user_profile_edit/:id', to: 'user_profile#edit', as: :user_profile_edit
     put 'user_profile_update/:id', to: 'user_profile#update', as: :user_profile_update
@@ -55,6 +67,8 @@ Rails.application.routes.draw do
 
     resources :shf_applications, path: 'ansokan' do
       member do
+        put 'remove_attachment'
+
         put 'update-reason-waiting', to: 'shf_applications#update_reason_waiting',
             as: 'reason_waiting'
 

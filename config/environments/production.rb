@@ -23,7 +23,11 @@ Rails.application.configure do
   config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
 
   # Compress JavaScripts and CSS.
-  config.assets.js_compressor = :uglifier
+
+  # Per the Uglifier gem documentation on https://github.com/lautis/uglifier,
+  # do the following so Uglifier will accept ES6 syntax:
+  config.assets.js_compressor = Uglifier.new(harmony: true)
+
   # config.assets.css_compressor = :sass
 
   # Do not fallback to assets pipeline if a precompiled asset is missed.
@@ -49,13 +53,6 @@ Rails.application.configure do
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   # config.force_ssl = true
 
-  # Use the lowest log level to ensure availability of diagnostic information
-  # when problems arise.
-  config.log_level = :info
-
-  # Prepend all log lines with the following tags.
-  config.log_tags = [ :request_id ]
-
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
 
@@ -64,7 +61,7 @@ Rails.application.configure do
   # config.active_job.queue_name_prefix = "shf_project_#{Rails.env}"
 
 
-  ###
+  ########################################################################
   #
   # Mail
   #
@@ -86,7 +83,9 @@ Rails.application.configure do
   config.action_mailer.asset_host     =   ENV['SHF_MAIL_ASSETS_HOST'] ||
                                                  'http://hitta.sverigeshundforetagare.se'
   #
-  ###
+  # end Mail
+  ########################################################################
+
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation cannot be found).
@@ -95,6 +94,19 @@ Rails.application.configure do
   # Send deprecation notices to registered listeners.
   config.active_support.deprecation = :notify
 
+
+  ########################################################################
+  #
+  # LOGGING
+  #
+
+  # Use the lowest log level to ensure availability of diagnostic information
+  # when problems arise.
+  config.log_level = :info
+
+  # Prepend all log lines with the following tags.
+  config.log_tags = [ :request_id ]
+
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
 
@@ -102,11 +114,19 @@ Rails.application.configure do
   # require 'syslog/logger'
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
 
+  # To have the Rails log sent to the stdout and *not* a file,
+  # define RAILS_LOG_TO_STDOUT as anything.
   if ENV["RAILS_LOG_TO_STDOUT"].present?
     logger           = ActiveSupport::Logger.new(STDOUT)
     logger.formatter = config.log_formatter
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
   end
+
+  #
+  # end LOGGING
+  ########################################################################
+
+
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false

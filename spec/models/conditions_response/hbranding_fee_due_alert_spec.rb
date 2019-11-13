@@ -1,24 +1,16 @@
 require 'rails_helper'
 require 'email_spec/rspec'
+require 'shared_context/activity_logger'
+require 'shared_context/stub_email_rendering'
+require 'shared_context/named_dates'
 
 
 RSpec.describe HBrandingFeeDueAlert do
 
+  include_context 'create logger'
+  include_context 'named dates'
+
   subject  { described_class.instance }
-
-
-  let(:jan_1) { Date.new(2018, 1, 1) }
-
-  let(:nov_29) { Date.new(2018, 11, 29) }
-  let(:nov_30) { Date.new(2018, 11, 30) }
-  let(:dec_1)  { Date.new(2018, 12, 1) }
-  let(:dec_2)  { Date.new(2018, 12, 2) }
-  let(:dec_3)  { Date.new(2018, 12, 3) }
-  let(:dec_5)  { Date.new(2018, 12, 5) }
-
-  let(:nov_30_last_year) { Date.new(2017, 11, 30) }
-  let(:dec_2_last_year) { Date.new(2017, 12, 2) }
-  let(:dec_3_last_year) { Date.new(2017, 12, 3) }
 
   let(:user) { create(:user, email: FFaker::InternetSE.disposable_email) }
 
@@ -218,8 +210,8 @@ RSpec.describe HBrandingFeeDueAlert do
               create(:membership_fee_payment,
                      :successful,
                      user:        member,
-                     start_date:  dec_3_last_year,
-                     expire_date: User.expire_date_for_start_date(dec_3_last_year))
+                     start_date:  lastyear_dec_3,
+                     expire_date: User.expire_date_for_start_date(lastyear_dec_3))
               member
             }
 
@@ -247,8 +239,8 @@ RSpec.describe HBrandingFeeDueAlert do
               create(:membership_fee_payment,
                      :successful,
                      user:        member,
-                     start_date:  dec_2_last_year,
-                     expire_date: User.expire_date_for_start_date(dec_2_last_year))
+                     start_date:  lastyear_dec_2,
+                     expire_date: User.expire_date_for_start_date(lastyear_dec_2))
               member
             }
 
@@ -271,8 +263,8 @@ RSpec.describe HBrandingFeeDueAlert do
             create(:membership_fee_payment,
                    :successful,
                    user:        member,
-                   start_date:  nov_30_last_year,
-                   expire_date: User.expire_date_for_start_date(nov_30_last_year))
+                   start_date:  lastyear_nov_30,
+                   expire_date: User.expire_date_for_start_date(lastyear_nov_30))
             member
           }
 
@@ -313,13 +305,13 @@ RSpec.describe HBrandingFeeDueAlert do
             paid_members_co
             member_paid_dec_5
 
-            Timecop.freeze(nov_30_last_year) do
+            Timecop.freeze(lastyear_nov_30) do
               create(:h_branding_fee_payment,
                      :successful,
                      user:        member_paid_dec_5,
                      company:     paid_members_co,
-                     start_date:  nov_30_last_year,
-                     expire_date: Company.expire_date_for_start_date(nov_30_last_year))
+                     start_date:  lastyear_nov_30,
+                     expire_date: Company.expire_date_for_start_date(lastyear_nov_30))
             end
 
             expect(paid_members_co.branding_license?).to be_falsey
@@ -336,13 +328,13 @@ RSpec.describe HBrandingFeeDueAlert do
             paid_members_co
             member_paid_dec_3
 
-            Timecop.freeze(nov_30_last_year) do
+            Timecop.freeze(lastyear_nov_30) do
               create(:h_branding_fee_payment,
                      :successful,
                      user:        member_paid_dec_3,
                      company:     paid_members_co,
-                     start_date:  nov_30_last_year,
-                     expire_date: Company.expire_date_for_start_date(nov_30_last_year))
+                     start_date:  lastyear_nov_30,
+                     expire_date: Company.expire_date_for_start_date(lastyear_nov_30))
             end
 
             expect(paid_members_co.branding_license?).to be_falsey
@@ -369,16 +361,8 @@ RSpec.describe HBrandingFeeDueAlert do
 
   describe 'delivers emails to all current company members' do
 
-    LOG_DIR      = 'tmp'
-    LOG_FILENAME = 'testlog.txt'
+    include_context 'stub email rendering'
 
-    after(:all) do
-      tmpfile = File.join(Rails.root, LOG_DIR, LOG_FILENAME)
-      File.delete(tmpfile) if File.exist?(tmpfile)
-    end
-
-    let(:filepath) { File.join(Rails.root, LOG_DIR, LOG_FILENAME) }
-    let(:log) { ActivityLogger.open(filepath, 'TEST', 'open', false) }
 
     let(:paid_member1) {
       member = create(:member_with_membership_app)
@@ -403,6 +387,11 @@ RSpec.describe HBrandingFeeDueAlert do
     }
 
 
+    before(:each) do
+      subject.create_alert_logger(log)
+    end
+
+
     it 'emails sent to all members and logged' do
       paid_member1
       paid_member2
@@ -411,12 +400,14 @@ RSpec.describe HBrandingFeeDueAlert do
       expect(paid_member_co.current_members.size).to eq 2
 
       Timecop.freeze(jan_1) do
-        subject.send_email(paid_member_co, log)
+        paid_member_co.current_members.each do | member |
+          subject.send_email(paid_member_co, member, log)
+        end
       end
 
       expect(ActionMailer::Base.deliveries.size).to eq 2
-      expect(File.read(filepath)).to include("[info] HBrandingFeeDueAlert email sent to user id: #{paid_member1.id} email: #{paid_member1.email} company id: #{paid_member_co.id} name: #{paid_member_co.name}.")
-      expect(File.read(filepath)).to include("[info] HBrandingFeeDueAlert email sent to user id: #{paid_member2.id} email: #{paid_member2.email} company id: #{paid_member_co.id} name: #{paid_member_co.name}.")
+      expect(File.read(logfilepath)).to include("[info] HBrandingFeeDueAlert email sent to user id: #{paid_member1.id} email: #{paid_member1.email} company id: #{paid_member_co.id} name: #{paid_member_co.name}.")
+      expect(File.read(logfilepath)).to include("[info] HBrandingFeeDueAlert email sent to user id: #{paid_member2.id} email: #{paid_member2.email} company id: #{paid_member_co.id} name: #{paid_member_co.name}.")
     end
 
   end

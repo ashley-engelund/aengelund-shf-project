@@ -1,8 +1,14 @@
 require 'rails_helper'
 require 'create_membership_seq_if_needed'
 
+require_relative File.join(Rails.root, 'db', 'seed_helpers', 'app_configuration_seeder')
+
 require File.join(__dir__, 'shared_specs_db_seeding')
 
+# NOTE: We must stub AppConfigurationSeeder.seed so that Paperclip does not try to spawn processes.
+# Some of those spawned processes will Fail (or even SEGFAULT!).
+# This seems to do with running them under RSpec and the .load_seed method.
+# The AppConfigurationSeeder.seed method works fine in real life.
 
 
 ENV_ADMIN_EMAIL_KEY      = 'SHF_ADMIN_EMAIL' unless defined?(ENV_ADMIN_EMAIL_KEY)
@@ -22,7 +28,10 @@ RSpec.describe 'Dev DB is seeded with users, members, apps, and companies' do
 
     RSpec::Mocks.with_temporary_scope do
 
+      allow(SeedHelper::AppConfigurationSeeder).to receive(:seed).and_return(true)
+
       allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('development'))
+      allow_any_instance_of(ActivityLogger).to receive(:show).and_return(false)
 
       # must stub this way so the rest of ENV is preserved
       stub_const('ENV', ENV.to_hash.merge({ ENV_ADMIN_EMAIL_KEY    => admin_email,
@@ -54,9 +63,13 @@ RSpec.describe 'Dev DB is seeded with users, members, apps, and companies' do
 
       RSpec::Mocks.with_temporary_scope do
         allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('development'))
+        allow_any_instance_of(ActivityLogger).to receive(:show).and_return(false)
 
         # must stub this way so the rest of ENV is preserved
         stub_const('ENV', ENV.to_hash.merge({ ENV_NUM_SEEDED_USERS_KEY => seed_users }))
+
+        allow(SeedHelper::AppConfigurationSeeder).to receive(:seed).and_return(true)
+
         SHFProject::Application.load_seed
       end
     end
@@ -90,10 +103,10 @@ RSpec.describe 'Dev DB is seeded with users, members, apps, and companies' do
 
   describe 'addresses' do
 
-    NUM_USERS = 7
+    NUM_USERS = 7 unless defined?(NUM_USERS)
 
-    DB_DIR             = File.join(__dir__, '..', '..', 'db')
-    EMPTY_CSV_FILENAME = 'fake-addresses-empty.csv'
+    SEED_DB_DIR = File.join(Rails.root, 'db') unless defined?(SEED_DB_DIR)
+    EMPTY_CSV_FILENAME = 'fake-addresses-empty.csv' unless defined?(EMPTY_CSV_FILENAME)
 
     # CSV file content for 10 fake addresses with geocoding
     FAKE_ADDRESSES              = "street_address,post_code,city,country,region_name,kommun_name,latitude,longitude,visibility,mail\n" +
@@ -106,20 +119,20 @@ RSpec.describe 'Dev DB is seeded with users, members, apps, and companies' do
         '"Engelbrektsgatan 80","06875","Strömstad","Sverige","Online","Nässjö",57.6530377,14.6981554,street_address,false' + "\n" +
         '"Skaraborgsgatan 9b","08247","Laholm","Sverige","Gävleborg","Ockelbo",60.9197006,16.5426709711809,street_address,false' + "\n" +
         '"Surtsögatan 9a","64 898","Solna","Sverige","Sverige","Norsjö",64.93630935,19.4762167086367,street_address,false' + "\n" +
-        '"Huvudfabriksgatan 4a","56 407","Nyköping","Sverige","Värmland","Flen",59.0567823,16.5893,street_address,false' + "\n"
-    FAKE_ADDRESSES_CSV_FILENAME = "fake-addresses-10-#{Time.now.to_i}.csv"
+        '"Huvudfabriksgatan 4a","56 407","Nyköping","Sverige","Värmland","Flen",59.0567823,16.5893,street_address,false' + "\n"  unless defined?(FAKE_ADDRESSES)
+
+    FAKE_ADDRESSES_CSV_FILENAME = "fake-addresses-10-#{Time.now.to_i}.csv" unless defined?(FAKE_ADDRESSES_CSV_FILENAME)
 
 
     before(:all) do
       SHFProject::Application.load_tasks
-      create_empty_file(DB_DIR, EMPTY_CSV_FILENAME)
-      create_csv_file(DB_DIR, FAKE_ADDRESSES_CSV_FILENAME, FAKE_ADDRESSES)
+      create_empty_file(SEED_DB_DIR, EMPTY_CSV_FILENAME)
+      create_csv_file(SEED_DB_DIR, FAKE_ADDRESSES_CSV_FILENAME, FAKE_ADDRESSES)
     end
 
     before(:each) do
       DatabaseCleaner.start
       create_user_membership_num_seq_if_needed
-
     end
 
     after(:each) do
@@ -131,8 +144,8 @@ RSpec.describe 'Dev DB is seeded with users, members, apps, and companies' do
 
     after(:all) do
       # remove the CSV files created
-      remove_file(DB_DIR, EMPTY_CSV_FILENAME)
-      remove_file(DB_DIR, FAKE_ADDRESSES_CSV_FILENAME)
+      remove_file(SEED_DB_DIR, EMPTY_CSV_FILENAME)
+      remove_file(SEED_DB_DIR, FAKE_ADDRESSES_CSV_FILENAME)
     end
 
     # We can't know exactly how many addresses are created because some randomness is used

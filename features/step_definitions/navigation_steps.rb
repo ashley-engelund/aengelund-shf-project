@@ -1,16 +1,59 @@
-Given(/^I am on the "([^"]*)" page(?: for "([^"]*)")?$/) do |page, email|
+# Set the EU cookie consent cookie and then VISIT A PAGE
+#
+# Here are examples of strings that will match (the regular expression for) this step:
+#   I am on the "blorf" page
+#       page = 'blorf'
+#       email = nil
+#       eu_cookie_value = nil
+#
+#   I am on the "blorf" page for "x"
+#       page = 'blorf'
+#       email = 'x'
+#       eu_cookie_value = nil
+#
+#   I am on the "blorf" page for "x" and the EU cookie is "z"
+#       page = 'blorf'
+#       email = 'x'
+#       eu_cookie_value = 'z'
+#
+#   I am on the "blorf" page and the EU cookie is "z1"
+#       page = 'blorf'
+#       email = nil
+#       eu_cookie_value = 'z'
+#
+# The default is to set the EU cookie consent cookie to 'true' so that
+# the notice does NOT appear. If the notice does appear, it might block/cover
+# elements that other steps are trying to work with.
+#
+Given(/^I am on the "([^"]*)" page(?: for "([^"]*)")?(?: and the EU cookie is "([^"]*)")?$/) do |page, email, eu_cookie_value|
   user = email == nil ? @user :  User.find_by(email: email)
+
+  eu_cookie_value = eu_cookie_value.nil? ? 'true' : eu_cookie_value
 
   begin
     visit path_with_locale(get_path(page, user))
-  rescue => exception
-    warn exception.message
+    step "the EU cookies consent cookie is set to \"#{eu_cookie_value}\""
+
+  rescue StandardError => orig_exception
+    raise orig_exception  # if the original exception
+
+  rescue => exception  # FIXME -- only do this branch if the path cannot be found. Need to match on the message,  not just the exception class Do not swallow (loose) the original exception
+    # ex: Code above might through a NoMethod exception for some other reason (not having to do with the page path)
+
+    warn exception.message  # FIXME: what is the purpose of this statement?
+
     begin
       path_components = page.split(/\s+/)
+      # TODO refactor this code duplicated above (create a block/method with 'visit'() and 'step...')
       visit self.send(path_components.push('path').join('_').to_sym)
-    rescue NoMethodError, ArgumentError
+      step "the EU cookies consent cookie is set to \"#{eu_cookie_value}\""
+
+    rescue NoMethodError, ArgumentError => error
       raise "Can't find mapping from \"#{page}\" to a path.\n" +
-        "Now, go and add a mapping in #{__FILE__} or assertion_steps.rb"
+        "Now, go and add a mapping in #{__FILE__} or assertion_steps.rb\n" +
+          "original error: #{error}\n" +
+          "exception: #{exception}\n"
+
     end
   end
 

@@ -7,7 +7,7 @@ Feature: As a member of a company
   I want to see schduled company events when I view the company's page
 
   Background:
-    Given the following users exists
+    Given the following users exist:
       | email            | admin | member |
       | member@mutts.com |       | true   |
       | visitor@mail.com |       |        |
@@ -99,6 +99,15 @@ Feature: As a member of a company
     And I fill in t("companies.show.dinkurs_key") with "wrongkey"
     And I click on t("submit")
     Then I should see t("activerecord.errors.models.company.attributes.dinkurs_company_id.invalid")
+
+  @time_adjust @dinkurs_invalid_key
+  Scenario: Member edits company, enters Dinkurs ID with invalid chars, sees validation error
+    Given the date is set to "2017-10-01"
+    And I am logged in as "member@mutts.com"
+    And I am on the edit company page for "5560360793"
+    And I fill in t("companies.show.dinkurs_key") with "Åö"
+    And I click on t("submit")
+    Then I should see t("activerecord.errors.models.company.attributes.dinkurs_company_id.invalid_chars")
 
   @time_adjust @selenium @dinkurs_fetch
   Scenario: Member fetches Dinkurs events

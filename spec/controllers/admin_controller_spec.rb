@@ -3,9 +3,15 @@ require 'rails_helper'
 RSpec.describe AdminController, type: :controller do
 
   # this will bypass Pundit policy access checks so logging in is not necessary
-  before(:each) { Warden.test_mode! }
+  before(:each) do
+    Warden.test_mode!
+    Timecop.freeze(Time.zone.parse("2019-01-01"))
+  end
 
-  after(:each) { Warden.test_reset! }
+  after(:each) do
+    Warden.test_reset!
+    Timecop.return
+  end
 
   let(:user) { create(:user) }
 
@@ -34,6 +40,9 @@ RSpec.describe AdminController, type: :controller do
   out_str }
 
   let(:expected_pattern) { /(.*)\n(.*),(.*),(.*),(.*),(.*),(.*),(.*),([^"]*),"([^"]*)","([^"]*)","([^"]*)","([^"]*)","([^"]*)","([^"]*)","([^"]*)",'(.*),"([^"]*)",(.*),(.*),(.*)\n/m }
+
+  let(:payment_successful) { 'betald' }
+  let(:payment_expiry_20191108) { Time.zone.parse("2019-11-08") }
 
 
   describe '#export_ankosan_csv' do
@@ -64,6 +73,15 @@ RSpec.describe AdminController, type: :controller do
     ADDR_COUNTY           = 19
     ADDR_COUNTRY          = 20
 
+
+    # This lets us do the post: just once and then memoize the response body.
+    # export_response_body must be referred first in the test so that this is called at least once.
+    let(:export_response_body) do
+      post :export_ansokan_csv
+      response.body
+    end
+
+
     describe 'logged in as admin' do
 
       it 'content type is text/csv' do
@@ -84,9 +102,9 @@ RSpec.describe AdminController, type: :controller do
 
       it 'header line is correct' do
 
-        post :export_ansokan_csv
+        export_response_body
 
-        expect(response.body).to eq csv_header
+        expect(export_response_body).to eq csv_header
 
       end
 
@@ -95,9 +113,9 @@ RSpec.describe AdminController, type: :controller do
 
         it 'no membership applications has just the header' do
 
-          post :export_ansokan_csv
+          export_response_body
 
-          expect(response.body).to eq csv_header
+          expect(export_response_body).to eq csv_header
 
         end
 
@@ -207,18 +225,18 @@ RSpec.describe AdminController, type: :controller do
 
         let(:membership_payment) do
           FactoryBot.create(:payment,
-                            status:      'betald',
+                            status:      payment_successful,
                             user:        u1,
-                            expire_date: Time.zone.parse("2019-11-08"))
+                            expire_date: payment_expiry_20191108)
         end
 
         let(:branding_payment) do
           FactoryBot.create(:payment,
-                            status:       'betald',
+                            status:       payment_successful,
                             user:         u1,
                             company:      membership_app.companies.first,
                             payment_type: Payment::PAYMENT_TYPE_BRANDING,
-                            expire_date:  Time.zone.parse("2019-11-08"))
+                            expire_date:  payment_expiry_20191108)
         end
 
 

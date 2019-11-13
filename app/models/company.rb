@@ -14,8 +14,11 @@ class Company < ApplicationRecord
   validates_uniqueness_of :company_number,
     message: I18n.t('activerecord.errors.models.company.attributes.company_number.taken')
   validates_length_of :company_number, is: 10
-  validates_format_of :email, with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, on: [:create, :update]
+  validates :email, email: true
+
   validate :swedish_organisationsnummer
+
+  validates :dinkurs_company_id, dinkurs_id: true
 
   before_save :sanitize_website, :sanitize_description
 
@@ -126,6 +129,9 @@ class Company < ApplicationRecord
   rescue Dinkurs::Errors::InvalidKey
     errors.add(:dinkurs_company_id, :invalid)
     return false
+  rescue URI::InvalidURIError
+    errors.add(:dinkurs_company_id, :invalid_chars)
+    return false
   end
 
 
@@ -159,6 +165,10 @@ class Company < ApplicationRecord
 
   def kommuns_names
     addresses.joins(:kommun).select('kommuns.name').distinct.pluck('kommuns.name')
+  end
+
+  def cities_names
+    addresses.select(:city).distinct.pluck(:city)
   end
 
 

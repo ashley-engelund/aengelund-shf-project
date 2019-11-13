@@ -4,12 +4,6 @@ en:
   title: "SWEDEN'S ETHICAL DOG COMPANIES"
 
   SHF_name: &SHF_name "Swedish Dog Industry Association"
-  meta:
-    default:
-      title: "Find H-markt dog companies, dog training instructors, dog trainers, or dog entrepreneurs."
-      description: "Here you will find ethical Swedish dog companies that have earned the H-brand mark. Find dog trainers, dog training instructors, dog psychologists, dog day care, grooming and more."
-      keywords: 'dog, dog owner, dog instructor, dog entrepreneur, Swedish dog company, Swedish dog company, ethical, H-brand, H-mark, H-marked, dog training'
-      image_src: "Sveriges_hundforetagare_banner_sajt.jpg"
 
   dog: dog
 
@@ -150,6 +144,11 @@ en:
         one: User
         other: Users
 
+      task_attempt:
+        one: Task Attempt
+        other: Task Attempts
+
+
     attributes:
 
       user:
@@ -215,7 +214,7 @@ en:
         company_number: *org_nr
         name: *name
         phone_number: Phone Number
-        email: *email
+        email: Company email
         post_code: *post_code
         city: *city
         kommun: *kommun
@@ -235,7 +234,8 @@ en:
         title: &title Title
         description: *description
         uploader: &uploader Uploader
-
+        actual_file_content_type: Uploaded file type
+        actual_file: Uploaded file
 
       member_app_waiting_reason:
         name_sv: "Name (Swedish)"
@@ -243,6 +243,22 @@ en:
         description_sv: "Description (Swedish)"
         description_en: "Description (English)"
         is_custom: "Custom reason"
+
+      app_configuration:
+        site_name: &site_name Site name
+        site_meta_title: &site_meta_title Site meta title
+        site_meta_description: &site_meta_description Site meta description
+        site_meta_keywords: &site_meta_keywords Site meta keywords
+        site_meta_image: &site_meta_image Site meta image
+        og_type: &site_og_type OG type
+        twitter_card_type: &site_twitter_card_type Twitter card type
+        facebook_app_id: &site_facebook_app_id Facebook Application ID
+
+      task_attempt:
+        task_name: Task name
+        task_source: Task source
+        was_successful: Was successful
+        attempted_on: Attempted on
 
 
     errors:
@@ -261,6 +277,7 @@ en:
               taken: This company (organization number) already exists in the system.
             dinkurs_company_id:
               invalid: is not recognized as a company key by Dinkurs
+              invalid_chars: contains invalid characters (characters such as Å, Ä, Ö are not allowed)
             company_has_active_memberships: "The company has active (accepted) membership applications."
 
         user:
@@ -304,6 +321,20 @@ en:
             timing:
               invalid: must be a symbol
 
+        task_attempt:
+          attributes:
+            was_successful:
+              invalid: "- %{value} must be true or false (a Boolean)"
+
+        successful_task_attempt:
+          attributes:
+            was_successful:
+              invalid: "- %{value} can only be true"
+
+        failed_task_attempt:
+          attributes:
+            was_successful:
+              invalid: "- %{value} can only be false"
 
 
       messages:
@@ -765,15 +796,16 @@ en:
       proof_of_membership_describe: This image is your proof of membership in SHF.
       proof_of_membership_photo_needed: 'If you see "Photo Unavailable" then please
                                          upload a photo of yourself here: '
-      image_how_to_use_html: You can download the image (%{download_link}),
-                        take a screenshot, or link to it from your website
-                        (%{show_link}), and use it in social media or print to use in a
-                        physical context, for example, to show a customer.
+      image_how_to_use_html: You can download the image, take a screenshot,
+                            link to it from your website and use it in social media,
+                            or print it have and show (ex. show it to a customer/client).
       image_use_guidelines_html: Please note that your use of this image is subject to
                                  these %{use_guidelines_link}.
       use_guidelines: guidelines
       download_image: Download Image
-      show_image: Show Image
+      show_image: Show image
+      copy_image_url: Copy image link
+      copied: Copied
       image_dimensions_html: "The image width is <span id='%{width_id}'></span>
                              pixels and the height is
                              <span id='%{height_id}'></span> pixels."
@@ -880,7 +912,7 @@ en:
     all_shf_documents: All SHF Documents
     all_shf_minutes: All Meeting Minutes
 
-    invalid_upload_type: Sorry, this is not a file type you can upload.
+    invalid_upload_type: *invalid_upload_type
     file_too_large: *file_too_large_5MB
 
     contents_access_error: 'There was an error accessing the file: %{message}'
@@ -985,6 +1017,8 @@ en:
       delete_confirm: "Are you sure you want to delete the reason: %{name_sv} (%{name_en})?"
 
     app_configuration:
+      image_show:
+        missing: &missing Missing!
       edit:
         title: &application_configuration Application Configuration
         chair_signature: &chair_signature_title Chairperson Signature
@@ -992,6 +1026,15 @@ en:
         h_brand_logo: &h_branding_logo_title H-Branding Logo
         sweden_dog_trainers: &sweden_dog_trainers_logo_title Sweden Dog Trainers
         admin_email_new_apps_enabled: &admin_email_new_apps_enabled Send emails to Admin when new app received
+        site_name: *site_name
+        site_meta_title: *site_meta_title
+        site_meta_description: *site_meta_description
+        site_meta_keywords: *site_meta_keywords
+        site_meta_image: *site_meta_image
+        og_type: *site_og_type
+        twitter_card_type: *site_twitter_card_type
+        facebook_app_id: *site_facebook_app_id
+        missing: *missing
 
       show:
         title: *application_configuration
@@ -1000,6 +1043,15 @@ en:
         h_brand_logo: *h_branding_logo_title
         sweden_dog_trainers: *sweden_dog_trainers_logo_title
         admin_email_new_apps_enabled: *admin_email_new_apps_enabled
+        site_name: *site_name
+        site_meta_title: *site_meta_title
+        site_meta_description: *site_meta_description
+        site_meta_keywords: *site_meta_keywords
+        site_meta_image: *site_meta_image
+        og_type: *site_og_type
+        twitter_card_type: *site_twitter_card_type
+        facebook_app_id: *site_facebook_app_id
+        missing: *missing
 
       update:
         success: Application data updated successfully
@@ -1053,14 +1105,23 @@ en:
         success: User profile updated successfully
         error: One or more problems prevented the profile from being updated.
       become:
-        have_become: You are now acting as user with id %{user_id}
-
+        have_become: "You are now acting as user %{user_name} (id: %{user_id}). Log out then log back in as the admin if you need to administrate again."
 
 
 
   mailers:
-    login_here: "Click here to go to the login page:"
-    may_need_to_login_first: "You may need to log in first.  Here's the login page:"
+    login_here: "Click here to go to the login page."
+    your_login_email_is: "Your login email is "
+
+    how_to_pay_membership: "How to Pay Your Membership Fee:"
+    pay_membership_step: "Once you are logged in, go to your account page to pay."
+    here_is_acct_page: "Here is your account page: "
+
+    how_to_pay_hmarkt: "How to Pay the H-Markt License Fee:"
+    pay_hmarkt_step: &co_pay_after_loggedin "Once you are logged in, go to the company page where you will see the button to pay."
+    here_is_co_page: "Here is the company page: "
+    h_brand_exp_shown: "The H-markt license expiration date will be on the company page."
+
 
     application_mailer:
       greeting: &email_greeting "Hello %{greeting_name}"
@@ -1091,34 +1152,46 @@ en:
           view_app_here: "You can view the membership application here: "
           must_be_logged_in: "(You must be logged in as the administrator to view it.)"
 
+      member_unpaid_over_x_months:
+        subject: Members unpaid for more than %{num_months} months
+        message_text:
+          these_are_unpaid: "These members are unpaid. Their membership fee was due %{num_months} months ago:"
+          full_name: Name
+
+        error_sending:  FIXME - need text to display if there is a problem sending this email
+
 
     shf_application_mailer:
+      will_see_app_button:  "After you log in, you will see a button that will take you to your application where you can upload your files."
+
       acknowledge_received:
         subject: Your application to Sveriges Hundföretagare has been received
         message_text: "Your application has been received.  We are all working hard, so it might take a while before we get to it. So do not worry if it takes a while before you hear from us."
         your_submitted_info: "As a reminder, here is what you submitted:"
         review_after_recevied_files: *review_after_recevied_files
         upload_choice_intro: "Your choice for providing files: "
-        need_to_upload: "You need to upload your files."
-        can_upload_more: "You can upload more files."
+        need_to_upload: "You need to upload your files. Here's how:"
+        can_upload_more: "You can upload more files. Here's how:"
         error_sending: &shf_email_error "There was a problem sending email to you at {%email} about your application."
 
       app_approved:
         subject: Your application to Sveriges Hundföretagare is approved
         message_text:
-          app_approved_and_next: "Your application is now approved. What is left before you are registered as a member in the system is to pay your membership fee.  Log in to the website and then pay at this link: "
+          app_approved_and_next: "Your application is now approved. What is left before you are registered as a member in the system is to pay your membership fee:"
+          step_1_login_to_website: Log in to the website
+          step_1_with_your_email: " with your email: %{login_email}"
+          step_2_pay: "Then pay at this page: "
           h_branding_not_paid: "When this is done you will need to finish your company page and pay your H-branding fee. More information about how to do that will come after you paid your membership fee."
           thanks: "Thank you for wanting to be a member and contributing to a Sweden with an ethical dog industry."
           error_sending: *shf_email_error
 
 
     member_mailer:
-      member_account_link: "%{account_link} (You may need to login first before the link works.)"
+      member_account_link: "%{account_link} (You may need to login first before the link works. Your login is %{login_email}.)"
 
       app_no_uploaded_files:
         subject: Please upload qualification files to your Sveriges Hundföretagare application
-        message_text: "This is a reminder that you need upload files for your SHF application so that it can be reviewed."
-        will_see_app_button:  "After you log in, you will see a button that will take you to your application where you can upload your files."
+        message_text: "This is a reminder that you need upload files for your SHF application so that it can be reviewed. Here's how: "
         thanks: "Thanks for wanting to be a member."
         error_sending: *shf_email_error
 
@@ -1127,7 +1200,8 @@ en:
         greeting: *email_greeting
         message_text:
           welcome:  *subject_welcome
-          youre_active: "You have been activated as a member in the system. You can login and manage your profile and build your business page. When you are signed in, you can edit your business page and pay your branding license fee here: "
+          youre_active: "You have been activated as a member in the system. You can login and manage your profile and build your business page."
+          can_edit_co_pay: "When you are signed in, you can edit your business page and pay your branding license fee here: "
           access_fb_group: "As a member, you will also have access to our closed Facebook group: "
           and_member_pages: "as well as hidden pages in our member system: "
 
@@ -1135,18 +1209,16 @@ en:
         subject: Your membership will expire soon
         greeting: *email_greeting
         message_text:
-          expire_alert_html: Please note that your current membership period will
-                        expire on <span class="date-warning">%{expire_date}</span>.
-          extend_membership: You can extend your membership for another
-                             12 months by paying the membership fee.
+          expire_alert_html: "Please note that your current membership period will expire on "
+          extend_membership: "You can extend your membership for another 12 months by paying the membership fee."
 
       h_branding_fee_will_expire:
         subject: The H-Branding fee for your company will be due soon
         greeting: *email_greeting
         message_text:
-          expire_alert_html: "Please note that your current H-branding fee period will expire on <span class='date-warning'>%{expire_date}</span>."
+          expire_alert_html: "Please note that your current H-branding fee period will expire on "
           how_to_pay_fee: &pay_hbrand_be_mapped You can extend your H-branding for another 12 months by paying the fee. This makes you visible on the map.
-          company_link_login_msg: "Once you are logged in, you will be able to see the license expiration date on the company page and see the button to pay:"
+          company_link_login_msg: &co_pay_after_loggedin "Once you are logged in, go to the company page where you will see the button to pay.  Here is the company page:"
 
       h_branding_fee_past_due:
           subject: The H-Branding fee for your company is unpaid/past due
@@ -1154,8 +1226,7 @@ en:
           message_text:
             fee_is_unpaid: Please note that your current H-branding fee is unpaid.
             how_to_pay_fee: *pay_hbrand_be_mapped
-            company_link_login_msg: " (You may need to login first before you can see the button to pay)."
-
+            company_link_login_msg: *co_pay_after_loggedin
 
       membership_lapsed:
         subject: "Your SHF membership has expired"
@@ -1170,7 +1241,7 @@ en:
         subject: Please complete the company information
         greeting: *email_greeting
         message_text:
-          complete_the_info: "You need to complete the info for %{co_identifier}. If you don't it won't show up on the map or in Google searches"
+          complete_the_info: "You need to complete the info for %{co_identifier}. If you don't it won't show up on the map or in Google searches."
           company_needs_name: "company number %{co_number}"
           what_is_missing: "Here is what's missing:"
           co_name_missing: "company name"
@@ -1339,6 +1410,7 @@ en:
     not_permitted: You are not authorized to access that page.
     try_login: Login first and then retry accessing that page.
     bad_search_params: "Sorry.  We could not search for %{search_item} with those critera.  Please try again."
+    something_wrong: 'Something went wrong - please reload page and try again.'
     format: "%{attribute} %{message}"
     messages:
       accepted: must be accepted
