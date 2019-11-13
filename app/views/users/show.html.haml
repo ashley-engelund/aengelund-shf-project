@@ -23,7 +23,7 @@
         %h3.section-title= t("membership").capitalize
     .row
       .col
-        = field_or_none("#{ t('.membership_number') }", @user.membership_number,
+        = field_or_none(t('.membership_number'), @user.membership_number,
                         label_class: 'standard-label',
                         value_class: 'membership-number')
 
@@ -54,7 +54,7 @@
           .col.admin-note
 
             %p{ class: "membership-packet #{ @user.membership_packet_sent? ? 'sent' : 'not-sent' }",
-            id: 'date-membership-packet-sent'}
+            id: 'date-membership-packet-sent' }
               = membership_packet_str(@user)
 
             %p
@@ -71,8 +71,7 @@
                 #{ t('.logged_in_count') }:
                 = @user.sign_in_count
             - if @user.reset_password_sent_at.blank?
-              %p
-                = t('.password_never_reset')
+              %p= t('.password_never_reset')
             - else
               %p
                 %b #{ t('.reset_password_sent_at') }:
