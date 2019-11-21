@@ -63,9 +63,13 @@ module ApplicationHelper
                      label_class: label_class, value_class: value_class)
   end
 
-  def icon_link(url, icon)
-    if !url.blank? && !icon.nil?
+  def icon_link(url, icon, disabled_class = 'disabled_icon')
+    if icon.nil?
+      nil
+    elsif !url.blank?
       link_to raw("<i class='fab fa-#{icon} fa-2x'></i>"), url, target: '_blank'
+    else
+      raw("<i class='fab fa-#{icon} fa-2x #{disabled_class}'></i>")
     end
   end
   

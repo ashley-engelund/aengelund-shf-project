@@ -424,7 +424,7 @@ RSpec.describe ApplicationHelper, type: :helper do
 
     describe 'url' do
       it "doesn't show icon if url is null or an empty string" do
-        expect(helper.icon_link(nil, 'facebook-square')).to eq nil
+        expect(helper.icon_link(nil, 'facebook-square')).to eq "<i class='fab fa-facebook-square fa-2x disabled_icon'></i>"
       end
     end
   end

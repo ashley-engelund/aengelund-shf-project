@@ -2,10 +2,11 @@
 
   a {
     border-bottom: 0;
-    margin-right: 15px;
   }
 
   i {
+    margin-right: 15px;
+
     &:hover {
       filter: saturate(5);
     }
@@ -23,4 +24,9 @@
 
 .fa-youtube-square {
   color: #c00;
+}
+
+.disabled_icon {
+  color: gray;
+  cursor: not-allowed;
 }
