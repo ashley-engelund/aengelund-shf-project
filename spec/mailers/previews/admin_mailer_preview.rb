@@ -75,7 +75,7 @@ class AdminMailerPreview < ActionMailer::Preview
       FactoryBot.create(:company, name: co_with_fb_name) # let FactoryBot create the org_nummer/company_number and address
     end
     co_with_facebook = Company.find_by(name: co_with_fb_name)
-    co_with_facebook.update(facebook_url: 'https://example.com/FAKE/Facebook/URL')
+    #co_with_facebook.update(facebook_url: 'https://example.com/FAKE/Facebook/URL')
 
     co_no_fb_name = "The We Don't Use Facebook Company"
     unless Company.find_by(name: co_no_fb_name)
@@ -104,7 +104,7 @@ class AdminMailerPreview < ActionMailer::Preview
 
     co1 = shf_app.companies.first
     FactoryBot.create(:h_branding_fee_payment, user: new_member, company: co_with_facebook)
-    co1.update(facebook_url: 'https://example.com/FAKE/Facebook/URL')
+    #co1.update(facebook_url: 'https://example.com/FAKE/Facebook/URL')
     FactoryBot.create(:h_branding_fee_payment, user: new_member, company: co_no_facebook)
 
     AdminMailer.new_membership_granted_co_hbrand_paid(new_member)
