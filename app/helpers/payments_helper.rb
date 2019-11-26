@@ -18,7 +18,7 @@ module PaymentsHelper
     if expire_date
       tag.div do
         concat tag.span "#{expire_label}: ", class: 'standard-label'
-        concat tag.span "#{expire_date}", class: payment_should_be_made_class(entity)
+        concat tag.span "#{expire_date}", class: payment_due_now_hint_css_class(entity)
         concat ' '
         concat fas_tooltip(expire_after_tooltip_title)
       end
@@ -49,31 +49,39 @@ module PaymentsHelper
   end
 
 
-  def payment_should_be_made_class(entity)
-    # TODO use the classes defined in ApplicationHelper
+  # Another possible name for this method: payment_status_ok_indicator_css_class
+  # The word "indicator" is good. It's possibly better than "hint"
+  # This method name ends with '_css_class' to make it clear that this returns
+  # a CSS class as opposed to a normal Ruby class.
+  #
+  # @return [String] - the CSS class that should be applied based on whether or
+  # not a payment is due, and how soon the payment is due
+  #
+  def payment_due_now_hint_css_class(entity)
     if entity.term_expired?
-      'No'
+      no_css_class
     elsif entity.too_early_to_pay?
-      'Yes'
+      yes_css_class
     else
-      'Maybe'
+      maybe_css_class
     end
   end
 
 
-  def expire_date_css_class(expire_date)
+  def expires_soon_hint_css_class(expire_date)
     today = Time.zone.today
     if today < expire_date.months_ago(1)  # expire_date minus one month
-      value_class = 'Yes'  # green
+      value_class = yes_css_class
     elsif today >= expire_date
-      value_class = 'No'
+      value_class = no_css_class
     else
-      value_class = 'Maybe'
+      value_class = maybe_css_class
     end
     value_class
   end
 
 
+  # TODO standardize this method name:  should it end in '_css_classes' to make it clear it is not related to Ruby classes?
   def payment_button_classes(additional_classes = [])
     %w(btn btn-secondary btn-sm) + additional_classes
   end

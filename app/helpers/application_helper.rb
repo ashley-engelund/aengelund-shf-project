@@ -13,6 +13,7 @@ module ApplicationHelper
   include MetaImageTagsHelper
 
 
+  # TODO standardize this method name:  should it end in '_css_class' to make it clear it is not related to Ruby classes?
   def flash_class(level)
     case level.to_sym
       when :notice then
@@ -112,6 +113,8 @@ module ApplicationHelper
 
 
   # Construct a string that can be used by CSS to style things in a particular view.
+  # TODO standardize this method name:  should it end in '_css_class' to make it clear it is not related to Ruby classes?
+  #
   def item_view_class(active_record_item, action_name)
     "#{action_name} #{active_record_item.class.name.downcase} #{unique_css_id(active_record_item)}"
   end
@@ -173,8 +176,7 @@ module ApplicationHelper
 
   # return a span tag with class yes || no and text = t('yes')||t('no') depending on the boolean value
   def yes_no_span(boolean_value)
-    # boolean_value ? content_tag(:span, t('yes'), class: 'yes') : content_tag(:span, t('no'), class: 'no')
-    span_with_yes_no_class((boolean_value ? t('yes'): t('no')), boolean_value)
+    span_with_yes_no_css_class((boolean_value ? t('yes'): t('no')), boolean_value)
   end
 
 
@@ -184,13 +186,14 @@ module ApplicationHelper
   # yes and no
   #
   # Ex:
-  #   span_with_yes_no_class('surround this text', true)
+  #   span_with_yes_no_css_class('surround this text', true)
   #    => "<span class: 'yes'>surround this text</span>"
   #
-  #   span_with_yes_no_class('surround this text', false)
+  #   span_with_yes_no_css_class('surround this text', false)
   #    => "<span class: 'no'>surround this text</span>"
-  def span_with_yes_no_class(text, boolean_value)
-    content_tag(:span, text, class: (boolean_value ? CSS_CLASS_YES : CSS_CLASS_NO))
+  #
+  def span_with_yes_no_css_class(text, boolean_value)
+    content_tag(:span, text, class: (boolean_value ? yes_css_class : no_css_class))
   end
 
 
@@ -265,17 +268,35 @@ module ApplicationHelper
   end
 
 
-  def css_admin_class
+  # If the user is an admin, append the appropriate CSS class
+  #
+  # @param current_classes [Array[String]] - list of CSS classes
+  # @return [Array] - a list of the current_classes with the admin class appended if needed
+  def with_admin_css_class_if_needed(user, current_classes = [])
+    user.admin? ? (current_classes << admin_css_class) : current_classes
+  end
+
+
+  # public method for accessing the CSS class for displaying the 'is admin' indicator
+  def admin_css_class
     CSS_ADMIN_CLASS
   end
 
 
-  # If the user is an admin,
-  #   append the appropriate CSS class
-  #
-  # @param current_classes [Array[String]] - list of CSS classes
-  # @return [Array] - a list of the current_classes with the admin class appended if needed
-  def with_admin_class_if_needed(user, current_classes = [])
-    user.admin? ? (current_classes << css_admin_class) : current_classes
+  # public method for accessing the CSS class for displaying a 'yes' indicator
+  def yes_css_class
+    CSS_CLASS_YES
   end
+
+  # public method for accessing the CSS class for displaying a 'no' indicator
+  def no_css_class
+    CSS_CLASS_NO
+  end
+
+
+  # public method for accessing the CSS class for displaying a 'maybe' indicator
+  def maybe_css_class
+    CSS_CLASS_MAYBE
+  end
+
 end

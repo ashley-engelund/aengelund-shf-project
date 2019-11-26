@@ -27,7 +27,7 @@ RSpec.describe PaymentsHelper, type: :helper do
 
     context 'user' do
 
-      # which CSS class is tested by the payment_should_be_made_class spec below
+      # which CSS class is tested by the payment_due_now_hint_css_class spec below
       it 'returns the expiration date with the css class set' do
         user_payment.update(expire_date: Time.zone.today + 1.month + 2.days)
         response = /class="([^"]*)".*#{user_payment.expire_date}/
@@ -67,7 +67,7 @@ RSpec.describe PaymentsHelper, type: :helper do
 
     context 'company' do
 
-      # which CSS class is tested by the payment_should_be_made_class spec below
+      # which CSS class is tested by the payment_due_now_hint_css_class spec below
       it 'returns the expiration date with the css class set' do
         brand_payment.update(expire_date: Time.zone.today + 1.month + 2.days)
         response = /class="([^"]*)".*#{user_payment.expire_date}/
@@ -166,7 +166,7 @@ RSpec.describe PaymentsHelper, type: :helper do
   end
 
 
-  describe 'payment_should_be_made_class is based on entity.should_pay_now? and entity.too_early_to_pay?' do
+  describe 'payment_due_now_hint_css_class is based on entity.should_pay_now? and entity.too_early_to_pay?' do
 
     include_context 'create users'
 
@@ -179,38 +179,38 @@ RSpec.describe PaymentsHelper, type: :helper do
     end
 
 
-    it 'returns "yes" if too_early_to_pay?' do
-      expect(payment_should_be_made_class(user_membership_expires_EOD_feb1)).to eq 'Yes'
+    it 'returns yes css class if too_early_to_pay?' do
+      expect(payment_due_now_hint_css_class(user_membership_expires_EOD_feb1)).to eq helper.yes_css_class
     end
 
-    it 'returns "maybe" if it has not expired and should_pay_now?' do
-      expect(payment_should_be_made_class(user_membership_expires_EOD_jan29)).to eq 'Maybe'
+    it 'returns maybe css class if it has not expired and should_pay_now?' do
+      expect(payment_due_now_hint_css_class(user_membership_expires_EOD_jan29)).to eq helper.maybe_css_class
     end
 
-    it 'returns "no" if the payment term has expired' do
-      expect(payment_should_be_made_class(user_paid_lastyear_nov_29)).to eq 'No'
+    it 'returns no css class if the payment term has expired' do
+      expect(payment_due_now_hint_css_class(user_paid_lastyear_nov_29)).to eq helper.no_css_class
     end
 
-    it 'returns "no" if no payments have been made' do
-      expect(payment_should_be_made_class(build(:user))).to eq 'No'
-      expect(payment_should_be_made_class(build(:company))).to eq 'No'
+    it 'returns no css class if no payments have been made' do
+      expect(payment_due_now_hint_css_class(build(:user))).to eq helper.no_css_class
+      expect(payment_due_now_hint_css_class(build(:company))).to eq helper.no_css_class
     end
 
   end
 
 
-  describe 'expire_date_css_class' do
+  describe 'expires_soon_hint_css_class' do
 
-    it 'returns "Yes" if expire_date more than a month away' do
-      expect(expire_date_css_class(Time.zone.today + 2.months)).to eq 'Yes'
+    it 'returns yes css class if expire_date more than a month away' do
+      expect(expires_soon_hint_css_class(Time.zone.today + 2.months)).to eq helper.yes_css_class
     end
 
-    it 'returns "Maybe" if expire_date less than a month away' do
-      expect(expire_date_css_class(Time.zone.today + 2.days)).to eq 'Maybe'
+    it 'returns maybe css class if expire_date less than a month away' do
+      expect(expires_soon_hint_css_class(Time.zone.today + 2.days)).to eq helper.maybe_css_class
     end
 
-    it 'returns "No" if expire_date has passed' do
-      expect(expire_date_css_class(Time.zone.today - 2.days)).to eq 'No'
+    it 'returns no css class if expire_date has passed' do
+      expect(expires_soon_hint_css_class(Time.zone.today - 2.days)).to eq helper.no_css_class
     end
   end
 
