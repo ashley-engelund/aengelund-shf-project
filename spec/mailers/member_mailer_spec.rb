@@ -411,6 +411,44 @@ RSpec.describe MemberMailer, type: :mailer do
   end
 
 
+  describe '#first_membership_fee_owed' do
+
+    let(:approved_user) do
+      shf_app = create(:shf_application, :accepted)
+      u = shf_app.user
+      u.email = 'approved-user@example.com'
+      u
+    end
+
+    let(:email_sent) { MemberMailer.first_membership_fee_owed(approved_user) }
+
+    # .mailers.member_mailer.first_membership_fee_owed.subject
+    it_behaves_like 'a successfully created email',
+                    I18n.t('subject', scope: 'mailers.member_mailer.first_membership_fee_owed'),
+                    'approved-user@example.com',
+                    'Firstname Lastname' do
+      let(:email_created) { email_sent }
+    end
+
+    it_behaves_like 'from address is correct' do
+      let(:mail_address) { email_sent.header['from'] }
+    end
+
+    it_behaves_like 'reply-to address is correct' do
+      let(:email_created) { email_sent }
+    end
+
+    it_behaves_like 'it shows how to login and the page to pay the membership fee' do
+      let(:email_created) { email_sent }
+      let(:user) { approved_user }
+    end
+
+    it 'tells you to pay the membership fee' do
+      pending 'need the right words for this'
+    end
+  end
+
+
   it 'has a previewer' do
     expect(MemberMailerPreview).to be
   end
