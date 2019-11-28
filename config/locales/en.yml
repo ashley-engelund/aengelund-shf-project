@@ -1264,9 +1264,9 @@ en:
           company_link_login_msg: "Here's the link to the company so you can edit it: "
 
       first_membership_fee_owed:
-        subject: Please pay your SHF Membership fee
+        subject: "Approved, but haven't paid yet?"
         greeting: *email_greeting
-        message_text: You can pay your membership and start taking advantage of the membership benefits by logging in and paying.
+        message_text: "You have been approved to become a member, but you must pay a membership fee in order to take advantage of the benefits, offers and discounts included in the membership. You can easily pay by following the steps below."
 
 
   devise:

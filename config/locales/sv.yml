@@ -1268,9 +1268,9 @@ sv:
           pay_on_acct_page: &pay_on_acct_page "Du betalar via "
 
       first_membership_fee_owed:
-        subject: Please pay your SHF Membership fee
+        subject: "Godkänd, men missat att betala?"
         greeting: *email_greeting
-        message_text: "Du kan betala ditt medlemskap och börja dra nytta av medlemsfördelarna genom att logga in och betala."
+        message_text: "Du har blivit godkänd för att bli medlem, men du måste betala medlemsavgift för att kunna dra nytta av de förmåner, erbjudande och rabatter som ingår i medlemskapet. Du kan enkelt betala genom att följa stegen nedan."
 
 
 
