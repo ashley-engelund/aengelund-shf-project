@@ -420,11 +420,13 @@ RSpec.describe MemberMailer, type: :mailer do
       u
     end
 
+    FIRST_MEMBERSHIP_OWED_SCOPE = 'mailers.member_mailer.first_membership_fee_owed'
+
     let(:email_sent) { MemberMailer.first_membership_fee_owed(approved_user) }
 
     # .mailers.member_mailer.first_membership_fee_owed.subject
     it_behaves_like 'a successfully created email',
-                    I18n.t('subject', scope: 'mailers.member_mailer.first_membership_fee_owed'),
+                    I18n.t('subject', scope: FIRST_MEMBERSHIP_OWED_SCOPE),
                     'approved-user@example.com',
                     'Firstname Lastname' do
       let(:email_created) { email_sent }
@@ -444,7 +446,7 @@ RSpec.describe MemberMailer, type: :mailer do
     end
 
     it 'tells you to pay the membership fee' do
-      pending 'need the right words for this'
+      expect(email_sent).to have_body_text(I18n.t('message_text', scope: FIRST_MEMBERSHIP_OWED_SCOPE))
     end
   end
 

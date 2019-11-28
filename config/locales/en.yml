@@ -1252,8 +1252,7 @@ en:
       first_membership_fee_owed:
         subject: Please pay your SHF Membership fee
         greeting: *email_greeting
-        message_text:
-          fee_is_unpaid: "Please pay your SHF membership fee...."
+        message_text: You can pay your membership and start taking advantage of the membership benefits by logging in and paying.
 
 
   devise:
