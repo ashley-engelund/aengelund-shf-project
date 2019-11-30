@@ -7,13 +7,6 @@
 #
 module PathHelpers
 
-  # remove any leading locale path info
-  def current_path_without_locale(path)
-    locale_pattern =  /^(\/)(en|sv)?(\/)?(.*)$/
-    path.gsub(locale_pattern, '\1\4')
-  end
-
-
   # Given a page name [String] in a step, visit the right page.
   #
   # All known paths.  Based on the page name, visit the appropriate page.
@@ -31,10 +24,7 @@ module PathHelpers
         path = new_user_session_path
       when 'register as a new user'
         path = new_user_registration_path
-      when 'edit registration for a user'
-        path = edit_user_registration_path
-      when 'new password'
-        path = new_user_password_path
+
 
       # Home a.k.a 'landing' pages
       when 'landing'
@@ -46,26 +36,31 @@ module PathHelpers
       when 'member instructions'
         path = information_path
 
+      # User Profile: this is the devise registrations page
+      when 'edit registration for a user', 'edit user profile', 'edit my user profile'
+        path = edit_user_registration_path
+      when 'new password'
+        path = new_user_password_path
+
+      # User Account
+      when 'user details', 'user account'
+        path = user_path(user)
+
+
       # SHF application pages
-      when 'new application'
-        path = new_shf_application_path
-      when 'submit new membership application'
+      when 'new application', 'submit new membership application'
         path = new_shf_application_path
       when 'edit application', 'edit my application'
         user.reload
         path = edit_shf_application_path(user.shf_application)
       when 'application', 'show my application'
         path = shf_application_path(user.shf_application)
-      when 'membership applications', 'shf applications'
-        path = shf_applications_path
 
       # Business category pages
       when 'business categories'
         path = business_categories_path
 
       # Company pages
-      when 'all companies'
-        path = companies_path
       when 'create a new company'
         path = new_company_path
       when 'my first company'
@@ -77,25 +72,29 @@ module PathHelpers
       when 'edit my company'
         path = edit_company_path(user.shf_application.companies.first)
 
-      # User and Member pages
-      when 'all users'
-        path = users_path
-      when 'user details', 'user profile'
-        path = user_path(user)
-
-
       # SHF Document pages
       when 'all shf documents'
         path = shf_documents_path
-      when 'new shf document'
-        path = new_shf_document_path
 
 
       # ==================================================
       # Other Admin pages - pages only administrators can access
-      #   These are admin access only pages that don't fit with the groups/topics above.
-      #   Admin access only pages may also be listed above, grouped with specific topics/areas.
-      #   Ex: view all companies = only an admin can access, but is grouped with 'Company pages' above.
+
+      # Users
+      when 'all users'
+        path = users_path
+
+      # Shf Applications
+      when 'membership applications', 'shf applications'
+        path = shf_applications_path
+
+      # Companies
+      when 'all companies'
+        path = companies_path
+
+      # SHF Documents
+      when 'new shf document'
+        path = new_shf_document_path
 
       # Application configuration
       when 'admin edit app configuration'
@@ -128,6 +127,13 @@ module PathHelpers
     end
 
     path
+  end
+
+
+  # remove any leading locale path info
+  def current_path_without_locale(path)
+    locale_pattern =  /^(\/)(en|sv)?(\/)?(.*)$/
+    path.gsub(locale_pattern, '\1\4')
   end
 
 
