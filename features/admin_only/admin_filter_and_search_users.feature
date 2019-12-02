@@ -1,7 +1,7 @@
-Feature: Admin searches and sorts users
+Feature: Admin filters and searches users
 
   As an admin
-  I would like to search and sort users
+  I would like to filter and search
   to quickly and easily find users I am interested in
 
 
@@ -82,76 +82,3 @@ Feature: Admin searches and sorts users
     And I click on t("search")
     Then I should see "ja@hotmail.com"
     And I should not see "luke@force.net"
-
-
-
-  # =================================================================
-  # SORTING
-
-  Scenario: Admin sorts users by email
-    Given I am on the "all users" page
-    When I click on t("users.users_list.email")
-    Then I should see "luke@force.net" before "sconnor@example.com"
-
-
-  Scenario: Admin sorts users by membership number
-    When I click on t("users.users_list.membership_number")
-    Then I should see "ja@hotmail.com" before "sconnor@example.com"
-    Then I should see "sconnor@example.com" before "admin@sverigeshundforetagare.se"
-    Then I should see "admin@sverigeshundforetagare.se" before "luke@force.net"
-    When I click on t("users.users_list.membership_number")
-    Then I should see "luke@force.net" before "admin@sverigeshundforetagare.se"
-    Then I should see "admin@sverigeshundforetagare.se" before "sconnor@example.com"
-    Then I should see "sconnor@example.com" before "ja@hotmail.com"
-
-
-  Scenario: Sort by member packet sent status
-    When I click on t("users.users_list.member_packet")
-    Then I should see "sconnor@example.com" before "ja@hotmail.com"
-    And I should see "lars-member@happymutts.com" before "ja@hotmail.com"
-    And I should see "former-member@happymutts.com" before "ja@hotmail.com"
-
-    # search in DESC order
-    When I click on t("users.users_list.member_packet")
-    Then I should see "luke@force.net" before "sconnor@example.com"
-    And I should see "luke@force.net" before "lars-member@happymutts.com"
-    And I should see "luke@force.net" before "former-member@happymutts.com"
-
-
-  Scenario: Sort by when user was created ( = user registered)
-    When I click on t("users.users_list.created")
-    Then I should see "sconnor@example.com" before "ja@hotmail.com"
-    And I should see "lars-member@happymutts.com" before "ja@hotmail.com"
-    And I should see "former-member@happymutts.com" before "ja@hotmail.com"
-
-    # search in DESC order
-    When I click on t("users.users_list.created")
-    Then I should see "luke@force.net" before "sconnor@example.com"
-    And I should see "luke@force.net" before "lars-member@happymutts.com"
-    And I should see "luke@force.net" before "former-member@happymutts.com"
-
-
-  Scenario: Sort by number of logins
-    When I click on t("users.users_list.logged_in_count")
-    Then I should see "sconnor@example.com" before "ja@hotmail.com"
-    And I should see "lars-member@happymutts.com" before "ja@hotmail.com"
-    And I should see "former-member@happymutts.com" before "ja@hotmail.com"
-
-    # search in DESC order
-    When I click on t("users.users_list.logged_in_count")
-    Then I should see "luke@force.net" before "sconnor@example.com"
-    And I should see "luke@force.net" before "lars-member@happymutts.com"
-    And I should see "luke@force.net" before "former-member@happymutts.com"
-
-
-  Scenario: Sort by membership status
-    When I click on t("users.users_list.member")
-    Then I should see "sconnor@example.com" before "ja@hotmail.com"
-    And I should see "lars-member@happymutts.com" before "ja@hotmail.com"
-    And I should see "former-member@happymutts.com" before "ja@hotmail.com"
-
-    # search in DESC order
-    When I click on t("users.users_list.member")
-    Then I should see "luke@force.net" before "sconnor@example.com"
-    And I should see "luke@force.net" before "lars-member@happymutts.com"
-    And I should see "luke@force.net" before "former-member@happymutts.com"
