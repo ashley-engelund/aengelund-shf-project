@@ -8,14 +8,14 @@ Feature: Admin filters and searches users
   Background:
 
     Given the following users exist
-      | first_name | last_name | email                           | admin | membership_number | member | date_membership_packet_sent | sign_in_count |  created_at |
-      | John       | Adams     | ja@hotmail.com                  | false | 1                 | false  |                             |               |             |
-      | Sarah      | Connor    | sconnor@example.com             | false | 2                 | true   |                             |               |             |
-      | Lars       | Member    | lars-member@happymutts.com      | false | 101               | true   |                             |               |             |
-      | Hannah     | Member    | hannah-member@happymutts.com    | false | 102               | true   |                             |               |             |
-      | Former     | Member    | former-member@happymutts.com    | false |                   | false  |                             |               |             |
-      | Luke       | Skywalker | luke@force.net                  | false | 14                | false  |                             |               |             |
-      | admin      | admin     | admin@sverigeshundforetagare.se | true  | 3                 | false  |                             |               |             |
+      | first_name | last_name | email                           | admin | membership_number | member |
+      | John       | Adams     | ja@hotmail.com                  | false | 1                 | false  |
+      | Sarah      | Connor    | sconnor@example.com             | false | 2                 | true   |
+      | Lars       | Member    | lars-member@happymutts.com      | false | 101               | true   |
+      | Hannah     | Member    | hannah-member@happymutts.com    | false | 102               | true   |
+      | Former     | Member    | former-member@happymutts.com    | false |                   | false  |
+      | Luke       | Skywalker | luke@force.net                  | false | 14                | false  |
+      | admin      | admin     | admin@sverigeshundforetagare.se | true  | 3                 | false  |
 
 
     And the following applications exist:
