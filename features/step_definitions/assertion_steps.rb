@@ -228,7 +228,7 @@ Then "{capture_string} should{negate} have {capture_string} as an option" do |se
 
   select_options = case field.tag_name
                    when "select"
-                     options = field.all("option")
+                     field.all("option")
                    end
   expect(select_options.map(&:text)).send((negate ? :not_to : :to), include(expected_string))
 end
