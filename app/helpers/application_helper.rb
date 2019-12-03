@@ -63,7 +63,17 @@ module ApplicationHelper
                      label_class: label_class, value_class: value_class)
   end
 
-  def icon_link(url, icon, disabled_class = 'disabled_icon')
+
+  # Return a link to a FontAwesome icon.
+  # If either the url or icon are nil, return nil.
+  # Else use the FontAwesome :icon method to get the icon and create the link to the url
+  # Assumes the :icon is a FontAwesome icon.  This does not check to see if it is or not.
+  #
+  # @param url [String] - ths is what :link_to will link to
+  # @param icon [String] - the name of the FontAwesome icon, without any leading 'fa-'.  Ex: 'facebook', or 'youtube-square'
+  # @return [String] - the HTML link to the icon, with the CSS classes 'fab' and 'fa-2x' applied and target '_blank'
+  #
+  def icon_link(url, icon)
     if url.blank? || icon.nil?
       nil
     else
