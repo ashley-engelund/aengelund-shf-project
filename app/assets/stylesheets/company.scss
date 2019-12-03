@@ -1,25 +1,10 @@
-.social-media {
-
-  a {
-    border-bottom: 0;
-  }
-
-  i {
-    margin-right: 15px;
-
-    &:hover {
-      filter: saturate(5);
-    }
-  }
-
-}
 
 .fa-facebook {
-  color: #3578e5;
+  color: $social-media-facebook-blue;
 }
 
 .fa-instagram {
-  color: #6e644b;
+  color: $social-media-instagram-gray;
 }
 
 .fa-youtube-square {
