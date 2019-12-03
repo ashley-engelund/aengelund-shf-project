@@ -630,7 +630,7 @@ en:
       website: Company website
       org_nr: *org_nr
       delete: "Delete company"
-      confirm_are_you_sure: '*are_you_sure_confirm you want to delete the company?'
+      confirm_are_you_sure: *are_you_sure_confirm
       add_address: 'Add address'
       click_to_edit: 'click to edit'
       edit_branding_status: Edit Branding Status
