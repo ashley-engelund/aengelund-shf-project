@@ -1,7 +1,7 @@
 Feature: Edit the social media urls (links) for a company
 
   Background:
-    Given the following users exists
+    Given the following users exist:
       | email            | admin | member |
       | member@mutts.com |       | true   |
       | admin@shf.se     | true  | true   |
