@@ -26,11 +26,36 @@
 }
 
 
-
 .edit a,
 .delete a {
   border-bottom: 0;
 }
+
+// ======================================
+// ICONS
+
+// ------------------------------
+// FontAwesome social media icons
+
+.fa-facebook {
+  color: $social-media-facebook-blue;
+}
+
+.fa-instagram {
+  color: $social-media-instagram-gray;
+}
+
+.fa-youtube-square {
+  color: $social-media-youtube-red;
+}
+// ------------------------------
+
+
+.disabled-icon {
+  color: $disabled-icon-gray;
+  cursor: not-allowed;
+}
+// ======================================
 
 .grayed-btn-colors {
   background-color: $grayed-button-background;
