@@ -7,7 +7,7 @@ Feature: User pays membership fee
   Background:
     Given the App Configuration is not mocked and is seeded
 
-    Given the following users exist
+    Given the following users exist:
       | email                    | admin | member |
       | emma-applicant@mutts.com |       | false  |
       | admin@shf.se             | true  | false  |
@@ -25,8 +25,9 @@ Feature: User pays membership fee
   Scenario: User pays membership fee (post-2017)
     Given the date is set to "2018-7-01"
     And I am logged in as "emma-applicant@mutts.com"
-    And I am on the "user details" page for "emma-applicant@mutts.com"
+    And I am on the "user account" page for "emma-applicant@mutts.com"
     And I should see t("menus.nav.members.pay_membership")
+    And I should see t("payors.due")
     Then I click on t("menus.nav.members.pay_membership")
     And I complete the membership payment
     And I should see t("payments.success.success")
@@ -37,7 +38,7 @@ Feature: User pays membership fee
   Scenario: User starts payment process then abandons it so no payment is made
     Given the date is set to "2017-12-31"
     And I am logged in as "emma-applicant@mutts.com"
-    And I am on the "user details" page for "emma-applicant@mutts.com"
+    And I am on the "user account" page for "emma-applicant@mutts.com"
     When I click on t("menus.nav.members.pay_membership")
     And I abandon the payment
     Then user "emma-applicant@mutts.com" has no payments
@@ -47,7 +48,7 @@ Feature: User pays membership fee
   Scenario: User incurs error in payment processing so no payment is made
     Given the date is set to "2017-12-31"
     And I am logged in as "emma-applicant@mutts.com"
-    And I am on the "user details" page for "emma-applicant@mutts.com"
+    And I am on the "user account" page for "emma-applicant@mutts.com"
     Then I click on t("menus.nav.members.pay_membership")
     And I incur an error in payment processing
     And I should see t("payments.error.error")

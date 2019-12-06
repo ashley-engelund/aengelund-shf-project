@@ -25,9 +25,11 @@ Feature: Member pays branding license fee for a company
       | emma@mutts.com                      | 2120000142     | rehab         | accepted |
       | lars-member@co-with-no-payments.com | 5560360793     | rehab         | accepted |
 
+
+    # Emma has (magically) paid her membership fee until 2019-12-31, but the company branding-fee only through 2018-12-31
     Given the following payments exist
       | user_email                          | start_date | expire_date | payment_type | status | hips_id |
-      | emma@mutts.com                      | 2018-01-01 | 2018-12-31  | member_fee   | betald | none    |
+      | emma@mutts.com                      | 2018-01-01 | 2019-12-31  | member_fee   | betald | none    |
       | lars-member@co-with-no-payments.com | 2018-01-01 | 2018-12-31  | member_fee   | betald | none    |
 
     Given the following payments exist
@@ -41,6 +43,7 @@ Feature: Member pays branding license fee for a company
     And I am logged in as "lars-member@co-with-no-payments.com"
     And I am the page for company number "5560360793"
     Then I should see "NewCompanyWithNoPayments"
+    And I should see t("payors.due")
     When I click on t("menus.nav.company.pay_branding_fee")
     And I complete the branding payment for "NewCompanyWithNoPayments"
     Then I should see t("payments.success.success")
@@ -53,13 +56,42 @@ Feature: Member pays branding license fee for a company
     And I am logged in as "emma@mutts.com"
     And I am the page for company number "2120000142"
     Then I should see "HappyMutts"
+    And I should see t("payors.due_by", due_date: '2018-12-31')
     When I click on t("menus.nav.company.pay_branding_fee")
     And I complete the branding payment for "HappyMutts"
     Then I should see t("payments.success.success")
     And company number "2120000142" is paid through "2019-12-31"
 
+
+  @time_adjust @selenium
+  Scenario: Member pays branding fee 'too soon' (way early) before the term has expired
+    Given the date is set to "2018-01-02"
+    And I am logged in as "emma@mutts.com"
+    And I am the page for company number "2120000142"
+    Then I should see "HappyMutts"
+    And I should see t("payors.too_early")
+    When I click on t("menus.nav.company.pay_branding_fee")
+    And I complete the branding payment for "HappyMutts"
+    Then I should see t("payments.success.success")
+    And company number "2120000142" is paid through "2019-12-31"
+
+
+  @time_adjust @selenium
+  Scenario: Member pays branding fee after the term has expired
+    Given the date is set to "2019-02-02"
+    And I am logged in as "emma@mutts.com"
+    And I am the page for company number "2120000142"
+    Then I should see "HappyMutts"
+    And I should see t("payors.past_due")
+    When I click on t("menus.nav.company.pay_branding_fee")
+    And I complete the branding payment for "HappyMutts"
+    Then I should see t("payments.success.success")
+    And company number "2120000142" is paid through "2020-02-01"
+
+
     # Note that you must go to the page _after_ the date has been set for this example so that the browser (via cucumber and Timecop) thinks the date it 2018-12-31.
-    # Without the 'I am the page for company number "2120000142"' step explicitly in the scenario below, the date will 'be' "2018-01-01" and it will be too early for a payment to be made, and a modal dialog box will come up with that info.
+    # Without the 'I am the page for company number "2120000142"' step explicitly in the scenario below, the date will 'be' "2018-01-01"
+    # and it will be too early for a payment to be made, and a modal dialog box will come up with that info.
   @selenium @time_adjust
   Scenario: Member starts payment process then abandons it
     Given the date is set to "2018-12-30"

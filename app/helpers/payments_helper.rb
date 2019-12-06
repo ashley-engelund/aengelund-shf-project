@@ -49,8 +49,15 @@ module PaymentsHelper
   end
 
 
+  # @return [String] - The I18n.t string that says if a payment is due now, is past due, or isn't due now.
+  def payment_due_hint(entity)
+    t("payors.#{entity.payment_due_status}", due_date: entity.payment_expire_date)
+  end
+
+
   # Another possible name for this method: payment_status_ok_indicator_css_class
   # The word "indicator" is good. It's possibly better than "hint"
+  #
   # This method name ends with '_css_class' to make it clear that this returns
   # a CSS class as opposed to a normal Ruby class.
   #
@@ -58,19 +65,17 @@ module PaymentsHelper
   # not a payment is due, and how soon the payment is due
   #
   def payment_due_now_hint_css_class(entity)
-    if entity.term_expired?
-      no_css_class
-    elsif entity.too_early_to_pay?
-      yes_css_class
-    else
-      maybe_css_class
+    case entity.payment_due_status
+      when :too_early then yes_css_class
+      when :due, :past_due then no_css_class
+      else maybe_css_class
     end
   end
 
 
   def expires_soon_hint_css_class(expire_date)
     today = Time.zone.today
-    if today < expire_date.months_ago(1)  # expire_date minus one month
+    if today < expire_date.months_ago(1) # expire_date minus one month
       value_class = yes_css_class
     elsif today >= expire_date
       value_class = no_css_class

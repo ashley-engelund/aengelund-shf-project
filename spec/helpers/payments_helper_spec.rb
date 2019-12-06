@@ -166,37 +166,68 @@ RSpec.describe PaymentsHelper, type: :helper do
   end
 
 
+  describe 'payment_due_hint returns string from I18n.t for the payment_due_status' do
+
+    it 'status = :past_due' do
+      faux_user =  build(:member_with_membership_app)
+      allow(faux_user).to receive(:payment_due_status).and_return(:past_due)
+      expect(payment_due_hint(faux_user)).to eq t('payors.past_due')
+    end
+
+    it 'status = :due' do
+      faux_user =  build(:member_with_membership_app)
+      allow(faux_user).to receive(:payment_due_status).and_return(:due)
+      expect(payment_due_hint(faux_user)).to eq t('payors.due')
+    end
+
+    it 'status = :due_by also requires a due_date' do
+      faux_user =  build(:member_with_membership_app)
+      allow(faux_user).to receive(:payment_due_status).and_return(:due_by)
+      allow(faux_user).to receive(:payment_expire_date).and_return(Date.new(2019,11,11))
+      expect(payment_due_hint(faux_user)).to eq t('payors.due_by', due_date: '2019-11-11')
+    end
+
+    it 'status = :too_early' do
+      faux_user =  build(:member_with_membership_app)
+      allow(faux_user).to receive(:payment_due_status).and_return(:too_early)
+      expect(payment_due_hint(faux_user)).to eq t('payors.too_early')
+    end
+  end
+
+
   describe 'payment_due_now_hint_css_class is based on entity.should_pay_now? and entity.too_early_to_pay?' do
 
-    include_context 'create users'
-
-    # ==================================
-    #  Today = DECEMBER 1 for EVERY EXAMPLE
-    around(:each) do |example|
-      Timecop.freeze(dec_1)
-      example.run
-      Timecop.return
+    it 'returns yes css class if payment status is :too_early' do
+      faux_user =  build(:member_with_membership_app)
+      allow(faux_user).to receive(:payment_due_status).and_return(:too_early)
+      expect(payment_due_now_hint_css_class(faux_user)).to eq helper.yes_css_class
     end
 
-
-    it 'returns yes css class if too_early_to_pay?' do
-      expect(payment_due_now_hint_css_class(user_membership_expires_EOD_feb1)).to eq helper.yes_css_class
+    it 'returns maybe css class if payment status is :due_by' do
+      faux_user =  build(:member_with_membership_app)
+      allow(faux_user).to receive(:payment_due_status).and_return(:due_by)
+      expect(payment_due_now_hint_css_class(faux_user)).to eq helper.maybe_css_class
     end
 
-    it 'returns maybe css class if it has not expired and should_pay_now?' do
-      expect(payment_due_now_hint_css_class(user_membership_expires_EOD_jan29)).to eq helper.maybe_css_class
+    it 'returns no css class if the payment status is :past_due' do
+      faux_user =  build(:member_with_membership_app)
+      allow(faux_user).to receive(:payment_due_status).and_return(:past_due)
+      expect(payment_due_now_hint_css_class(faux_user)).to eq helper.no_css_class
     end
 
-    it 'returns no css class if the payment term has expired' do
-      expect(payment_due_now_hint_css_class(user_paid_lastyear_nov_29)).to eq helper.no_css_class
-    end
+    it 'returns no css class if payment status is :due' do
+      faux_user =  build(:member_with_membership_app)
+      allow(faux_user).to receive(:payment_due_status).and_return(:due)
+      expect(payment_due_now_hint_css_class(faux_user)).to eq helper.no_css_class
 
-    it 'returns no css class if no payments have been made' do
-      expect(payment_due_now_hint_css_class(build(:user))).to eq helper.no_css_class
-      expect(payment_due_now_hint_css_class(build(:company))).to eq helper.no_css_class
+      faux_co = build(:company)
+      allow(faux_co).to receive(:payment_due_status).and_return(:due)
+      expect(payment_due_now_hint_css_class(faux_co)).to eq helper.no_css_class
     end
 
   end
+
+
 
 
   describe 'expires_soon_hint_css_class' do
