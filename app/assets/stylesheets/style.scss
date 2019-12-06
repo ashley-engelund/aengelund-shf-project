@@ -97,6 +97,11 @@ margin-bottom:0;
   outline: 0;
 }
 
+a.btn.disabled, {
+  border-color: $lightgray;
+  color: $gray;
+}
+
 .btco-menu li > a {
   color: $black;
   padding: 10px 15px;
