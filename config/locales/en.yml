@@ -368,8 +368,9 @@ en:
   payors:
     status: Status
     no_payment_due_now: &no_payment_due_now No payment is due now.
+    due: Payment is due now.
     past_due: Payment is past due!
-    due: Payment is due by %{due_date}.
+    due_by: Payment is due by %{due_date}.
     too_early: *no_payment_due_now
     term_paid_through: &term_paid_through Paid through
     you_are_paid_until: You are already paid until

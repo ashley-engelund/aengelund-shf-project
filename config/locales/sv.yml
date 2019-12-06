@@ -370,8 +370,9 @@ sv:
   payors:
     status: Status
     no_payment_due_now: &no_payment_due_now Ingen betalning behöver göras nu.
+    due: Betalning sker nu.
     past_due: Betalning är förfallen!
-    due: Betalning sker före %{due_date}.
+    due_by: Betalning sker före %{due_date}.
     too_early: *no_payment_due_now
     term_paid_through: &term_paid_through Betald till och med
     you_are_paid_until: Du betalas tills
