@@ -370,6 +370,9 @@ sv:
   payors:
     status: Status
     no_payment_due_now: &no_payment_due_now Ingen betalning behöver göras nu.
+    past_due: Betalning är förfallen!
+    due: Betalning sker före %{due_date}.
+    too_early: *no_payment_due_now
     term_paid_through: &term_paid_through Betald till och med
     you_are_paid_until: Du betalas tills
     you_dont_owe_until_then: Du är inte skyldig en betalning förrän då.
@@ -377,6 +380,7 @@ sv:
     do_you_want_to_pay_now: Vill du verkligen göra en betalning nu?
     yes_pay_answer: 'Ja, gör en betalning'
     no_pay_answer: 'Nej. Nevermind. Betal inte'
+    admin_cant_edit: "Medlemsstatus kan inte uppdateras. (Kanske har inga betalningar gjorts.)"
 
   payment:
     payment_type:
