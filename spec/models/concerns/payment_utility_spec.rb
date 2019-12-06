@@ -92,10 +92,10 @@ RSpec.describe User, type: :model do
 
   describe '#term_expired?' do
 
-    it 'true if no payments have been made' do
-      expect(user_no_payments.term_expired?(membership_fee)).to be_truthy
-      expect(user_no_payments.term_expired?).to be_truthy
-      expect(user_no_payments.term_expired?(branding_license_fee)).to be_truthy
+    it 'false if no payments have been made (there was never any term if no payments were made, so there was nothing to expire)' do
+      expect(user_no_payments.term_expired?(membership_fee)).to be_falsey
+      expect(user_no_payments.term_expired?).to be_falsey
+      expect(user_no_payments.term_expired?(branding_license_fee)).to be_falsey
     end
 
     it 'true if today is after the latest expire time (expire time < today)' do
@@ -246,11 +246,7 @@ RSpec.describe User, type: :model do
   describe 'payment_due_status' do
 
     it ':past_due if term_expired?' do
-      expect(user_no_payments.payment_due_status(payment_type: membership_fee)).to  eq :past_due
-      expect(user_no_payments.payment_due_status).to  eq :past_due
-      expect(user_no_payments.payment_due_status(payment_type: branding_license_fee)).to  eq :past_due
       expect(member_expired.payment_due_status).to eq :past_due
-
       expect(user_paid_only_lastyear_dec_2.payment_due_status(payment_type: membership_fee)).to eq :past_due
       expect(user_paid_only_lastyear_dec_2.payment_due_status).to eq :past_due
       u_co = user_paid_only_lastyear_dec_2.companies.first
@@ -258,22 +254,28 @@ RSpec.describe User, type: :model do
       expect(u_co.payment_due_status).to eq :past_due
     end
 
-    it ':too_early_to_pay if too_early_to_pay? is true' do
-      expect(user_membership_expires_EOD_feb1.payment_due_status).to eq :too_early_to_pay
+    it ':too_early if too_early_to_pay? is true' do
+      expect(user_membership_expires_EOD_feb1.payment_due_status).to eq :too_early
       u_co = user_membership_expires_EOD_feb1.companies.first
-      expect(u_co.payment_due_status).to eq :too_early_to_pay
+      expect(u_co.payment_due_status).to eq :too_early
     end
 
-    it ':due if it is before the term expiry but after the too early to pay cutoff' do
-      expect(user_membership_expires_EOD_jan30.payment_due_status).to eq :due
+    it ':due_by if it is before the term expiry but after the too early to pay cutoff' do
+      expect(user_membership_expires_EOD_jan30.payment_due_status).to eq :due_by
       u_co = user_membership_expires_EOD_jan30.companies.first
-      expect(u_co.payment_due_status).to eq :due
+      expect(u_co.payment_due_status).to eq :due_by
 
-      expect(user_membership_expires_EOD_jan29.payment_due_status).to eq :due
+      expect(user_membership_expires_EOD_jan29.payment_due_status).to eq :due_by
       u_co = user_membership_expires_EOD_jan29.companies.first
-      expect(u_co.payment_due_status).to eq :due
+      expect(u_co.payment_due_status).to eq :due_by
     end
 
+    it ':due if no successful payments have been made' do
+      expect(user_no_payments.payment_due_status(payment_type: membership_fee)).to  eq :due
+      expect(user_no_payments.payment_due_status).to  eq :due
+      expect(user_no_payments.payment_due_status(payment_type: branding_license_fee)).to  eq :due
+
+    end
   end
 
 
