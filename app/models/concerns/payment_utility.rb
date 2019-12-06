@@ -92,13 +92,13 @@ module PaymentUtility
     #
     # Also see the RSpecs for more examples
     #
+    # @param [String] payment_type - the type of payment this is (used to get the expiration date)
     # @param [Duration] should_pay_cutoff - the number of days before a payment
     #    due date that defines when it is "too soon" to pay. Default is from the Application configuration
-    # @param [String] payment_type - the type of payment this is (used to get the expiration date)
     #
     # @return [Boolean] - true if the term has expired OR Today is after the cutoff day
-    def should_pay_now?(should_pay_cutoff = AdminOnly::AppConfiguration.config_to_use.payment_too_soon_days.days,
-                        payment_type = self.class::THIS_PAYMENT_TYPE)
+    def should_pay_now?(payment_type: self.class::THIS_PAYMENT_TYPE,
+                        should_pay_cutoff: AdminOnly::AppConfiguration.config_to_use.payment_too_soon_days.days)
 
       cutoff_date =  has_successful_payments?(payment_type) ? payment_expire_date(payment_type) - should_pay_cutoff : Time.zone.now
       term_expired?(payment_type) || Time.zone.now >= cutoff_date
@@ -107,13 +107,30 @@ module PaymentUtility
 
     # Is it "too early" to pay now?  "too early" is determined by the Application Configuration
     #
-    # @param [Duration] should_pay_cutoff - Duration (number of days)
     # @param [String] payment_type - the type of payment this is
-    #
+    # @param [Duration] should_pay_cutoff - Duration (number of days)
+    #  FIXME - all usages
     # @return [Boolean] - true only if no payment should be made now
-    def too_early_to_pay?(should_pay_cutoff = AdminOnly::AppConfiguration.config_to_use.payment_too_soon_days.days,
-                          payment_type = self.class::THIS_PAYMENT_TYPE)
-      !should_pay_now?(should_pay_cutoff, payment_type)
+    def too_early_to_pay?(payment_type: self.class::THIS_PAYMENT_TYPE,
+                          should_pay_cutoff: AdminOnly::AppConfiguration.config_to_use.payment_too_soon_days.days)
+      !should_pay_now?(payment_type: payment_type, should_pay_cutoff: should_pay_cutoff)
+    end
+
+
+    # Logic for determining the payment due status.
+    # This puts the logic here in one place, and
+    # the symbols returned can then easily be used in switch statements (ex: to display different messages, etc.)
+    #
+    # @return [Symbol] - :past_due | :due | :too_early
+    def payment_due_status(payment_type: self.class::THIS_PAYMENT_TYPE,
+                           should_pay_cutoff:  AdminOnly::AppConfiguration.config_to_use.payment_too_soon_days.days)
+      if term_expired?(payment_type)
+        :past_due
+      elsif too_early_to_pay?(payment_type: payment_type, should_pay_cutoff: should_pay_cutoff)
+        :too_early
+      else
+        :due
+      end
     end
 
   end

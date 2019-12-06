@@ -167,32 +167,32 @@ RSpec.describe User, type: :model do
         let(:custom_cutoff_duration) { 1.week }
 
         it 'always true if no payments have been made (no matter the dates, cutoff, etc.)' do
-          expect(user_no_payments.should_pay_now?(custom_cutoff_duration)).to be_truthy
-          expect(build(:company).should_pay_now?(custom_cutoff_duration)).to be_truthy
+          expect(user_no_payments.should_pay_now?(should_pay_cutoff: custom_cutoff_duration)).to be_truthy
+          expect(build(:company).should_pay_now?(should_pay_cutoff: custom_cutoff_duration)).to be_truthy
         end
 
         it 'always true of the term has expired' do
-          expect(user_paid_lastyear_nov_29.should_pay_now?(custom_cutoff_duration)).to be_truthy
+          expect(user_paid_lastyear_nov_29.should_pay_now?(should_pay_cutoff: custom_cutoff_duration)).to be_truthy
           u_co = user_paid_lastyear_nov_29.companies.first
-          expect(u_co.should_pay_now?(custom_cutoff_duration)).to be_truthy
+          expect(u_co.should_pay_now?(should_pay_cutoff: custom_cutoff_duration)).to be_truthy
         end
 
         it 'false if before the cutoff date' do
-          expect(user_membership_expires_EOD_dec9.should_pay_now?(custom_cutoff_duration)).to be_falsey
+          expect(user_membership_expires_EOD_dec9.should_pay_now?(should_pay_cutoff: custom_cutoff_duration)).to be_falsey
           u_co = user_membership_expires_EOD_dec9.companies.first
-          expect(u_co.should_pay_now?(custom_cutoff_duration)).to be_falsey
+          expect(u_co.should_pay_now?(should_pay_cutoff: custom_cutoff_duration)).to be_falsey
         end
 
         it 'true if on the cutoff date' do
-          expect(user_membership_expires_EOD_dec8.should_pay_now?(custom_cutoff_duration)).to be_truthy
+          expect(user_membership_expires_EOD_dec8.should_pay_now?(should_pay_cutoff: custom_cutoff_duration)).to be_truthy
           u_co = user_membership_expires_EOD_dec8.companies.first
-          expect(u_co.should_pay_now?(custom_cutoff_duration)).to be_truthy
+          expect(u_co.should_pay_now?(should_pay_cutoff: custom_cutoff_duration)).to be_truthy
         end
 
         it 'true if after the cutoff date' do
-          expect(user_membership_expires_EOD_dec7.should_pay_now?(custom_cutoff_duration)).to be_truthy
+          expect(user_membership_expires_EOD_dec7.should_pay_now?(should_pay_cutoff: custom_cutoff_duration)).to be_truthy
           u_co = user_membership_expires_EOD_dec7.companies.first
-          expect(u_co.should_pay_now?(custom_cutoff_duration)).to be_truthy
+          expect(u_co.should_pay_now?(should_pay_cutoff: custom_cutoff_duration)).to be_truthy
         end
       end
     end
@@ -240,6 +240,40 @@ RSpec.describe User, type: :model do
         expect(u_co.too_early_to_pay?).to eq !u_co.should_pay_now?
       end
     end
+  end
+
+
+  describe 'payment_due_status' do
+
+    it ':past_due if term_expired?' do
+      expect(user_no_payments.payment_due_status(payment_type: membership_fee)).to  eq :past_due
+      expect(user_no_payments.payment_due_status).to  eq :past_due
+      expect(user_no_payments.payment_due_status(payment_type: branding_license_fee)).to  eq :past_due
+      expect(member_expired.payment_due_status).to eq :past_due
+
+      expect(user_paid_only_lastyear_dec_2.payment_due_status(payment_type: membership_fee)).to eq :past_due
+      expect(user_paid_only_lastyear_dec_2.payment_due_status).to eq :past_due
+      u_co = user_paid_only_lastyear_dec_2.companies.first
+      expect(u_co.payment_due_status(payment_type: branding_license_fee)).to eq :past_due
+      expect(u_co.payment_due_status).to eq :past_due
+    end
+
+    it ':too_early_to_pay if too_early_to_pay? is true' do
+      expect(user_membership_expires_EOD_feb1.payment_due_status).to eq :too_early_to_pay
+      u_co = user_membership_expires_EOD_feb1.companies.first
+      expect(u_co.payment_due_status).to eq :too_early_to_pay
+    end
+
+    it ':due if it is before the term expiry but after the too early to pay cutoff' do
+      expect(user_membership_expires_EOD_jan30.payment_due_status).to eq :due
+      u_co = user_membership_expires_EOD_jan30.companies.first
+      expect(u_co.payment_due_status).to eq :due
+
+      expect(user_membership_expires_EOD_jan29.payment_due_status).to eq :due
+      u_co = user_membership_expires_EOD_jan29.companies.first
+      expect(u_co.payment_due_status).to eq :due
+    end
+
   end
 
 
