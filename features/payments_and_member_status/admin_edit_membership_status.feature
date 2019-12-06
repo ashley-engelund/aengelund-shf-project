@@ -76,22 +76,9 @@ Feature: Admin edits membership status, dates, notes (membership info)
 
 
   @selenium @time_adjust
-  Scenario: Admin changes status to a member for a user that has never made a payment
-    Given I am on the "user details" page for "never-paid-user@mutts.com"
+  Scenario: Admin cannot change member status for someone that has never made a payment
+    Given I am on the "user account" page for "never-paid-user@mutts.com"
     And user "emma@mutts.com" is paid through "2017-12-31"
-    When I click on t("users.user.edit_member_status")
-    Then I should see t("users.user.edit_member_status")
-    And I should see t("users.show.member")
-    And I should see t("activerecord.attributes.payment.expire_date")
-    And I should see t("activerecord.attributes.payment.notes")
-    When I select radio button t("Yes")
-    And I fill in t("activerecord.attributes.payment.notes") with "Made a member."
-    And I click on t("users.user.submit_button_label")
-    And I wait for all ajax requests to complete
-    And I reload the page
-    # ^^ should not have to do this - check later after upgrades. (DOM/page partial _is_ updated in real life, but not with capybara)
-    Then I should see membership status is t("users.show.is_a_member")
-    #  No comment is recorded because there is no payment to update (comment is an attribute of the payment)
-    And I should not see "Made a member."
-    # Membership expiration date does not change:
-    And user "emma@mutts.com" is paid through "2017-12-31"
+    Then I should see t("payors.admin_cant_edit")
+    And the link button t("users.user.edit_member_status") should be disabled
+

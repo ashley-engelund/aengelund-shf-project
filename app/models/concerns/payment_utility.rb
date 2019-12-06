@@ -157,6 +157,12 @@ module PaymentUtility
       end
     end
 
+
+    # This is our current rule:  an admin cannot edit the  status if there are no payments [2019-12-05]
+    def admin_can_edit_status?
+      has_successful_payments?
+    end
+
   end
 
   #   - FIXME how to store this date if/when the member is no longer a current member?

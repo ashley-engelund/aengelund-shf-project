@@ -279,6 +279,43 @@ RSpec.describe User, type: :model do
   end
 
 
+  describe 'admin_can_edit_status?' do
+
+    it 'false if no payments' do
+      expect(user_no_payments.admin_can_edit_status?).to be_falsey
+    end
+
+    it 'false if no successful payments' do
+      u_failed_payments_only = create(:member_with_membership_app)
+      u_co = u_failed_payments_only.shf_application.companies.first
+
+      # failed on nov 29.  Note that :expired means that it was not successful on HIPS (nothing to do with payment term status)
+      Timecop.freeze(nov_29) do
+        create(:membership_fee_payment,
+               :expired,
+               user:        u_failed_payments_only,
+               company:     u_co,
+               start_date:  nov_29,
+               expire_date: User.expire_date_for_start_date(nov_29),
+               notes:       'nov_29 failed (expired) membership')
+        create(:h_branding_fee_payment,
+               :expired,
+               user:        u_failed_payments_only,
+               company:     u_co,
+               start_date:  nov_29,
+               expire_date: Company.expire_date_for_start_date(nov_29),
+               notes:       'nov_29 failed (expired) branding')
+      end
+
+      expect(u_failed_payments_only.admin_can_edit_status?).to be_falsey
+    end
+
+    it 'true if there are any successful payments' do
+      expect(user_unsuccessful_this_year.admin_can_edit_status?).to be_truthy
+    end
+  end
+
+
   describe '.next_payment_dates returns an Array of [start_date, expire_date] for the next payment for the given entity id' do
 
     context 'entity not found raises ActiveRecord::RecordNotFound because it signals a problem in the program logic' do
