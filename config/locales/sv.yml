@@ -370,17 +370,17 @@ sv:
   payors:
     status: Status
     no_payment_due_now: &no_payment_due_now Ingen betalning behöver göras nu.
-    due: Betalning sker nu.
+    due: Betalning behöver göras.
     past_due: Betalning är förfallen!
-    due_by: Betalning sker före %{due_date}.
+    due_by: Betalning behöver göras före %{due_date}.
     too_early: *no_payment_due_now
     term_paid_through: &term_paid_through Betald till och med
-    you_are_paid_until: Du betalas tills
-    you_dont_owe_until_then: Du är inte skyldig en betalning förrän då.
+    you_are_paid_until: Du har betalt till och med
+    you_dont_owe_until_then: "Du är inte skyldig en betalning förrän:"
     paying_now_extends_until: "Att göra en %{fee_name_payment} nu kommer att förlänga din %{term_name} till %{extended_end_date}."
     do_you_want_to_pay_now: Vill du verkligen göra en betalning nu?
     yes_pay_answer: 'Ja, gör en betalning'
-    no_pay_answer: 'Nej. Nevermind. Betal inte'
+    no_pay_answer: 'Nej.'
     admin_cant_edit: "Medlemsstatus kan inte uppdateras. (Kanske har inga betalningar gjorts.)"
 
   payment:
@@ -397,7 +397,7 @@ sv:
       betald: betald
       utgånget: utgånget
       väntar_på_betalning: "Väntar på betalning"
-    term_start_date: startdatum för terminen
+    term_start_date: startdatum
     term_expiry_date: slutdatum
     no_payment_due_now: *no_payment_due_now
 
@@ -682,15 +682,15 @@ sv:
       confirm_are_you_sure: *are_you_sure_confirm
       add_address: 'Lägg till adress'
       click_to_edit: 'klicka för att redigera'
-      hbrand_status_paid: Kan använda H-märkesbilden. (Licensavgiften betalas)
-      hbrand_status_not_paid: Kan inte använda H-märkesbilden. (Licensavgiften betalas inte)
+      hbrand_status_paid: Får använda H-märkesbilden. (H-märkespremie betalad)
+      hbrand_status_not_paid: Får inte använda H-märkesbilden. (H-märkespremie ej betad)
       edit_branding_status: Redigera Status
       branding_license: Betald H-märkespremie
       term_paid_through: *term_paid_through
       no_payment_due_now: *no_payment_due_now
-      hbrand_term_payment: betalning för H-märkespremie licensperiod
-      hbrand_fee: avgift för H-märkespremie
-      hbrand_term: licensperiod för H-märkespremie
+      hbrand_term_payment: H-märkespremiebetalning
+      hbrand_fee: H-märkespremie
+      hbrand_term: H-märkespremieperiod
       payment_tooltip: Betald avgift förlänger H-märkningen i ett år.
       branding_fee_expire_date_tooltip: &branding_fee_expire_date_tooltip Efter detta datum går perioden för din H-märkning ut.
       term_expire_date_tooltip: *branding_fee_expire_date_tooltip
@@ -853,13 +853,13 @@ sv:
       submit_new_password: Spara det nya lösenordet
       member: *member
       membership_status: Medlemsstatus
-      not_a_member: Äar inte medlem
-      is_a_member: Är en medlem med god status
+      not_a_member: Är inte medlem
+      is_a_member: Är medlem
       term_paid_through: *term_paid_through
       no_payment_due_now: *no_payment_due_now
-      membership_fee_payment: medlemsbetalning
-      membership_fee: medlemskaps avgift
-      membership_term: medlemstid
+      membership_fee_payment: betalning av medlemskap
+      membership_fee: medlemskapsavgift
+      membership_term: medlemperiod
       payment_tooltip: När du betalar din medlemsavgift förlängs ditt medlemskap i ett år.
       membership_expire_date_tooltip: &membership_expire_date_tooltip Efter detta datum går perioden för ditt medlemskap ut.
       term_expire_date_tooltip: *membership_expire_date_tooltip
