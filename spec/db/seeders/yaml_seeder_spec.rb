@@ -329,8 +329,7 @@ RSpec.describe Seeders::YamlSeeder do
     end
 
     it 'writes Date written: <timestamp>' do
-      expect(described_class.standard_top_comments).to match(/Date written: #{Time.now}/)
-      #    comment_line("Date written: #{Time.now}")
+      expect(described_class.standard_top_comments).to match(/Date written\: \d\d\d\d-\d\d-\d\d \d\d\:\d\d\:\d\d (.)*(\s)*/)
     end
   end
 
@@ -366,7 +365,7 @@ RSpec.describe Seeders::YamlSeeder do
 
     it 'appends a timestamp of format %F-%H%M%S%z to the filename' do
       allow(Time).to receive(:now).and_return(Time.new(2123, 1, 2, 3, 4, 5))
-      expect(described_class.timestamped_fn('this.blorf')).to match(/.*this-2123-01-02-030405-.*\.blorf/)
+      expect(described_class.timestamped_fn('this.blorf')).to match(/.*this-2123-01-02-030405.*\.blorf/)
     end
   end
 
