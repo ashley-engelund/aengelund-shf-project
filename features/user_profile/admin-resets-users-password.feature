@@ -2,7 +2,9 @@ Feature:  Admin resets passwords for members and users
 
   As an admin
   So that I can help users that forgot their password (who can't reset it themselves via email)
-  I need to be able to reset passwords for users
+  I need to be able to reset passwords for users.
+
+
 
 
   Background:
