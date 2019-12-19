@@ -31,7 +31,7 @@ Feature:  Admin resets passwords for members and users
     And I fill in t("activerecord.attributes.user.password") with "newpassword"
     And I fill in t("activerecord.attributes.user.password_confirmation") with "newpassword"
 
-    And I fill in t("devise.registrations.edit.current_password") with "admin_password"      
+    And I fill in t("devise.registrations.edit.current_password") with "admin_password"
     Then I click on t("devise.registrations.edit.submit_button_label") button
     And I should see t("admin_only.user_profile.update.success")
 
