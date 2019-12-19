@@ -43,3 +43,12 @@
 #text {
   margin-top: 1rem;
 }
+
+
+.edit_user {
+  label.current-password {
+    color: $primary;
+    @extend .h4;
+    font-weight: bold;
+  }
+}
