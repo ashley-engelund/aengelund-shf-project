@@ -48,7 +48,7 @@
 .edit_user {
   label.current-password {
     color: $primary;
-    @extend .h4;
+    font-size: larger;
     font-weight: bold;
   }
 }
