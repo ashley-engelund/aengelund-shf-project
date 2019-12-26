@@ -57,12 +57,13 @@ Feature: User pays membership fee
   # The test is not critical; we know that it works in real life and it covers
   # a scenario that currently is not done much in real life.
   # Ashley E 2019-12-26
-  @skip_ci_test
+  @selenium @skip_ci_test
   Scenario: User incurs error in payment processing so no payment is made
     Given the date is set to "2017-12-31"
     And I am logged in as "emma-applicant@mutts.com"
     And I am on the "user account" page for "emma-applicant@mutts.com"
-    Then I click on t("menus.nav.members.pay_membership")
+    When I click on t("menus.nav.members.pay_membership")
     And I incur an error in payment processing
-    And I should see t("payments.error.error")
-    Then the user is paid through ""
+    Then I should see t("payments.error.error")
+    And user "emma-applicant@mutts.com" has no completed payments
+    And the user is paid through ""
