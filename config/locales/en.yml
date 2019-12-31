@@ -534,6 +534,9 @@ en:
         h_expires_html: 'Your H-branding fee-payment for company <b>%{company}</b> expired:'
         pay_h_here_html: 'Your H-branding fee for company <b>%{company}</b> needs to be paid:'
 
+    shf_application_min_info_as_table:
+      view_application: View application
+
     shf_application_fields:
       company_numbers_tooltip: You can enter multiple company numbers, separated by
                                a comma or blank spaces
@@ -878,6 +881,8 @@ en:
       not_sent: not sent
       edit_member_status: &edit_member_status Edit Member Status
       pay_membership: &pay_membership Pay Membership Fee
+      edit_user_profile: &edit_user_profile Edit the profile for %{name}
+      admin_user_info_title: User Info
 
     update:
       passwords_dont_match: "The two passwords entered don't match."
@@ -907,6 +912,8 @@ en:
       'no': *no
       edit_member_status: *edit_member_status
       submit_button_label: Update Status
+      edit_user_account: &edit_user_account Edit the account for %{name}
+      edit_user_profile: *edit_user_profile
 
     users_list:
       membership_number: *membership_number_short
@@ -921,9 +928,15 @@ en:
       applications_tooltip: User has an open application
       expire_date: *expire_date
       member_packet: *member_packet
+      edit_profile: Edit Profile
+      edit_account: (Edit Acct.)
 
     destroy:
       success: User deleted successfully.
+
+  user_profiles:
+    edit:
+      edit_user_account: *edit_user_account
 
   payments:
     create:

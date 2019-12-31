@@ -541,6 +541,8 @@ sv:
                         du ett nytt mail med information om hur du skapar din
                         sökbara företagssida."
 
+    shf_application_min_info_as_table:
+      view_application: Visa ansökningar
 
     shf_application_fields:
       company_numbers_tooltip: Du kan ange flera företagsnummer, åtskilda av
@@ -893,6 +895,8 @@ sv:
       not_sent: inte skickat
       edit_member_status: &edit_member_status Redigera medlemsstatus
       pay_membership: &pay_membership Betala medlemsavgift
+      edit_user_profile: &edit_user_profile Edit the profile for %{name}
+      admin_user_info_title: Användare Info
 
     update:
       passwords_dont_match: De två lösenord du angivit matchar inte.
@@ -922,6 +926,8 @@ sv:
       'no': *no
       edit_member_status: *edit_member_status
       submit_button_label: Uppdatera status
+      edit_user_account: &edit_user_account Edit the account for %{name}
+      edit_user_profile: *edit_user_profile
 
     users_list:
       membership_number: *membership_number_short
@@ -936,9 +942,15 @@ sv:
       applications_tooltip: Användaren har en öppen ansökan
       expire_date: *expire_date
       member_packet: *member_packet
+      edit_profile: Edit Profile
+      edit_account: (Edit Acct.)
 
     destroy:
       success: Användaren raderades framgångsrikt.
+
+  user_profiles:
+    edit:
+      edit_user_account: *edit_user_account
 
   payments:
     create:
