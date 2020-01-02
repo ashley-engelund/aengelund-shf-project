@@ -1,0 +1,6 @@
+.login-name
+  .row
+    .col
+      = field_or_none("#{ t('.email') }", mail_to(@user.email),
+                     label_class: 'standard-label',
+                     value_class: 'login-email')

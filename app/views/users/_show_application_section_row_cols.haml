@@ -1,0 +1,10 @@
+.applications
+  .row.section-title
+    .col.mt-2
+      - has_none = @user.shf_application.blank? ? t('none_n') : ''
+      %h3= "#{ t('application') }: #{ has_none }"
+
+  - unless @user.shf_application.blank?
+    .row
+      .col.mt-2
+        = render partial: 'shf_applications/shf_application_min_info_as_table', locals: { application: @user.shf_application }
