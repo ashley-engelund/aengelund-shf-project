@@ -1,10 +1,10 @@
 # Standardized icons and icon-related helpers to use in the app
 #
-# TODO just load this once. No need to redefine the methods every time
 #
 module ShfIconsHelper
 
   FA_STYLE_DEFAULT = 'fas'
+  FA_EDIT = 'edit'
   FA_USER_PROFILE = 'id-card'
   FA_USER_ACCOUNT = 'folder'
   FA_EXTERNAL_LINK = 'external-link-alt'
@@ -15,6 +15,7 @@ module ShfIconsHelper
   METHODS_AND_ICONS = [
       { method_name_start: 'user_profile', icon: FA_USER_PROFILE },
       { method_name_start: 'user_account', icon: FA_USER_ACCOUNT },
+      { method_name_start: 'edit', icon: FA_EDIT },
       { method_name_start: 'external_link', icon: FA_EXTERNAL_LINK },
   ]
 
