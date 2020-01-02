@@ -59,7 +59,7 @@ Feature: Show user account (details) information to me
     Given I am logged in as "emma-member@example.com"
     When I am on the "user details" page for "emma-member@example.com"
     Then I should see "Emma IsAMember"
-    And I should see t("users.show.email")
+    And I should see t("users.show_login_email_row_cols.email")
     And I should see "emma-member@example.com"
 
 
@@ -173,7 +173,7 @@ Feature: Show user account (details) information to me
     Given I am logged in as "emma-member@example.com"
     When I am on the "user details" page for "emma-member@example.com"
     Then I should not see t("errors.not_permitted")
-    And I should see t("users.show.email")
+    And I should see t("users.show_login_email_row_cols.email")
     And I should see "emma-member@example.com"
 
 
@@ -187,7 +187,7 @@ Feature: Show user account (details) information to me
     Given I am logged in as "lars-member@example.com"
     When I am on the "user details" page for "lars-member@example.com"
     Then I should not see t("errors.not_permitted")
-    And I should see t("users.show.email")
+    And I should see t("users.show_login_email_row_cols.email")
     And I should see "lars-member@example.com"
     And I should see t("users.show.membership_number")
 
