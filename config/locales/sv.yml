@@ -826,7 +826,7 @@ sv:
     all_business_categories: Alla kategorier
 
   users:
-    edit_user_account: &edit_user_account Edit the account for %{name}
+    edit_user_account: &edit_user_account Redigera kontot för %{name}
 
     index:
       title: Alla Användare
@@ -862,7 +862,7 @@ sv:
 
       edit_member_status: &edit_member_status Redigera medlemsstatus
       pay_membership: &pay_membership Betala medlemsavgift
-      edit_user_profile: &edit_user_profile Edit the profile for %{name}
+      edit_user_profile: &edit_user_profile Information om användaren %{name}
 
     show_login_email_row_cols:
         email: *email

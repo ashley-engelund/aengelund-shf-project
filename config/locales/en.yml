@@ -866,7 +866,7 @@ en:
       logged_in_count: *sign_in_count
       current_sign_in_at: *user_current_signed_in_time
       current_sign_in_ip: *user_current_ip
-      member_packet: &member_packet member packet
+      member_packet: &member_packet pkt
       sent: sent
       not_sent: not sent
 
