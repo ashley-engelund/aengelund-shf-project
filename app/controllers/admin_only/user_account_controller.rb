@@ -9,22 +9,7 @@ module AdminOnly
     before_action :set_app_config, only: [:edit, :update]
 
 
-    # def become
-    #   return unless current_user.admin?
-    #
-    #   new_user = User.find(params[:id])
-    #
-    #   bypass_sign_in(new_user)
-    #
-    #   current_user = new_user # necessary so feature test passes
-    #
-    #   helpers.flash_message(:warn, t('.have_become', user_id: @user.id, user_name: @user.full_name) )
-    #
-    #   redirect_to user_path(params[:id])
-    # end
-
     def edit
-      puts "admin edit"
     end
 
 
