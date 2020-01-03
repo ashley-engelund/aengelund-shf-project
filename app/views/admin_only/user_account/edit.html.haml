@@ -34,7 +34,7 @@
           = f.label :membership_number
           = f.text_field :membership_number,  class: 'form-control'
 
-    = render partial: 'users/show_application_section_row_cols'
+    = render partial: 'users/show_application_section_row_cols', locals: { user: @user }
 
 
     - if @current_user.admin?
@@ -77,4 +77,4 @@
             = f.submit "#{t('submit')}", class: 'btn btn-primary form-control m-2'
 
 
-    = render partial: 'users/show_member_images_row_cols'
+    = render partial: 'users/show_member_images_row_cols', locals: { user: @user, app_configuration: @app_configuration }

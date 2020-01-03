@@ -16,7 +16,7 @@
 
 .entry-content.container
 
-  = render partial: 'show_login_email_row_cols'
+  = render partial: 'show_login_email_row_cols', locals: { user: @user }
 
   .membership
     .row.section-title
@@ -31,9 +31,8 @@
     = render partial: 'membership_term_status', locals: { user: @user }
 
 
-  = render partial: 'show_application_section_row_cols'
+  = render partial: 'show_application_section_row_cols', locals: { user: @user }
 
-  = render partial: 'show_info_for_admin_only'
+  = render partial: 'show_info_for_admin_only', locals: { user: @user }
 
-  = render partial: 'show_member_images_row_cols'
-
+  = render partial: 'show_member_images_row_cols', locals: { user: @user, app_configuration: @app_configuration }
