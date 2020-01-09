@@ -543,6 +543,8 @@ sv:
 
     shf_application_min_info_as_table:
       view_application: Visa ansökningar
+      org_nr: *org_nr
+      company_name: *name
 
     shf_application_fields:
       company_numbers_tooltip: Du kan ange flera företagsnummer, åtskilda av

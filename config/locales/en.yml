@@ -536,6 +536,8 @@ en:
 
     shf_application_min_info_as_table:
       view_application: View application
+      org_nr: *org_nr
+      company_name: *name
 
     shf_application_fields:
       company_numbers_tooltip: You can enter multiple company numbers, separated by
