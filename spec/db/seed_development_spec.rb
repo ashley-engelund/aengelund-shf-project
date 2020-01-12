@@ -1,9 +1,15 @@
 require 'rails_helper'
 require 'create_membership_seq_if_needed'
 
-require_relative File.join(Rails.root, 'db', 'seed_helpers', 'app_configuration_seeder')
-
 require File.join(__dir__, 'shared_specs_db_seeding')
+
+# require all *.rb files in these <Rails.root>/db subdirectories
+required_subdirs = %w(seed_helpers seeders)
+required_subdirs.each do | required_subdir |
+  Dir[File.join(Rails.root, 'db', required_subdir, '**','*.rb')].each do |file|
+    require file
+  end
+end
 
 # NOTE: We must stub AppConfigurationSeeder.seed so that Paperclip does not try to spawn processes.
 # Some of those spawned processes will Fail (or even SEGFAULT!).
@@ -32,6 +38,8 @@ RSpec.describe 'Dev DB is seeded with users, members, apps, and companies' do
 
       allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('development'))
       allow_any_instance_of(ActivityLogger).to receive(:show).and_return(false)
+
+      allow(Seeders::MasterChecklistsSeeder).to receive(:seed).and_return([])
 
       # must stub this way so the rest of ENV is preserved
       stub_const('ENV', ENV.to_hash.merge({ ENV_ADMIN_EMAIL_KEY    => admin_email,
@@ -64,6 +72,8 @@ RSpec.describe 'Dev DB is seeded with users, members, apps, and companies' do
       RSpec::Mocks.with_temporary_scope do
         allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('development'))
         allow_any_instance_of(ActivityLogger).to receive(:show).and_return(false)
+
+        allow(Seeders::MasterChecklistsSeeder).to receive(:seed).and_return([])
 
         # must stub this way so the rest of ENV is preserved
         stub_const('ENV', ENV.to_hash.merge({ ENV_NUM_SEEDED_USERS_KEY => seed_users }))
