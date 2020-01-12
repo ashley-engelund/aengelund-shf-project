@@ -6,7 +6,15 @@ Rails.application.routes.draw do
   devise_for :users
 
   as :user do
-    authenticated :user, lambda {|u| u.admin? }  do
+
+    authenticated :user, lambda { |u| u.admin? } do
+
+      namespace :admin_only, path: 'admin' do
+        resources :master_checklists
+        get  'master-checklists/max-list-position', to: 'master_checklists#max_list_position'
+        post 'master-checklists/toggle-in-use', to: 'master_checklists#toggle_in_use'
+      end
+
       post 'admin/export-ansokan-csv'
 
       # Route for testing Exception Notification configuration
@@ -17,6 +25,7 @@ Rails.application.routes.draw do
     end
   end
 
+  # ---------------------------------------------------------------------------
   # We're already using 'admin' as the name of a user role, so we
   # use "admin_only" here to avoid colliding with that term with the
   # namespace directories and class names.  We keep 'admin' as the path
