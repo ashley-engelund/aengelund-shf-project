@@ -53,7 +53,7 @@ module Seeders
     end
 
 
-    def self.create_ordered_entry(yaml_entry, parent_ordered_entry: nil)
+    def self.create_ordered_entry(_yaml_entry, parent_ordered_entry: nil)
       raise NoMethodError, "Subclass must define the #{__method__} method", caller
 
       # Example of how a subclass might implement this method:

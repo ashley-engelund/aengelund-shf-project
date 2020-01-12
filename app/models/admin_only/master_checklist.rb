@@ -178,7 +178,7 @@ module AdminOnly
 
     #
     # This is a stub.  Later versions of this model use this to check for completed UserChecklists, etc.
-    def can_be_changed?(attributes_to_change = [])
+    def can_be_changed?(_attributes_to_change = [])
       true
     end
 
