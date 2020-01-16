@@ -46,10 +46,17 @@ module AdminOnly
     # to see if the object can really be destroyed.
     before_destroy :can_be_destroyed?, prepend: true
 
+    USER_CHECKLIST_CLASS = UserChecklist
+
+    has_many :user_checklists, class_name: "#{USER_CHECKLIST_CLASS}", dependent: :destroy
+    has_many :users, through: :user_checklists
 
     has_ancestry
 
     include OrderedAncestryEntry
+
+    scope :completed_userchecklists, -> { where(id: USER_CHECKLIST_CLASS.completed.pluck(:id)) }
+    scope :uncompleted_userchecklists, -> { where(id: USER_CHECKLIST_CLASS.uncompleted.pluck(:id)) }
 
     scope :in_use, -> { where(is_in_use: true) }
     scope :not_in_use, -> { where(is_in_use: false) }
@@ -60,6 +67,10 @@ module AdminOnly
 
     # --------------------------------------------------------------------------
 
+    def self.user_checklist_class
+      USER_CHECKLIST_CLASS
+    end
+
 
     # Return the entry and all children as an Array, sorted by list position and then name.
     #
@@ -67,6 +78,25 @@ module AdminOnly
     #
     def self.all_as_array_nested_by_name
       all_as_array(order: %w(name))
+    end
+
+
+    # The only attributes that can be changed if there are any completed user checklist
+    #  are :is_in_use and :is_in_use_changed_at  (when :is_in_use was changed)
+    #
+    def self.change_with_completed_user_checklists?(attribute)
+      attributes_can_change_with_completed.include?(attribute.to_sym)
+    end
+
+
+    # Cannot change a Master Checklist if the attribute is one that is displayed to users
+    def self.change_with_uncompleted_user_checklists?(attribute)
+      !attributes_displayed_to_users.include?(attribute.to_sym)
+    end
+
+
+    def self.attributes_can_change_with_completed
+      [:is_in_use, :is_in_use_changed_at, :notes, :updated_at]
     end
 
 
@@ -85,6 +115,11 @@ module AdminOnly
     # -----------------------------------------
 
 
+    def user_checklist_class
+      self.class.user_checklist_class
+    end
+
+
     # @return all children that have is_in_use set to true
     #
     def children_in_use
@@ -95,6 +130,21 @@ module AdminOnly
     def children_not_in_use
       self.ancestry_base_class.where(child_conditions).where(is_in_use: false)
     end
+
+
+    def completed_user_checklists
+      user_checklist_class.completed_for_master_checklist(self)
+      # user_checklists.reject(&:completed?) #{ |user_checklist| user_checklist.completed? }
+    end
+
+
+    def uncompleted_user_checklists
+      user_checklist_class.not_completed_for_master_checklist(self)
+      # user_checklists.reject(&:completed?) #{ |user_checklist| user_checklist.completed? }
+    end
+
+
+    alias_method :not_completed_user_checklists, :uncompleted_user_checklists
 
 
     # @return [Array<AdminOnly::MasterChecklist>] - list of MasterChecklists that can be a parent to this one.
@@ -118,6 +168,7 @@ module AdminOnly
         children.each { |child| child.set_is_in_use(in_use) }
         in_use ? change_to_being_in_use : delete_or_mark_unused
       end
+
     end
 
 
@@ -139,11 +190,18 @@ module AdminOnly
     # destroy is called outside this method (with no business logic checks, etc.)
     def delete_or_mark_unused
 
+      delete_uncompleted_user_checklists
+
       if can_delete?
         destroy
       else
         mark_as_no_longer_used
       end
+    end
+
+
+    def delete_uncompleted_user_checklists
+      uncompleted_user_checklists.each { |uncompleted_uc| uncompleted_uc.delete }
     end
 
 
@@ -182,9 +240,8 @@ module AdminOnly
     end
 
 
-    # This is a stub. Later versions of this model use this to check for completed UserChecklists, etc.
     def can_delete?
-      false
+      !children? && !has_completed_user_checklists?
     end
 
 
@@ -196,10 +253,62 @@ module AdminOnly
     # ----------------------
 
 
+    # If there are any completed user checklists, cannot change it.
+    #  it can be changed only if the attribute can be changed with completed user checklists associated
     #
-    # This is a stub.  Later versions of this model use this to check for completed UserChecklists, etc.
-    def can_be_changed?(_attributes_to_change = [])
+    # If there are user checklists, but none are completed:
+    #  it can be changed only if the attribute can be changed with uncompleted user checklists associated
+    #
+    #                                        | uncompleted: can   |                | completed: can
+    # has User Checklist? | any uncompleted? | change attribute ? | any completed? | change attribute ? | can change?
+    # --------------------+------------------+--------------------+----------------+--------------------|------------
+    #   _false_           |   -              |      -             |  -             |                    | true
+    #                     |                  |                    |                |                    |
+    #   true              |   -              |      -             |  true          |  _true_            | true
+    #   true              |   -              |      -             |  false         |  _false_           | false
+    #                     |                  |                    |                |                    |
+    #   true              |   true           |      _true_        |  false         |                    | true
+    #   true              |   true           |      _false_       |  false         |                    | false
+    #
+    #    underlined (_..._) items are the key to determining the result
+    #
+    # TODO Rails 6.0+: verify that changed_attributes still applies. Rails 6.0+ has simplified tracking changes to attributes: Dirty https://api.rubyonrails.org/classes/ActiveModel/Dirty.html
+    #
+    # Raise exceptions - which halts further callbacks and can then be used to display a message (or whatever action should be taken)
+    # if changes to these attributes cannot be made.
+    #
+    def can_be_changed?(attributes_to_change = [])
+
+      return false unless is_in_use
+      return true unless user_checklists.any?
+
+      # '|' = [Array] union of the keys and attributes to change
+
+      if has_completed_user_checklists?
+        can_change_with_completed = (changed_attributes.keys | attributes_to_change).inject(true) { |can_change, this_attribute| can_change && change_with_completed_user_checklists?(this_attribute) }
+        raise HasCompletedUserChecklistsCannotChange unless can_change_with_completed
+      end
+
+      can_change_with_uncompleted = (changed_attributes.keys | attributes_to_change).inject(true) { |can_change, this_attribute| can_change && change_with_uncompleted_user_checklists?(this_attribute) }
+      raise CannotChangeUserVisibleInfo unless can_change_with_uncompleted
+
+      true # should always be true (can be changed) if we got to here
+    end
+
+
+    def change_with_completed_user_checklists?(attribute)
+      self.class.change_with_completed_user_checklists?(attribute)
+    end
+
+
+    def change_with_uncompleted_user_checklists?(attribute)
+      raise CannotChangeUserVisibleInfo unless self.class.change_with_uncompleted_user_checklists?(attribute)
       true
+    end
+
+
+    def has_completed_user_checklists?
+      user_checklist_class.completed_for_master_checklist(self).count > 0
     end
 
 

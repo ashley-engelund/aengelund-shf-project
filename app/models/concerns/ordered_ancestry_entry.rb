@@ -26,7 +26,7 @@ module OrderedAncestryEntry
     before_update :update_parent_list_positions, if: :will_save_change_to_list_position?
 
 
-    NO_CHILDREN_LAST_USED_POSITION = -1
+    NO_CHILDREN_LAST_USED_POSITION = -1 unless defined?(NO_CHILDREN_LAST_USED_POSITION)
 
     # --------------------------------------------------------------------------
 
@@ -44,7 +44,7 @@ module OrderedAncestryEntry
 
 
     # Arrange the hash of nodes and all descendents as an Array. Sort based on the options given.
-    # If no hash of nodes is given, arrange all OrderedListEntries
+    # If no hash of nodes is given, arrange all instances of this class (the including class of this module)
     # Recurse depth first through all descendents.
     #
     # @param [Hash] options - options given to Ancestry.arrange. options[:order] will be used for sorting/order_by

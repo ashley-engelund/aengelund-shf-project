@@ -27,6 +27,11 @@ RSpec.describe AdminOnly::MasterChecklist, type: :model do
   end
 
 
+  it 'the user checklist class is UserChecklist' do
+    expect(described_class.user_checklist_class).to eq UserChecklist
+  end
+
+
   describe 'Factories' do
 
     it 'default factory is valid' do
@@ -59,11 +64,54 @@ RSpec.describe AdminOnly::MasterChecklist, type: :model do
   end
 
 
+  describe '.change_with_completed_user_checklists?' do
+    it 'true if attribute is :notes' do
+      expect(described_class.change_with_completed_user_checklists?(:notes)).to be_truthy
+    end
+    it 'true if attribute is :is_in_use' do
+      expect(described_class.change_with_completed_user_checklists?(:is_in_use)).to be_truthy
+    end
+    it 'true if attribute is :is_in_use' do
+      expect(described_class.change_with_completed_user_checklists?(:is_in_use_changed_at)).to be_truthy
+    end
+    it 'false otherwise' do
+      # TODO could get list of all attributes, reject the ones above, then run this test with each one
+      expect(described_class.change_with_completed_user_checklists?(:blorf)).to be_falsey
+    end
+  end
+
+
+  describe '.change_with_uncompleted_user_checklists??' do
+
+    it 'false if attribute is something that is displayed to users in user checklists' do
+      expect(described_class.change_with_uncompleted_user_checklists?(:displayed_text)).to be_falsey
+      expect(described_class.change_with_uncompleted_user_checklists?(:description)).to be_falsey
+    end
+    it 'true otherwise' do
+      expect(described_class.change_with_uncompleted_user_checklists?('blorf')).to be_truthy
+    end
+  end
+
 
   describe '.attributes_displayed_to_users' do
     it 'just displayed_text and description' do
       expect(described_class.attributes_displayed_to_users).to match_array([:displayed_text, :description])
     end
+  end
+
+
+  describe '.top_level_next_list_position' do
+
+    it '1 if there are no top level checklists' do
+      expect(described_class.top_level_next_list_position).to eq 1
+    end
+
+    it 'maximum list position + 1 of all top level checklists' do
+      create(:master_checklist, displayed_text: 'list 0', list_position: 0)
+      create(:master_checklist, displayed_text: 'list 99', list_position: 99)
+      expect(described_class.top_level_next_list_position).to eq 100
+    end
+
   end
 
 
@@ -91,6 +139,24 @@ RSpec.describe AdminOnly::MasterChecklist, type: :model do
 
       children_found = mc_parent.children_in_use
       expect(children_found.to_a).to match_array([child2_in_use, child3_in_use])
+    end
+  end
+
+
+  describe 'completed_user_checklists' do
+    it 'calls the User Checklist class to get all completed ones for this master checklist' do
+      master_c = create(:master_checklist)
+      expect(described_class.user_checklist_class).to receive(:completed_for_master_checklist).with(master_c)
+      master_c.completed_user_checklists
+    end
+  end
+
+
+  describe 'uncompleted_user_checklists' do
+    it 'calls the User Checklist class to get all not completed ones for this master checklist' do
+      master_c = create(:master_checklist)
+      expect(described_class.user_checklist_class).to receive(:not_completed_for_master_checklist).with(master_c)
+      master_c.uncompleted_user_checklists
     end
   end
 
@@ -177,6 +243,11 @@ RSpec.describe AdminOnly::MasterChecklist, type: :model do
 
     let(:new_master) { create(:master_checklist) }
 
+    it 'uncompleted user checklists are deleted' do
+      expect(new_master).to receive(:delete_uncompleted_user_checklists)
+      new_master.delete_or_mark_unused
+    end
+
     it 'checks to see if it can be deleted' do
       expect(new_master).to receive(:can_delete?)
       new_master.delete_or_mark_unused
@@ -200,6 +271,61 @@ RSpec.describe AdminOnly::MasterChecklist, type: :model do
         expect(new_master).to receive(:destroy)
         new_master.delete_or_mark_unused
       end
+    end
+  end
+
+
+  describe 'delete_uncompleted_user_checklists' do
+
+    MASTERC_NAME = 'master c'
+
+    # Set up a master checklist with 5 associated user checklists:
+    #   2 are completed, 1 is not completed
+    #
+    # Create other master checklists with a mix of completed and uncompleted user checklists.
+    #
+    # Then call delete_uncompleted_user_checklists
+    before(:all) do
+      master_c = create(:master_checklist, name: MASTERC_NAME)
+      create(:user_checklist, :completed, master_checklist: master_c)
+      create(:user_checklist, :completed, master_checklist: master_c)
+      create(:user_checklist, master_checklist: master_c)
+
+      some_other_master_checklist = create(:master_checklist)
+      create(:user_checklist, :completed, master_checklist: some_other_master_checklist)
+      create(:user_checklist, :completed, master_checklist: some_other_master_checklist)
+      create(:user_checklist, master_checklist: some_other_master_checklist)
+      yet_another_master_checklist = create(:master_checklist)
+      create(:user_checklist, :completed, master_checklist: yet_another_master_checklist)
+      create(:user_checklist, master_checklist: yet_another_master_checklist)
+
+      master_c.delete_uncompleted_user_checklists
+    end
+
+    let(:master_c) { described_class.find_by(name: MASTERC_NAME) }
+
+
+    it 'compeleted user checklists for this master checklist are not deleted ' do
+      remaining_user_checklists = UserChecklist.all
+      master_c_user_checklists = remaining_user_checklists.select { |uc| uc.master_checklist == master_c }
+
+      expect(master_c_user_checklists.count).to eq 2
+      expect(master_c_user_checklists.select(&:completed?).count).to eq 2
+    end
+
+    it 'completed user checklists for this master checklist are deleted ' do
+      remaining_user_checklists = UserChecklist.all
+      master_c_user_checklists = remaining_user_checklists.select { |uc| uc.master_checklist == master_c }
+
+      expect(master_c_user_checklists.reject(&:completed?)).to be_empty
+    end
+
+    it 'other user checklists are not affected ' do
+      remaining_user_checklists = UserChecklist.all
+      other_masters_user_checklists = remaining_user_checklists.reject { |uc| uc.master_checklist == master_c }
+
+      expect(other_masters_user_checklists.count).to eq 5
+      expect(other_masters_user_checklists.select(&:completed?).count).to eq 3
     end
   end
 
@@ -286,14 +412,18 @@ RSpec.describe AdminOnly::MasterChecklist, type: :model do
       expect(mc_with_children.can_delete?).to be_falsey
     end
 
+    it 'false if has completed user checklists' do
+      mc_with_completed_uchecklists = create(:master_checklist)
+      create(:user_checklist, :completed, master_checklist: mc_with_completed_uchecklists)
+      expect(mc_with_completed_uchecklists.can_delete?).to be_falsey
+    end
 
-
-    it 'always false (later version of the model implements more logic)' do
-      expect(create(:master_checklist).can_delete?).to be_falsey
+    it 'else true' do
+      expect(create(:master_checklist).can_delete?).to be_truthy
 
       mc_with_uncompleted_uchecklists = create(:master_checklist)
-      # create(:user_checklist, checklist: mc_with_uncompleted_uchecklists)
-      expect(mc_with_uncompleted_uchecklists.can_delete?).to be_falsey
+      create(:user_checklist, master_checklist: mc_with_uncompleted_uchecklists)
+      expect(mc_with_uncompleted_uchecklists.can_delete?).to be_truthy
     end
   end
 
@@ -327,6 +457,77 @@ RSpec.describe AdminOnly::MasterChecklist, type: :model do
       expect(new_master.can_be_changed?(['flurb'])).to be_truthy
     end
 
+    context 'there are associated user checklists' do
+
+      context 'there are completed user checklists' do
+
+        it 'true if attribute changed is :is_in_use or :is_in_use_changed_at' do
+          new_master = create(:master_checklist)
+          create(:user_checklist, :completed, master_checklist: new_master)
+
+          expect(new_master.can_be_changed?([:is_in_use])).to be_truthy
+          expect(new_master.can_be_changed?([:is_in_use_changed_at])).to be_truthy
+        end
+
+        it 'raises exception if the attributes are anything else' do
+          new_master = create(:master_checklist)
+          create(:user_checklist, :completed, master_checklist: new_master)
+
+          expect { new_master.can_be_changed?(['flurb']) }.to raise_exception AdminOnly::HasCompletedUserChecklistsCannotChange
+          expect { new_master.can_be_changed?([:name]) }.to raise_exception AdminOnly::HasCompletedUserChecklistsCannotChange
+        end
+
+        it 'true if no attributes are changed (which should not really happen, but ok if it does)' do
+          new_master = create(:master_checklist)
+          create(:user_checklist, :completed, master_checklist: new_master)
+
+          expect(new_master.can_be_changed?).to be_truthy
+        end
+      end
+
+      context 'there are only uncompleted user checklists' do
+
+        let(:new_master) do
+          master_c = create(:master_checklist)
+          create(:user_checklist, master_checklist: master_c)
+          create(:user_checklist, master_checklist: master_c)
+          master_c
+        end
+
+        it 'notes' do
+          expect(new_master.can_be_changed?(['notes'])).to be_truthy
+          new_master.notes = 'notes is now changed'
+          expect(new_master.can_be_changed?).to be_truthy
+        end
+
+        describe 'raises exception for all attributes users see' do
+          [:displayed_text, :description].each do |attrib_user_sees|
+
+            it "#{attrib_user_sees}" do
+              expect { new_master.can_be_changed?([attrib_user_sees]) }.to raise_exception AdminOnly::CannotChangeUserVisibleInfo
+            end
+          end
+        end
+      end
+
+    end
+
+  end
+
+
+  describe 'has_completed_user_checklists?' do
+
+    it 'true if count of completed user checklists > 0' do
+      mc_with_completed = create(:master_checklist)
+      create(:user_checklist, :completed, master_checklist: mc_with_completed)
+      expect(mc_with_completed.has_completed_user_checklists?).to be_truthy
+    end
+
+    it 'false if count =< 0' do
+      mc_with_completed = create(:master_checklist)
+      create(:user_checklist, master_checklist: mc_with_completed)
+      expect(mc_with_completed.has_completed_user_checklists?).to be_falsey
+    end
   end
 
 
@@ -349,5 +550,355 @@ RSpec.describe AdminOnly::MasterChecklist, type: :model do
     end
   end
 
+
+  # ======================================================
+
+  # describe 'Integration tests ' do
+  #
+  #
+  #
+  # describe 'set_is_in_use ' do
+  # describe 'integration testing' do
+  #   context 'has user checklists ' do
+  #
+  #     context 'none are completed ' do
+  #       it 'is deleted ' do
+  #         pending
+  #       end
+  #     end
+  #
+  #     context 'some are completed ' do
+  #       it 'is marked as not in use ' do
+  #         pending
+  #       end
+  #     end
+  #   end
+  #
+  #   context 'has children ' do
+  #     pending
+  #   end
+  #
+  #   context 'no children ' do
+  #     pending
+  #   end
+  # end
+  # end
+  #
+  #
+  #
+  #   describe 'toggle_is_in_use ' do
+  #
+  #     it 'is_in_use changed to true if it was false ' do
+  #       new_master = create(:master_checklist)
+  #       expect(new_master.is_in_use).to be_truthy
+  #       new_master.toggle_is_in_use
+  #       expect(new_master.is_in_use).to be_falsey
+  #     end
+  #
+  #     it 'is_in_use changed to false if it was true ' do
+  #       new_master = create(:master_checklist, is_in_use: false)
+  #       expect(new_master.is_in_use).to be_falsey
+  #       new_master.toggle_is_in_use
+  #       expect(new_master.is_in_use).to be_truthy
+  #     end
+  #
+  #     it 'is_in_use_changed_at is changed to Time now ' do
+  #       new_master = create(:master_checklist)
+  #       expect(new_master.is_in_use_changed_at).to be_nil
+  #       frozen_time = Time.zone.now
+  #       Timecop.freeze(frozen_time) do
+  #         new_master.toggle_is_in_use
+  #       end
+  #       expect(new_master.is_in_use_changed_at).to eq frozen_time
+  #
+  #       next_frozen_time = Time.zone.now
+  #       Timecop.freeze(next_frozen_time) do
+  #         new_master.toggle_is_in_use
+  #       end
+  #       expect(new_master.is_in_use_changed_at).to eq next_frozen_time
+  #     end
+  #
+  #     it 'all children is_in_use are changed to this same state ' do
+  #       new_master = create(:master_checklist)
+  #       child1 = create(:master_checklist, parent: new_master)
+  #       new_master.insert(child1) # updates the list position in the parent
+  #       child2 = create(:master_checklist, parent: new_master)
+  #       new_master.insert(child2) # updates the list position in the parent
+  #       child2_1 = create(:master_checklist, parent: child2)
+  #       child2.insert(child2_1) # updates the list position in the parent
+  #
+  #       expect(new_master.is_in_use).to be_truthy
+  #       expect(child1.is_in_use).to be_truthy
+  #       expect(child2.is_in_use).to be_truthy
+  #       expect(child2_1.is_in_use).to be_truthy
+  #
+  #       new_master.toggle_is_in_use
+  #
+  #       expect(new_master.is_in_use).to be_falsey
+  #       expect(child1.is_in_use).to be_falsey
+  #       expect(child2.is_in_use).to be_falsey
+  #       expect(child2_1.is_in_use).to be_falsey
+  #     end
+  #
+  #
+  #     context 'is in a list (has ancestors) ' do
+  #       # TODO - too much duplication?
+  #
+  #       describe 'list positions are updated ' do
+  #
+  #         describe 'REMOVED from the parent list (no longer in use) ' do
+  #
+  #           context 'has no children ' do
+  #
+  #             context 'no assoc.user checklists ' do
+  #
+  #               it 'is deleted ' do
+  #                 new_master = create(:master_checklist)
+  #                 expect(new_master.is_in_use).to be_truthy
+  #                 new_master.toggle_is_in_use
+  #
+  #                 expect { described_class.find(new_master.id) }.to raise_exception ActiveRecord::RecordNotFound
+  #               end
+  #             end
+  #
+  #             context 'has assoc.user checklists, but none are completed ' do
+  #
+  #               it 'is deleted; assoc.user checklists are also deleted ' do
+  #                 master_list = create(:master_checklist)
+  #                 uc_1_not_completed = create(:user_checklist, master_checklist: master_list)
+  #                 uc_2_not_completed = create(:user_checklist, master_checklist: master_list)
+  #
+  #                 expect(UserChecklist.count).to eq 2
+  #
+  #                 master_list.toggle_is_in_use
+  #
+  #                 expect(AdminOnly::MasterChecklist.count).to eq 0
+  #                 expect { master_list.reload }.to raise_exception ActiveRecord::RecordNotFound
+  #                 expect(UserChecklist.count).to eq 0
+  #                 expect { uc_1_not_completed.reload }.to raise_exception ActiveRecord::RecordNotFound
+  #                 expect { uc_2_not_completed.reload }.to raise_exception ActiveRecord::RecordNotFound
+  #               end
+  #             end
+  #
+  #
+  #             context 'has completed assoc.user checklists ' do
+  #
+  #               it 'not deleted; only user checklists that are not completed are deleted ' do
+  #
+  #                 new_master = create(:master_checklist)
+  #                 list_1 = create(:master_checklist, parent: new_master)
+  #
+  #                 uc_2_not_completed = create(:user_checklist, master_checklist: new_master)
+  #                 uc_3 = create(:user_checklist, :completed, master_checklist: new_master)
+  #
+  #                 expect(UserChecklist.count).to eq 2
+  #
+  #                 new_master.toggle_is_in_use
+  #
+  #                 expect(new_master.reload.is_in_use).to be_falsey # would fail if the obj. didn' t exist (was deleted)
+  #                 expect(UserChecklist.count).to eq 1
+  #                 expect { uc_2_not_completed.reload }.to raise_exception ActiveRecord::RecordNotFound
+  #               end
+  #
+  #             end
+  #           end
+  #
+  #           context 'has children' do
+  #
+  #             context 'no assoc. user checklists' do
+  #               it 'is deleted. (children will be evaluated independently)' do
+  #
+  #                 new_master = create(:master_checklist)
+  #                 child1 = create(:master_checklist, parent: new_master)
+  #                 new_master.insert(child1) # updates the list position in the parent
+  #                 child2 = create(:master_checklist, parent: new_master)
+  #                 new_master.insert(child2) # updates the list position in the parent
+  #                 child2_1 = create(:master_checklist, parent: child2)
+  #                 child2.insert(child2_1) # updates the list position in the parent
+  #
+  #                 expect(new_master.is_in_use).to be_truthy
+  #                 expect(child1.is_in_use).to be_truthy
+  #                 expect(child2.is_in_use).to be_truthy
+  #                 expect(child2_1.is_in_use).to be_truthy
+  #
+  #                 new_master.toggle_is_in_use
+  #
+  #                 # all should be deleted
+  #                 expect { described_class.find(new_master.id) }.to raise_exception ActiveRecord::RecordNotFound
+  #                 expect { described_class.find(child1.id) }.to raise_exception ActiveRecord::RecordNotFound
+  #                 expect { described_class.find(child2.id) }.to raise_exception ActiveRecord::RecordNotFound
+  #                 expect { described_class.find(child2_1.id) }.to raise_exception ActiveRecord::RecordNotFound
+  #               end
+  #             end
+  #
+  #             context 'has assoc. user checklists, but none are completed' do
+  #
+  #               it 'is deleted; incompleted user checklists are also deleted. (children will be evaluated independently)' do
+  #
+  #                 new_master = create(:master_checklist)
+  #
+  #                 child1 = create(:master_checklist, parent: new_master)
+  #                 new_master.insert(child1) # updates the list position in the parent
+  #                 child2 = create(:master_checklist, parent: new_master)
+  #                 new_master.insert(child2) # updates the list position in the parent
+  #                 child2_1 = create(:master_checklist, parent: child2)
+  #                 child2.insert(child2_1) # updates the list position in the parent
+  #
+  #                 uc_1_not_completed = create(:user_checklist, master_checklist: new_master)
+  #                 uc_2_not_completed = create(:user_checklist, master_checklist: new_master)
+  #                 uc_3_not_completed = create(:user_checklist, master_checklist: new_master)
+  #
+  #                 child2_uc_1_completed = create(:user_checklist, :completed, master_checklist: child2)
+  #
+  #                 expect(UserChecklist.count).to eq 4
+  #
+  #                 new_master.toggle_is_in_use
+  #
+  #                 # These should be deleted:
+  #                 # expect { described_class.find(child1.id) }.to raise_exception ActiveRecord::RecordNotFound
+  #                 expect { described_class.find(child2_1.id) }.to raise_exception ActiveRecord::RecordNotFound
+  #
+  #                 expect(UserChecklist.count).to eq 1
+  #                 expect { UserChecklist.find(uc_1_not_completed.id) }.to raise_exception ActiveRecord::RecordNotFound
+  #                 expect { UserChecklist.find(uc_2_not_completed.id) }.to raise_exception ActiveRecord::RecordNotFound
+  #                 expect { UserChecklist.find(uc_3_not_completed.id) }.to raise_exception ActiveRecord::RecordNotFound
+  #
+  #                 # These should not be deleted:
+  #                 expect(new_master.is_in_use).to be_falsey
+  #                 expect(child2.reload.is_in_use).to be_falsey
+  #                 expect { child2_uc_1_completed.reload }.not_to raise_exception
+  #               end
+  #             end
+  #
+  #             context 'has some completed user checklists' do
+  #
+  #               it 'not deleted; uncompleted user checklists are deleted (children evaluated sep.)' do
+  #                 new_master = create(:master_checklist)
+  #                 child1 = create(:master_checklist, parent: new_master)
+  #                 new_master.insert(child1) # updates the list position in the parent
+  #                 child2 = create(:master_checklist, parent: new_master)
+  #                 new_master.insert(child2) # updates the list position in the parent
+  #                 child2_1 = create(:master_checklist, parent: child2)
+  #                 child2.insert(child2_1) # updates the list position in the parent
+  #
+  #                 expect(new_master.is_in_use).to be_truthy
+  #                 expect(child1.is_in_use).to be_truthy
+  #                 expect(child2.is_in_use).to be_truthy
+  #                 expect(child2_1.is_in_use).to be_truthy
+  #
+  #                 uc_1_not_completed = create(:user_checklist, master_checklist: new_master)
+  #                 uc_2_not_completed = create(:user_checklist, master_checklist: new_master)
+  #                 uc_3_completed = create(:user_checklist, :completed, master_checklist: new_master)
+  #
+  #                 child2_uc_1_not_completed = create(:user_checklist, master_checklist: child2)
+  #
+  #                 new_master.toggle_is_in_use
+  #
+  #                 expect(new_master.is_in_use).to be_falsey
+  #                 expect(described_class.count).to eq 1
+  #
+  #                 # These should be deleted:
+  #                 expect { described_class.find(child1.id) }.to raise_exception ActiveRecord::RecordNotFound
+  #                 expect { described_class.find(child2.id) }.to raise_exception ActiveRecord::RecordNotFound
+  #                 expect { described_class.find(child2_1.id) }.to raise_exception ActiveRecord::RecordNotFound
+  #
+  #                 expect(UserChecklist.count).to eq 1
+  #                 expect(UserChecklist.first).to eq uc_3_completed
+  #               end
+  #
+  #             end
+  #
+  #             context 'children have NO COMPLETED assoc. user checklists' do
+  #
+  #               it 'is deleted, children deleted, all uncompleted user checklists are deleted' do
+  #
+  #                 new_master = create(:master_checklist)
+  #                 child1 = create(:master_checklist, parent: new_master)
+  #                 new_master.insert(child1) # updates the list position in the parent
+  #                 child2 = create(:master_checklist, parent: new_master)
+  #                 new_master.insert(child2) # updates the list position in the parent
+  #                 child2_1 = create(:master_checklist, parent: child2)
+  #                 child2.insert(child2_1) # updates the list position in the parent
+  #
+  #                 expect(new_master.is_in_use).to be_truthy
+  #                 expect(child1.is_in_use).to be_truthy
+  #                 expect(child2.is_in_use).to be_truthy
+  #                 expect(child2_1.is_in_use).to be_truthy
+  #
+  #                 child1_uc_1_not_completed = create(:user_checklist, master_checklist: child1)
+  #                 child2_uc_1_not_completed = create(:user_checklist, master_checklist: child2)
+  #
+  #                 new_master.toggle_is_in_use
+  #
+  #                 # all should be deleted
+  #                 expect(described_class.count).to eq 0
+  #                 expect { described_class.find(new_master.id) }.to raise_exception ActiveRecord::RecordNotFound
+  #                 expect { described_class.find(child1.id) }.to raise_exception ActiveRecord::RecordNotFound
+  #                 expect { described_class.find(child2.id) }.to raise_exception ActiveRecord::RecordNotFound
+  #                 expect { described_class.find(child2_1.id) }.to raise_exception ActiveRecord::RecordNotFound
+  #
+  #                 expect(UserChecklist.count).to eq 0
+  #               end
+  #             end
+  #
+  #             context 'some children DO have completed assoc. user checklists' do
+  #
+  #               it 'is not deleted (since there are children that are completed)' do
+  #
+  #                 # this does not have a User checklist assoc.
+  #                 new_master = create(:master_checklist)
+  #
+  #                 child1 = create(:master_checklist, parent: new_master)
+  #                 new_master.insert(child1) # updates the list position in the parent
+  #                 child2 = create(:master_checklist, parent: new_master)
+  #                 new_master.insert(child2) # updates the list position in the parent
+  #                 child2_1 = create(:master_checklist, parent: child2)
+  #                 child2.insert(child2_1) # updates the list position in the parent
+  #
+  #                 # this does not have a User checklist assoc.
+  #                 child3 = create(:master_checklist, parent: new_master)
+  #                 new_master.insert(child3) # updates the list position in the parent
+  #
+  #                 uc_child1 = create(:user_checklist, master_checklist: child1)
+  #                 uc_child2 = create(:user_checklist, master_checklist: child2)
+  #                 uc_child2_1 = create(:user_checklist, :completed, master_checklist: child2_1)
+  #
+  #                 new_master.toggle_is_in_use
+  #
+  #                 # These were deleted
+  #                 expect { described_class.find(child1.id) }.to raise_exception ActiveRecord::RecordNotFound
+  #                 # The assoc. user checklist was deleted
+  #                 expect { UserChecklist.find(uc_child1.id) }.to raise_exception ActiveRecord::RecordNotFound
+  #
+  #                 expect { described_class.find(child3.id) }.to raise_exception ActiveRecord::RecordNotFound
+  #
+  #                 # uncompleted user checklists were deleted:
+  #                 expect { UserChecklist.find(uc_child2.id) }.to raise_exception ActiveRecord::RecordNotFound
+  #
+  #                 # These were not deleted and now have :is_in_use set to false
+  #                 expect(new_master.reload.is_in_use).to be_falsey
+  #                 expect(child2.reload.is_in_use).to be_falsey
+  #                 expect(child2_1.reload.is_in_use).to be_falsey
+  #
+  #                 # These user checklists are still here
+  #                 # expect(uc_top.reload.master_checklist).to eq new_master
+  #                 expect(uc_child2_1.reload.master_checklist).to eq child2_1
+  #               end
+  #             end
+  #
+  #           end
+  #
+  #         end
+  #
+  #
+  #         describe 'ADDED to the parent list (is now in use)' do
+  #           pending
+  #         end
+  #
+  #       end
+  #     end
+  #   end
+  #
+  # end
 
 end
