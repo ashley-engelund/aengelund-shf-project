@@ -89,6 +89,29 @@ RSpec.describe "module OrderedAncestryEntry" do
   end
 
 
+  describe 'list position is updated' do
+
+    context 'is a top level list' do
+
+      it 'other top level list positions are updated' do
+
+        top_list_0 = create(:master_checklist, displayed_text: 'list 0', list_position: 0)
+        top_list_2 = create(:master_checklist, displayed_text: 'list 2', list_position: 2)
+        top_list_1 = create(:master_checklist, displayed_text: 'list 1', list_position: 1)
+
+        expect(top_list_1).to receive(:entries_to_decrement).and_call_original
+        expect(top_list_1).to receive(:entries_to_increment).and_call_original
+
+        top_list_1.update(list_position: 2)
+
+        expect(top_list_0.reload.list_position).to eq 0
+        expect(top_list_1.reload.list_position).to eq 2
+        expect(top_list_2.reload.list_position).to eq 1
+      end
+    end
+  end
+
+
   describe 'insert' do
 
     it 'appends to the end if no position given' do
@@ -294,9 +317,38 @@ RSpec.describe "module OrderedAncestryEntry" do
   end
 
 
+  describe 'last_used_list_position' do
+
+    it '-1 if the list is empty' do
+      expect(create(:master_checklist).last_used_list_position).to eq class_that_includes::NO_CHILDREN_LAST_USED_POSITION
+    end
+
+    it 'maximum value of children.list_position if there are any children' do
+      root_mc = create(:master_checklist, num_children: 2)
+      puts "children list_postions: #{root_mc.children.map(&:list_position)}"
+      expect(root_mc.last_used_list_position).to eq 1
+
+      create(:master_checklist, parent: root_mc, name: 'list pos is not contiguous', list_position: 99)
+      puts "children list_postions: #{root_mc.children.map(&:list_position)}"
+      expect(root_mc.last_used_list_position).to eq 99
+    end
+
+    context 'not saved' do
+      it 'is NO_CHILDREN_LAST_USED_POSITION (-1)' do
+        expect(build(:master_checklist).last_used_list_position).to eq class_that_includes::NO_CHILDREN_LAST_USED_POSITION
+      end
+
+    end
+  end
+
+
   describe 'next_list_position' do
-    it 'is the last position for children ( = children.size)' do
-      expect(create(:master_checklist, num_children: 2).next_list_position).to eq 2
+    it 'is (maximum list_position of all children) + 1 [list positions may not be contiguous]' do
+      root_mc = create(:master_checklist, num_children: 2)
+      expect(root_mc.next_list_position).to eq 2
+
+      create(:master_checklist, parent: root_mc, name: 'list pos is not contiguous', list_position: 99)
+      expect(root_mc.next_list_position).to eq 100
     end
 
     it 'is zero if there are no children' do
@@ -373,6 +425,34 @@ RSpec.describe "module OrderedAncestryEntry" do
 
       expect(not_saved.allowable_as_parents([])).to be_empty
       expect(not_saved.allowable_as_parents([toplist])).to eq [toplist]
+    end
+
+
+    describe 'is sorted' do
+
+      before(:all) do
+        pos0_n1 = create(:master_checklist, name: '1', list_position: 0)
+        create(:master_checklist, name: '1.1', list_position: 0, parent: pos0_n1)
+        create(:master_checklist, name: '1.2', list_position: 1, parent: pos0_n1)
+
+        create(:master_checklist, name: '0', list_position: 1)
+
+        pos2_n3 = create(:master_checklist, name: '3', list_position: 2)
+        create(:master_checklist, name: '3.1', list_position: 0, parent: pos2_n3)
+        create(:master_checklist, name: '3.2', list_position: 1, parent: pos2_n3)
+
+        create(:master_checklist, name: '2', list_position: 3)
+      end
+
+      it 'default is to sort by list position' do
+        some_mc = create(:master_checklist)
+        expect(some_mc.allowable_as_parents(class_that_includes.all).map(&:name)).to eq(['1', '1.1', '1.2', '0', '3', '3.1', '3.2', '2'])
+      end
+
+      it 'can provide a block to use for sorting' do
+        some_mc = create(:master_checklist)
+        expect(some_mc.allowable_as_parents(class_that_includes.all) { |p| p.name }.map(&:name)).to eq(['0', '1', '1.1', '1.2', '2', '3', '3.1', '3.2'])
+      end
     end
   end
 

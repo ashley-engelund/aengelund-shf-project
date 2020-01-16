@@ -23,8 +23,10 @@ module OrderedAncestryEntry
 
     # If the list position has changed,
     # the parent (containing) list needs to update all of the other entries (siblings) in the list.
-    around_update :update_parent_list_positions, if: :will_save_change_to_list_position?
+    before_update :update_parent_list_positions, if: :will_save_change_to_list_position?
 
+
+    NO_CHILDREN_LAST_USED_POSITION = -1
 
     # --------------------------------------------------------------------------
 
@@ -34,7 +36,7 @@ module OrderedAncestryEntry
     # Helpful for displaying the list.
     #
     # @param [Array<String>] order - list of attributes to order the array by
-    # @return [Array<MasterChecklist>] - an Array with the given node first, then its descendents sorted by the ancestry, list position, and then name.
+    # @return [Array<OrderedAncestryEntry>] - an Array with the given node first, then its descendents sorted by the ancestry, list position, and then name.
     #
     def self.all_as_array(order: [])
       arrange_as_array(order: %w(ancestry list_position).concat(order))
@@ -48,7 +50,7 @@ module OrderedAncestryEntry
     # @param [Hash] options - options given to Ancestry.arrange. options[:order] will be used for sorting/order_by
     # @param [Hash] nodes_to_arrange_hash - a Hash of nodes to arrange. Initialized to Ancestry.arrange(options) if not given.
     #
-    # @return [Array<MasterChecklist>] - an Array with the given node first, then its descendents sorted based on options[:order]
+    # @return [Array<OrderedAncestryEntry>] - an Array with the given node first, then its descendents sorted based on options[:order]
     #
     def self.arrange_as_array(options = {}, nodes_to_arrange_hash = nil)
       nodes_to_arrange_hash ||= arrange(options)
@@ -68,7 +70,7 @@ module OrderedAncestryEntry
     #
     # After the insert, update the order_in_list [= position] for all children.
     #
-    # @param new_entry [MasterChecklist] - the new entry to insert into the list of children
+    # @param new_entry [OrderedAncestryEntry] - the new entry to insert into the list of children
     # @param new_position [Integer] - the 0-based position for the new entry.
     #  Default = the size of the list of children,  which will place the new_entry at the end
     #
@@ -87,7 +89,7 @@ module OrderedAncestryEntry
     # Delete the entry from the list of children.
     # After the deletion, update the positions for all children as necessary.
     #
-    # @param entry [MasterChecklist] - the entry to delete from the list of children
+    # @param entry [OrderedAncestryEntry] - the entry to delete from the list of children
     # @return [Array] - children with the entry deleted
     def delete_from_children(entry)
       if children.include?(entry)
@@ -113,9 +115,20 @@ module OrderedAncestryEntry
     end
 
 
+    # The last (max) list_position of all children.
+    # Is -1 if there are no children
+    def last_used_list_position
+      children? ? children.map(&:list_position).max : NO_CHILDREN_LAST_USED_POSITION
+    rescue Ancestry::AncestryException
+      # if this has not yet been saved, Ancestry will raise this exception.
+      # No need to propagate the exception. Return the value for having no children.
+      NO_CHILDREN_LAST_USED_POSITION
+    end
+
+
     # the next list position that should be used
     def next_list_position
-      children.size
+      last_used_list_position + 1
     end
 
 
@@ -130,9 +143,13 @@ module OrderedAncestryEntry
     # No children of this entry can be a parent
     # Helpful for selecting a parent for an entry
     #
-    # @param [Array[MasterChecklist]] - list of entries to check
-    # @return [Array[MasterChecklist]] - the list of entries that can be a parent to this object
-    def allowable_as_parents(potential_parents = [])
+    # List is sorted by list_position by default.
+    #
+    # @param [Array<OrderedAncestryEntry>] - list of entries to check
+    # @param  [Proc] block - a block to pass to #sort_by used to sort the final list returned
+    # @return [Array<OrderedAncestryEntry>] - the list of entries that can be a parent to this object
+    #
+    def allowable_as_parents(potential_parents = [], &block)
       return potential_parents if potential_parents.empty?
 
       if self.persisted?
@@ -147,7 +164,7 @@ module OrderedAncestryEntry
         allowable_parents = potential_parents
       end
 
-      allowable_parents
+      block ? allowable_parents.sort_by(&block) : allowable_parents
     end
 
 
@@ -157,19 +174,21 @@ module OrderedAncestryEntry
 
     # This calls update_columns (_not_ update) so that any update... callbacks will NOT be triggered
     def increment_child_positions(position_start = children.size)
-      children_to_increment = children_to_increment(position_start)
-      children_to_increment.each do |child|
-        child.update_list_position_and_updated_cols(child.list_position + 1)
-      end
+      children_to_inc = children_to_increment(position_start)
+      # children_to_increment.each do |child|
+      #   child.update_list_position_and_updated_cols(child.list_position + 1)
+      # end
+      increment_positions(children_to_inc)
     end
 
 
     # This calls update_columns (_not_ update) so that any update... callbacks will NOT be triggered
     def decrement_child_positions(position_start = children.size)
-      children_to_decrement = children_to_decrement(position_start)
-      children_to_decrement.each do |child|
-        child.update_list_position_and_updated_cols(child.list_position - 1)
-      end
+      children_to_dec = children_to_decrement(position_start)
+      # children_to_decrement.each do |child|
+      #   child.update_list_position_and_updated_cols(child.list_position - 1)
+      # end
+      decrement_positions(children_to_dec)
     end
 
 
@@ -191,40 +210,79 @@ module OrderedAncestryEntry
 
   # Update the list positions for all entries in the parent list based on
   # the about to be saved 'list_position' attribute for this entry.
-  # See around_update
+  # If this is a top level list and the position has changed, then update the
+  # list positions for all other top level lists ( = siblings ).
+  #
+  #
+  # See before_update
   #
   # This is not the most efficient way to do this, but it is the most straightforward.
   # (If the list lengths were very large, it would be worth using a more efficient algorithm.)
   #
   def update_parent_list_positions
-
-    if ancestors?
       original_list_position = attribute_change_to_be_saved('list_position').first
       new_position = attribute_change_to_be_saved('list_position').last
 
+    if ancestors?
       # move all children "down" to fill where this entry used to be
       parent.decrement_child_positions(original_list_position + 1)
 
       # make room for where this will be inserted in the new_position
       parent.increment_child_positions(new_position)
+    else
+      # If this is a top level list, need to update all siblings
+      if siblings?
+        sibs_not_including_self = siblings.reject{|s| s == self}
+        sibs_after_orig_position = entries_to_decrement(sibs_not_including_self, original_list_position + 1)
+        decrement_positions(sibs_after_orig_position)
 
-      # update and save this object
-      yield
+        sibs_to_increment = entries_to_increment(sibs_not_including_self, new_position)
+        increment_positions(sibs_to_increment)
+      end
+    end
+  end
+
+
+  def decrement_positions(entries_to_decrement = [])
+    entries_to_decrement.each do |entry|
+      entry.update_list_position_and_updated_cols(entry.list_position - 1)
+    end
+  end
+
+
+  def increment_positions(entries_to_increment = [])
+    entries_to_increment.each do |entry|
+      entry.update_list_position_and_updated_cols(entry.list_position + 1)
     end
   end
 
 
   def children_to_increment(position_start = children.size)
-    position_to_start_incrementing = position_start.blank? ? children.size : position_start
-    children.select { |child| child.list_position >= position_to_start_incrementing }
+    entries_to_increment(children, position_start)
+    # position_to_start_incrementing = position_start.blank? ? children.size : position_start
+    # children.select { |child| child.list_position >= position_to_start_incrementing }
   end
 
 
   def children_to_decrement(position_start = children.size)
-    position_to_start_decrementing = position_start.blank? ? children.size : position_start
+    entries_to_decrement(children, position_start)
+    # position_to_start_decrementing = position_start.blank? ? children.size : position_start
+    #
+    # # do not decrement any list_position that is zero or less
+    # children.select { |child| child.list_position > 0 && child.list_position >= position_to_start_decrementing }
+  end
 
+
+  def entries_to_increment(entries = [], position_start)
+    position_to_start_incrementing = position_start.blank? ? entries.size : position_start
+    entries.select { |entry| entry.list_position >= position_to_start_incrementing }
+  end
+
+
+  def entries_to_decrement(entries = [], position_start)
+    position_to_start_decrementing = position_start.blank? ? entries.size : position_start
     # do not decrement any list_position that is zero or less
-    children.select { |child| child.list_position > 0 && child.list_position >= position_to_start_decrementing }
+    entries.select { |entry| entry.list_position > 0 && entry.list_position >= position_to_start_decrementing }
   end
 
 end
