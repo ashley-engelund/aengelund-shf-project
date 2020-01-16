@@ -71,7 +71,7 @@ Rails.application.routes.draw do
     get 'designguide', to: 'design_guide#show'
 
   end
-
+  # ---------------------------------------------------------------------------
 
   get '/pages/*id', to: 'pages#show', as: :page, format: false
 
@@ -124,7 +124,14 @@ Rails.application.routes.draw do
 
       post 'toggle_membership_package_sent', to: 'users#toggle_membership_package_sent'
 
+      # ---------------------------------------------------
+      # UserChecklist as a nested resource under User, with path '/lista' in the URI
+      resources :user_checklists, only: [:show, :index], path: 'lista' do
+        post 'all_changed_by_completion_toggle', to: 'user_checklists#all_changed_by_completion_toggle'
+      end
+
     end
+
 
     get 'anvandare/:id/proof_of_membership', to: 'users#proof_of_membership',
         as: 'proof_of_membership'
