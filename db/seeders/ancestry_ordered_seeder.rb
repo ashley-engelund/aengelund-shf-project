@@ -44,7 +44,7 @@ module Seeders
 
       entries_created = []
       begin
-      new_ordered_entry = create_ordered_entry(yaml_hash, parent_ordered_entry: parent_ordered_entry)
+        new_ordered_entry = create_ordered_entry(yaml_hash, parent_ordered_entry: parent_ordered_entry)
       rescue => error
         raise error, "trying to create! #{yaml_hash}\n   #{error.message}"
       end
@@ -52,7 +52,7 @@ module Seeders
 
       yaml_hash.fetch(:children, []).each do |yaml_child_entry|
         begin
-        entries_created.concat(create_entry_and_children(yaml_child_entry, parent_ordered_entry: new_ordered_entry))
+          entries_created.concat(create_entry_and_children(yaml_child_entry, parent_ordered_entry: new_ordered_entry))
         rescue => error
           raise error, "trying to create! #{yaml_child_entry}\n   #{error.message}"
         end

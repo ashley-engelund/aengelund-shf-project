@@ -38,6 +38,7 @@ RSpec.describe 'Dev DB is seeded with users, members, apps, and companies' do
       allow_any_instance_of(SeedHelper::AddressFactory).to receive(:tell).and_return(false)
 
       allow(Seeders::MasterChecklistsSeeder).to receive(:seed).and_return([])
+      allow(Seeders::UserChecklistsSeeder).to receive(:seed).and_return([])
 
       # must stub this way so the rest of ENV is preserved
       stub_const('ENV', ENV.to_hash.merge({ ENV_ADMIN_EMAIL_KEY    => admin_email,
@@ -70,6 +71,7 @@ RSpec.describe 'Dev DB is seeded with users, members, apps, and companies' do
         allow(Seeders::YamlSeeder).to receive(:tell).and_return(false)
 
         allow(Seeders::MasterChecklistsSeeder).to receive(:seed).and_return([])
+        allow(Seeders::UserChecklistsSeeder).to receive(:seed).and_return([])
 
         # must stub this way so the rest of ENV is preserved
         stub_const('ENV', ENV.to_hash.merge({ ENV_NUM_SEEDED_USERS_KEY => seed_users }))

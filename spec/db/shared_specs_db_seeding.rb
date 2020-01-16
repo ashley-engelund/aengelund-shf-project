@@ -29,6 +29,7 @@ RSpec.shared_examples 'admin, business categories, kommuns, and regions are seed
 
         allow(SeedHelper::AppConfigurationSeeder).to receive(:seed).and_return(true)
         allow(Seeders::MasterChecklistsSeeder).to receive(:seed).and_return([])
+        allow(Seeders::UserChecklistsSeeder).to receive(:seed).and_return([])
 
         SHFProject::Application.load_tasks
         SHFProject::Application.load_seed
@@ -154,6 +155,7 @@ RSpec.shared_examples 'it calls geocode min max times with csv file' do |num_use
       allow_any_instance_of(SeedHelper::AddressFactory).to receive(:tell).and_return(false)
 
       allow(Seeders::MasterChecklistsSeeder).to receive(:seed).and_return([])
+      allow(Seeders::UserChecklistsSeeder).to receive(:seed).and_return([])
 
       stub_const('ENV', ENV.to_hash.merge({ ENV_NUM_SEEDED_USERS_KEY => num_users }))
       stub_const('ENV', ENV.to_hash.merge({ ENV_SEED_FAKE_CSV_FNAME_KEY => csv_filename }))
