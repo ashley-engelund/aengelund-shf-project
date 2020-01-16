@@ -103,11 +103,16 @@ module Seeders
 
     # Subclasses can override this as needed, especially if creating objects from the yaml is complex.
     #
-    #  FIXME use map?
     # @return [Array<Object>] - list of objects successfully created
     def self.create_objects(yaml_entries)
       created_objects = []
-      yaml_entries.each { |yaml_entry| created_objects << create_object(yaml_entry) }
+      yaml_entries.each do |yaml_entry|
+        begin
+          created_objects << create_object(yaml_entry)
+        rescue => error
+          raise error, "trying to create_object #{yaml_entry}\n   #{error.message}"
+        end
+      end
       created_objects
     end
 
@@ -209,9 +214,6 @@ module Seeders
     # =============================
 
 
-    # FIXME this doesn't belong here!
-    # Create a MasterChecklist from the yaml_hash, then each entry in [:children] (this recurses top-down)
-    #
     def self.create_entry_and_children(yaml_hash, parent_ordered_entry: nil)
 
       new_ordered_entry = create_ordered_entry(yaml_hash, parent_ordered_entry: parent_ordered_entry)

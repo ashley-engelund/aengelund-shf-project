@@ -43,17 +43,25 @@ module Seeders
     def self.create_entry_and_children(yaml_hash, parent_ordered_entry: nil)
 
       entries_created = []
+      begin
       new_ordered_entry = create_ordered_entry(yaml_hash, parent_ordered_entry: parent_ordered_entry)
+      rescue => error
+        raise error, "trying to create! #{yaml_hash}\n   #{error.message}"
+      end
       entries_created << new_ordered_entry
 
       yaml_hash.fetch(:children, []).each do |yaml_child_entry|
+        begin
         entries_created.concat(create_entry_and_children(yaml_child_entry, parent_ordered_entry: new_ordered_entry))
+        rescue => error
+          raise error, "trying to create! #{yaml_child_entry}\n   #{error.message}"
+        end
       end
       entries_created
     end
 
 
-    def self.create_ordered_entry(_yaml_entry, parent_ordered_entry: nil)
+    def self.create_ordered_entry(yaml_entry, parent_ordered_entry: nil)
       raise NoMethodError, "Subclass must define the #{__method__} method", caller
 
       # Example of how a subclass might implement this method:
