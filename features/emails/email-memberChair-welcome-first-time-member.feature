@@ -2,7 +2,8 @@ Feature: Membership chair gets an email when a first-time-ever membership has be
 
   As the membership chair,
   So that I can welcome a new member on social media, send a membership package, etc.,
-  I should get an email when someone has been granted membership for the first time.
+  I should get an email when someone has been granted membership for the first time
+  and they have joined a Company (and the company is in good standing).
 
 
   Pivotal Tracker story: https://www.pivotaltracker.com/story/show/169273314
