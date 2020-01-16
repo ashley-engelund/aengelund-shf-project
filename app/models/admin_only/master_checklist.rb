@@ -5,10 +5,13 @@ module AdminOnly
   class MasterChecklistError < StandardError
   end
 
-  class HasCompletedUserChecklistsCannotChange < MasterChecklistError
+  class CannotChangeAttributeError < MasterChecklistError
   end
 
-  class CannotChangeUserVisibleInfo < MasterChecklistError
+  class HasCompletedUserChecklistsCannotChange < CannotChangeAttributeError
+  end
+
+  class CannotChangeUserVisibleInfo < CannotChangeAttributeError
   end
 
 
@@ -51,6 +54,10 @@ module AdminOnly
     scope :in_use, -> { where(is_in_use: true) }
     scope :not_in_use, -> { where(is_in_use: false) }
 
+    scope :top_level_checklists, -> { where(ancestry: nil) }
+    scope :top_level_in_use, -> { top_level_checklists.in_use }
+
+
     # --------------------------------------------------------------------------
 
 
@@ -68,6 +75,13 @@ module AdminOnly
     end
 
 
+    def self.top_level_next_list_position
+      default_next_position = 1
+      top_checklists = top_level_in_use
+      top_checklists.empty? ? default_next_position : top_checklists.pluck(:list_position).max + 1
+    end
+
+
     # -----------------------------------------
 
 
@@ -82,6 +96,12 @@ module AdminOnly
       self.ancestry_base_class.where(child_conditions).where(is_in_use: false)
     end
 
+
+    # @return [Array<AdminOnly::MasterChecklist>] - list of MasterChecklists that can be a parent to this one.
+    #  Only those that are currently in use are returned.
+    def allowable_parents(potential_parents = [])
+      allowable_as_parents(potential_parents).select(&:is_in_use)
+    end
 
 
     def toggle_is_in_use

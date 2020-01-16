@@ -95,6 +95,18 @@ RSpec.describe AdminOnly::MasterChecklist, type: :model do
   end
 
 
+  describe 'allowable_parents' do
+
+    it 'only entries currently in use are returned' do
+      mc1 = create(:master_checklist)
+      mc_in_use = create(:master_checklist)
+      mc_not_in_use = create(:master_checklist, :not_in_use)
+
+      expect(mc1.allowable_parents([mc_in_use, mc_not_in_use])).to match_array([mc_in_use])
+    end
+  end
+
+
   describe 'toggle_is_in_use' do
     it 'sets_in_use to the opposite of whatever is_in_use currently is' do
       mc_in_use = create(:master_checklist)
