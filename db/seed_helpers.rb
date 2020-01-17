@@ -117,6 +117,8 @@ module SeedHelper
 
   # Create a SHF Application for the user and set the application
   # to the given :state.
+  # If the company for co_number does not yet exist, create it. (find_or_create!(company_number: ...))
+  #
   # If the application is accepted, then also create payments
   # (a membership payment and H-brand payment for the company).
   #
@@ -151,7 +153,7 @@ module SeedHelper
     ma.file_delivery_selection_date = Date.current
 
     # make a full company object (instance) for the membership application
-    ma.companies << make_new_company(co_number)
+    ma.companies << find_or_make_new_company(co_number)
 
     # Create payment records for accepted app and associated company
     if ma.state == MA_ACCEPTED_STATE_STR
@@ -230,20 +232,21 @@ module SeedHelper
   end
 
 
-  def make_new_company(company_number)
+  def find_or_make_new_company(company_number)
 
-    # make a full company instance
-    company = Company.new(company_number: company_number,
-                          email:          FFaker::InternetSE.disposable_email,
-                          name:           FFaker::CompanySE.name,
-                          phone_number:   FFaker::PhoneNumberSE.phone_number,
-                          website:        FFaker::InternetSE.http_url)
+    Company.find_or_create_by!(company_number: company_number) do | co |
 
-    if company.save
-      @address_factory.make_n_save_a_new_address(company)
+      # make a full company instance and address
+      co.company_number = company_number
+      co.email =          FFaker::InternetSE.disposable_email
+      co.name =           FFaker::CompanySE.name
+      co.phone_number =   FFaker::PhoneNumberSE.phone_number
+      co.website =        FFaker::InternetSE.http_url
+
+      @address_factory.make_n_save_a_new_address(co)
+      co
     end
 
-    company
   end
 
 
