@@ -9,6 +9,7 @@ require 'rake'
 require 'activity_logger'
 require 'logfile_namer'
 
+require_relative 'seed_helpers'
 require_relative 'require_all_seeders_and_helpers'
 
 
