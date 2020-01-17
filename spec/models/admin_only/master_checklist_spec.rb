@@ -26,6 +26,13 @@ RSpec.describe AdminOnly::MasterChecklist, type: :model do
     list
   end
 
+  after(:all) do
+    DatabaseCleaner.clean
+    UserChecklist.delete_all
+    AdminOnly::MasterChecklist.delete_all
+    User.delete_all
+  end
+
 
   it 'the user checklist class is UserChecklist' do
     expect(described_class.user_checklist_class).to eq UserChecklist

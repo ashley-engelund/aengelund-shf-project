@@ -19,6 +19,14 @@ RSpec.describe UserChecklist, type: :model do
   }
 
 
+  after(:all) do
+    DatabaseCleaner.clean
+    UserChecklist.delete_all
+    AdminOnly::MasterChecklist.delete_all
+    User.delete_all
+  end
+
+
   describe 'Factory' do
 
     it 'default factory is valid' do
@@ -52,6 +60,7 @@ RSpec.describe UserChecklist, type: :model do
   describe 'Scopes (including those as class methods)' do
 
     describe 'completed' do
+
       it 'empty if no UserChecklist is completed' do
         create(:user_checklist)
         expect(described_class.completed).to be_empty
