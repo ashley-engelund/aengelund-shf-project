@@ -33,7 +33,6 @@ RSpec.describe 'Dev DB is seeded with users, members, apps, and companies' do
 
       allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('development'))
 
-      allow(Seeders::YamlSeeder).to receive(:tell).and_return(false)
       allow_any_instance_of(ActivityLogger).to receive(:show).and_return(false)
       allow(Seeders::YamlSeeder).to receive(:tell).and_return(false)
       allow_any_instance_of(SeedHelper::AddressFactory).to receive(:tell).and_return(false)

@@ -145,6 +145,7 @@ RSpec.shared_examples 'it calls geocode min max times with csv file' do |num_use
     RSpec::Mocks.with_temporary_scope do
 
       allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('development'))
+
       allow_any_instance_of(ActivityLogger).to receive(:show).and_return(false)
       allow(Seeders::YamlSeeder).to receive(:tell).and_return(false)
       allow_any_instance_of(SeedHelper::AddressFactory).to receive(:tell).and_return(false)
