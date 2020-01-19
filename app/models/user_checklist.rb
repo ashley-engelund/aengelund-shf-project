@@ -10,10 +10,23 @@ require 'ordered_ancestry_entry'
 # Note: If a list has sublists (children), it cannot be manually set to un-/completed.
 #   The completion status is set automatically based on the children (e.g. if they are are complete or not).
 #
-#
 # What happens when you change the master list?  does it reflect that?
 #   - No:  SHF board decided that when a person renews again (or has reason to see the checklist again),
 #     the users will see the new/updated/changed information from a master list.  (Otherwise we have to notify each user of the change(s) each time.)
+#
+# TODO:  if a new membership guideline list is generated each time a person renews,
+#    then we need a way to know which is the _current_ membership guideline list.
+#  - is this just the same as
+#    (1) setting something as 'current/ not in use / expiration date'
+#    (2) setting the associated "type" of a thing ( = --> a table/list of types )
+#
+# TODO: There is a _time_ component to a UserChecklist: there is a date when the list starts to take effect
+#    and a 'due date': a deadline by which the user must completed it,
+#    and perhaps even a date when the list no longer applies.
+#
+# Ex:
+#   in 2020, current members in good standing do not need to complete the Membership Guidelines until they renew next time.
+#
 #
 # @author Ashley Engelund (ashley.engelund@gmail.com  weedySeaDragon @ github)
 # @date  2019-12-04
@@ -66,13 +79,14 @@ class UserChecklist < ApplicationRecord
 
   # Add .includes to the query used to get all descendants to help avoid N+1 queries
   def descendants depth_options = {}
-    super.includes(:master_checklist).includes(:user)
+    super #.includes(:user)
   end
 
 
   # Add .includes to the query used to get all descendants to help reduce N+1 queries
   def children
-    super.includes(:master_checklist).includes(:user)
+    # super.includes(:master_checklist).includes(:user)
+    super #.includes(:user)
   end
 
 
@@ -104,6 +118,19 @@ class UserChecklist < ApplicationRecord
   end
 
 
+  # @return [Integer] - 100 = 100% complete. The percent complete, based on self or all children.
+  def percent_complete
+    if children?
+      size = children.count
+      total_kid_percents = children.inject(0) { |sum, kid| sum + kid.percent_complete }
+      total_kid_percents.fdiv(size).round
+    else
+      completed? ? 100 : 0
+    end
+
+  end
+
+
   # Toggle whether or not this is completed and return a list of all UserChecklists changed because of it.
   # Use the current completed state to determine what the new state should be.
   #
@@ -112,6 +139,20 @@ class UserChecklist < ApplicationRecord
   #
   def all_changed_by_completion_toggle(new_date_complete = Time.zone.now)
     completed? ? all_toggled_to_uncomplete : all_toggled_to_complete(new_date_complete)
+  end
+
+
+  # Set this and all children to completed with the given date
+  def set_complete_including_children(new_date_completed = Time.zone.now)
+    update(date_completed: new_date_completed)
+    set_date_completed(descendants.uncompleted, new_date_completed)
+  end
+
+
+  # Set this and all children to not completed
+  def set_uncomplete_including_children
+    update(date_completed: nil)
+    set_date_completed(descendants.completed, nil)
   end
 
 
@@ -165,6 +206,25 @@ class UserChecklist < ApplicationRecord
     end
 
     items_changed
+  end
+
+
+  # Use update_all to set (update) date_completed and updated_at
+  # update_all will not set :updated_at.
+  # We manually set it first in case changing the date_completed would change the group of records
+  # for ar_relation.
+  #
+  # @param [ActiveRecord::Relation] ar_relation -  the relation (= will resolve to some group of records) that will be updated
+  # @param [Time | Nil] new_date_completed - the new value for date_completed
+  #
+  def set_date_completed(ar_relation, new_date_completed)
+    set_updated_at_now(ar_relation)
+    ar_relation.update_all(date_completed: new_date_completed)
+  end
+
+
+  def set_updated_at_now(ar_relation)
+    ar_relation.update_all(updated_at: Time.zone.now)
   end
 
 end

@@ -1,0 +1,130 @@
+// Styles for UserChecklists
+
+@import 'shf-custom-colors';
+
+$med-soft-green: #64884266;
+$med-soft-green-darker: #5982329c;
+
+$blue-element-color: $info;
+
+$is-complete-color: $med-soft-green-darker;
+$checkbox-size: 20px;
+
+
+#user-checklists {
+
+  li {
+    //list-style: none;
+
+    .is-list {
+      font-weight: bold;
+    }
+
+    .top-level-list {
+      color: $primary;
+      font-size: larger;
+    }
+
+    .date-completed {
+      font-size: smaller;
+      font-style: italic;
+    }
+  }
+}
+
+.membership-guidelines {
+
+  .show-inline {
+    display: inline;
+  }
+
+  .hide {
+    display: none;
+  }
+
+  .is-complete{
+    color: $is-complete-color;
+  }
+
+
+  .instructions.scroll-down {
+    font-size: smaller;
+    text-align: center;
+  }
+
+
+  .progress {
+
+    height: 2rem;
+
+    .percent-text {
+      color: $body-text;
+      font-size: 1rem;
+      //font-weight: bolder;
+    }
+
+    .progress-bar {
+      background-color: lighten($blue-element-color, 30%);
+    }
+
+    .progress-bar.is-complete {
+      background-color: $is-complete-color;
+    }
+
+  }
+
+  .checklist-items {
+    li.checklist-item {
+      list-style: circle;
+    }
+  }
+
+  .have-read-confirmation {
+    .name {
+      font-weight: bold;
+    }
+  }
+
+  .checkbox-date-completed {
+    color: $blue-element-color;
+    height: $checkbox-size;
+    width: $checkbox-size;
+  }
+
+  .next,
+  .prev {
+
+    font-size: 1.25rem;
+
+    a {
+      border-bottom: 0;
+      color: $blue-element-color;
+    }
+  }
+
+  .card-footer {
+    text-align: center;
+  }
+
+  .contact-if-questions {
+    font-size: smaller;
+  }
+
+  .membership-guidelines-completed {
+
+    .completed-progress-bar {
+      margin-bottom: 1rem;
+
+      p {
+        font-style: italic;
+        margin-bottom: 0;
+      }
+
+      .progress-bar {
+        background-color: $is-complete-color;
+      }
+
+    }
+  }
+
+}

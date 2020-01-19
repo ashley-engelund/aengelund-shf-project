@@ -12,6 +12,12 @@ class ApplicationController < ActionController::Base
 
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 
+  # Standardize XHR response values
+  XHR_SUCCESS = 200
+  XHR_SUCCESSTEXT = 'OK'
+  XHR_ERROR = 500
+  XHR_ERRORTEXT = 'ERROR'
+
 
   def index
 
@@ -50,6 +56,55 @@ class ApplicationController < ActionController::Base
 
   def set_page_meta_robots_none
     set_meta_tags helpers.meta_robots_none
+  end
+
+
+  def validate_xhr_request
+    raise 'Unsupported request' unless request.xhr?
+  end
+
+  # Subclasses should redefine this to authorize as needed.
+  # Ex:  a UserChecklistsController might define it as:
+  #
+  #   def validate_and_authorize_xhr
+  #     validate_xhr_request
+  #     authorize_user_checklist_class  # this is the additional authorization
+  #   end
+  #
+  def validate_and_authorize_xhr
+    validate_xhr_request
+  end
+
+
+  # Template method (wrapper) for doing an XHR request.
+  # --> Expects the yield to return a Hash of information
+  #     that will be merged into the response data rendered as JSON
+  #     and sent back to the XHR requester.
+  #
+  def handle_xhr_request
+
+    validate_and_authorize_xhr
+
+    # defaults
+    status = XHR_ERROR
+    status_text = XHR_ERRORTEXT
+    error_text = ''
+    additional_response_data = {}
+
+    additional_response_data = additional_response_data.merge(yield)
+
+    status = XHR_SUCCESS
+    status_text = XHR_SUCCESSTEXT
+
+  rescue => error
+    error_text = error.message
+
+  ensure
+    response_data = { status: status,
+                      status_text: status_text,
+                      error_text: error_text }.merge(additional_response_data)
+
+    render json: response_data
   end
 
 

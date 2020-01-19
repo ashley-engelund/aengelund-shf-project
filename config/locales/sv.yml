@@ -124,6 +124,12 @@ sv:
     one: Mitt företag
     other: Mina företag
 
+  checklist_common:
+    done: &done Done
+    complete: &complete Complete
+    date_completed: &date_completed Date Completed
+
+
   # Automatisk och manuell sökning för Active Records
   activerecord:
     models:
@@ -155,6 +161,18 @@ sv:
         one: Task Attempt
         other: Task Attempts
 
+      checklist_item:
+        one: Checklist Item
+        other: Checklist Items
+
+      checklist:
+        one: Checklist
+        other: Checklists
+
+      master_checklist:
+        one: Master Checklist Item
+        other: Master Checklist Items
+
 
     attributes:
 
@@ -181,7 +199,7 @@ sv:
         status: Status
         start_date: Startdatum
         expire_date: &expire_date Utgångsdatum
-        notes: Anteckningar
+        notes: &notes Anteckningar
         created: *created
         last_updated: *last_updated
 
@@ -275,6 +293,34 @@ sv:
         twitter_card_type: &site_twitter_card_type Twitter card type
         facebook_app_id: &site_facebook_app_id Facebook Application ID
         payment_too_soon_days: &payment_too_soon_days Number of days that a user will be warned that a payment is 'too soon'
+
+      checklist_item:
+        name: *name
+        description: *description
+        order_in_list: Order in list
+
+      checklist:
+        name: *name
+        description: *description
+
+      user_checklist:
+        name: *name
+        description: *description
+        complete: *done
+        date_complete: *date_completed
+        completed: &checklist_completed Completed
+        not_completed: &checklist_not_completed Not Completed
+
+      master_checklist:
+        name: *name
+        is_in_use: &master_checklist_in_use Is Used
+        is_no_longer_used: &no_longer_used No longer in use
+        is_in_use_changed_at: &master_checklist_in_use_changed_at Is use changed
+        displayed_text: &displayed_text Name displayed to users
+        description: *description
+        list_position: Position in list
+        ancestry: Parent lists
+        notes: &master_checklist_admin_notes Notes (admin only)
 
 
     errors:
@@ -962,6 +1008,37 @@ sv:
     destroy:
       success: Användaren raderades framgångsrikt.
 
+    registrations:
+      new:
+        title: &registrations_new_title Skapa användare
+        create_account: &create_account Skapa konto
+        forgot_password: &forgot_password Glömt lösenord
+        confirm_password: &confirm_password Bekräfta nytt lösenord
+        submit_button_label: &registrations_new_submit Skapa användare
+        success: &registration_new_success Ett nytt konto har skapats
+      edit:
+        my_profile_title: &my_profile_title Redigera din profil
+        title: *my_profile_title
+        edit_profile_for_title: &edit_profile_for_title 'Redigera profile: %{user}'
+        unconfirmed_email_for: &unconfirmed_email_for 'Obekräftad mailadress för: %{unconfirmed_email}'
+        leave_blank_if_no_change: &leave_blank_if_no_change lämna tomt om du inte vill byta
+        confirm_password: *confirm_password
+        current_password: &current_password Nuvarande lösenord
+        required_to_save_changes: &required_to_save_changes (behövs för att spara ändringar)
+        submit_button_label: *update
+        delete_my_account: &delete_my_account Ta bort mitt konto
+        unregister: &unregister Avregistrera dig
+        confirm_are_you_sure: &delete_your_account_confirm_are_you_sure Är du säker på att du vill radera ditt konto?
+        back: *back
+        success: &edit_registration_success Ditt konto har uppdaterats
+        password_header: &registrations_password_header Byt lösenord
+        new_password: &new_password Nytt lösenord
+        info_header: &registrations_info_header Redigera namn och e-post
+        password_confirmation: *password_confirmation
+        member_photo:
+          pic_header: &registrations_pic_header Redigera profilbild
+
+
   user_profiles:
     edit:
       edit_user_account: *edit_user_account
@@ -977,6 +1054,94 @@ sv:
 
     error:
       error: Det uppstod ett fel vid behandlingen av din betalning
+
+  checklist_items:
+    new:
+      title: New Checklist item
+    create:
+      error: "There was a problem creating and saving the checklist item %{name}."
+      success: "%{name} was created and saved."
+    edit:
+      title: "Editing %{name}"
+      delete: &delete_checklist_item "Delete the checklist item named %{name}"
+      delete_confirm: &delete_checklist_item_confirm "Are you sure you want to delete the checklist item %{name}?"
+    update:
+      error:  "There was a problem updating the checklist item %{name}."
+      success: "The checklist item %{name} was updated."
+    index:
+      title: Checklist Items
+      done_col: "done?"
+      in_checklist_col: checklist
+      order_in_list_col: "# in list"
+      delete: *delete_checklist_item
+      delete_confirm: *delete_checklist_item_confirm
+    show:
+      title: "Checklist Item %{name}"
+    destroy:
+      error: "There was a problem deleting %{name}. It was not deleted."
+      success: "%{name} was deleted."
+
+  checklists:
+    new:
+     title: New Checklist
+    create:
+      error: "There was a problem creating and saving the checklist %{name}."
+      success: "%{name} was created and saved."
+    edit:
+      title: "Editing %{name}"
+      delete: "Delete the checklist named %{name}"
+      delete_confirm: "Are you sure you want to delete the checklist %{name}?"
+    update:
+      error:  "There was a problem updating the checklist %{name}."
+      success: "The checklist %{name} was updated."
+    index:
+      title: Checklists
+    show:
+      title: "Checklist %{name}"
+    destroy:
+      error: "There was a problem deleting %{name}. It was not deleted."
+      success: "%{name} was deleted."
+
+
+  user_checklists:
+    all_list_items: &user_checklists_all_items Back to all of my checklists
+    all_list_items_for_user: &user_checklists_all_items_for_user Back to all user checklists for %{name}
+
+    index:
+      title: Checklists for %{name}
+
+    show:
+      title: "Checklist %{name}"
+      description: *description
+      delete_confirm: "Are you sure you want to delete the checklist '%{name}' for user %{user_name}?"
+      all_list_items: *user_checklists_all_items
+      all_list_items_for_user: *user_checklists_all_items_for_user
+
+    all_changed_by_completion_toggle:
+      not_found: Not Found
+
+    new:
+      title: New User Checklist
+
+    membership_guidelines_completed:
+      agreed_to_all_terms: I have agreed to all membership terms.
+      i_commit_to: "Som medlem i Sveriges Hundföretagare åtar jag mig att:"
+      all_complete_percent: "100% komplett"
+
+    progress_bar:
+      complete: &progress_complete komplett
+
+    show_progress:
+      read_and_agree: Please read and agree to them. Check the box beside each item to show you agree.
+      scroll_down_to_read_all: Scroll down to read all items and see the button to go to the next group.
+      read_and_agree_start: I have read and agree to all of the
+      read_and_agree_end: terms.
+      contact_if_questions: Questions about any of these terms? Contact us... <email> <fbook>...
+
+      next: &next Nästa
+      previous: &previous Föregående
+      complete: *progress_complete
+
 
   admin:
     index:
@@ -1132,6 +1297,9 @@ sv:
         facebook_app_id: *site_facebook_app_id
         missing: *missing
         payment_too_soon_days: *payment_too_soon_days
+        membership_guideline_list: &membership_guideline_list Membership Guideline List
+        membership_guideline_list_tooltip: &membership_guideline_list_tooltip Choose a top level list that will be used as the Membership Guidelines list. (Only top level lists that are in use are shown.)
+        required_field: &required_field obligatoriskt fält
 
       show:
         title: *application_configuration
@@ -1150,6 +1318,8 @@ sv:
         facebook_app_id: *site_facebook_app_id
         missing: *missing
         payment_too_soon_days: *payment_too_soon_days
+        membership_guideline_list: *membership_guideline_list
+        required_field: *required_field
 
       update:
         success: Programdata uppdaterades framgångsrikt
@@ -1246,6 +1416,112 @@ sv:
         success: Användarens information uppdaterad.
         error: Ett problem hindrade användarinformationen från att uppdateras.
 
+
+    master_checklists:
+      new_item: &new_master_list_item New Master List Item
+      all_list_items: &all_master_list_items All Master List items
+      view_list_item: &view_master_list_item View List Item
+      edit_list_item: &edit_master_list_item Edit List Item
+      delete_list_item: &delete_master_list_item Delete List Item
+
+      errors:
+        master_checklist_id_not_found: &master_checklist_id_not_found "Master Checklist item with id %{id} was not found"
+        cannot_change_has_completed: &master_checklist_error_cant_change_has_completed (sv) Cannot change "%{attributes}" of '%{name}' because there are completed User checklists based on it.
+        cannot_change_user_visible: (sv) Cannot change the master checklist info that users see because there are User checklists based on it.
+
+      form:
+        name: *name
+        is_in_use: *master_checklist_in_use
+        is_no_longer_used: *no_longer_used
+        is_no_longer_used_as_of: "as of %{date}"
+        is_in_use_changed_at: *master_checklist_in_use_changed_at
+        displayed_text: *displayed_text
+        description: &master_checklist_description Description displayed to users
+        parent_list: &parent_list Parent list
+        list_position: &list_position Position in list
+        notes: *master_checklist_admin_notes
+        top_level_list: &top_level_list (This is a top level list.)
+        child_items: &child_items Items
+        leave_blank_adds_to_end: "Leave the position (order) blank to add this to the end of the list."
+
+      new:
+        title: New Master Checklist Item
+        name: *name
+        displayed_text: *displayed_text
+        description: *master_checklist_description
+        list_position: *list_position
+        all_list_items: *all_master_list_items
+      create:
+        error: "There was a problem creating and saving the master checklist item %{name}."
+        success: "%{name} was created and saved."
+      edit:
+        title: "Editing %{name}"
+        delete: &delete_master_checklist_item "Delete %{name}"
+        delete_confirm: &delete_master_checklist_item_confirm "Are you sure you want to delete the master checklist item %{name}?"
+        view_list_item: *view_master_list_item
+        all_list_items: *all_master_list_items
+      update:
+        error_cant_change_has_completed: *master_checklist_error_cant_change_has_completed
+        error:  "There was a problem updating the master checklist item %{name}."
+        success: "The master checklist item %{name} was updated."
+      index:
+        title: &master_checklist_index_title Master Checklists
+        name: *name
+        displayed_text: &master_checklist_index_displayed_text Displayed as
+        displayed_description: Displayed Description
+        in_parent_col: in list
+        pos_in_list: "pos. in list"
+        completed: *checklist_completed
+        not_completed: *checklist_not_completed
+        new_item: *new_master_list_item
+        delete: *delete_master_checklist_item
+        delete_confirm: *delete_master_checklist_item_confirm
+      index_as_table:
+        title: *master_checklist_index_title
+        delete_confirm: *delete_master_checklist_item_confirm
+        displayed_text: *master_checklist_index_displayed_text
+        name: *name
+        new_item: *new_master_list_item
+      show:
+        title: "Master Checklist Item"
+        is_in_use: *master_checklist_in_use
+        is_no_longer_used: *no_longer_used
+        is_no_longer_used_as_of: "as of %{date}"
+        is_in_use_changed_at: *master_checklist_in_use_changed_at
+        displayed_text: *displayed_text
+        description: *master_checklist_description
+        list_position: *list_position
+        notes: *master_checklist_admin_notes
+        delete_confirm: *delete_master_checklist_item_confirm
+        parent_list: *parent_list
+        top_level_list: *top_level_list
+        child_items: *child_items
+        edit_list_item: *edit_master_list_item
+        delete_list_item: *delete_master_list_item
+        all_list_items: *all_master_list_items
+        new_child_in_list: New Item in this list
+        new_child_makes_this_a_list: New Child item (makes this a list)
+
+      destroy:
+        error: "There was a problem deleting the master checklist item '%{name}'. It was not deleted."
+        success: "'%{name}' was deleted."
+
+      max_list_position:
+        not_found: *master_checklist_id_not_found
+
+      set_to_no_longer_used:
+        not_found: *master_checklist_id_not_found
+        error: "There was a problem setting '%{name}' to no longer in use."
+        success: "'%{name}' is now set to no longer in use."
+
+      toggle_in_use:
+        not_found: *master_checklist_id_not_found
+        cannot_change_has_completed: (sv) Cannot change the master checklist because there are completed User checklists based on it.
+        cannot_change_user_visible: (sv) Cannot change the master checklist info that users see because there are User checklists based on it.
+
+      delete_button_if_applicable:
+        delete: *delete_master_checklist_item
+        delete_confirm: *delete_master_checklist_item_confirm
 
 
   mailers:
@@ -1412,33 +1688,34 @@ sv:
 
     registrations:
       new:
-        title: Skapa användare
-        create_account: Skapa konto
-        forgot_password: Glömt lösenord
-        confirm_password: &confirm_password Bekräfta nytt lösenord
-        submit_button_label: Skapa användare
-        success: Ett nytt konto har skapats
-      edit:
-        my_profile_title: &my_profile_title Redigera din profil
-        title: *my_profile_title
-        edit_profile_for_title: 'Redigera profile: %{user}'
-        unconfirmed_email_for: 'Obekräftad mailadress för: %{unconfirmed_email}'
-        leave_blank_if_no_change: lämna tomt om du inte vill byta
+        title: *registrations_new_title
         confirm_password: *confirm_password
-        current_password: Nuvarande lösenord
-        required_to_save_changes: (behövs för att spara ändringar)
+        submit_button_label: *registrations_new_submit
+        success: *registration_new_success
+        create_account: *create_account
+        forgot_password: *forgot_password
+
+      edit:
+        my_profile_title: *my_profile_title
+        title: *my_profile_title
+        edit_profile_for_title: *edit_profile_for_title
+        unconfirmed_email_for: *unconfirmed_email_for
+        leave_blank_if_no_change: *leave_blank_if_no_change
+        confirm_password: *confirm_password
+        current_password: *current_password
+        required_to_save_changes: *required_to_save_changes
         submit_button_label: *update
-        delete_my_account: Ta bort mitt konto
-        unregister: Avregistrera dig
-        confirm_are_you_sure: Är du säker på att du vill radera ditt konto?
+        delete_my_account: *delete_my_account
+        unregister: *unregister
+        confirm_are_you_sure: *delete_your_account_confirm_are_you_sure
         back: *back
-        success: Ditt konto har uppdaterats
-        password_header: Byt lösenord
-        new_password: Nytt lösenord
-        info_header: Redigera namn och e-post
+        success: *edit_registration_success
+        password_header: *registrations_password_header
+        new_password: *new_password
+        info_header: *registrations_info_header
         password_confirmation: *password_confirmation
         member_photo:
-          pic_header: Redigera profilbild
+          pic_header: *registrations_pic_header
 
     sessions:
       new:
@@ -1543,6 +1820,10 @@ sv:
         shf_meeting_minutes: *member_pages_board_meetings
         manage_applications: Hantera ansökningar
         app_configuration: Appkonfiguration
+        master_checklists: Master Checklists
+        dashboard: Dashboard
+        design_guide: Design Guide
+
         categories:
           submenu_title: Kategorier
           manage_categories: Hantera kategorier

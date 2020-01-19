@@ -178,6 +178,79 @@ RSpec.describe UserChecklist, type: :model do
   end
 
 
+  describe 'percent_complete' do
+
+    context 'no children' do
+
+      it '100 if is completed' do
+        expect(create(:user_checklist, :completed).percent_complete).to eq 100
+      end
+
+      it '0 if not completed' do
+        expect(create(:user_checklist).percent_complete).to eq 0
+      end
+    end
+
+    context 'has children' do
+
+      it '0 if none are completed' do
+        expect(create(:user_checklist, num_children: 3).percent_complete).to eq 0
+      end
+
+      it '100 if all are completed' do
+        top = create(:user_checklist, num_completed_children: 3)
+        top.date_completed = Time.now
+        expect(top.percent_complete).to eq 100
+      end
+
+      it 'sum(children percent complete) / (number of children) (do not count self)' do
+        top1 = create(:user_checklist)
+        c1 = create(:user_checklist, :completed, parent: top1)
+        c2 = create(:user_checklist, :completed, parent: top1)
+        expect(top1.percent_complete).to eq 100
+
+        top2 = create(:user_checklist)
+        c2_1 = create(:user_checklist, :completed, parent: top2)
+        expect(top2.percent_complete).to eq 100
+
+        top3 = create(:user_checklist)
+        c3_1 = create(:user_checklist,  parent: top3)
+        c3_2 = create(:user_checklist,  parent: top3)
+        c3_3 = create(:user_checklist, :completed, parent: top3)
+        expect(top3.percent_complete).to eq 33
+
+        top4 = create(:user_checklist)
+        c4_1 = create(:user_checklist, :completed, parent: top4)
+        c4_1_1 = create(:user_checklist, :completed, parent: c4_1)
+        c4_1_1_1 = create(:user_checklist, :completed, parent: c4_1_1)
+        expect(top4.percent_complete).to eq 100
+
+        top5 = create(:user_checklist)
+
+        c5_1 = create(:user_checklist, parent: top5) # 100% complete
+        c5_1_1 = create(:user_checklist, :completed, parent: c5_1)
+        c5_1_1_1 = create(:user_checklist, :completed, parent: c5_1_1)
+
+        c5_2 = create(:user_checklist, parent: top5) # 0% complete
+        c5_2_1 = create(:user_checklist,  parent: c5_2)
+        c5_2_1_1 = create(:user_checklist,  parent: c5_2_1)
+
+        c5_3 = create(:user_checklist,  parent: top5)  # 50% complete
+        c5_3_1 = create(:user_checklist, :completed, parent: c5_3)
+        c5_3_2 = create(:user_checklist,  parent: c5_3)
+
+
+        expect(c5_1.percent_complete).to eq 100
+        expect(c5_2.percent_complete).to eq 0
+        expect(c5_3.percent_complete).to eq 50
+
+        # (100 + 0 + 50) / 3
+        expect(top5.percent_complete).to eq 50
+      end
+    end
+  end
+
+
   describe 'all_changed_by_completion_toggle' do
 
     describe 'is set to completed if it is not complete' do
@@ -577,6 +650,94 @@ RSpec.describe UserChecklist, type: :model do
 
       end
 
+    end
+
+  end
+
+
+  describe 'set_complete_including_children' do
+
+    # Would be good to stub things so these tests don't hit the db so much
+
+    it 'sets self to complete' do
+      uc = create(:user_checklist)
+      uc.set_complete_including_children
+      expect(uc.completed?).to be_truthy
+    end
+
+    it 'sets all descendants that were not already complete to complete' do
+      root = create(:user_checklist)
+      child1 = create(:user_checklist, parent: root, name: 'child1')
+      child1_1 = create(:user_checklist, parent: child1, name: 'child1_1')
+      child1_1_1_complete = create(:user_checklist, :completed, parent: child1_1, name: 'child1_1_1')
+      child2_complete = create(:user_checklist, :completed, parent: root, name: 'child2')
+
+      child1_orig_updated_at = child1.updated_at
+      child1_1_orig_updated_at = child1_1.updated_at
+      child1_1_1_complete_orig_updated_at = child1_1_1_complete.updated_at
+      child2_complete_orig_updated_at = child2_complete.updated_at
+
+      root.set_complete_including_children
+
+      expect(root.uncompleted.count).to eq 0
+
+      # updated_at is changed for all descendants that were uncomplete
+      expect(child1_orig_updated_at).not_to eq child1.reload.updated_at
+      expect(child1_1_orig_updated_at).not_to eq child1_1.reload.updated_at
+
+      # descendants that were already complete are not changed
+      expect(child1_1_1_complete_orig_updated_at).to eq child1_1_1_complete.reload.updated_at
+      expect(child2_complete_orig_updated_at).to eq child2_complete.reload.updated_at
+    end
+
+    it 'can specify the date_completed' do
+      root = create(:user_checklist)
+      child1 = create(:user_checklist, parent: root, name: 'child1')
+
+      given_date_completed = Time.parse("2020-10-31")
+
+      root.set_complete_including_children(given_date_completed)
+      expect(root.reload.date_completed).to eq given_date_completed
+      expect(child1.reload.date_completed).to eq given_date_completed
+    end
+  end
+
+
+  describe 'set_uncomplete_including_children' do
+
+    # Would be good to stub things so these tests don't hit the db so much
+
+    it 'sets self to uncomplete' do
+      uc = create(:user_checklist)
+      uc.set_uncomplete_including_children
+      expect(uc.completed?).to be_falsey
+    end
+
+    it 'sets all descendants that were complete to uncomplete' do
+
+      # descendants that were already uncomplete are not changed
+      root = create(:user_checklist)
+      child1 = create(:user_checklist, parent: root, name: 'child1')
+      child1_1_complete = create(:user_checklist, :completed, parent: child1, name: 'child1_1')
+      child1_1_1 = create(:user_checklist, parent: child1_1_complete, name: 'child1_1_1')
+      child2_complete = create(:user_checklist, :completed, parent: root, name: 'child2')
+
+      child1_orig_updated_at = child1.updated_at
+      child1_1_complete_orig_updated_at = child1_1_complete.updated_at
+      child1_1_1_orig_updated_at = child1_1_1.updated_at
+      child2_complete_orig_updated_at = child2_complete.updated_at
+
+      root.set_uncomplete_including_children
+
+      expect(root.completed.count).to eq 0
+
+      # updated_at is changed for all descendants that were complete
+      expect(child1_1_complete_orig_updated_at).not_to eq child1_1_complete.reload.updated_at
+      expect(child2_complete_orig_updated_at).not_to eq child2_complete.reload.updated_at
+
+      # descendants that were already uncomplete are not changed
+      expect(child1_orig_updated_at).to eq child1.reload.updated_at
+      expect(child1_1_1_orig_updated_at).to eq child1_1_1.reload.updated_at
     end
 
   end

@@ -1,0 +1,167 @@
+- checkbox_id = 'completed-checkbox'
+- is_completed_icon_id = 'fas-is-complete-icon'
+- inner_progress_bar_id = 'progress-bar'
+- percent_text_class = 'percent-text'
+- next_arrow_id = 'fas-next-arrow-icon'
+- next_link_id = 'next-link'
+
+- blank_icon_name = blank_fa_icon_name
+- completed_icon_name = complete_check_fa_icon_name
+
+.membership-guidelines
+  - overall_progress = @overall_progress
+
+  = render partial: 'checklist_header', locals: {user: @current_user, user_checklist: @membership_guidelines }
+
+  .entry-content.container
+    .user-checklist
+      %p.description= @membership_guidelines.description
+
+      %p.instructions= t('.read_and_agree')
+
+      = render partial: 'progress_bar', locals: {  percent_complete: overall_progress }
+
+      %p.instructions.scroll-down= t('.scroll_down_to_read_all')
+
+      .row
+        .col
+          -# Can't make the card a partial because we need to update the progress bar.
+          -# This is an excellent use case for using Vue or React (to take advantage of components automatically reacting to change)
+          %div.card
+            %div.card-body
+
+              %h4.card-title
+                %span.is-complete.show-inline#is-complete-icon
+                  -# The 'fa-fw' class is essential: That font awesome class sets a fixed width no matter what icon is shown.
+                  -# It keeps the content to the right of the icon from 'jumping over' when there is no icon to display.
+                  = blank_icon(html_options: { class: 'fa-fw', id: is_completed_icon_id })
+                = @user_checklist.name
+
+              = render partial: 'checklist_tree_as_list', locals: { user_checklist: @user_checklist }
+
+              %p.have-read-confirmation
+                = check_box_tag(checkbox_id, 'checked', @user_checklist.completed?,
+                    { class: "checkbox-date-completed",
+                      onchange:"toggleCompletedCheckbox(#{@user.id}, #{@user_checklist.id})" })
+
+                =t('.read_and_agree_start')
+                %span.name= @user_checklist.name
+                =t('.read_and_agree_end')
+
+            %div.card-footer
+              .row
+                .col
+                  %p.contact-if-questions= t('.contact_if_questions')
+
+                  - next_sibling = @user_checklist.next_sibling
+                  - if next_sibling
+                    .next
+                      = link_to  user_user_checklist_progress_path(@user, next_sibling), {id: next_link_id, class: 'hide'} do
+                        = t('.next')
+                        %span.next-arrow-icon.show-inline#next-arrow-icon
+                          = next_arrow_icon(html_options: { class: 'fa-lg', id: next_arrow_id })
+
+
+:javascript
+
+  const setCompleteUrl = "/anvandare/lista/set-all-completed/"
+  const setUncompleteUrl = "/anvandare/lista/set-all-uncompleted/"
+
+  const checkboxId = "#{checkbox_id}"
+  const isCompleteIconId = "#{is_completed_icon_id}"
+  const innerProgressBarId = "#{inner_progress_bar_id}"
+  const percentTextClass = "#{percent_text_class}"
+  const nextLinkId = "#{next_link_id}"
+
+  const blankIcon = "#{blank_icon_name}"
+  const completedIcon = "#{completed_icon_name}"
+
+  const flexClass = "flex";
+
+
+  window.onload = function(){
+    updateBasedOnCompletedCheckbox();
+  }
+
+
+  function display100Complete() {
+
+  }
+
+  function toggleCompletedCheckbox(userId, checklistId) {
+      let checkbox = getCheckboxElement();
+      ajaxPostURL = (checkbox.checked ? setCompleteUrl : setUncompleteUrl)
+      $.post( ajaxPostURL + checklistId, updateDateSuccessfulFor); // FIXME catch error and display as an alert
+  }
+
+
+  function updateDateSuccessfulFor(responseData) {
+    // FIXME catch error and display as an alert
+    updateBasedOnCompletedCheckbox();
+    let newPercentComplete = responseData.overall_percent_complete;
+    updateProgressBar(newPercentComplete);
+    if (newPercentComplete == 100) {
+      window.location.reload(true);
+    }
+  }
+
+
+  function updateBasedOnCompletedCheckbox() {
+   let checkbox = getCheckboxElement();
+    if (checkbox.checked) {
+      showCompleteCheckIcon();
+      showNextLink();
+    }
+    else {
+      hideCompleteCheckIcon();
+      hideNextLink();
+    }
+  }
+
+  function showNextLink() {
+    let nextLinkElement = getNextLinkElement();
+    showElementWithClass(nextLinkElement, flexClass)
+  }
+
+  function hideNextLink() {
+    let nextLinkElement = getNextLinkElement();
+    hideElementWithClass(nextLinkElement, flexClass)
+  }
+
+  function hideCompleteCheckIcon() {
+    let checkCompleteIcon = getCheckedCompleteIconElement();
+    replaceClass(checkCompleteIcon, completedIcon, blankIcon);
+  }
+
+  function showCompleteCheckIcon() {
+    let checkCompleteIcon = getCheckedCompleteIconElement();
+    replaceClass(checkCompleteIcon, blankIcon, completedIcon);
+  }
+
+
+  function updateProgressBar(progressPercent = 0) {
+    let progressBar = getInnerProgressBarElement();
+    let progressPercentString = progressPercent + "%";
+    let percentText = progressBar.getElementsByClassName(percentTextClass)[0];
+    percentText.textContent = progressPercentString + " #{t('.complete')}";
+
+    progressBar.style.width = progressPercentString;
+    progressBar.setAttribute('aria-valuenow', progressPercent);
+  }
+
+
+  function getInnerProgressBarElement() {
+    return document.getElementById(innerProgressBarId);
+  }
+
+  function getCheckboxElement() {
+    return document.getElementById(checkboxId);
+  }
+
+  function getCheckedCompleteIconElement() {
+    return document.getElementById(isCompleteIconId);
+  }
+
+  function getNextLinkElement() {
+    return document.getElementById(nextLinkId);
+  }

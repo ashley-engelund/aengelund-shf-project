@@ -7,12 +7,20 @@ Rails.application.routes.draw do
 
   as :user do
 
-    authenticated :user, lambda { |u| u.admin? } do
+    authenticated :user, lambda { |u| u.admin? } do``
 
       namespace :admin_only, path: 'admin' do
         resources :master_checklists
-        get  'master-checklists/max-list-position', to: 'master_checklists#max_list_position'
-        post 'master-checklists/toggle-in-use', to: 'master_checklists#toggle_in_use'
+        get  'master-checklists/next-onebased-list-position', to: 'master_checklists#next_one_based_list_position'
+        # post 'master-checklists/toggle-in-use', to: 'master_checklists#toggle_in_use'
+        post 'master-checklists/set-to-no-longer-used/:id', to: 'master_checklists#set_to_no_longer_used',
+             as: :master_checklist_set_to_no_longer_used
+
+        # User Checklists
+        #  - all by user checklist
+        #  - all by users
+        #  - by status?
+
       end
 
       post 'admin/export-ansokan-csv'
@@ -127,10 +135,18 @@ Rails.application.routes.draw do
       # ---------------------------------------------------
       # UserChecklist as a nested resource under User, with path '/lista' in the URI
       resources :user_checklists, only: [:show, :index], path: 'lista' do
+        get 'progress', to: 'user_checklists#show_progress'
+
         post 'all_changed_by_completion_toggle', to: 'user_checklists#all_changed_by_completion_toggle'
       end
 
     end
+
+    # UserChecklist
+    post 'anvandare/lista/set-all-completed/:id', to: 'user_checklists#set_complete_including_kids',
+         as: 'user_checklist_set_complete_including_kids'
+    post 'anvandare/lista/set-all-uncompleted/:id', to: 'user_checklists#set_uncomplete_including_kids',
+         as: 'user_checklist_set_uncomplete_including_kids'
 
 
     get 'anvandare/:id/proof_of_membership', to: 'users#proof_of_membership',
@@ -142,16 +158,16 @@ Rails.application.routes.draw do
     resources :shf_documents, path: 'dokument'
 
     get 'dokument/innehall/:page',
-      to: 'shf_documents#contents_show', as: 'contents_show'
+        to: 'shf_documents#contents_show', as: 'contents_show'
 
     get 'dokument/innehall/:page/redigera',
-      to: 'shf_documents#contents_edit', as: 'contents_edit'
+        to: 'shf_documents#contents_edit', as: 'contents_edit'
 
     patch 'dokument/innehall/:page',
-      to: 'shf_documents#contents_update', as: 'contents_update'
+          to: 'shf_documents#contents_update', as: 'contents_update'
 
     get 'medlemssidor', to: 'shf_documents#minutes_and_static_pages',
-                        as: 'member_pages'
+        as: 'member_pages'
 
   end
 
@@ -163,10 +179,10 @@ Rails.application.routes.draw do
        as: :payments
 
   get 'anvandare/:user_id/betalning/:id', to: 'payments#success',
-      as: :payment_success  # user redirect from HIPS
+      as: :payment_success # user redirect from HIPS
 
   get 'anvandare/:user_id/betalning/:id/error', to: 'payments#error',
-      as: :payment_error  # user redirect from HIPS
+      as: :payment_error # user redirect from HIPS
 
   post 'anvandare/betalning/webhook', to: 'payments#webhook',
        as: :payment_webhook
@@ -174,7 +190,7 @@ Rails.application.routes.draw do
 
   # ------- Address as a nested resource within company -----
   post 'hundforetag/:company_id/adresser/:id/set_type', to: 'addresses#set_address_type',
-       as: :company_address_type  # Used only for XHR action, not visible to user
+       as: :company_address_type # Used only for XHR action, not visible to user
 
   get 'hundforetag/:company_id/ny', to: 'addresses#new', as: :new_company_address
 
@@ -182,14 +198,15 @@ Rails.application.routes.draw do
        as: :company_addresses
 
   get 'hundforetag/:company_id/adresser/:id/redigera', to: 'addresses#edit',
-       as: :edit_company_address
+      as: :edit_company_address
 
   put 'hundforetag/:company_id/adresser/:id', to: 'addresses#update',
-       as: :company_address
+      as: :company_address
 
   delete 'hundforetag/:company_id/adresser/:id', to: 'addresses#destroy',
          as: :company_address_delete
   # ----------------------------------------------------------
+
 
   get 'information', to: 'shf_applications#information'
 
