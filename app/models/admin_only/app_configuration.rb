@@ -73,6 +73,13 @@ module AdminOnly
                       url: :url_for_images
 
 
+    #
+    # This points to the MasterChecklist to use for the Membership Guidelines list.
+    # Conceptualy, 'belongs to' isn't quite right, but it is technically true that
+    # the Application Configuration tracks the association to just one MasterChecklist.
+    #
+    belongs_to :membership_guideline_list, class_name: 'AdminOnly::MasterChecklist'
+
     validates_presence_of :site_name, :site_meta_title
 
     validates_attachment_presence :site_meta_image
