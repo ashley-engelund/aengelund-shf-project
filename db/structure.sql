@@ -106,7 +106,8 @@ CREATE TABLE public.app_configurations (
     site_meta_image_file_size integer,
     site_meta_image_updated_at timestamp without time zone,
     singleton_guard integer DEFAULT 0 NOT NULL,
-    payment_too_soon_days integer DEFAULT 60 NOT NULL
+    payment_too_soon_days integer DEFAULT 60 NOT NULL,
+    membership_guideline_list_id bigint
 );
 
 
@@ -1379,6 +1380,13 @@ CREATE INDEX index_addresses_on_region_id ON public.addresses USING btree (regio
 
 
 --
+-- Name: index_app_configurations_on_membership_guideline_list_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_app_configurations_on_membership_guideline_list_id ON public.app_configurations USING btree (membership_guideline_list_id);
+
+
+--
 -- Name: index_app_configurations_on_singleton_guard; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1608,6 +1616,14 @@ ALTER TABLE ONLY public.shf_applications
 
 
 --
+-- Name: app_configurations fk_rails_488f5a5802; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.app_configurations
+    ADD CONSTRAINT fk_rails_488f5a5802 FOREIGN KEY (membership_guideline_list_id) REFERENCES public.master_checklists(id);
+
+
+--
 -- Name: user_checklists fk_rails_4ff2e06edf; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1773,6 +1789,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191030162238'),
 ('20191130225826'),
 ('20191204203416'),
-('20200108194625');
+('20200108194625'),
+('20200119054308');
 
 

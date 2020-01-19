@@ -33,6 +33,12 @@
 
   = render partial: 'show_application_section_row_cols', locals: { user: @user }
 
+  %p.checklists
+    - if @user.checklists.empty?
+      Checklists: #{t('none')}
+    -else
+      = link_to 'Checklists', user_user_checklists_path(@user) unless @user.checklists.empty?
+
   = render partial: 'show_info_for_admin_only', locals: { user: @user }
 
   = render partial: 'show_member_images_row_cols', locals: { user: @user, app_configuration: @app_configuration }
