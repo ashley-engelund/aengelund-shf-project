@@ -1,23 +1,27 @@
-%h1 Listing admin_only_master_checklist_types
+%header.entry-header
+  %h1.entry-title= t('.title')
 
-%table
-  %thead
-    %tr
-      %th Name
-      %th Description
-      %th
-      %th
-      %th
+.entry-content
 
-  %tbody
-    - @admin_only_master_checklist_types.each do |admin_only_master_checklist_type|
+  %table.table.table-hover.table-sm#membership-checklist-types
+    %thead
       %tr
-        %td= admin_only_master_checklist_type.name
-        %td= admin_only_master_checklist_type.description
-        %td= link_to 'Show', admin_only_master_checklist_type
-        %td= link_to 'Edit', edit_admin_only_master_checklist_type_path(admin_only_master_checklist_type)
-        %td= link_to 'Destroy', admin_only_master_checklist_type, method: :delete, data: { confirm: 'Are you sure?' }
+        %th.name= t('.name')
+        %th.description=  t('.description')
+        %th
+        %th
 
-%br
+    %tbody
+      - @admin_only_master_checklist_types.each do |admin_only_master_checklist_type|
+        %tr
+          %td= link_to admin_only_master_checklist_type.name, admin_only_master_checklist_type
+          %td= link_to admin_only_master_checklist_type.description, admin_only_master_checklist_type
 
-= link_to 'New Master checklist type', new_admin_only_master_checklist_type_path
+          %td= link_to icon('fas', 'edit'), edit_admin_only_master_checklist_type_path(admin_only_master_checklist_type)
+          %td= link_to icon('fas', 'trash', class: 'delete'), admin_only_master_checklist_type,
+            method: :delete,
+            :data => { confirm: t('.delete_confirm', name: admin_only_master_checklist_type.name) }
+
+  %hr
+    .text-center
+      = link_to t('.new_master_checklist_type'), new_admin_only_master_checklist_type_path, class: 'btn btn-sm btn-light new-master-checklist-type', id: 'new-master-checklist-type'

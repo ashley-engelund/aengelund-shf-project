@@ -1,16 +1,14 @@
 = form_for @admin_only_master_checklist_type do |f|
-  - if @admin_only_master_checklist_type.errors.any?
-    #error_explanation
-      %h2= "#{pluralize(@admin_only_master_checklist_type.errors.count, "error")} prohibited this admin_only_master_checklist_type from being saved:"
-      %ul
-        - @admin_only_master_checklist_type.errors.full_messages.each do |message|
-          %li= message
 
-  .field
-    = f.label :name
+  != model_errors_helper(@admin_only_master_checklist_type)
+
+  .form-group
+    = f.label :name, t('.name')
     = f.text_field :name
-  .field
-    = f.label :description
+
+  .form-grup
+    = f.label :description, t('.description')
     = f.text_field :description
-  .actions
-    = f.submit 'Save'
+
+  .actions.form-group
+    = f.submit t('submit'), class: 'btn btn-primary mb-2 form-control'

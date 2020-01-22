@@ -1,2 +1,8 @@
-class AdminOnly::MasterChecklistType < ApplicationRecord
+module AdminOnly
+
+  class MasterChecklistType < ApplicationRecord
+
+  end
+
 end
+

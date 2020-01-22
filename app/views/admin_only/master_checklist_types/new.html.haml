@@ -1,5 +1,8 @@
-%h1 New admin_only_master_checklist_type
+%header.entry-header
+  %h1.entry-title= t('.title')
 
-= render 'form'
-
-= link_to 'Back', admin_only_master_checklist_types_path
+.entry-content
+  = render 'form'
+  %hr
+  .text-center
+    = link_to t('.all_master_checklist_types'), admin_only_master_checklist_types_path, class: 'btn btn-sm btn-light'

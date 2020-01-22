@@ -173,6 +173,10 @@ en:
         one: Master Checklist Item
         other: Master Checklist Items
 
+      master_checklist_type:
+        one: Master Checklist Type
+        other: Master Checklist Types
+
 
     attributes:
 
@@ -319,6 +323,10 @@ en:
         list_position: Position in list
         ancestry: Parent lists
         notes: &master_checklist_admin_notes Notes (admin only)
+
+      master_checklist_type:
+        name: *name
+        description: *description
 
 
     errors:
@@ -1519,8 +1527,57 @@ en:
         delete: *delete_master_checklist_item
         delete_confirm: *delete_master_checklist_item_confirm
 
+    master_checklist_types:
 
-    mailers:
+      new_master_checklist_type: &new_master_checklist_type "New Master Checklist Type"
+      edit_master_checklist_type: &edit_master_checklist_type "Edit Master Checklist Type '%{name}'"
+      all_master_checklist_types: &all_master_checklist_types "All Master Checklist Types"
+      delete_confirm_master_checklist_type: &delete_confirm_master_checklist_type "Delete master checklist type '%{name}'?"
+      view_master_checklist_type: &view_master_checklist_type "View '%{name}'"
+
+      index:
+        title: All Master Checklist Types
+        name: *name
+        description: *description
+        new_master_checklist_type: *new_master_checklist_type
+        delete_confirm: *delete_confirm_master_checklist_type
+
+      show:
+        name: *name
+        description: *description
+        all_master_checklist_types: *all_master_checklist_types
+        edit_master_checklist_type: *edit_master_checklist_type
+
+      new:
+        title: *new_master_checklist_type
+        name: *name
+        description: *description
+        all_master_checklist_types: *all_master_checklist_types
+
+      edit:
+        title: "Editting: %{name}"
+        name: *name
+        description: *description
+        view_master_checklist_type: *view_master_checklist_type
+
+      form:
+        name: *name
+        description: *description
+
+      create:
+        error: "There was a problem creating and saving the master checklist type %{name}."
+        success: "%{name} was created and saved."
+
+      update:
+        error: "There was a problem updating the master checklist type %{name}."
+        success: "%{name} was updated."
+
+      destroy:
+        error: "There was a problem deleting the master checklist type '%{name}'. It was not deleted."
+        success: "'%{name}' was deleted."
+
+
+      mailers:
     login_here: "Click here to go to the login page."
     your_login_email_is: "Your login email is "
 

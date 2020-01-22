@@ -1,8 +1,5 @@
 Rails.application.routes.draw do
 
-  namespace :admin_only do
-    resources :master_checklist_types
-  end
   mount Ckeditor::Engine => '/ckeditor'
   filter :locale
 
@@ -14,11 +11,15 @@ Rails.application.routes.draw do
     authenticated :user, lambda { |u| u.admin? } do``
 
       namespace :admin_only, path: 'admin' do
+
         resources :master_checklists
         get  'master-checklists/next-onebased-list-position', to: 'master_checklists#next_one_based_list_position'
         # post 'master-checklists/toggle-in-use', to: 'master_checklists#toggle_in_use'
         post 'master-checklists/set-to-no-longer-used/:id', to: 'master_checklists#set_to_no_longer_used',
              as: :master_checklist_set_to_no_longer_used
+
+
+        resources :master_checklist_types
 
         # User Checklists
         #  - all by user checklist
