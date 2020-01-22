@@ -1,0 +1,28 @@
+---
+# YAML Seed data for the SHF project
+# YAML Data for class: Seeders::MasterChecklistTypesSeeder
+# Date written: 2020-01-22 13:46:29 -0800
+# ----------------------
+- id: 2
+  name: Medlemsåtagande
+  description: membership ethical guidelines checklist
+  created_at: !ruby/object:ActiveSupport::TimeWithZone
+    utc: &1 2020-01-22 21:05:08.696727000 Z
+    zone: &2 !ruby/object:ActiveSupport::TimeZone
+      name: Etc/UTC
+    time: *1
+  updated_at: !ruby/object:ActiveSupport::TimeWithZone
+    utc: &3 2020-01-22 21:44:08.513796000 Z
+    zone: *2
+    time: *3
+- id: 3
+  name: Steps to Become a member
+  description: Steps to become a member
+  created_at: !ruby/object:ActiveSupport::TimeWithZone
+    utc: &4 2020-01-22 21:45:26.635473000 Z
+    zone: *2
+    time: *4
+  updated_at: !ruby/object:ActiveSupport::TimeWithZone
+    utc: &5 2020-01-22 21:45:26.635473000 Z
+    zone: *2
+    time: *5
