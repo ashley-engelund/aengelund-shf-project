@@ -19,8 +19,8 @@ function replaceClass(element, existingClass, replacingClass) {
 
     // check to see if .classList is supported by the browser
     if (element.classList) {
-      element.classList.add(replacingClass);
       element.classList.remove(existingClass);
+      element.classList.add(replacingClass);
     } else {
       // This handles IE 9 and older
       var classes = element.className.split(" ");

@@ -75,9 +75,10 @@ module AdminOnly
 
     #
     # This points to the MasterChecklist to use for the Membership Guidelines list.
-    # Conceptualy, 'belongs to' isn't quite right, but it is technically true that
+    # Conceptually, 'belongs to' isn't quite right, but it is technically true that
     # the Application Configuration tracks the association to just one MasterChecklist.
     #
+    # FIXME
     belongs_to :membership_guideline_list, class_name: 'AdminOnly::MasterChecklist'
 
     validates_presence_of :site_name, :site_meta_title

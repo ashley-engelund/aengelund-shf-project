@@ -42,7 +42,7 @@
             -# TODO i18n
             Completed?
             - disabled_setting = @user_checklist.children? ? {disabled: true} : {}
-            = check_box_tag("completed-checkbox-#{li_id}", 'checked', @user_checklist.completed?, { class: "checkbox-date-completed",
+            = check_box_tag("completed-checkbox-#{li_id}", 'checked', @user_checklist.all_completed?, { class: "checkbox-date-completed",
                 onchange:"toggleCompletedCheckbox(#{current_user.id}, #{@user_checklist.id})" }.merge(disabled_setting))
 
 
@@ -67,7 +67,7 @@
           = link_to  child_entry.name,
                     user_user_checklist_path(child_entry.user, child_entry),
                     class: list_entry_css_classes(child_entry)
-          - if child_entry.completed?
+          - if child_entry.all_completed?
             %span.date-completed
               -# TODO i18n
               Date completed: #{child_entry.date_completed}

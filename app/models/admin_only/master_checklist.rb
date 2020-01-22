@@ -82,7 +82,7 @@ module AdminOnly
 
 
     # The only attributes that can be changed if there are any completed user checklist
-    #  are :is_in_use and :is_in_use_changed_at  (when :is_in_use was changed)
+    #  are :is_in_use and :is_in_use_changed_at  (when the attribute :is_in_use was changed)
     #
     def self.change_with_completed_user_checklists?(attribute)
       attributes_can_change_with_completed.include?(attribute.to_sym)
@@ -101,7 +101,7 @@ module AdminOnly
 
 
     def self.attributes_displayed_to_users
-      [:displayed_text, :description]
+      [:displayed_text, :description, :list_position, :ancestry]
     end
 
 
@@ -134,13 +134,13 @@ module AdminOnly
 
     def completed_user_checklists
       user_checklist_class.completed_for_master_checklist(self)
-      # user_checklists.reject(&:completed?) #{ |user_checklist| user_checklist.completed? }
+      # user_checklists.reject(&:all_completed?) #{ |user_checklist| user_checklist.all_completed? }
     end
 
 
     def uncompleted_user_checklists
       user_checklist_class.not_completed_for_master_checklist(self)
-      # user_checklists.reject(&:completed?) #{ |user_checklist| user_checklist.completed? }
+      # user_checklists.reject(&:all_completed?) #{ |user_checklist| user_checklist.all_completed? }
     end
 
 
@@ -240,13 +240,23 @@ module AdminOnly
     end
 
 
+    # Cannot delete if there are _any_ user checklists associated with it (completed or not)
     def can_delete?
-      !children? && !has_completed_user_checklists?
+      !children? && !user_checklists.any?
     end
 
 
-    def change_is_in_use(new_value = false, changed_time = Time.zone.now)
-      update(is_in_use: new_value, is_in_use_changed_at: changed_time)
+    # Cannot make any 'major' changes if there are any user checklists.
+    # "major" changes are any that users see or that UserChecklists are based on.
+    # (as of 2020-01-20 this means that only notes and the name that administrators see can be changed.)
+    def no_more_major_changes?
+      user_checklists.any?
+    end
+
+
+    # Cannot change if there are any user checklists.
+    def can_add_child?
+      !no_more_major_changes?
     end
 
 
@@ -260,7 +270,7 @@ module AdminOnly
     #  it can be changed only if the attribute can be changed with uncompleted user checklists associated
     #
     #                                        | uncompleted: can   |                | completed: can
-    # has User Checklist? | any uncompleted? | change attribute ? | any completed? | change attribute ? | can change?
+    # has User Checklist? | any uncompleted? | change attribute ? | any all_completed? | change attribute ? | can change?
     # --------------------+------------------+--------------------+----------------+--------------------|------------
     #   _false_           |   -              |      -             |  -             |                    | true
     #                     |                  |                    |                |                    |
@@ -309,6 +319,11 @@ module AdminOnly
 
     def has_completed_user_checklists?
       user_checklist_class.completed_for_master_checklist(self).count > 0
+    end
+
+
+    def change_is_in_use(new_value = false, changed_time = Time.zone.now)
+      update(is_in_use: new_value, is_in_use_changed_at: changed_time)
     end
 
 

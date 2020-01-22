@@ -137,6 +137,13 @@ module OrderedAncestryEntry
     end
 
 
+    # This method will eventually be available in the Ancestry gem. (and/or a SQL based version)
+    # Until then, here it is.
+    def leaves
+      subtree.select { |node| node.childless? }
+    end
+
+
     # Delete the entry from the list of children.
     # After the deletion, update the positions for all children as necessary.
     #

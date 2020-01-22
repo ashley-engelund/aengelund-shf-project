@@ -101,8 +101,8 @@ RSpec.describe AdminOnly::MasterChecklist, type: :model do
 
 
   describe '.attributes_displayed_to_users' do
-    it 'just displayed_text and description' do
-      expect(described_class.attributes_displayed_to_users).to match_array([:displayed_text, :description])
+    it 'displayed_text, description, list_position, ancestry' do
+      expect(described_class.attributes_displayed_to_users).to match_array([:displayed_text, :description, :list_position, :ancestry])
     end
   end
 
@@ -317,14 +317,14 @@ RSpec.describe AdminOnly::MasterChecklist, type: :model do
       master_c_user_checklists = remaining_user_checklists.select { |uc| uc.master_checklist == master_c }
 
       expect(master_c_user_checklists.count).to eq 2
-      expect(master_c_user_checklists.select(&:completed?).count).to eq 2
+      expect(master_c_user_checklists.select(&:all_completed?).count).to eq 2
     end
 
     it 'completed user checklists for this master checklist are deleted ' do
       remaining_user_checklists = UserChecklist.all
       master_c_user_checklists = remaining_user_checklists.select { |uc| uc.master_checklist == master_c }
 
-      expect(master_c_user_checklists.reject(&:completed?)).to be_empty
+      expect(master_c_user_checklists.reject(&:all_completed?)).to be_empty
     end
 
     it 'other user checklists are not affected ' do
@@ -332,7 +332,7 @@ RSpec.describe AdminOnly::MasterChecklist, type: :model do
       other_masters_user_checklists = remaining_user_checklists.reject { |uc| uc.master_checklist == master_c }
 
       expect(other_masters_user_checklists.count).to eq 5
-      expect(other_masters_user_checklists.select(&:completed?).count).to eq 3
+      expect(other_masters_user_checklists.select(&:all_completed?).count).to eq 3
     end
   end
 
@@ -425,12 +425,16 @@ RSpec.describe AdminOnly::MasterChecklist, type: :model do
       expect(mc_with_completed_uchecklists.can_delete?).to be_falsey
     end
 
-    it 'else true' do
+    it 'false if has an uncompleted user checklist' do
       expect(create(:master_checklist).can_delete?).to be_truthy
 
       mc_with_uncompleted_uchecklists = create(:master_checklist)
       create(:user_checklist, master_checklist: mc_with_uncompleted_uchecklists)
-      expect(mc_with_uncompleted_uchecklists.can_delete?).to be_truthy
+      expect(mc_with_uncompleted_uchecklists.can_delete?).to be_falsey
+    end
+
+    it 'else true (no user checklist, no children)' do
+      expect(create(:master_checklist).can_delete?).to be_truthy
     end
   end
 

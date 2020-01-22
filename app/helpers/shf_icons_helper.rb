@@ -49,6 +49,7 @@ module ShfIconsHelper
       { method_name_start: 'external_link', icon: FA_EXTERNAL_LINK },
       { method_name_start: 'complete_check', icon: FA_COMPLETE_CHECK },
       { method_name_start: 'blank', icon: FA_BLANK },
+
       { method_name_start: 'next_arrow', icon: FA_ARROW_RIGHT },
       { method_name_start: 'previous_arrow', icon: FA_ARROW_LEFT },
 

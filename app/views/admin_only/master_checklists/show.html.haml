@@ -4,13 +4,16 @@
 .entry-content.container
   .master-checklist-item
 
+  - if @master_checklist.no_more_major_changes?
+    .row.mt-2.no-more-major-changes
+      = render partial: 'no_more_major_changes_note'
 
     .row.mt-2.completion-status
       .col.numbers
         %h5
           Status:
-          %span.completed= "completed: " + @master_checklist.user_checklists.completed.count.to_s
-          %span.not-completed= ", not completed: " + @master_checklist.user_checklists.uncompleted.count.to_s
+          %span.completed= "completed: " + @master_checklist.user_checklists.all_that_are_completed.count.to_s
+          %span.not-completed= ", not completed: " + @master_checklist.user_checklists.all_that_are_uncompleted.count.to_s
 
     - unless @master_checklist.is_in_use
       %p.not-in-use
@@ -40,7 +43,6 @@
           %p.displayed-text.displayed-to-users=  @master_checklist.displayed_text
           %p.description.displayed-to-users= @master_checklist.description
 
-
     %hr
 
 
@@ -55,7 +57,7 @@
                    class: list_entry_css_classes(child_entry)
         = render partial: 'completed_numbers', locals: {master_checklist: child_entry}
 
-    - if @master_checklist.can_be_changed?
+    - if @master_checklist.can_add_child?
       - new_button_text = @master_checklist.children? ? t('.new_child_in_list') : t('.new_child_makes_this_a_list')
       = link_to new_button_text, new_admin_only_master_checklist_path(parent: @master_checklist), class: 'btn btn-sm btn-secondary'
 
@@ -74,11 +76,12 @@
   %hr
   .text-center
     - if @master_checklist.can_be_changed?
-      -# FIXME - if cannot be changed, mark as no longer used and duplicate?
       = link_to t('.edit_list_item'),
                   edit_admin_only_master_checklist_path(@master_checklist), class: 'btn btn-primary btn-sm edit-master-checklist-item'
-      = render partial: 'delete_button_if_applicable', locals: { master_checklist: @master_checklist }
 
+    = link_to '(clone and mark this as no longer used) TBD', '#', class: 'btn btn-sm btn-primary'
+
+    = render partial: 'delete_button_if_applicable', locals: { master_checklist: @master_checklist }
 
     %p
 

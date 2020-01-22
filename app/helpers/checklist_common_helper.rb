@@ -12,7 +12,7 @@ module ChecklistCommonHelper
   end
 
 
-  # Return HTML string that displays the completed? value and,
+  # Return HTML string that displays the all_completed? value and,
   # if the item is completed, the date completed
   # in bootstrap columns
   #

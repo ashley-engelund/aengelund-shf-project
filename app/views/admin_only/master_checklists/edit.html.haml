@@ -4,14 +4,17 @@
 .entry-content.container
   .master-checklist-item
 
-    %p.numbers
-      %span.completed= t('.completed') + ': ' + @master_checklist.user_checklists.completed.count.to_s + ', '
-      %span.not-completed= t('.not_completed') + ': ' + @master_checklist.user_checklists.uncompleted.count.to_s
-    %hr
+    - if @master_checklist.no_more_major_changes?
+      .row.mt-2.no-more-major-changes
+        = render partial: 'no_more_major_changes_note'
+    .row
+      %p.numbers
+        %span.completed= t('.completed') + ': ' + @master_checklist.user_checklists.all_that_are_completed.count.to_s + ', '
+        %span.not-completed= t('.not_completed') + ': ' + @master_checklist.user_checklists.all_that_are_uncompleted.count.to_s
+      %hr
 
     = render 'form', locals: {master_checklist: @master_checklist,
        all_allowable_parents: @all_allowable_parents,
-       can_edit_everything: !@master_checklist.is_in_use,
        class_name: 'edit-master-checklist-item'}
 
   %hr
@@ -19,5 +22,7 @@
       = link_to t('.view_list_item'), @master_checklist, class: 'btn btn-sm btn-light'
 
       = render partial: 'delete_button_if_applicable', locals: { master_checklist: @master_checklist }
+
+      = link_to '(clone and mark this as no longer used) TBD', '#', class: 'btn btn-sm btn-primary'
 
       = link_to t('.all_list_items'), admin_only_master_checklists_path, class: 'btn btn-sm btn-light'

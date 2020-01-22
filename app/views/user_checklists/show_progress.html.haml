@@ -4,9 +4,12 @@
 - percent_text_class = 'percent-text'
 - next_arrow_id = 'fas-next-arrow-icon'
 - next_link_id = 'next-link'
+- contact_us_footer_id = 'contact-us-footer'
 
-- blank_icon_name = blank_fa_icon_name
+- blank_icon_name = complete_check_fa_icon_name
 - completed_icon_name = complete_check_fa_icon_name
+- whiteout_class = 'whiteout'
+- show_class = 'is-complete'
 
 .membership-guidelines
   - overall_progress = @overall_progress
@@ -17,11 +20,11 @@
     .user-checklist
       %p.description= @membership_guidelines.description
 
-      %p.instructions= t('.read_and_agree')
-
       = render partial: 'progress_bar', locals: {  percent_complete: overall_progress }
 
-      %p.instructions.scroll-down= t('.scroll_down_to_read_all')
+      %p.instructions= t('.read_and_agree')
+
+      -#%p.instructions.scroll-down= t('.scroll_down_to_read_all')
 
       .row
         .col
@@ -30,28 +33,35 @@
           %div.card
             %div.card-body
 
-              %h4.card-title
+              %h4.card-title.guideline-name
                 %span.is-complete.show-inline#is-complete-icon
+
                   -# The 'fa-fw' class is essential: That font awesome class sets a fixed width no matter what icon is shown.
                   -# It keeps the content to the right of the icon from 'jumping over' when there is no icon to display.
-                  = blank_icon(html_options: { class: 'fa-fw', id: is_completed_icon_id })
+                  = complete_check_icon(html_options: { class: "fa-fw #{whiteout_class}", id: is_completed_icon_id })
+
                 = @user_checklist.name
 
               = render partial: 'checklist_tree_as_list', locals: { user_checklist: @user_checklist }
 
               %p.have-read-confirmation
-                = check_box_tag(checkbox_id, 'checked', @user_checklist.completed?,
-                    { class: "checkbox-date-completed",
+
+                = check_box_tag(checkbox_id, 'checked', @user_checklist.all_completed?,
+                    { class: "fa-check-square",
                       onchange:"toggleCompletedCheckbox(#{@user.id}, #{@user_checklist.id})" })
 
-                =t('.read_and_agree_start')
-                %span.name= @user_checklist.name
-                =t('.read_and_agree_end')
+                = label_tag checkbox_id, { onchange:"toggleCompletedCheckbox(#{@user.id}, #{@user_checklist.id})" } do
+                  =t('.read_and_agree_start')
+                  %span.name= @user_checklist.name
+                  =t('.read_and_agree_end')
 
             %div.card-footer
               .row
                 .col
-                  %p.contact-if-questions= t('.contact_if_questions')
+                  %p.contact-if-questions
+                    %div#contact-us-footer
+                      = t('.contact_if_questions')
+                      = mail_to(t('.email_display_name'), ENV['SHF_MEMBERSHIP_EMAIL'])
 
                   - next_sibling = @user_checklist.next_sibling
                   - if next_sibling
@@ -72,37 +82,35 @@
   const innerProgressBarId = "#{inner_progress_bar_id}"
   const percentTextClass = "#{percent_text_class}"
   const nextLinkId = "#{next_link_id}"
+  const contactUsFooterId = "#{contact_us_footer_id}"
 
   const blankIcon = "#{blank_icon_name}"
   const completedIcon = "#{completed_icon_name}"
 
   const flexClass = "flex";
-
+  const whiteoutClass = "#{whiteout_class}";
+  const showClass = "#{show_class}";
 
   window.onload = function(){
     updateBasedOnCompletedCheckbox();
   }
 
-
-  function display100Complete() {
-
-  }
-
   function toggleCompletedCheckbox(userId, checklistId) {
       let checkbox = getCheckboxElement();
       ajaxPostURL = (checkbox.checked ? setCompleteUrl : setUncompleteUrl)
-      $.post( ajaxPostURL + checklistId, updateDateSuccessfulFor); // FIXME catch error and display as an alert
-  }
 
+      $.post( ajaxPostURL + checklistId)
 
-  function updateDateSuccessfulFor(responseData) {
-    // FIXME catch error and display as an alert
-    updateBasedOnCompletedCheckbox();
-    let newPercentComplete = responseData.overall_percent_complete;
-    updateProgressBar(newPercentComplete);
-    if (newPercentComplete == 100) {
-      window.location.reload(true);
-    }
+        .done(function(responseData) {
+           updateBasedOnCompletedCheckbox();
+          let newPercentComplete = responseData.overall_percent_complete;
+          updateProgressBar(newPercentComplete);
+          if (newPercentComplete == 100) {
+            window.location.reload(true);
+          }
+        })
+
+      .fail(function(responseData) { return failedRequest(responseData) });
   }
 
 
@@ -110,12 +118,24 @@
    let checkbox = getCheckboxElement();
     if (checkbox.checked) {
       showCompleteCheckIcon();
+      hideContactUs();
       showNextLink();
     }
     else {
       hideCompleteCheckIcon();
+      showContactUs();
       hideNextLink();
     }
+  }
+
+  function showContactUs() {
+    let contactUsElement = getContactUsElement();
+    showElementWithClass(contactUsElement, flexClass)
+  }
+
+  function hideContactUs() {
+    let contactUsElement = getContactUsElement();
+    hideElementWithClass(contactUsElement, flexClass)
   }
 
   function showNextLink() {
@@ -130,12 +150,14 @@
 
   function hideCompleteCheckIcon() {
     let checkCompleteIcon = getCheckedCompleteIconElement();
-    replaceClass(checkCompleteIcon, completedIcon, blankIcon);
+    // replaceClass(checkCompleteIcon, completedIcon, blankIcon);
+    replaceClass(checkCompleteIcon, showClass, whiteoutClass);
   }
 
   function showCompleteCheckIcon() {
     let checkCompleteIcon = getCheckedCompleteIconElement();
-    replaceClass(checkCompleteIcon, blankIcon, completedIcon);
+    // replaceClass(checkCompleteIcon, blankIcon, completedIcon);
+    replaceClass(checkCompleteIcon, whiteoutClass, showClass);
   }
 
 
@@ -156,6 +178,10 @@
 
   function getCheckboxElement() {
     return document.getElementById(checkboxId);
+  }
+
+  function getContactUsElement() {
+    return document.getElementById(contactUsFooterId);
   }
 
   function getCheckedCompleteIconElement() {

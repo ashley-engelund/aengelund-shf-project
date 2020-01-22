@@ -14,6 +14,7 @@ require 'ordered_ancestry_entry'
 #   - No:  SHF board decided that when a person renews again (or has reason to see the checklist again),
 #     the users will see the new/updated/changed information from a master list.  (Otherwise we have to notify each user of the change(s) each time.)
 #
+#
 # TODO:  if a new membership guideline list is generated each time a person renews,
 #    then we need a way to know which is the _current_ membership guideline list.
 #  - is this just the same as
@@ -92,42 +93,50 @@ class UserChecklist < ApplicationRecord
 
   # --------------------------------------------------------------------------
 
-  def completed?
+  # This checks self _and_ descendants. 'completed?' does not check descendants
+  def all_completed?
     !date_completed.blank? && descendants_completed?
   end
 
 
-  def descendants_completed?
-    descendants.inject(:true) { |is_completed, descendant| descendant.completed? && is_completed }
-  end
-
-
+  # This checks self _and_ descendants
+  #
   # @return [Array<UserChecklist>] - the list of all items that are completed, including self and children
-  def completed
+  def all_that_are_completed
     all_complete = descendants.completed.to_a
     all_complete.prepend self unless date_completed.blank?
     all_complete
   end
 
 
+  # This checks self _and_ descendants
+  #
   # @return [Array<UserChecklist>] - the list of all items that are not completed, including self and children
-  def uncompleted
+  def all_that_are_uncompleted
     all_uncomplete = descendants.uncompleted.to_a
     all_uncomplete.prepend self if date_completed.blank?
     all_uncomplete
   end
 
 
+  def descendants_completed?
+    descendants.inject(:true) { |is_completed, descendant| descendant.all_completed? && is_completed }
+  end
+
+
+  # This only checks self.  It does not check any descendants. 'all_completed?' also checks descendants.
+  def completed?
+    !date_completed.nil?
+  end
+
+
   # @return [Integer] - 100 = 100% complete. The percent complete, based on self or all children.
   def percent_complete
-    if children?
-      size = children.count
-      total_kid_percents = children.inject(0) { |sum, kid| sum + kid.percent_complete }
-      total_kid_percents.fdiv(size).round
-    else
-      completed? ? 100 : 0
-    end
+    all_leaves = leaves
+    num_leaves = all_leaves.count
+    leaves_sum_complete = all_leaves.inject(0) { |sum, leaf| sum + (leaf.completed? ? 100 : 0) }
 
+    leaves_sum_complete.fdiv(num_leaves).round
   end
 
 
@@ -138,7 +147,7 @@ class UserChecklist < ApplicationRecord
   # @return [Array<UserChecklist>] - a list of all user checklists that were changed
   #
   def all_changed_by_completion_toggle(new_date_complete = Time.zone.now)
-    completed? ? all_toggled_to_uncomplete : all_toggled_to_complete(new_date_complete)
+    all_completed? ? all_toggled_to_uncomplete : all_toggled_to_complete(new_date_complete)
   end
 
 

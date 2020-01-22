@@ -24,14 +24,14 @@
 
           %i{class:'expand-collapse-toggle fa fa-angle-down' ,'aria-controls': children_ul_id, 'aria-expanded': 'true', 'data-toggle': 'collapse', href: children_ul_id, role: 'button' }
 
-        = check_box_tag("completed-checkbox-#{child_entry_li_id}", 'checked', child_entry.completed?, { class: "checkbox-date-completed",
+        = check_box_tag("completed-checkbox-#{child_entry_li_id}", 'checked', child_entry.all_completed?, { class: "checkbox-date-completed",
            onchange:"toggleCompletedCheckbox(#{current_user.id}, #{child_entry.id}, '#{child_entry_li_id}')" }.merge(disabled_setting))
 
         %span.name{ class: list_entry_css_classes(child_entry) }
           = child_entry.name
 
         %span.date-completed
-          - if  child_entry.completed?
+          - if  child_entry.all_completed?
             Date completed: #{child_entry.date_completed.to_date}
 
         - unless child_entry.ancestors?

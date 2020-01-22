@@ -14,13 +14,13 @@
         .col
           %div.card
             %div.card-body
-              %h4.card-title= t('.i_commit_to')
+              %h3.card-title= t('.i_commit_to')
 
               = render partial: 'checklist_tree_as_list', locals: { user_checklist: @membership_guidelines }
 
             %div.card-footer
               .row
-                %h3
+                %h4
                   %span.is-complete.show-inline#all-complete-icon
                     = complete_check_icon(html_options: { class: 'fa-fw', id: 'fas-all-complete-icon' })
                   =t('.agreed_to_all_terms')

@@ -12,7 +12,7 @@ module UserChecklistsHelper
     checkbox_icon = 'square' # default
     title = "is not completed" # FIXME I18n.t
 
-    if user_checklist.completed?
+    if user_checklist.all_completed?
       checkbox_icon = 'check-square'
       title = "is completed"
     end
@@ -30,7 +30,7 @@ module UserChecklistsHelper
   def is_completed_checkbox(user_checklist, options = {})
     checkbox_with_post('completed-checkbox',
                        'checked',
-                       user_checklist.completed?,
+                       user_checklist.all_completed?,
                        user_user_checklist_all_changed_by_completion_toggle_path(user_checklist.user, user_checklist), options)
   end
 

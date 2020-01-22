@@ -3,6 +3,7 @@
 
 .entry-content
   = render 'form', locals: {master_checklist: @master_checklist,   all_allowable_parents: @all_allowable_parents }
+
   %hr
   .text-center
     = link_to t('.all_list_items'), admin_only_master_checklists_path, class: 'btn btn-sm btn-light'
