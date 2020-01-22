@@ -1548,6 +1548,7 @@ sv:
         new_master_checklist_type: *new_master_checklist_type
         delete_confirm_master_checklist_type: *delete_confirm_master_checklist_type
         view_master_checklist_type: &view_master_checklist_type "View '%{name}'"
+        delete_confirm: *delete_confirm_master_checklist_type
 
       show:
         name: *name
