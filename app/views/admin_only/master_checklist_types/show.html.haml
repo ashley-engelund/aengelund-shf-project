@@ -1,0 +1,12 @@
+%p#notice= notice
+
+%p
+  %b Name:
+  = @admin_only_master_checklist_type.name
+%p
+  %b Description:
+  = @admin_only_master_checklist_type.description
+
+= link_to 'Edit', edit_admin_only_master_checklist_type_path(@admin_only_master_checklist_type)
+\|
+= link_to 'Back', admin_only_master_checklist_types_path

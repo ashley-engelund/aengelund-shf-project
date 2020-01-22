@@ -1,0 +1,23 @@
+%h1 Listing admin_only_master_checklist_types
+
+%table
+  %thead
+    %tr
+      %th Name
+      %th Description
+      %th
+      %th
+      %th
+
+  %tbody
+    - @admin_only_master_checklist_types.each do |admin_only_master_checklist_type|
+      %tr
+        %td= admin_only_master_checklist_type.name
+        %td= admin_only_master_checklist_type.description
+        %td= link_to 'Show', admin_only_master_checklist_type
+        %td= link_to 'Edit', edit_admin_only_master_checklist_type_path(admin_only_master_checklist_type)
+        %td= link_to 'Destroy', admin_only_master_checklist_type, method: :delete, data: { confirm: 'Are you sure?' }
+
+%br
+
+= link_to 'New Master checklist type', new_admin_only_master_checklist_type_path

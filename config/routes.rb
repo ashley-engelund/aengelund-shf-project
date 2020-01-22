@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
 
+  namespace :admin_only do
+    resources :master_checklist_types
+  end
   mount Ckeditor::Engine => '/ckeditor'
   filter :locale
 

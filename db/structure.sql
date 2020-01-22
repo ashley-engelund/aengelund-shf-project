@@ -68,6 +68,38 @@ ALTER SEQUENCE public.addresses_id_seq OWNED BY public.addresses.id;
 
 
 --
+-- Name: admin_only_master_checklist_types; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.admin_only_master_checklist_types (
+    id bigint NOT NULL,
+    name character varying,
+    description character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: admin_only_master_checklist_types_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.admin_only_master_checklist_types_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: admin_only_master_checklist_types_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.admin_only_master_checklist_types_id_seq OWNED BY public.admin_only_master_checklist_types.id;
+
+
+--
 -- Name: app_configurations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -1013,6 +1045,13 @@ ALTER TABLE ONLY public.addresses ALTER COLUMN id SET DEFAULT nextval('public.ad
 
 
 --
+-- Name: admin_only_master_checklist_types id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.admin_only_master_checklist_types ALTER COLUMN id SET DEFAULT nextval('public.admin_only_master_checklist_types_id_seq'::regclass);
+
+
+--
 -- Name: app_configurations id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1165,6 +1204,14 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 
 ALTER TABLE ONLY public.addresses
     ADD CONSTRAINT addresses_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: admin_only_master_checklist_types admin_only_master_checklist_types_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.admin_only_master_checklist_types
+    ADD CONSTRAINT admin_only_master_checklist_types_pkey PRIMARY KEY (id);
 
 
 --
@@ -1790,6 +1837,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20191130225826'),
 ('20191204203416'),
 ('20200108194625'),
-('20200119054308');
+('20200119054308'),
+('20200122200839');
 
 
