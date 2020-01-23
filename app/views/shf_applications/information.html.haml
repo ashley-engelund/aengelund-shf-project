@@ -28,6 +28,8 @@
 
   - elsif current_user.has_shf_application?
 
+    -# TODO need to handle each Application status
+
     - if current_user.shf_application.accepted?
 
       = render partial: 'check_payment_status'
@@ -36,7 +38,10 @@
 
       = render partial: 'waiting_for_approval'
 
-    -# Here, do we want to tell the user that their app is rejected?  Perhaps reapply?
+    - else # rejected!
+
+      -# Here, do we want to tell the user that their app is rejected?  Perhaps reapply?
+
 
   - else
 
