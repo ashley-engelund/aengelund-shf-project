@@ -8,7 +8,7 @@ Rails.application.routes.draw do
 
   as :user do
 
-    authenticated :user, lambda { |u| u.admin? } do``
+    authenticated :user, lambda { |u| u.admin? } do
 
       namespace :admin_only, path: 'admin' do
 
