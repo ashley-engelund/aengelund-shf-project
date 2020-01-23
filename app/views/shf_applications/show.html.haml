@@ -5,7 +5,12 @@
   .entry-content.container-fluid
     .row
       .col
-        %h2= @shf_application.user.full_name
+        %h2
+          - if current_user.admin?
+            = link_to  @shf_application.user.full_name, @shf_application.user
+
+          - else
+            = @shf_application.user.full_name
 
         = render partial: 'membership_number', locals: { user: @shf_application.user }
 

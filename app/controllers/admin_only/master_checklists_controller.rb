@@ -33,12 +33,14 @@ module AdminOnly
 
     def new
       @master_checklist = MasterChecklist.new
-      if params.fetch('parent', false)
-        parent_id = parent_checklist_param
-      end
+      parent_id = params.fetch('parent', false) ? params['parent'].to_i : nil
+
 
       @master_checklist.list_position = next_list_position_for(parent_id)
       @master_checklist.parent = MasterChecklist.find(parent_id) if parent_id
+      if @master_checklist.parent
+        @master_checklist.master_checklist_type = @master_checklist.parent.master_checklist_type
+      end
 
       @max_list_position_zerobased = @master_checklist.list_position
       @all_allowable_parents = all_allowable_parents

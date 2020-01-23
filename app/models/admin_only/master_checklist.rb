@@ -76,6 +76,14 @@ module AdminOnly
     end
 
 
+    # TODO hardcoded for now.  get from AppConfiguration later
+    # get the most recently updated Master that is a 'membership_guidelines_type'
+    #
+    def self.latest_membership_guideline_master
+      AdminOnly::MasterChecklist.where(master_checklist_type: AdminOnly::MasterChecklistType.membership_guidelines_type).top_level_checklists.order(:updated_at).last
+    end
+
+
     # Return the entry and all children as an Array, sorted by list position and then name.
     #
     # @return [Array<MasterChecklist>] - an Array with the given node first, then its children sorted by the ancestry, list position, and then name.
@@ -195,18 +203,11 @@ module AdminOnly
     # destroy is called outside this method (with no business logic checks, etc.)
     def delete_or_mark_unused
 
-      delete_uncompleted_user_checklists
-
       if can_delete?
         destroy
       else
         mark_as_no_longer_used
       end
-    end
-
-
-    def delete_uncompleted_user_checklists
-      uncompleted_user_checklists.each { |uncompleted_uc| uncompleted_uc.delete }
     end
 
 

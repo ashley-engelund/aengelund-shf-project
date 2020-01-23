@@ -47,6 +47,8 @@ class UserChecklist < ApplicationRecord
 
   scope :by_ancestry, -> { order(ancestry: :desc) }
 
+  scope :top_level, -> { where(ancestry: nil) }
+
 
   def self.completed
     where.not(date_completed: nil)
@@ -58,13 +60,18 @@ class UserChecklist < ApplicationRecord
   end
 
 
+  def self.for_user(user)
+    where(user: user)
+  end
+
+
   def self.completed_by_user(user)
-    where(user: user).completed
+    for_user(user).completed
   end
 
 
   def self.not_completed_by_user(user)
-    where(user: user).uncompleted
+    for_user(user).uncompleted
   end
 
 
@@ -77,6 +84,13 @@ class UserChecklist < ApplicationRecord
     where(master_checklist: master_checklist).uncompleted
   end
 
+
+  # TODO this is hardcoded for now.  Later, get it from AppConfig or something
+  def self.membership_guideline
+
+  end
+
+  # --------------------------------------------------------------------------------------
 
   # Add .includes to the query used to get all descendants to help avoid N+1 queries
   def descendants depth_options = {}

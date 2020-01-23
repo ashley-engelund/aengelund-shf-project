@@ -45,7 +45,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def sign_up(resource_name, resource)
     super(resource_name, resource)
 
-    AdminOnly::UserChecklistFactory.create_membership_checklist_for(resource)
+    # AdminOnly::UserChecklistFactory.create_membership_checklist_for(resource)
   end
 
 

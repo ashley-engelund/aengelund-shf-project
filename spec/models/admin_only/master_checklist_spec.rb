@@ -250,11 +250,6 @@ RSpec.describe AdminOnly::MasterChecklist, type: :model do
 
     let(:new_master) { create(:master_checklist) }
 
-    it 'uncompleted user checklists are deleted' do
-      expect(new_master).to receive(:delete_uncompleted_user_checklists)
-      new_master.delete_or_mark_unused
-    end
-
     it 'checks to see if it can be deleted' do
       expect(new_master).to receive(:can_delete?)
       new_master.delete_or_mark_unused
@@ -282,59 +277,59 @@ RSpec.describe AdminOnly::MasterChecklist, type: :model do
   end
 
 
-  describe 'delete_uncompleted_user_checklists' do
-
-    MASTERC_NAME = 'master c'
-
-    # Set up a master checklist with 5 associated user checklists:
-    #   2 are completed, 1 is not completed
-    #
-    # Create other master checklists with a mix of completed and uncompleted user checklists.
-    #
-    # Then call delete_uncompleted_user_checklists
-    before(:all) do
-      master_c = create(:master_checklist, name: MASTERC_NAME)
-      create(:user_checklist, :completed, master_checklist: master_c)
-      create(:user_checklist, :completed, master_checklist: master_c)
-      create(:user_checklist, master_checklist: master_c)
-
-      some_other_master_checklist = create(:master_checklist)
-      create(:user_checklist, :completed, master_checklist: some_other_master_checklist)
-      create(:user_checklist, :completed, master_checklist: some_other_master_checklist)
-      create(:user_checklist, master_checklist: some_other_master_checklist)
-      yet_another_master_checklist = create(:master_checklist)
-      create(:user_checklist, :completed, master_checklist: yet_another_master_checklist)
-      create(:user_checklist, master_checklist: yet_another_master_checklist)
-
-      master_c.delete_uncompleted_user_checklists
-    end
-
-    let(:master_c) { described_class.find_by(name: MASTERC_NAME) }
-
-
-    it 'compeleted user checklists for this master checklist are not deleted ' do
-      remaining_user_checklists = UserChecklist.all
-      master_c_user_checklists = remaining_user_checklists.select { |uc| uc.master_checklist == master_c }
-
-      expect(master_c_user_checklists.count).to eq 2
-      expect(master_c_user_checklists.select(&:all_completed?).count).to eq 2
-    end
-
-    it 'completed user checklists for this master checklist are deleted ' do
-      remaining_user_checklists = UserChecklist.all
-      master_c_user_checklists = remaining_user_checklists.select { |uc| uc.master_checklist == master_c }
-
-      expect(master_c_user_checklists.reject(&:all_completed?)).to be_empty
-    end
-
-    it 'other user checklists are not affected ' do
-      remaining_user_checklists = UserChecklist.all
-      other_masters_user_checklists = remaining_user_checklists.reject { |uc| uc.master_checklist == master_c }
-
-      expect(other_masters_user_checklists.count).to eq 5
-      expect(other_masters_user_checklists.select(&:all_completed?).count).to eq 3
-    end
-  end
+  # describe 'delete_uncompleted_user_checklists' do
+  #
+  #   MASTERC_NAME = 'master c'
+  #
+  #   # Set up a master checklist with 5 associated user checklists:
+  #   #   2 are completed, 1 is not completed
+  #   #
+  #   # Create other master checklists with a mix of completed and uncompleted user checklists.
+  #   #
+  #   # Then call delete_uncompleted_user_checklists
+  #   before(:all) do
+  #     master_c = create(:master_checklist, name: MASTERC_NAME)
+  #     create(:user_checklist, :completed, master_checklist: master_c)
+  #     create(:user_checklist, :completed, master_checklist: master_c)
+  #     create(:user_checklist, master_checklist: master_c)
+  #
+  #     some_other_master_checklist = create(:master_checklist)
+  #     create(:user_checklist, :completed, master_checklist: some_other_master_checklist)
+  #     create(:user_checklist, :completed, master_checklist: some_other_master_checklist)
+  #     create(:user_checklist, master_checklist: some_other_master_checklist)
+  #     yet_another_master_checklist = create(:master_checklist)
+  #     create(:user_checklist, :completed, master_checklist: yet_another_master_checklist)
+  #     create(:user_checklist, master_checklist: yet_another_master_checklist)
+  #
+  #     master_c.delete_uncompleted_user_checklists
+  #   end
+  #
+  #   let(:master_c) { described_class.find_by(name: MASTERC_NAME) }
+  #
+  #
+  #   it 'compeleted user checklists for this master checklist are not deleted ' do
+  #     remaining_user_checklists = UserChecklist.all
+  #     master_c_user_checklists = remaining_user_checklists.select { |uc| uc.master_checklist == master_c }
+  #
+  #     expect(master_c_user_checklists.count).to eq 2
+  #     expect(master_c_user_checklists.select(&:all_completed?).count).to eq 2
+  #   end
+  #
+  #   it 'completed user checklists for this master checklist are deleted ' do
+  #     remaining_user_checklists = UserChecklist.all
+  #     master_c_user_checklists = remaining_user_checklists.select { |uc| uc.master_checklist == master_c }
+  #
+  #     expect(master_c_user_checklists.reject(&:all_completed?)).to be_empty
+  #   end
+  #
+  #   it 'other user checklists are not affected ' do
+  #     remaining_user_checklists = UserChecklist.all
+  #     other_masters_user_checklists = remaining_user_checklists.reject { |uc| uc.master_checklist == master_c }
+  #
+  #     expect(other_masters_user_checklists.count).to eq 5
+  #     expect(other_masters_user_checklists.select(&:all_completed?).count).to eq 3
+  #   end
+  # end
 
 
   describe 'mark_as_no_longer_used' do

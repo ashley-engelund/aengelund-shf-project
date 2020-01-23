@@ -5,6 +5,7 @@ RSpec.describe AdminOnly::UserChecklistFactory do
 
   let(:simple_user) { create(:user) }
 
+
   describe ".create_nested_lists_for_user_from_checklist_masters(list, user)" do
 
     it 'returns [] if the list is nil' do
@@ -26,10 +27,9 @@ RSpec.describe AdminOnly::UserChecklistFactory do
     end
 
     it 'creates an ordered list of UserChecklists from a MasterChecklist with children and mirrors the ancestry' do
-
       list_type = create(:master_checklist_type, name: 'some type')
 
-      item1_top_list_name =  'item1-top_list'
+      item1_top_list_name = 'item1-top_list'
       item1_top_list = AdminOnly::MasterChecklist.create!(master_checklist_type: list_type, name: item1_top_list_name, displayed_text: item1_top_list_name, list_position: 0)
 
       child1 = AdminOnly::MasterChecklist.create!(master_checklist_type: list_type, name: 'item1-sublist_1', displayed_text: 'item1-sublist_1', parent: item1_top_list, list_position: 10)
@@ -48,21 +48,20 @@ RSpec.describe AdminOnly::UserChecklistFactory do
       expect(user_checklist.first.user).to eq simple_user
       expect(user_checklist.map(&:list_position)).to match_array([0, 2, 10, 21, 210])
 
-      arranged = UserChecklist.arrange  # This arranges them so that they are nested
-      expect((arranged.keys).size).to eq 2  # Once nested, only 2 times are at the top, so the size == 2
-      top_checklist_names = arranged.keys.map{|k| k.name}
+      arranged = UserChecklist.arrange # This arranges them so that they are nested
+      expect((arranged.keys).size).to eq 2 # Once nested, only 2 times are at the top, so the size == 2
+      top_checklist_names = arranged.keys.map { |k| k.name }
       expect(top_checklist_names).to match_array([item1_top_list_name, item2_top_list_name])
     end
-
   end
 
 
-  describe 'create_membership_checklist_for' do
+  describe '.create_membership_checklist_for' do
 
     it 'raises an error if the membership guidelines template is not found' do
       allow(described_class).to receive(:get_membership_checklist_template).and_return(nil)
 
-      expect{described_class.create_membership_checklist_for(simple_user)}.to raise_error(AdminOnly::UserChecklistTemplateNotFoundError)
+      expect { described_class.create_membership_checklist_for(simple_user) }.to raise_error(AdminOnly::UserChecklistTemplateNotFoundError)
     end
 
 
@@ -76,25 +75,33 @@ RSpec.describe AdminOnly::UserChecklistFactory do
   end
 
 
-  describe 'create_member_guidelines_checklist_for' do
+  describe '.create_member_guidelines_checklist_for' do
 
     it 'raises an error if the membership guidelines template is not found' do
       allow(described_class).to receive(:get_member_guidelines_checklist_template).and_return(nil)
 
-      expect{described_class.create_member_guidelines_checklist_for(simple_user)}.to raise_error(AdminOnly::UserChecklistTemplateNotFoundError)
+      expect { described_class.create_member_guidelines_checklist_for(simple_user) }.to raise_error(AdminOnly::UserChecklistTemplateNotFoundError)
     end
 
     it 'calls create_nested_lists_for_user_from_checklist_masters with the membership guidelines template and the user' do
-      # guidelines_template = create(:master_checklist, name: 'SHF Member Guidelines')
-      #
-      # expect(described_class).to receive(:create_nested_lists_for_user_from_master_checklists).with([guidelines_template], simple_user)
-      #
-      # described_class.create_member_guidelines_checklist_for(simple_user)
+      guidelines_template = create(:master_checklist, name: 'SHF Member Guidelines')
+      allow(described_class).to receive(:get_member_guidelines_checklist_template).and_return(guidelines_template)
+
+      expect(described_class).to receive(:create_nested_lists_for_user_from_master_checklists).with([guidelines_template], simple_user)
+      described_class.create_member_guidelines_checklist_for(simple_user)
     end
   end
 
 
-  describe 'get_membership_checklist_template' do
+  describe '.get_member_guidelines_checklist_template' do
+    it 'calls AdminOnly::MasterChecklist.latest_membership_guideline_master to get it (but will change later)' do
+      expect(AdminOnly::MasterChecklist).to receive(:latest_membership_guideline_master)
+      described_class.get_member_guidelines_checklist_template
+    end
+  end
+
+
+  describe '.get_membership_checklist_template' do
 
     it 'returns nil if no member checklist is found' do
       expect(described_class.get_membership_checklist_template).to be_nil

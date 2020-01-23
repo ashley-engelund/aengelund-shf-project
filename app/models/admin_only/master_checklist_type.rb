@@ -26,6 +26,18 @@ module AdminOnly
     validates_uniqueness_of :name
 
 
+    # TODO - Eventually get this from AppConfiguration info?
+    MEMBER_GUIDELINES_LIST_TYPE = 'Medlemsåtagande'
+
+
+    # --------------------------------------------------------------------------
+
+    # TODO will later get this from AppConfiguration. Hardcoded for now
+    def self.membership_guidelines_type
+      find_by(name: MEMBER_GUIDELINES_LIST_TYPE)
+    end
+
+
     # --------------------------------------------------------------------------
 
 
