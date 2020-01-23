@@ -3,6 +3,9 @@
 @import 'shf-custom-colors';
 
 $lighter-shf-blue: lighten($shf-blue, 30%);
+$no-more-changes-background: #e9ecef;
+
+$no-more-changes-note-color: darkred;
 
 [data-href] {
   cursor: pointer;
@@ -14,15 +17,10 @@ tr {
   }
 }
 
-.no-more-major-changes {
-
-  color: darkred;
+.no-more-major-changes-note {
+  color: $no-more-changes-note-color;
   font-weight: bolder;
-
-  p {
-    line-height: 1.5rem;
-    margin-bottom: 0;
-  }
+  margin-top: 1rem;
 }
 
 .not-in-use {
@@ -32,9 +30,24 @@ tr {
   font-weight: bold;
 }
 
+.show,
+.edit {
+
+  .displayed-to-users {
+    font-weight: bold;
+  }
+
+  .no-more-major-changes {
+    background-color: $no-more-changes-background;
+  }
+
+  .what-users-see {
+    border: 1pt dotted $shf-blue;
+    padding-left: 1rem;
+  }
+}
 
 body.master_checklists.index {
-
 
   #master-list-items {
 
@@ -176,14 +189,34 @@ body.master_checklists.index {
       }
     }
 
-
   }
 
 }
 
+
 .show {
 
+  .list-type {
+    font-style: italic;
+
+    a {
+      border-bottom: 1px dotted $shf-blue;
+      border-left: 1px transparent solid;
+      border-right: 1px transparent solid;
+      border-top: 1px transparent solid;
+
+      &:hover {
+        background-color: $lighter-shf-blue;
+        border: 1px $lighter-shf-blue solid;
+        color: $body-text;
+      }
+    }
+
+  }
+
+
   .master-checklist-item {
+
 
     .displayed-to-users {
 
@@ -202,13 +235,12 @@ body.master_checklists.index {
   }
 
   .what-users-see {
-    //1pt solid #5692ce
-    border: 1pt dotted $shf-blue;
-    padding-left: 1rem;
+    background-color: white;
 
     .displayed-text {
       font-size: larger;
     }
+
     .description {
       padding-left: 1rem;
     }
@@ -221,23 +253,28 @@ body.master_checklists.index {
 
 
 .edit {
+
+  //.edit input.form-control.displayed-to-users,
+
   .master-checklist-item {
 
     .displayed-to-users {
       margin-left: 2rem;
 
-      .form-control,
-      label {
-        color: $primary;
-      }
-
-      .form-control {
+      .form-group {
         font-weight: bold;
       }
 
-      label {
-        font-style: italic;
+      label,
+      .label {
+        color: gray;
       }
+
+      .value.displayed-to-users,
+      input.form-control.displayed-to-users {
+        color: $primary;
+      }
+
     }
   }
 }

@@ -1,17 +1,17 @@
+-# TODO DRY with show view
+- is_in_use_class = @master_checklist.is_in_use ? 'is-in-use' : ''
+- not_in_use_class = @master_checklist.is_in_use ? '' : 'not-in-use'
+- no_more_changes_class = @master_checklist.no_more_major_changes? ? 'no-more-major-changes' : ''
 %header.entry-header
   %h1.entry-title{class: @master_checklist.is_in_use ? '' : 'not-in-use'}= @master_checklist.name
 
-.entry-content.container
+.entry-content.container{ class: "#{no_more_changes_class}"}
   .master-checklist-item
 
-    - if @master_checklist.no_more_major_changes?
-      .row.mt-2.no-more-major-changes
-        = render partial: 'no_more_major_changes_note'
-    .row
-      %p.numbers
-        %span.completed= t('.completed') + ': ' + @master_checklist.user_checklists.all_that_are_completed.count.to_s + ', '
-        %span.not-completed= t('.not_completed') + ': ' + @master_checklist.user_checklists.all_that_are_uncompleted.count.to_s
-      %hr
+    = render partial: 'no_more_major_changes_note_if_needed', locals: { master_checklist: @master_checklist }
+
+    = render partial: 'status_numbers_row', locals: { master_checklist: @master_checklist }
+
 
     = render 'form', locals: {master_checklist: @master_checklist,
        all_allowable_parents: @all_allowable_parents,

@@ -47,6 +47,9 @@ module AdminOnly
   class AdminOnly::UserChecklistFactory
 
     # TODO - Eventually get this from AppConfiguration info?
+    MEMBER_GUIDELINES_LIST_NAME = 'Medlemsåtagande'
+
+    # TODO - Eventually get this from AppConfiguration info?
     BECOME_A_MEMBER_LIST_NAME = 'Become a Member'
 
     # ------------------------------------------------------------
@@ -66,10 +69,10 @@ module AdminOnly
       end
     end
 
-
+    # TODO The list to use should eventually be set by the admin (in AppConfiguration?)  Hardcoded for now.
     def self.get_member_guidelines_checklist_template
-      # AdminOnly::MasterChecklist.find_by(name: MEMBER_GUIDELINES_LIST_NAME)
-      AdminOnly::AppConfiguration.membership_guideline_list
+      AdminOnly::MasterChecklist.find_by(name: MEMBER_GUIDELINES_LIST_NAME).first
+      # AdminOnly::AppConfiguration.instance.membership_guideline_list
     end
 
 

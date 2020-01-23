@@ -29,7 +29,8 @@ module AdminOnly
   # @date 2019-12-01
   #
   #--------------------------
-
+  #
+  #
   class MasterChecklist < ApplicationRecord
 
     belongs_to :master_checklist_type
@@ -108,6 +109,7 @@ module AdminOnly
     end
 
 
+    # FIXME - this is not correct. If a list was deleted/marked as not in use, this number is just an _order_ but not the human understandable list #
     def self.top_level_next_list_position
       default_next_position = 1
       top_checklists = top_level_in_use

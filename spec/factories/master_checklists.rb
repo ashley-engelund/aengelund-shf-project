@@ -9,7 +9,6 @@ FactoryBot.define do
 
     association :master_checklist_type
 
-
     trait :not_in_use do
       is_in_use { false }
       is_in_use_changed_at { Time.zone.now }

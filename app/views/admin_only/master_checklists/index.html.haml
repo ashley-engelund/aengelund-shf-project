@@ -31,12 +31,12 @@
               %span.label= t('.displayed_text') + ': '
               %span.value=child_entry.displayed_text.truncate(displayed_text_length, separator: ' ', omission: '... (cont.)')
 
-            = render partial: 'completed_numbers', locals: {master_checklist: child_entry}
+            = render partial: 'completed_numbers_span', locals: {master_checklist: child_entry}
 
 
   %hr
   %h3 Items that are no longer in use (archived)
-  = render partial: 'admin_only/master_checklists/not_in_use_table', locals: { no_longer_in_use: @no_longer_in_use}
+  = render partial: 'admin_only/master_checklists/non_nested_table', locals: { no_longer_in_use: @no_longer_in_use}
 
   %hr
 

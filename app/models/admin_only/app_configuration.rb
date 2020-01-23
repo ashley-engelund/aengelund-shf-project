@@ -79,7 +79,7 @@ module AdminOnly
     # the Application Configuration tracks the association to just one MasterChecklist.
     #
     # FIXME
-    belongs_to :membership_guideline_list, class_name: 'AdminOnly::MasterChecklist'
+     belongs_to :membership_guideline_list, class_name: 'AdminOnly::MasterChecklist', optional: true
 
     validates_presence_of :site_name, :site_meta_title
 

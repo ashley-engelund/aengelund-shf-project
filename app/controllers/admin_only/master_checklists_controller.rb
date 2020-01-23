@@ -33,12 +33,12 @@ module AdminOnly
 
     def new
       @master_checklist = MasterChecklist.new
-      if (parent_id = parent_checklist_param)
-        @master_checklist.parent = MasterChecklist.find(parent_id)
-        @master_checklist.list_position = @master_checklist.parent.next_list_position
-      else
-        @master_checklist.list_position = MasterChecklist.top_level_next_list_position
+      if params.fetch('parent', false)
+        parent_id = parent_checklist_param
       end
+
+      @master_checklist.list_position = next_list_position_for(parent_id)
+      @master_checklist.parent = MasterChecklist.find(parent_id) if parent_id
 
       @max_list_position_zerobased = @master_checklist.list_position
       @all_allowable_parents = all_allowable_parents
@@ -46,7 +46,6 @@ module AdminOnly
 
 
     def edit
-      # FIXME need to disable fields that cannot be changed if there are already completed items
       @max_list_position_zerobased = max_position_in_this_list(@master_checklist)
       @all_allowable_parents = all_allowable_parents
     end
@@ -64,8 +63,11 @@ module AdminOnly
           format.html { redirect_to @master_checklist, notice: t('.success', name: @master_checklist.name) }
           format.json { render :show, status: :created, location: @master_checklist }
         else
+          @all_allowable_parents = all_allowable_parents
+          @max_list_position_zerobased = @master_checklist.list_position
           format.html do
             @master_checklist.errors.full_messages.each { |err_message| helpers.flash_message(:alert, err_message) }
+
             render :new, error: 'Error creating the new MasterChecklist:  '
           end
           format.json { render json: @master_checklist.errors, status: :unprocessable_entity }
@@ -156,8 +158,17 @@ module AdminOnly
 
         if @master_checklist.set_is_in_use(false)
           respond_to do |format|
-            format.html { redirect_to admin_only_master_checklist_path(@master_checklist), notice: t('.success', name: @master_checklist.name) }
-            format.json { render :show, status: :ok, location: @master_checklist }
+
+            # it may have been deleted (if it was allowed to be), or it may have just been set to 'not in use'
+            if MasterChecklist.find(@master_checklist.id)
+              format.html { redirect_to admin_only_master_checklist_path(@master_checklist), notice: t('.success', name: @master_checklist.name) }
+              format.json { render :show, status: :ok, location: @master_checklist }
+            else
+              # it was deleted
+              format.html { redirect_to admin_only_master_checklists_path, notice: t('.success', name: @master_checklist.name) }
+              format.json { render :index, status: :ok }
+            end
+
           end
         else
           respond_to do |format|
@@ -255,17 +266,19 @@ module AdminOnly
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def master_checklist_params
-      params.require(:admin_only_master_checklist).permit(:name, :displayed_text,
+      params.require(:admin_only_master_checklist).permit(:name,
+                                                          :displayed_text,
                                                           :description,
                                                           :position,
                                                           :parent_id,
                                                           :list_position,
-                                                          :notes)
+                                                          :notes,
+                                                          :master_checklist_type_id)
     end
 
 
     def parent_checklist_param
-      params.require(:parent)
+      params.permit(:parent)
     end
 
 
@@ -283,6 +296,24 @@ module AdminOnly
 
     def all_ordered_list_entries
       MasterChecklist.all_as_array_nested_by_name
+    end
+
+
+    # Given the parent_id, return the list position for a new master checklist
+    # If parent_id is nil,
+    #   then return the next position for a list with no parent, which is top level list
+    # else look up the parent list with that id
+    #   if the parent list was not found,
+    #     then return the next position for a list with no parent, which is top level list
+    #     else return the next position from the parent list
+    #
+    def next_list_position_for(parent_id = nil)
+      if parent_id
+        parent_list = MasterChecklist.find(parent_id)
+        parent_list ? parent_list.next_list_position : MasterChecklist.top_level_next_list_position
+      else
+        MasterChecklist.top_level_next_list_position
+      end
     end
 
 

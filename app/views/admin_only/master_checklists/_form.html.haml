@@ -1,3 +1,4 @@
+-# TODO DRY with show view
 - checklist_master = locals.fetch(:master_checklist, nil)
 - all_allowable_parents = locals.fetch(:all_allowable_parents, [])
 - cannot_edit = @master_checklist.no_more_major_changes?
@@ -18,31 +19,43 @@
         = f.label :name, t('.name'), class: 'required'
         = f.text_field :name,  class: 'form-control'
 
+  .row
+    .col
+      .form-group
+        .list-type
+          = f.label :master_checklist_type_id, "#{t('.list_type')}"
+          = f.collection_select :master_checklist_type_id, AdminOnly::MasterChecklistType.all, :id, :name, {}, {class: 'form-control'}
+
+  .row.mt-2.users-see-this
+    .col
+      %h4 Users see:
+
+      %div.what-users-see
+
+        .row
+          .col.displayed-text.displayed-to-users
+            - if cannot_edit
+              %p.displayed-text
+                %span.label= "#{t('.displayed_text')}: "
+                %span.value.displayed-to-users= @master_checklist.displayed_text
+            - else
+              .form-group
+                = f.label :displayed_text, t('.displayed_text'), class: 'required'
+                = f.text_field :displayed_text,  class: 'form-control displayed-to-users'
+
+        .row
+          .col.description.displayed-to-users
+            - if cannot_edit
+              %p.description
+                %span.label= "#{t('.description')}: "
+                %span.value.displayed-to-users= @master_checklist.description
+            - else
+              .form-group
+                = f.label :description, t('.description')
+                = f.text_field :description,  class: 'form-control displayed-to-users'
 
   .row
-    .col.displayed-text.displayed-to-users
-      - if cannot_edit
-        %p.displayed-text
-          %span.label= "#{t('.displayed_text')}: "
-          %span.value= @master_checklist.displayed_text
-      - else
-        .form-group
-          = f.label :displayed_text, t('.displayed_text'), class: 'required'
-          = f.text_field :displayed_text,  class: 'form-control'
-
-  .row
-    .col.description.displayed-to-users
-      - if cannot_edit
-        %p.description
-          %span.label= "#{t('.description')}: "
-          %span.value= @master_checklist.description
-      - else
-        .form-group
-          = f.label :description, t('.description')
-          = f.text_field :description,  class: 'form-control'
-
-  .row
-    .col.parent-list.displayed-to-users
+    .col.parent-list
       - if cannot_edit
         %p.parent
           %span.label= "#{t('.parent_list')}: "
@@ -56,11 +69,11 @@
             onchange:"getMaxListPosition()"}
 
   .row
-    .col.list-position.displayed-to-users
+    .col.list-position
       - if cannot_edit
         %p.list-position
           %span.label= "#{t('.list_position')}: "
-          %span.value.displayed-to-users= @master_checklist.list_position
+          %span.value= @master_checklist.list_position
       - else
         .form-group
           -# order in list is ZERO based in the db.  Add 1 to the checklist_master.list_position here so it makes sense to normal humans.
