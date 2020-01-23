@@ -323,6 +323,7 @@ en:
         list_position: Position in list
         ancestry: Parent lists
         notes: &master_checklist_admin_notes Notes (admin only)
+        list_type: Type
 
       master_checklist_type:
         name: *name
@@ -1127,7 +1128,7 @@ en:
       title: New User Checklist
 
     all_changed_by_completion_toggle:
-      not_found: Not Found
+      not_found:  &user_checklist_not_found "User Checklist id: %{user_checklist_id} not found"
 
     progress_bar:
       complete: &progress_complete complete
@@ -1148,6 +1149,11 @@ en:
       agreed_to_all_terms: I have agreed to all membership terms.
       i_commit_to: "As a member of Sveriges Hundföretagare, I commit myself to:"
       all_complete_percent: "100% complete"
+
+    set_uc_and_kids_date_completed:
+      not_found: *user_checklist_not_found
+      missing-checklist-param-error: User Checklist missing parameter error!
+
 
   admin:
     index:
@@ -1433,6 +1439,7 @@ en:
 
       form:
         name: *name
+        list_type: &master_checklist_list_type List type
         is_in_use: *master_checklist_in_use
         is_no_longer_used: *no_longer_used
         is_no_longer_used_as_of: "as of %{date}"
@@ -1464,6 +1471,7 @@ en:
         delete_confirm: &delete_master_checklist_item_confirm "Are you sure you want to delete the master checklist item %{name}?"
         view_list_item: *view_master_list_item
         all_list_items: *all_master_list_items
+
       update:
         error_cant_change_has_completed: *master_checklist_error_cant_change_has_completed
         error:  "There was a problem updating the master checklist item %{name}."
@@ -1473,7 +1481,7 @@ en:
         name: *name
         displayed_text: &master_checklist_index_displayed_text Displayed as
         displayed_description: Displayed Description
-        pos_in_list: "pos. in list"
+        pos_in_list: &pos_in_list "pos. in list"
         in_parent_col: in list
         completed: *checklist_completed
         not_completed: *checklist_not_completed
@@ -1505,6 +1513,9 @@ en:
         all_list_items: *all_master_list_items
         new_child_in_list: New Item in this list
         new_child_makes_this_a_list: New Child item (makes this a list)
+        list_type: *master_checklist_list_type
+        subtitle_list_type_start: "This is a "
+        subtitle_list_type_end: " list."
 
       destroy:
         error: "There was a problem deleting the master checklist item '%{name}'. It was not deleted."
@@ -1526,6 +1537,23 @@ en:
       delete_button_if_applicable:
         delete: *delete_master_checklist_item
         delete_confirm: *delete_master_checklist_item_confirm
+
+      status_numbers_row:
+        status: Status
+
+      completed_numbers_span:
+        completed: *checklist_completed
+        not_completed: *checklist_not_completed
+
+      non_nested_table:
+        name: *name
+        displayed_text: *displayed_text
+        completed: *checklist_completed
+        not_completed: *checklist_not_completed
+        pos_in_list: *pos_in_list
+
+      next_one_based_list_position:
+        not_found: *master_checklist_id_not_found
 
     master_checklist_types:
 
@@ -1559,6 +1587,7 @@ en:
         name: *name
         description: *description
         view_master_checklist_type: *view_master_checklist_type
+        all_master_checklist_types: *all_master_checklist_types
 
       form:
         name: *name
@@ -1577,7 +1606,7 @@ en:
         success: "'%{name}' was deleted."
 
 
-      mailers:
+  mailers:
     login_here: "Click here to go to the login page."
     your_login_email_is: "Your login email is "
 

@@ -312,8 +312,8 @@ sv:
         description: *description
         complete: *done
         date_complete: *date_completed
-        completed: &checklist_completed Completed
-        not_completed: &checklist_not_completed Not Completed
+        completed: &checklist_completed Avslutad
+        not_completed: &checklist_not_completed Ännu inte slutförd
 
       master_checklist:
         name: *name
@@ -325,6 +325,7 @@ sv:
         list_position: Position in list
         ancestry: Parent lists
         notes: &master_checklist_admin_notes Notes (admin only)
+        list_type: Type
 
       master_checklist_type:
         name: *name
@@ -1128,7 +1129,7 @@ sv:
       all_list_items_for_user: *user_checklists_all_items_for_user
 
     all_changed_by_completion_toggle:
-      not_found: Not Found
+      not_found: &user_checklist_not_found "User Checklist id: %{user_checklist_id} not found"
 
     new:
       title: New User Checklist
@@ -1152,6 +1153,10 @@ sv:
       next: &next Nästa
       previous: &previous Föregående
       complete: *progress_complete
+
+    set_uc_and_kids_date_completed:
+      not_found: *user_checklist_not_found
+      missing-checklist-param-error: User Checklist missing parameter error!
 
 
   admin:
@@ -1442,6 +1447,7 @@ sv:
 
       form:
         name: *name
+        list_type: &master_checklist_list_type Listtyp
         is_in_use: *master_checklist_in_use
         is_no_longer_used: *no_longer_used
         is_no_longer_used_as_of: "as of %{date}"
@@ -1467,6 +1473,8 @@ sv:
         success: "%{name} was created and saved."
       edit:
         title: "Editing %{name}"
+        completed: *checklist_completed
+        not_completed: *checklist_not_completed
         delete: &delete_master_checklist_item "Delete %{name}"
         delete_confirm: &delete_master_checklist_item_confirm "Are you sure you want to delete the master checklist item %{name}?"
         view_list_item: *view_master_list_item
@@ -1481,7 +1489,7 @@ sv:
         displayed_text: &master_checklist_index_displayed_text Displayed as
         displayed_description: Displayed Description
         in_parent_col: in list
-        pos_in_list: "pos. in list"
+        pos_in_list: &pos_in_list "pos. in list"
         completed: *checklist_completed
         not_completed: *checklist_not_completed
         new_item: *new_master_list_item
@@ -1512,6 +1520,9 @@ sv:
         all_list_items: *all_master_list_items
         new_child_in_list: New Item in this list
         new_child_makes_this_a_list: New Child item (makes this a list)
+        list_type: *master_checklist_list_type
+        subtitle_list_type_start: "Detta är en "
+        subtitle_list_type_end: "  lista."
 
       destroy:
         error: "There was a problem deleting the master checklist item '%{name}'. It was not deleted."
@@ -1534,20 +1545,37 @@ sv:
         delete: *delete_master_checklist_item
         delete_confirm: *delete_master_checklist_item_confirm
 
+      status_numbers_row:
+        status: Status
+
+      completed_numbers_span:
+        completed: *checklist_completed
+        not_completed: *checklist_not_completed
+
+      non_nested_table:
+        name: *name
+        displayed_text: *displayed_text
+        completed: *checklist_completed
+        not_completed: *checklist_not_completed
+        pos_in_list: *pos_in_list
+
+      next_one_based_list_position:
+        not_found: *master_checklist_id_not_found
+
+
     master_checklist_types:
 
       new_master_checklist_type: &new_master_checklist_type "New Master Checklist Type"
       edit_master_checklist_type: &edit_master_checklist_type "Edit Master Checklist Type '%{name}'"
       all_master_checklist_types: &all_master_checklist_types "All Master Checklist Types"
       delete_confirm_master_checklist_type: &delete_confirm_master_checklist_type "Delete master checklist type '%{name}'?"
+      view_master_checklist_type: &view_master_checklist_type "View '%{name}'"
 
       index:
         title: All Master Checklist Types
         name: *name
         description: *description
         new_master_checklist_type: *new_master_checklist_type
-        delete_confirm_master_checklist_type: *delete_confirm_master_checklist_type
-        view_master_checklist_type: &view_master_checklist_type "View '%{name}'"
         delete_confirm: *delete_confirm_master_checklist_type
 
       show:
@@ -1567,6 +1595,7 @@ sv:
         name: *name
         description: *description
         view_master_checklist_type: *view_master_checklist_type
+        all_master_checklist_types: *all_master_checklist_types
 
       form:
         name: *name
