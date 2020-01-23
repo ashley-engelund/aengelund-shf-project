@@ -12,8 +12,7 @@
       .col.numbers
         %h5
           Status:
-          %span.completed= "completed: " + @master_checklist.user_checklists.all_that_are_completed.count.to_s
-          %span.not-completed= ", not completed: " + @master_checklist.user_checklists.all_that_are_uncompleted.count.to_s
+          = render partial: 'completed_numbers', locals: { master_checklist: @master_checklist }
 
     - unless @master_checklist.is_in_use
       %p.not-in-use

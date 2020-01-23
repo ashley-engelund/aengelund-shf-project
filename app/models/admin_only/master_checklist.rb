@@ -32,6 +32,9 @@ module AdminOnly
 
   class MasterChecklist < ApplicationRecord
 
+    belongs_to :master_checklist_type
+
+    validates_presence_of :master_checklist_type
     validates_presence_of :name
     validates_presence_of :displayed_text
     validates_presence_of :list_position
