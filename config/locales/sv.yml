@@ -40,6 +40,9 @@ sv:
   close: Stänga
   lastupdated: &last_updated Senast uppdaterad
 
+  next: &next Nästa
+  previous: &previous Föregående
+
   'yes': &yes Ja
   'no': &no Nej
   'Yes': *yes
@@ -485,7 +488,7 @@ sv:
       application_dog_category: &application_dog_category "Ansöker som:"
       clue_selected_categories: &clue_selected_categories "Blå fält = valda. Relevant medlemskategori behöver fyllas i för att vi ska kunna hantera din ansökan."
 
-      upload_files_section: Underlag för att styrka min ansökan
+      upload_files_section: &app_upload_files_section Underlag för att styrka min ansökan
       upload_files_instructions: 'Dokumenten är mycket viktiga för att vi ska kunna bedöma din ansökan. Vi använder dem för att verifiera dina kunskaper och utbildningar. Detta säkerställer att vår medlemsstandard är fortsatt hög, vilket i förlängningen innebär att allmänheten vet att Sveriges hundföretagare är professionella och att lita på.'
       upload_files: 'Ladda upp filer från datorn (VIKTIGT)'
       upload_allowed_file_types: 'Tillåtna filtyper:'
@@ -513,10 +516,14 @@ sv:
       remember_to_deliver_files: &chosen_method Kom ihåg att leverera filer via den valda leveransmetoden
 
     edit:
-      title: Redigera ansökan om medlemskap
+      title: Slutför din ansökan om medlemskap
       is_ready_for_review: Redo för granskning
       submit_button_label: *save
       submit_button_explain: Välj hur du vill leverera dina filer för att aktivera Skicka-knappen
+      step_about_you: *about_you
+      step_business_categories:  *application_dog_category
+      step_agree_to_guidelines: &app_agree_to_terms Godkänner villkoren
+      step_upload_docs: &app_step_upload_files Upload Files
 
     update:
       success: Ansökan har uppdaterats.
@@ -602,8 +609,30 @@ sv:
       company_name: *name
 
     shf_application_fields:
-      company_numbers_tooltip: Du kan ange flera företagsnummer, åtskilda av
-                               ett kommatecken eller tomma mellanslag
+      step_about_you: *about_you
+      step_business_categories: *application_dog_category
+      section_business_categories: *application_dog_category
+      step_membership_guidelines: *app_agree_to_terms
+      step_upload_files: *app_step_upload_files
+
+    app_section_about_you:
+      section_title: *about_you
+      contact_email: *contact_email
+      contact_email_instructions: This is the email we will use to contact you. (?)
+      company_numbers_tooltip: Du kan ange flera företagsnummer, åtskilda av ett kommatecken eller tomma mellanslag
+      new_company_btn_hint: Skapa ett nytt företag om det inte finns i systemet
+
+    app_section_business_categories:
+      section_title: *application_dog_category
+      business_categories_instructions: Check all that apply (and you can document?...) how these are used. Once you have completed the other sections, you will have the opportunity to upload documentation to support each of these categories....
+
+    app_section_membership_guidelines:
+#      FIXME - get this from AppConfig or ... in the application
+      section_membership_guidelines: Medlemsåtagande
+
+    app_section_upload_files:
+      section_title: *app_upload_files_section
+
 
     start_review:
       success: Granskningen har påbörjats.
@@ -1150,8 +1179,8 @@ sv:
       contact_if_questions: *if_you_have_qs_email_us
       email_display_name: Membership Chair
 
-      next: &next Nästa
-      previous: &previous Föregående
+      next: *next
+      previous: *previous
       complete: *progress_complete
 
     set_uc_and_kids_date_completed:

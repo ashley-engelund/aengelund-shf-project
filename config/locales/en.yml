@@ -18,6 +18,9 @@ en:
 
   password: &password Password
 
+  next: &next Next
+  previous: &previous Previous
+
   is_required_field: Indicates a required field
 
   user: &user user
@@ -477,7 +480,7 @@ en:
       application_dog_category: &application_dog_category "Services You Provide"
       clue_selected_categories: &clue_selected_categories "Blue box = selected categories"
 
-      upload_files_section: Documents to support your application (certifications, etc.)
+      upload_files_section: &app_upload_files_section Documents to support your application (certifications, etc.)
       upload_files_instructions: 'The documents are very important for us to assess your application. We use them to authenticate your skills and education. This ensures that our membership standards remain high, which in turn means that the public know that the Swedish dog business is professional and reliable.'
       upload_files: 'Upload files from your computer:'
       upload_allowed_file_types: 'Allowed file types:'
@@ -495,6 +498,7 @@ en:
       where_to_mail_files: We will email you the address
       email_files_subject: My Application Files
 
+
     rendering:
       success: Action performed successfully
 
@@ -507,10 +511,15 @@ en:
       remember_to_deliver_files: &chosen_method Please remember to deliver files via the chosen delivery method
 
     edit:
-      title: Edit Membership Application
+      title: Complete Your Membership Application
       is_ready_for_review: Is Ready for Review
       submit_button_label: *save
       submit_button_explain: Select a file delivery option to enable Save
+      step_about_you: *about_you
+      step_business_categories: *application_dog_category
+      step_agree_to_guidelines: &app_agree_to_terms Agree to Membership Terms
+      step_upload_docs: &app_step_upload_files Upload Docs
+
 
     update:
       success: The application was updated.
@@ -595,8 +604,28 @@ en:
       company_name: *name
 
     shf_application_fields:
-      company_numbers_tooltip: You can enter multiple company numbers, separated by
-                               a comma or blank spaces
+      step_about_you: *about_you
+      section_business_categories: *application_dog_category
+      step_business_categories: *application_dog_category
+      step_membership_guidelines: *app_agree_to_terms
+      step_upload_files: *app_step_upload_files
+
+    app_section_about_you:
+      section_title: *about_you
+      contact_email: *contact_email
+      contact_email_instructions: This is the email we will use to contact you. (?)
+      company_numbers_tooltip: "You can enter multiple company numbers, separated by a comma or blank spaces"
+      new_company_btn_hint: Create a new company if not yet in the system
+
+    app_section_business_categories:
+      section_title: *application_dog_category
+      business_categories_instructions: Check all that apply (and you can document?...) how these are used. Once you have completed the other sections, you will have the opportunity to upload documentation to support each of these categories....
+
+    app_section_membership_guidelines:
+      section_membership_guidelines: Membership Guidelines
+
+    app_section_upload_files:
+      section_title: *app_upload_files_section
 
     start_review:
       success: The review has been started.
@@ -1141,8 +1170,8 @@ en:
       contact_if_questions: *if_you_have_qs_email_us
       email_display_name: Membership Chair
 
-      next: &next Next
-      previous: &previous Previous
+      next: *next
+      previous: *previous
       complete: *progress_complete
 
     membership_guidelines_completed:
