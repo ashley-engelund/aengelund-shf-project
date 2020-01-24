@@ -1,0 +1,14 @@
+-# Standardized H1 element
+-# This adds CSS classes to the h1 element based on the current user (e.g. the admin)
+-# This partial expects the following locals:
+-#   header_str [String] - the text to display in the h1 element.
+-#
+-# Optional locals:
+-#   html [Hash] - additional HTML options that will be merged and applied to the h1 element
+-#       Ex: html: {color: 'green', 'text-align': 'right'}
+-#
+- html_opts = local_assigns[:html].nil? ? {} : html
+- h1_html_opts = { class: with_admin_css_class_if_needed(current_user, ['entry-title']) }.merge(html_opts)
+
+%header.entry-header
+  = tag.h1 header_str, h1_html_opts
