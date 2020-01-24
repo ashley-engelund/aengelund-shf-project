@@ -28,6 +28,10 @@ module ShfIconsHelper
   FA_LONG_ARROW_ALT_RIGHT = 'long-arrow-alt-right'
   FA_LONG_ARROW_ALT_UP = 'long-arrow-alt-up'
   FA_LONG_ARROW_ALT_DOWN = 'long-arrow-alt-down'
+  FA_CHEVRON_LEFT = 'chevron-left'
+  FA_CHEVRON_RIGHT = 'chevron-right'
+  FA_CHEVRON_UP = 'chevron-up'
+  FA_CHEVRON_DOWN = 'chevron-down'
 
 
   # Create an entry for each method that you want to define and the icon name it should use
@@ -71,6 +75,10 @@ module ShfIconsHelper
       { method_name_start: 'long_arrow_alt_right', icon: FA_LONG_ARROW_ALT_RIGHT },
       { method_name_start: 'long_arrow_alt_up', icon: FA_LONG_ARROW_ALT_UP },
       { method_name_start: 'long_arrow_alt_down', icon: FA_LONG_ARROW_ALT_DOWN },
+      { method_name_start: 'chevron_left', icon: FA_CHEVRON_LEFT },
+      { method_name_start: 'chevron_right', icon: FA_CHEVRON_RIGHT },
+      { method_name_start: 'chevron_up', icon: FA_CHEVRON_UP },
+      { method_name_start: 'chevron_down', icon: FA_CHEVRON_DOWN },
 
   ]
 
