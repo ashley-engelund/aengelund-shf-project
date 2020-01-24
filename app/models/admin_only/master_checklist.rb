@@ -80,7 +80,7 @@ module AdminOnly
     # get the most recently updated Master that is a 'membership_guidelines_type'
     #
     def self.latest_membership_guideline_master
-      AdminOnly::MasterChecklist.where(master_checklist_type: AdminOnly::MasterChecklistType.membership_guidelines_type).top_level_checklists.order(:updated_at).last
+      AdminOnly::MasterChecklist.in_use.where(master_checklist_type: AdminOnly::MasterChecklistType.membership_guidelines_type).top_level_checklists.order(:updated_at).last
     end
 
 

@@ -176,6 +176,9 @@ module AdminOnly
           respond_to do |format|
             format.html do
               helpers.flash_message(:alert, t('.error', name: @master_checklist.name))
+              #
+              # FIXME - need to reinitialze info for the master checklist?  type?
+              #
               @master_checklist.errors.full_messages.each { |err_message| helpers.flash_message(:alert, err_message) }
               render :edit
             end

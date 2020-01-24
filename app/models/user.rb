@@ -180,12 +180,6 @@ class User < ApplicationRecord
     shf_application&.accepted?
   end
 
-  # TODO hardcoded for now. should be generalized (AppConfig info, etc.)
-  #
-  def completed_membership_guidelines_checklist?
-    # has the checklist and it is complete
-    # FIXME
-  end
 
   def member_or_admin?
     admin? || member?

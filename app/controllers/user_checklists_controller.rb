@@ -182,10 +182,9 @@ class UserChecklistsController < ApplicationController
   end
 
 
-  # FIXME - this should be from AppConfiguration
+  # TODO - this should be from AppConfiguration
   def membership_guideline_root_user_checklist(uc_user)
     UserChecklist.find_by(name: 'Medlemsåtagande', user: uc_user)
-
   end
 
 

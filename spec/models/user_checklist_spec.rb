@@ -59,7 +59,7 @@ RSpec.describe UserChecklist, type: :model do
 
   describe 'Scopes (including those as class methods)' do
 
-    describe 'completed' do
+    describe '.completed' do
 
       it 'empty if no UserChecklist is completed' do
         create(:user_checklist)
@@ -73,7 +73,7 @@ RSpec.describe UserChecklist, type: :model do
       end
     end
 
-    describe 'uncompleted' do
+    describe '.uncompleted' do
       it 'empty if all UserChecklists are completed' do
         create(:user_checklist, :completed)
         expect(described_class.uncompleted).to be_empty
@@ -86,7 +86,7 @@ RSpec.describe UserChecklist, type: :model do
       end
     end
 
-    it 'completed_by_user' do
+    it '.completed_by_user' do
       checklist_1 = create(:user_checklist, :completed)
       user_1 = checklist_1.user
       2.times { create(:user_checklist, :completed, user: user_1) }
@@ -96,7 +96,7 @@ RSpec.describe UserChecklist, type: :model do
       expect(described_class.completed_by_user(user_1).count).to eq 3
     end
 
-    it 'not_completed_by_user' do
+    it '.not_completed_by_user' do
       checklist_1 = create(:user_checklist)
       user_1 = checklist_1.user
       2.times { create(:user_checklist, user: user_1) }
@@ -107,6 +107,61 @@ RSpec.describe UserChecklist, type: :model do
 
       expect(described_class.not_completed_by_user(user_1).count).to eq 3
     end
+
+    describe '.membership_guidelines_for_user' do
+
+      let(:membership_guidelines_type_name) { AdminOnly::MasterChecklistType::MEMBER_GUIDELINES_LIST_TYPE }
+
+      let(:user1) { create(:user, first_name: 'User1') }
+
+      # TODO get this from AppConfiguration later / stub (the membership guidelines list type, etc.)
+      let(:guideline_list_type) { create(:master_checklist_type, name: membership_guidelines_type_name) }
+      let(:guideline_master) { create(:master_checklist, master_checklist_type: guideline_list_type) }
+
+      before(:each) do
+        # create a Master for Membership Guidelines
+        # TODO get this from AppConfiguration later / stub (the membership guidelines list type, etc.)
+
+        create(:user_checklist, :completed, user: user1,
+               master_checklist: guideline_master,
+               num_completed_children: 3)
+      end
+
+      it 'returns only top level lists' do
+        expect(described_class.membership_guidelines_for_user(user1).count).to eq 1
+      end
+
+      it 'returns only Membership Guideline (type) lists' do
+        another_list_type = create(:master_checklist_type, name: 'another')
+        another_master = create(:master_checklist, master_checklist_type: another_list_type)
+
+        create(:user_checklist, :completed, user: user1,
+               master_checklist: another_master,
+               num_completed_children: 2)
+
+        expect(described_class.membership_guidelines_for_user(user1).count).to eq 1
+      end
+
+      it 'returns the lists only for the given user' do
+        user2 = create(:user, first_name: 'User2')
+        create(:user_checklist, :completed, user: user2,
+               master_checklist: guideline_master,
+               num_completed_children: 2)
+
+        expect(described_class.membership_guidelines_for_user(user1).count).to eq 1
+      end
+
+      it 'is ordered so the most recently created one is last' do
+        second_list = create(:user_checklist, :completed, user: user1,
+               master_checklist: guideline_master,
+               num_completed_children: 2)
+        second_list.update(created_at: Time.zone.now + 1.day)
+
+        expect(described_class.membership_guidelines_for_user(user1).count).to eq 2
+        expect(described_class.membership_guidelines_for_user(user1).last).to eq second_list
+      end
+    end
+
   end
 
 
@@ -308,7 +363,7 @@ RSpec.describe UserChecklist, type: :model do
 
           expect(guidelines_root.percent_complete).to eq 0
 
-          [sec5_leaf3, sec5_leaf2, sec5_leaf1].each { | item| item.update(date_completed: Time.zone.now)}
+          [sec5_leaf3, sec5_leaf2, sec5_leaf1].each { |item| item.update(date_completed: Time.zone.now) }
 
           expect(guidelines_root.percent_complete).to eq 13
 

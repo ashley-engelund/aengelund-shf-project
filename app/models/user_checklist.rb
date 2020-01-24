@@ -50,6 +50,16 @@ class UserChecklist < ApplicationRecord
   scope :top_level, -> { where(ancestry: nil) }
 
 
+
+  # Membership Guidelines checklist (top level) for the given user
+  def self.membership_guidelines_for_user(user)
+    UserChecklist.top_level
+        .where(master_checklist: AdminOnly::MasterChecklist.latest_membership_guideline_master)
+        .where( user: user)
+        .order(:created_at)
+  end
+
+
   def self.completed
     where.not(date_completed: nil)
   end
