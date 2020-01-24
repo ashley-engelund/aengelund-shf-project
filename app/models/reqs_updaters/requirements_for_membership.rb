@@ -25,20 +25,26 @@ class RequirementsForMembership < AbstractRequirements
   end
 
 
-
-  # TODO hardcoded completed_membership_guidelines_checklist for now. Could be more generalized later with info from AppConfiguration, etc.
   def self.requirements_met?(args)
     user = args[:user]
 
-    # FIXME what about current members?  They do not need to agree to the checklist until they renew.
-    # Anyone that is not a member on the 'start requiring membershp guidelines date'
-    # must complete the checklist as a membership requirement.
-    # Anyone that is already a member on the "start requiring membership guidelines date"
-    #  does NOT need to comlete the checklist -- until they renew.
-    #
+
     user.has_approved_shf_application? &&
-        user.completed_membership_guidelines_checklist? &&
+        membership_guidelines_checklist_done?(user) &&
         user.membership_current?
+  end
+
+
+  # @return [Boolean] - if a user must have a completed Membershil Guidelines checklist,
+  #   return true if has been completed (false if not completed)
+  # else if the user does not have to have a completed Membership Guidelines checklist,
+  #   return true (we assume it's fine)
+  def self.membership_guidelines_checklist_done?(user)
+    if UserChecklistManager.must_complete_membership_guidelines_checklist?(user)
+      UserChecklistManager.completed_membership_guidelines_checklist?(user)
+    else
+      true
+    end
   end
 
 end # RequirementsForMembership
