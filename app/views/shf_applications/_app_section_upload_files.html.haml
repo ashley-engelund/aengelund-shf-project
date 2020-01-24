@@ -1,0 +1,100 @@
+-# SHF Application section for Uploading supporting files (documentation)
+-# This partial expects these locals:
+-#
+-# f - the current form
+-# shf_application  - the ShfApplication that this is editing/creating
+-# allowed_file_types - the list of allowed file times.
+-#
+-# Optional:
+-#   section_number_str - This be prepended to the section name and followed by a space.
+-#                        Ex: '3.'
+-#
+- section_number_str = section_number_str.nil? ? '' : section_number_str.to_s + ' '
+
+.app-section#supporting-files
+  = render 'app_section_header', section_title: t('.section_title'),
+                                 section_number_str: section_number_str
+
+  .answers
+    %p.section-instructions= t('shf_applications.new.upload_files_instructions')
+
+    .files
+      .container.mt-3
+        .row
+          .col-md-6
+            #upload-files
+              %h3.upload-button-pre= t('shf_applications.new.upload_files')
+              %span{ class: 'btn btn-primary mt-3 btn-file' }
+                = t('shf_applications.new.upload_button')
+                = f.file_field 'actual_files[]',
+                  multiple: true,
+                  name: 'uploaded_file[actual_files][]',
+                  class: 'upload-field',
+                  id: 'upload-button',
+                  accept: allowed_file_types.values.join(',')
+
+              %p
+                = t('shf_applications.new.upload_multiple_files')
+                %br
+                %br
+                = t('shf_applications.new.upload_allowed_file_types')
+                = allowed_file_types.keys.flatten.join(' ')
+
+              %h4.hidden.files-to-upload-title#files-to-upload-title= t('shf_applications.new.will_be_uploaded')
+
+              -# The table that lists the files to be uploaded when the form is submitted:
+              %table.hidden.table#files-to-upload
+                %tbody.files{ 'data-toggle': "modal-gallery", 'data-target': "#modal-gallery" }
+          .col-md-6
+            = render 'uploaded_files_list', shf_application: shf_application
+    %br
+    %p
+      %span.file-delivery-selection
+        = t('shf_applications.new.file_delivery_selection')
+      %br
+
+      - radio_buttons_collection, footnotes = file_delivery_radio_buttons_collection
+
+      = f.collection_radio_buttons(:file_delivery_method_id,
+                                   radio_buttons_collection,
+                                   :first, :second, {}) do |rb|
+        = rb.label(class: 'form-check form-check-inline') do
+          %small= rb.radio_button + ' ' + rb.text + ' '
+      %small.file-delivery-footnotes
+        = footnotes
+
+    %p.upload-more-note.instructions= t('shf_applications.new.upload_more_files') if controller.action_name == 'new'
+
+
+:javascript
+
+  $("#upload-button").on('change',function () {
+    // update the list of files to be uploaded
+
+    var to_upload_title = document.getElementById("files-to-upload-title");
+    var upload_table = document.getElementById("files-to-upload");
+
+    var filesUploadButton = document.getElementById("upload-button");
+
+    $(upload_table).find("tr>td").remove();
+
+    if ('files' in filesUploadButton) {
+
+        // unhide the title and table so we can show what will be uploaded
+        to_upload_title.className = to_upload_title.className.replace( /(?:^|\s)hidden(?!\S)/g , '' );
+        upload_table.className = upload_table.className.replace( /(?:^|\s)hidden(?!\S)/g , '' );
+
+        for (var i = 0; i < filesUploadButton.files.length; i++) {
+
+          var file = filesUploadButton.files[i];
+          if ('name' in file) {
+            var new_lastrow = upload_table.insertRow(-1);
+            var filename = new_lastrow.insertCell(0);
+            filename.innerHTML = file.name
+          }
+
+        }
+
+    }
+
+  });

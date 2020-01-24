@@ -1,11 +1,29 @@
 %div{ :id => "#{unique_css_id(@shf_application)}", class: "#{item_view_class(@shf_application, controller.action_name)}" }
 
-  %header.entry-header
-    %h1.entry-title= t('.title')
+  = render 'application/h1_header', header_str: t('.title')
+
   .entry-content
     .instructions= t('shf_applications.new.instructions_html')
 
-    = render partial: 'membership_number', locals: { user: @shf_application.user }
+    - if current_user.admin?
+      = render partial: 'membership_number', locals: { user: @shf_application.user }
+    - else
+      = render partial: 'membership_number', locals: { user: @shf_application.user } unless @shf_application.user.membership_number.blank?
+
+    -# This should be DRYed and generated dynamically if we really do it:
+    %p.font-italic.small (Show main steps progress. This is what it would look like if they completed the first 2 steps: )
+    %p.progress-steps-line
+      %span.progress-step.completed
+        =" 1. #{t('.step_about_you')}"
+      %span.progress-step.progress-arrow= chevron_right_icon
+      %span.progress-step.completed
+        =" 2. #{t('.step_business_categories')}"
+      %span.progress-step.progress-arrow= chevron_right_icon
+      %span.progress-step.current
+        =" 3. #{t('.step_agree_to_guidelines')}"
+      %span.progress-step.progress-arrow= chevron_right_icon
+      %span.progress-step
+        =" 4. #{t('.step_upload_docs')}"
 
     = form_for @shf_application do |f|
 
@@ -17,6 +35,7 @@
 
       = render 'application/required_fields'
 
+      - submit_label = @shf_application.new_record? ? t('submit') : t('save')
       %p.submit-button-explain.strong.field-instruction= t('.submit_button_explain')
       = f.submit t('.submit_button_label'), disabled: true, class: 'btn btn-primary mb-2 form-control app-submit'
 

@@ -1,0 +1,19 @@
+.app-section#business-categories
+  - unless assocation_empty?(@all_business_categories)
+
+    = render 'app_section_header',
+      section_title: t('shf_applications.new.application_dog_category'),
+      section_number_str: section_number_str
+
+    -#%p= t('shf_applications.new.clue_selected_categories')
+
+    %p.section-instructions= t('.business_categories_instructions')
+
+    .row.row-cols-3.row-cols-md-4
+      = f.collection_check_boxes :business_category_ids, @all_business_categories, :id, :name do |biz_category|
+        .col-4
+          .card.business-category-choice
+            .card-body
+              .card-text
+                %p= biz_category.check_box(class: 'fa-check-square', position_class: 'checkbox-text') + biz_category.label(class: 'business-category-choice')
+

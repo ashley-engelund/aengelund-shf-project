@@ -27,10 +27,10 @@ margin-bottom:0;
   margin-top: 30px;
 }
 
-#company-number-entry {
-  display: inline-block;
-  width: 30%;
-}
+//#company-number-entry {
+//  display: inline-block;
+//  width: 30%;
+//}
 
 #supporting-files {
   margin-bottom: 1em;
@@ -326,7 +326,9 @@ margin: 5px 0 0 0;
 }
 
 .required:after {
+  color: red;
   content: '*';
+  padding-left: 0.2rem;
 }
 
 .s-column {

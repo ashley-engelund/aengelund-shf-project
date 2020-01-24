@@ -1,0 +1,26 @@
+- has_prev_section = local_assigns.fetch(:prev_section, false)
+- has_next_section = local_assigns.fetch(:next_section, false)
+
+- if has_prev_section || has_next_section
+  .row.next-prev-section
+    - if has_prev_section
+      .col-5
+        %span.previous-section-info
+          - prev_link = local_assigns[:prev_section_link].blank? ? '#' : prev_section_link
+          - prev_name = local_assigns[:prev_section_name].blank? ? '': ': ' + prev_section_name
+          =link_to prev_link do
+            = previous_arrow_icon
+            = t('previous').capitalize
+            %span.prev-section-name
+              = prev_name
+
+    - if has_next_section
+      .col-5
+        %span.next-section-info
+          - next_link = local_assigns[:next_section_link].blank? ? '#' : next_section_link
+          - next_name = local_assigns[:next_section_name].blank? ? '': ': ' + next_section_name
+          =link_to next_link do
+            = t('next').capitalize
+            %span.next-section-name
+              = next_name
+            = next_arrow_icon

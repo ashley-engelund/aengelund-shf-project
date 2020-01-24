@@ -1,0 +1,36 @@
+.app-section#about-you
+  = render 'app_section_header', section_title: t('.section_title'),
+                                 section_number_str: '1.'
+
+  .form-group.contact-email
+    = f.label :contact_email, t('shf_applications.show.contact_email'), class: 'required'
+    = f.email_field :contact_email,  class: 'form-control'
+    %p.field-instruction= t('shf_applications.new.can_be_same_email')
+
+  .form-group.phone-number
+    = f.label :phone_number, t('shf_applications.show.phone_number')
+    = f.telephone_field :phone_number,  class: 'form-control'
+
+
+  .form-group.company-number
+    = f.label :company_number, t('shf_applications.show.company_number'), class: 'required'
+    = fas_tooltip(t('.company_numbers_tooltip'))
+
+    %p.field-instruction= t('shf_applications.new.enter_company_number')
+
+    #company-number-entry.company-number-entry
+      = company_number_entry_field(company_numbers)
+      .new-company-link
+      -# NOTE: Capybara cannot find link without 'href' attribute
+      %a.btn.btn-secondary.btn-sm{title: t('.new_company_btn_hint'),
+                                 href: '#',
+                                 'data-toggle': 'modal',
+                                 'data-target': '#company-create-modal' }
+        = t('companies.new.title')
+    %p.field-instruction= t('.company_numbers_tooltip')
+
+
+
+  .clearfix
+
+  %br

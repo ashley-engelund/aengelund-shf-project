@@ -1,0 +1,11 @@
+-# This partial expects the following variables:
+-# section_title - the string to display on the header line
+-#
+-# Optional local variable for this partial:
+-#   section_number_str - This be prepended to the section name and followed by a space.
+-#                        Ex: '3.'
+-#
+- section_number_str = section_number_str.nil? ? '' : section_number_str.to_s + ' '
+
+%h2.section-title= section_number_str + section_title
+%span.font-italic.small (this would be on it's own page)
