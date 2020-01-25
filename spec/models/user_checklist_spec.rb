@@ -818,24 +818,26 @@ RSpec.describe UserChecklist, type: :model do
       child1_1_1_complete = create(:user_checklist, :completed, parent: child1_1, name: 'child1_1_1')
       child2_complete = create(:user_checklist, :completed, parent: root, name: 'child2')
 
-      child1_orig_updated_at = child1.updated_at
-      child1_1_orig_updated_at = child1_1.updated_at
-      child1_1_1_complete_orig_updated_at = child1_1_1_complete.updated_at
-      child2_complete_orig_updated_at = child2_complete.updated_at
+      child1_1_1_complete_orig_date_completed = child1_1_1_complete.date_completed
+      child2_complete_orig_date_completed = child2_complete.date_completed
 
       expect(root.all_that_are_uncompleted.count).to eq 3
+      expect(root.completed?).to be_falsey
+      expect(child1.completed?).to be_falsey
+      expect(child1_1.completed?).to be_falsey
 
       root.set_complete_including_children
 
       expect(root.all_that_are_uncompleted.count).to eq 0
 
-      # updated_at is changed for all descendants that were uncomplete
-      expect(child1_orig_updated_at).not_to eq child1.reload.updated_at
-      expect(child1_1_orig_updated_at).not_to eq child1_1.reload.updated_at
+      # descendants that were uncomplete are now complete
+      expect(root.completed?).to be_truthy
+      expect(child1.reload.completed?).to be_truthy
+      expect(child1_1.reload.completed?).to be_truthy
 
       # descendants that were already complete are not changed
-      expect(child1_1_1_complete_orig_updated_at).to eq child1_1_1_complete.reload.updated_at
-      expect(child2_complete_orig_updated_at).to eq child2_complete.reload.updated_at
+      expect(child1_1_1_complete.reload.date_completed).to eq child1_1_1_complete_orig_date_completed
+      expect(child2_complete.reload.date_completed).to eq child2_complete_orig_date_completed
     end
 
     it 'can specify the date_completed' do
@@ -870,24 +872,24 @@ RSpec.describe UserChecklist, type: :model do
       child1_1_1 = create(:user_checklist, parent: child1_1_complete, name: 'child1_1_1')
       child2_complete = create(:user_checklist, :completed, parent: root, name: 'child2')
 
-      child1_orig_updated_at = child1.updated_at
-      child1_1_complete_orig_updated_at = child1_1_complete.updated_at
-      child1_1_1_orig_updated_at = child1_1_1.updated_at
-      child2_complete_orig_updated_at = child2_complete.updated_at
+      child1_orig_date_completed = child1.date_completed
+      child1_1_1_orig_date_completed = child1_1_1.date_completed
 
       expect(root.all_that_are_completed.count).to eq 2
+      expect(child1_1_complete.completed?).to be_truthy
+      expect(child2_complete.completed?).to be_truthy
 
       root.set_uncomplete_including_children
 
       expect(root.all_that_are_completed.count).to eq 0
 
       # updated_at is changed for all descendants that were complete
-      expect(child1_1_complete_orig_updated_at).not_to eq child1_1_complete.reload.updated_at
-      expect(child2_complete_orig_updated_at).not_to eq child2_complete.reload.updated_at
+      expect(child1_1_complete.completed?).to be_truthy
+      expect(child2_complete.completed?).to be_truthy
 
       # descendants that were already uncomplete are not changed
-      expect(child1_orig_updated_at).to eq child1.reload.updated_at
-      expect(child1_1_1_orig_updated_at).to eq child1_1_1.reload.updated_at
+      expect(child1.reload.date_completed).to eq child1_orig_date_completed
+      expect(child1_1_1.reload.date_completed).to eq child1_1_1_orig_date_completed
     end
 
   end
