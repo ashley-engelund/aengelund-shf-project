@@ -69,10 +69,41 @@ module AdminOnly
     scope :top_level_in_use, -> { top_level_checklists.in_use }
 
 
+    # Delegate class methods
+    class << self
+
+      # will get an error if I try to use the class direction, hence the constant
+      CHANGE_POLICY = AdminOnly::MasterChecklistChangePolicy
+
+      delegate :attributes_can_change_with_completed,
+               :attributes_displayed_to_users,
+               :change_with_completed_user_checklists?,
+               :change_with_uncompleted_user_checklists?,
+               to: :CHANGE_POLICY
+
+    end
+
+    CHANGE_POLICY = AdminOnly::MasterChecklistChangePolicy
+
+    delegate :change_with_completed_user_checklists?,
+             :change_policy, to: :class
+
+    # delegate :no_more_major_changes?,
+    #          :can_be_destroyed?,
+    #          :can_delete?,
+    #          :can_add_child?,
+    #          :has_completed_user_checklists?,
+    #          to: :CHANGE_POLICY
+
     # --------------------------------------------------------------------------
 
     def self.user_checklist_class
       USER_CHECKLIST_CLASS
+    end
+
+
+    def self.change_policy
+      AdminOnly::MasterChecklistChangePolicy
     end
 
 
@@ -84,38 +115,31 @@ module AdminOnly
     end
 
 
-    # Return the entry and all children as an Array, sorted by list position and then name.
     #
-    # @return [Array<MasterChecklist>] - an Array with the given node first, then its children sorted by the ancestry, list position, and then name.
     #
-    def self.all_as_array_nested_by_name
-      all_as_array(order: %w(name))
-    end
-
-
-    # The only attributes that can be changed if there are any completed user checklist
-    #  are :is_in_use and :is_in_use_changed_at  (when the attribute :is_in_use was changed)
+    # # The only attributes that can be changed if there are any completed user checklist
+    # #  are :is_in_use and :is_in_use_changed_at  (when the attribute :is_in_use was changed)
+    # def self.change_with_completed_user_checklists?(attribute)
+    #   change_policy.change_with_completed_user_checklists?(attribute)
+    # end
     #
-    def self.change_with_completed_user_checklists?(attribute)
-      attributes_can_change_with_completed.include?(attribute.to_sym)
-    end
 
+    #
+    # # Cannot change a Master Checklist if the attribute is one that is displayed to users
+    # def self.change_with_uncompleted_user_checklists?(attribute)
+    #   !attributes_displayed_to_users.include?(attribute.to_sym)
+    # end
 
-    # Cannot change a Master Checklist if the attribute is one that is displayed to users
-    def self.change_with_uncompleted_user_checklists?(attribute)
-      !attributes_displayed_to_users.include?(attribute.to_sym)
-    end
-
-
-    def self.attributes_can_change_with_completed
-      [:is_in_use, :is_in_use_changed_at, :notes, :updated_at]
-    end
-
-
-    def self.attributes_displayed_to_users
-      [:displayed_text, :description, :list_position, :ancestry]
-    end
-
+    #
+    # def self.attributes_can_change_with_completed
+    #   [:is_in_use, :is_in_use_changed_at, :notes, :updated_at]
+    # end
+    #
+    #
+    # def self.attributes_displayed_to_users
+    #   [:displayed_text, :description, :list_position, :ancestry]
+    # end
+    #
 
     # FIXME - this is not correct. If a list was deleted/marked as not in use, this number is just an _order_ but not the human understandable list #
     def self.top_level_next_list_position
@@ -125,7 +149,17 @@ module AdminOnly
     end
 
 
-    # -----------------------------------------
+    # Return the entry and all children as an Array, sorted by list position and then name.
+    # This just passes the name to the OrderedAncestryEntry method so the result is ordered with th ename
+    # @return [Array<MasterChecklist>] - an Array with the given node first,
+    #   then its children sorted by the ancestry, list position, and then name.
+    #
+    def self.all_as_array_nested_by_name
+      all_as_array(order: %w(name))
+    end
+
+
+    # ------------------------------------------------------------------------------------
 
 
     def user_checklist_class
@@ -133,14 +167,46 @@ module AdminOnly
     end
 
 
-    # @return all children that have is_in_use set to true
-    #
-    def children_in_use
+    def no_more_major_changes?
+      delegate_to_change_policy(__method__)
+    end
+
+
+    def can_add_child?
+      delegate_to_change_policy(__method__)
+    end
+
+
+    def can_be_changed?(attributes_to_change = [])
+      delegate_to_change_policy(__method__, attributes_to_change)
+    end
+
+
+    # The before_destroy check with can_be_destroyed? is a failsafe in case
+    # destroy is called outside this method (with no business logic checks, etc.)
+    def can_be_destroyed?
+      delegate_to_change_policy(__method__)
+    end
+
+
+    def can_delete?
+      delegate_to_change_policy(__method__)
+    end
+
+
+    def has_completed_user_checklists?
+      self.user_checklist_class.completed_for_master_checklist(self).count > 0
+    end
+
+
+    # @return [ActiveRecord::Relation] - all descendants that have is_in_use set to true
+    def descendants_in_use
       self.ancestry_base_class.where(child_conditions).where(is_in_use: true)
     end
 
 
-    def children_not_in_use
+    # @return [ActiveRecord::Relation] - all descendants that have is_in_use set to false
+    def descendants_not_in_use
       self.ancestry_base_class.where(child_conditions).where(is_in_use: false)
     end
 
@@ -179,7 +245,7 @@ module AdminOnly
 
       self.class.transaction do
         children.each { |child| child.set_is_in_use(in_use) }
-        in_use ? change_to_being_in_use : delete_or_mark_unused
+        in_use ? change_to_being_in_use : ( can_delete? ? destroy : mark_as_no_longer_used)
       end
 
     end
@@ -191,23 +257,11 @@ module AdminOnly
     end
 
 
+    # :insert is used by the OrderedListEntry.
+    # Wrapping it in this method makes the intention clear
+    # and helps to keep "insert" from being ambiguous
     def add_to_parent_list_positions
-      # :insert is used by the OrderedListEntry.
-      # Wrapping it in this method makes the intention clear
-      # and helps to keep "insert" from being ambiguous
       parent.insert(self)
-    end
-
-
-    # The before_destroy check with can_be_destroyed? is a failsafe in case
-    # destroy is called outside this method (with no business logic checks, etc.)
-    def delete_or_mark_unused
-
-      if can_delete?
-        destroy
-      else
-        mark_as_no_longer_used
-      end
     end
 
 
@@ -240,94 +294,6 @@ module AdminOnly
     end
 
 
-    def can_be_destroyed?
-      # throw :abort is required to stop the callback chain
-      can_delete? ? true : (throw :abort)
-    end
-
-
-    # Cannot delete if there are _any_ user checklists associated with it (completed or not)
-    def can_delete?
-      !children? && !user_checklists.any?
-    end
-
-
-    # Cannot make any 'major' changes if there are any user checklists.
-    # "major" changes are any that users see or that UserChecklists are based on.
-    # (as of 2020-01-20 this means that only notes and the name that administrators see can be changed.)
-    def no_more_major_changes?
-      user_checklists.any?
-    end
-
-
-    # Cannot change if there are any user checklists.
-    def can_add_child?
-      !no_more_major_changes?
-    end
-
-
-    # ----------------------
-
-
-    # If there are any completed user checklists, cannot change it.
-    #  it can be changed only if the attribute can be changed with completed user checklists associated
-    #
-    # If there are user checklists, but none are completed:
-    #  it can be changed only if the attribute can be changed with uncompleted user checklists associated
-    #
-    #                                        | uncompleted: can   |                | completed: can
-    # has User Checklist? | any uncompleted? | change attribute ? | any all_completed? | change attribute ? | can change?
-    # --------------------+------------------+--------------------+----------------+--------------------|------------
-    #   _false_           |   -              |      -             |  -             |                    | true
-    #                     |                  |                    |                |                    |
-    #   true              |   -              |      -             |  true          |  _true_            | true
-    #   true              |   -              |      -             |  false         |  _false_           | false
-    #                     |                  |                    |                |                    |
-    #   true              |   true           |      _true_        |  false         |                    | true
-    #   true              |   true           |      _false_       |  false         |                    | false
-    #
-    #    underlined (_..._) items are the key to determining the result
-    #
-    # TODO Rails 6.0+: verify that changed_attributes still applies. Rails 6.0+ has simplified tracking changes to attributes: Dirty https://api.rubyonrails.org/classes/ActiveModel/Dirty.html
-    #
-    # Raise exceptions - which halts further callbacks and can then be used to display a message (or whatever action should be taken)
-    # if changes to these attributes cannot be made.
-    #
-    def can_be_changed?(attributes_to_change = [])
-
-      return false unless is_in_use
-      return true unless user_checklists.any?
-
-      # '|' = [Array] union of the keys and attributes to change
-
-      if has_completed_user_checklists?
-        can_change_with_completed = (changed_attributes.keys | attributes_to_change).inject(true) { |can_change, this_attribute| can_change && change_with_completed_user_checklists?(this_attribute) }
-        raise HasCompletedUserChecklistsCannotChange unless can_change_with_completed
-      end
-
-      can_change_with_uncompleted = (changed_attributes.keys | attributes_to_change).inject(true) { |can_change, this_attribute| can_change && change_with_uncompleted_user_checklists?(this_attribute) }
-      raise CannotChangeUserVisibleInfo unless can_change_with_uncompleted
-
-      true # should always be true (can be changed) if we got to here
-    end
-
-
-    def change_with_completed_user_checklists?(attribute)
-      self.class.change_with_completed_user_checklists?(attribute)
-    end
-
-
-    def change_with_uncompleted_user_checklists?(attribute)
-      raise CannotChangeUserVisibleInfo unless self.class.change_with_uncompleted_user_checklists?(attribute)
-      true
-    end
-
-
-    def has_completed_user_checklists?
-      user_checklist_class.completed_for_master_checklist(self).count > 0
-    end
-
-
     def change_is_in_use(new_value = false, changed_time = Time.zone.now)
       update(is_in_use: new_value, is_in_use_changed_at: changed_time)
     end
@@ -340,6 +306,22 @@ module AdminOnly
       "#{prefix * depth} #{name}"
     end
 
+
+    # =============================================================================
+
+    private
+
+
+    def delegate_to_change_policy(method, *original_args)
+      delegate_with_self_to(change_policy, method.to_sym, *original_args)
+    end
+
+
+    # Sends :method to delegatee with self as the first argument
+    def delegate_with_self_to(delegatee, method, *original_args)
+      original_args.blank? ? delegatee.send(method.to_sym, self) :
+          delegatee.send(method.to_sym, self, *original_args)
+    end
 
   end
 
