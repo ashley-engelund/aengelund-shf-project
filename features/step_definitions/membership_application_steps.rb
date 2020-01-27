@@ -36,6 +36,7 @@ And(/^the following applications exist:$/) do |table|
 
     legacy_app = hash['is_legacy'] == 'true' ? true : false
 
+    # 'ma' = Member Application
     if (ma = user.shf_application)
 
       user.shf_application.companies << companies
@@ -136,4 +137,24 @@ end
 
 And "I show the membership applications search form" do
   step %{I click on t("accordion_label.application_search_form_toggler.show")}
+end
+
+
+MIN_SHF_APP_TABLE_CSS = 'shf-applications-minimal-info'
+MIN_SHF_APP_TABLE_ROW_CSS = 'shf-application-minimal-info'
+
+
+# Examples of what this will match:
+#  I should see "member@example.com" in the minimal shf application info row
+#  I should see "Some Company Name" in the minimal shf application info row
+#  I should see "2120000142" in the minimal shf application info row
+#  I should not see "visitor@example.com" in the minimal shf application info
+#
+And "I should{negate} see {capture_string} in the minimal shf application info row" do | negate, text |
+  shf_min_apps_table = page.find(:xpath, "//table[contains(@class,'#{MIN_SHF_APP_TABLE_CSS}')]")
+  expect(shf_min_apps_table).not_to be_nil
+
+  shf_min_app_rows = shf_min_apps_table.find(:xpath, "//tr[contains(@class,'#{MIN_SHF_APP_TABLE_ROW_CSS}')]")
+  expect(shf_min_app_rows).not_to be_nil
+  expect(shf_min_app_rows).send (negate ? :not_to : :to), have_content(text)
 end

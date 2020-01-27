@@ -37,10 +37,15 @@ sv:
   save: &save Spara
   back: &back Tillbaks
   search: &search Sök
+  close: Stänga
+  lastupdated: &last_updated Senast uppdaterad
+
   'yes': &yes Ja
   'no': &no Nej
   'Yes': *yes
   'No': *no
+
+
   application: &application Ansökan
   user_activity: Användaraktivitet
   none: Ingen eller Inget
@@ -67,6 +72,8 @@ sv:
   info:
     logged_in_as_admin: Du är inloggad som admin
     under_construction: Sidan är under uppbyggnad, mer information och funktioner kommer att komma efterhand.
+
+  membership: &membership medlemskap
 
   apply_for_membership: Ansök om medlemskap
 
@@ -171,9 +178,12 @@ sv:
 
       payment:
         payment_type: Betalningstyp
+        status: Status
         start_date: Startdatum
         expire_date: &expire_date Utgångsdatum
         notes: Anteckningar
+        created: *created
+        last_updated: *last_updated
 
       shf_application:
         company_number: &company_number Organisationsnummer
@@ -217,6 +227,9 @@ sv:
         phone_number: &company_phone Telefonnummer till företaget
         email: Företagets email
         website: &company_website Webbplats
+        facebook_url: Facebook sida bildadress
+        instagram_url: Instagram bildadress
+        youtube_url: Youtube Kanal
         org_nr: *org_nr
         post_code: *post_code
         city: *city
@@ -261,6 +274,7 @@ sv:
         og_type: &site_og_type OG type
         twitter_card_type: &site_twitter_card_type Twitter card type
         facebook_app_id: &site_facebook_app_id Facebook Application ID
+        payment_too_soon_days: &payment_too_soon_days Number of days that a user will be warned that a payment is 'too soon'
 
 
     errors:
@@ -352,6 +366,23 @@ sv:
     kommun: *kommun
     none: *none_n
 
+
+  payors:
+    status: Status
+    no_payment_due_now: &no_payment_due_now Ingen betalning behöver göras nu.
+    due: Betalning behöver göras.
+    past_due: Betalning är förfallen!
+    due_by: Betalning behöver göras före %{due_date}.
+    too_early: *no_payment_due_now
+    term_paid_through: &term_paid_through Betald till och med
+    you_are_paid_until: Du har betalt till och med
+    you_dont_owe_until_then: "Du är inte skyldig en betalning förrän:"
+    paying_now_extends_until: "Att göra en %{fee_name_payment} nu kommer att förlänga din %{term_name} till %{extended_end_date}."
+    do_you_want_to_pay_now: Vill du verkligen göra en betalning nu?
+    yes_pay_answer: 'Ja, gör en betalning'
+    no_pay_answer: 'Nej.'
+    admin_cant_edit: "Medlemsstatus kan inte uppdateras. (Kanske har inga betalningar gjorts.)"
+
   payment:
     payment_type:
       member_fee: Medlemsavgift
@@ -359,7 +390,16 @@ sv:
     status:
       paid: &paid Betald
       never_paid: &never_paid Aldrig betald
-
+    processor_status: Processor Status
+    status_from_payment_processor:
+      skapad: skapad
+      avvaktan: avvaktan
+      betald: betald
+      utgånget: utgånget
+      väntar_på_betalning: "Väntar på betalning"
+    term_start_date: startdatum
+    term_expiry_date: slutdatum
+    no_payment_due_now: *no_payment_due_now
 
   company_locator:
     error:
@@ -501,6 +541,10 @@ sv:
                         du ett nytt mail med information om hur du skapar din
                         sökbara företagssida."
 
+    shf_application_min_info_as_table:
+      view_application: Visa ansökningar
+      org_nr: *org_nr
+      company_name: *name
 
     shf_application_fields:
       company_numbers_tooltip: Du kan ange flera företagsnummer, åtskilda av
@@ -620,6 +664,8 @@ sv:
 
     edit:
       title: 'Redigera företag: %{company_name}'
+      social_media_links: Sociala Medielänkar
+
     show:
       company_number: *org_nr
       name: *name
@@ -640,14 +686,23 @@ sv:
       confirm_are_you_sure: *are_you_sure_confirm
       add_address: 'Lägg till adress'
       click_to_edit: 'klicka för att redigera'
+      hbrand_status_paid: Får använda H-märkesbilden. (H-märkespremie betalad)
+      hbrand_status_not_paid: Får inte använda H-märkesbilden. (H-märkespremie ej betad)
       edit_branding_status: Redigera Status
       branding_license: Betald H-märkespremie
-      pay_branding_fee_tooltip: Betald avgift förlänger H-märkningen i ett år.
-      branding_fee_expire_date_tooltip: Efter detta datum går perioden för din H-märkning ut.
+      term_paid_through: *term_paid_through
+      no_payment_due_now: *no_payment_due_now
+      hbrand_term_payment: H-märkespremiebetalning
+      hbrand_fee: H-märkespremie
+      hbrand_term: H-märkespremieperiod
+      payment_tooltip: Betald avgift förlänger H-märkningen i ett år.
+      branding_fee_expire_date_tooltip: &branding_fee_expire_date_tooltip Efter detta datum går perioden för din H-märkning ut.
+      term_expire_date_tooltip: *branding_fee_expire_date_tooltip
       members: Företagsmedlemmar
       dinkurs_fetch_events: Hämta Dinkurs Events
       dinkurs_fetching: Hämtar händelser ... vänligen vänta
       dinkurs_key: *dinkurs_company_key
+      pay_branding_fee: &pay_branding_fee Betala H-märkespremie
 
     index:
       title:  Hitta H-märkt företag
@@ -773,25 +828,19 @@ sv:
     all_business_categories: Alla kategorier
 
   users:
+    edit_user_account: &edit_user_account Redigera kontot för %{name}
+
     index:
       title: Alla Användare
       no_search_results: Din sökning gav inget resultat, prova att ta bort något av dina val.
 
-    delete_user: Radera %{user}
+    delete_user: &delete_user "Radera %{user}"
 
     show:
+      edit_user_account: *edit_user_account
       membership_number: *membership_number
-      email: *email
-      current_sign_in_at: *user_current_signed_in_time
-      current_sign_in_ip: *user_current_ip
-      last_login: *user_last_login
-      last_login_ip: *user_last_login_ip
-      logged_in_count: *sign_in_count
-      created: *created
-      reset_password_sent_at: *user_reset_password_sent_at
-      password_never_reset: Användaren har aldrig återställt lösenordet.
-      user_has_never_signed_in: har aldrig loggat in.
-      is_an_admin: Är en admin
+      is_an_admin: &is_an_admin Är en admin
+
       'yes': *yes
       'no': *no
       reset_password: Byt lösenord
@@ -801,36 +850,67 @@ sv:
       please_note_new_password: Spara detta på ett säkert ställe. När du klickar på spara nedan kommer du inte att kunna se lösenordet igen och det finns ingen möjlighet att åter visa det.
       submit_new_password: Spara det nya lösenordet
       member: *member
-      pay_membership_tooltip: När du betalar din medlemsavgift förlängs ditt medlemskap i ett år.
-      membership_expire_date_tooltip: Efter detta datum går perioden för ditt medlemskap ut.
-      proof_of_membership: Behörighetsbevis
-      proof_of_membership_describe: Detta är ditt behörighetsbevis.
-      proof_of_membership_photo_needed: 'Om du saknar profilbild (ser "Photo
-                                        Unavailable"), ladda upp en bild av dig
-                                        själv (utan hund) här: '
-      image_how_to_use_html: Du kan ladda ner bilden, ta en
-                             skärmdump eller länka till den från din webbplats
-                             och använda den i sociala medier
-                             eller skriva ut för att använda i ett fysiskt
-                             sammanhang, till exempel att visa en kund.
-      image_use_guidelines_html: Observera att din användning av denna bild är föremål
-                                 för dessa %{use_guidelines_link}.
-      use_guidelines: riktlinjer
-      download_image: Ladda ner bild
-      image_dimensions_html: "Bildbredden är <span id = '%{width_id}'></span>
-                              pixlar och höjden är
-                              <span id = '%{height_id}'></span> pixlar."
-      use_this_image_link_html: "<span style='font-weight: bold'>
-                                Använd den här länken på en extern webbplats:
-                                </span>"
-      show_image: Visa bild
-      copy_image_url: Kopiera bildadress
-      copied: Kopierat
-      company_h_brand: Företaget H-märke för %{company}
-      company_h_brand_describe: Detta är ditt företags H-märke.
+      membership_status: &membership_status Medlemsstatus
+      not_a_member: &not_a_member Är inte medlem
+      is_a_member: &is_a_member Är medlem
+      term_paid_through: *term_paid_through
+      no_payment_due_now: *no_payment_due_now
+      membership_fee_payment: betalning av medlemskap
+      membership_fee: medlemskapsavgift
+      membership_term: medlemperiod
+      payment_tooltip: När du betalar din medlemsavgift förlängs ditt medlemskap i ett år.
+      membership_expire_date_tooltip: &membership_expire_date_tooltip Efter detta datum går perioden för ditt medlemskap ut.
+      term_expire_date_tooltip: *membership_expire_date_tooltip
+
+      edit_member_status: &edit_member_status Redigera medlemsstatus
+      pay_membership: &pay_membership Betala medlemsavgift
+      edit_user_profile: &edit_user_profile Information om användaren %{name}
+
+    show_login_email_row_cols:
+        email: *email
+
+    show_info_for_admin_only:
+      admin_user_info_title: &admin_user_info_title Användare Info
+      created: *created
+      reset_password_sent_at: *user_reset_password_sent_at
+      password_never_reset: &password_never_reset Användaren har aldrig återställt lösenordet.
+      user_has_never_signed_in: har aldrig loggat in.
+      last_login: *user_last_login
+      last_login_ip: *user_last_login_ip
+      logged_in_count: *sign_in_count
+      current_sign_in_at: *user_current_signed_in_time
+      current_sign_in_ip: *user_current_ip
       member_packet: &member_packet pkt
       sent: skickat
       not_sent: inte skickat
+
+
+    show_member_images_row_cols:
+      email: *email
+      proof_of_membership: &proof_of_membership Behörighetsbevis
+      proof_of_membership_describe: &proof_of_membership_describe Detta är ditt behörighetsbevis.
+      proof_of_membership_photo_needed: &proof_of_membership_photo_needed 'Om du saknar profilbild (ser "Photo
+                                           Unavailable"), ladda upp en bild av dig
+                                           själv (utan hund) här: '
+      company_h_brand: &company_h_brand Företaget H-märke för %{company}
+      company_h_brand_describe: &company_h_brand_describe Detta är ditt företags H-märke.
+
+      use_guidelines: &use_guidelines riktlinjer
+      download_image: &download_image Ladda ner bild
+      image_dimensions_html: "Bildbredden är <span id = '%{width_id}'></span>pixlar och höjden är<span id = '%{height_id}'></span> pixlar."
+      use_this_image_link_html: "<span style='font-weight: bold'>Använd den här länken på en extern webbplats:</span>"
+
+      image_how_to_use_html: &image_how_to_use_html "Du kan ladda ner bilden, ta en
+                             skärmdump eller länka till den från din webbplats
+                             och använda den i sociala medier
+                             eller skriva ut för att använda i ett fysiskt
+                             sammanhang, till exempel att visa en kund."
+      image_use_guidelines_html: &image_use_guidelines_html "Observera att din användning av denna bild är föremål
+                                 för dessa %{use_guidelines_link}."
+
+      show_image: &show_image Visa bild
+      copy_image_url: &copy_image_url Kopiera bildadress
+      copied:  &copied Kopierat
 
     update:
       passwords_dont_match: De två lösenord du angivit matchar inte.
@@ -854,11 +934,14 @@ sv:
       all_users: Alla användare
 
     user:
-      user_has_never_signed_in: har aldrig loggat in.
+      # is this entry used anywhere?  (the entry in .show above is, and follows rails convention)
+      user_has_never_signed_in: &user_has_never_signed_in har aldrig loggat in.
       'yes': *yes # https://coderwall.com/p/ld65tq/rails-i18n-yes-no-translation
       'no': *no
-      edit_member_status: Redigera medlemsstatus
+      edit_member_status: *edit_member_status
       submit_button_label: Uppdatera status
+      edit_user_account: *edit_user_account
+      edit_user_profile: *edit_user_profile
 
     users_list:
       membership_number: *membership_number_short
@@ -873,9 +956,15 @@ sv:
       applications_tooltip: Användaren har en öppen ansökan
       expire_date: *expire_date
       member_packet: *member_packet
+      edit_profile: Edit Profile
+      edit_account: (Edit Acct.)
 
     destroy:
       success: Användaren raderades framgångsrikt.
+
+  user_profiles:
+    edit:
+      edit_user_account: *edit_user_account
 
   payments:
     create:
@@ -1042,6 +1131,7 @@ sv:
         twitter_card_type: *site_twitter_card_type
         facebook_app_id: *site_facebook_app_id
         missing: *missing
+        payment_too_soon_days: *payment_too_soon_days
 
       show:
         title: *application_configuration
@@ -1059,6 +1149,7 @@ sv:
         twitter_card_type: *site_twitter_card_type
         facebook_app_id: *site_facebook_app_id
         missing: *missing
+        payment_too_soon_days: *payment_too_soon_days
 
       update:
         success: Programdata uppdaterades framgångsrikt
@@ -1107,12 +1198,54 @@ sv:
     user_profile:
       edit:
         title: 'Redigera profil: %{user}'
-        become_this_user: Bli den här användaren
+        become_this_user: &become_this_user Bli den här användaren
+        delete_this_user: *delete_user
       update:
         success: Användarprofil uppdaterad framgångsrikt
         error: Ett eller flera problem hindrade profilen från att uppdateras.
       become:
         have_become: "Du fungerar nu som användare %{user_name} (id: %{user_id}). Logga ut och logga sedan in som administratör om du behöver administrera igen."
+      become_user_button:
+        become_this_user: *become_this_user
+
+    user_account:
+      edit:
+        is_an_admin: *is_an_admin
+        edit_user_profile: *edit_user_profile
+        email: *email
+        membership_number: *membership_number
+        admin_user_info_title: *admin_user_info_title
+        created: *created
+
+        current_sign_in_at: *user_current_signed_in_time
+        current_sign_in_ip: *user_current_ip
+        user_has_never_signed_in: *user_has_never_signed_in
+        last_login: *user_last_login
+        last_login_ip: *user_last_login_ip
+        logged_in_count: *sign_in_count
+        reset_password_sent_at: *user_reset_password_sent_at
+        password_never_reset: *password_never_reset
+
+        proof_of_membership: *proof_of_membership
+        proof_of_membership_describe: *proof_of_membership_describe
+        proof_of_membership_photo_needed: *proof_of_membership_photo_needed
+        company_h_brand: *company_h_brand
+        company_h_brand_describe: *company_h_brand_describe
+
+        image_how_to_use_html: *image_how_to_use_html
+        image_use_guidelines_html: *image_use_guidelines_html
+        use_guidelines: *use_guidelines
+
+        download_image: *download_image
+        show_image: *show_image
+        copy_image_url: *copy_image_url
+        copied: *copied
+
+
+      update:
+        success: Användarens information uppdaterad.
+        error: Ett problem hindrade användarinformationen från att uppdateras.
+
 
 
   mailers:
@@ -1264,8 +1397,14 @@ sv:
         greeting: *email_greeting
         message_text:
           expire_alert_html: "Ditt medlemsskap gick ut <span class='date-warning'> %{expire_date}.</span>"
-          renew_membership: Du kan förnya ditt medlemsskap och fortsätta dra nytta av medlemsfördelarna genom att logga in och betala.
-          pay_on_acct_page: "Du betalar via "
+          renew_membership: Du kan förnya ditt medlemskap och fortsätta dra nytta av medlemsfördelarna genom att logga in och betala.
+          pay_on_acct_page: &pay_on_acct_page "Du betalar via "
+
+      first_membership_fee_owed:
+        subject: "Godkänd, men missat att betala?"
+        greeting: *email_greeting
+        message_text: "Du har blivit godkänd för att bli medlem, men du måste betala medlemsavgift för att kunna dra nytta av de förmåner, erbjudande och rabatter som ingår i medlemskapet. Du kan enkelt betala genom att följa stegen nedan."
+
 
 
   devise:
@@ -1280,7 +1419,9 @@ sv:
         submit_button_label: Skapa användare
         success: Ett nytt konto har skapats
       edit:
-        title: Redigera din profil
+        my_profile_title: &my_profile_title Redigera din profil
+        title: *my_profile_title
+        edit_profile_for_title: 'Redigera profile: %{user}'
         unconfirmed_email_for: 'Obekräftad mailadress för: %{unconfirmed_email}'
         leave_blank_if_no_change: lämna tomt om du inte vill byta
         confirm_password: *confirm_password
@@ -1391,10 +1532,10 @@ sv:
           view_company: Visa företagssida
           edit_company: Redigera företag
         my_application: *my_application
-        pay_membership: Betala medlemsavgift
+        pay_membership: *pay_membership
 
       company:
-        pay_branding_fee: Betala H-märkespremie
+        pay_branding_fee: *pay_branding_fee
 
       admin:
         shf_main_site: *shf_main_site

@@ -26,8 +26,60 @@
 }
 
 
-
 .edit a,
 .delete a {
   border-bottom: 0;
 }
+
+// ======================================
+// ICONS
+
+// ------------------------------
+// FontAwesome social media icons
+
+.fa-facebook {
+  color: $social-media-facebook-blue;
+}
+
+.fa-instagram {
+  color: $social-media-instagram-gray;
+}
+
+.fa-youtube-square {
+  color: $social-media-youtube-red;
+}
+// ------------------------------
+
+
+.disabled-icon {
+  color: $disabled-icon-gray;
+  cursor: not-allowed;
+}
+// ======================================
+
+.grayed-btn-colors {
+  background-color: $grayed-button-background;
+  border-color: $grayed-button-background;
+  color: $grayed-button-text;
+}
+
+.modal-content {
+  p {
+    line-height: 1.5em;
+  }
+}
+
+
+.section {
+  margin-bottom: 1em;
+  margin-left: 1em;
+}
+
+.section-title {
+  margin-top: 1em;
+}
+
+.admin-only {
+  background-color: $admin-only-background;
+}
+
