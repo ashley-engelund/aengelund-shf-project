@@ -13,7 +13,7 @@ RSpec.describe ApplicationController, type: :controller do
     end
 
     describe 'true for all other actions' do
-      all_other_actions = described_class.new.action_methods.reject { |action_name| action_name == 'show' || action_name = 'index' }
+      all_other_actions = described_class.new.action_methods.reject { |action_name| action_name == 'show' || action_name == 'index' }
       all_other_actions << 'blorf'
       all_other_actions.each do |action_name|
         it "#{action_name}" do
