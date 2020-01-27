@@ -17,7 +17,7 @@ module RobotsMetaTagAllActions
   protected
 
   # Always include the robots nofollow, noindex tag
-  def action_should_have_robots_none_tag?(action_name = '')
+  def action_should_have_robots_none_tag?(_action_name = '')
     true
   end
 
