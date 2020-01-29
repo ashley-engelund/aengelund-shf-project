@@ -191,7 +191,7 @@ Feature: Show user account (details) information to me
   Scenario: a user can see their own user page
     Given I am logged in as "emma-member@example.com"
     When I am on the "user account" page for "emma-member@example.com"
-    Then I should not see t("errors.not_permitted")
+    Then I should not see a message telling me I am not allowed to see that page
     And I should see t("users.show_login_email_row_cols.email")
     And I should see "emma-member@example.com"
 
@@ -205,7 +205,7 @@ Feature: Show user account (details) information to me
   Scenario: a member can see their own user page
     Given I am logged in as "lars-member@example.com"
     When I am on the "user account" page for "lars-member@example.com"
-    Then I should not see t("errors.not_permitted")
+    Then I should not see a message telling me I am not allowed to see that page
     And I should see t("users.show_login_email_row_cols.email")
     And I should see "lars-member@example.com"
     And I should see t("users.show.membership_number")

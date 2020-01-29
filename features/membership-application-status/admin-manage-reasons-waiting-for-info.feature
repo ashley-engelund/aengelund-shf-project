@@ -73,7 +73,7 @@ Feature: Admin manages the list of reasons why SHF is waiting for info from an a
   Scenario: An admin can view the list of reasons
     Given I am logged in as "admin@shf.se"
     When I am on the "all waiting for info reasons" page
-    Then I should not see t("errors.not_permitted")
+    Then I should not see a message telling me I am not allowed to see that page
     And I should see t("admin_only.member_app_waiting_reasons.index.title")
 
 
@@ -105,7 +105,7 @@ Feature: Admin manages the list of reasons why SHF is waiting for info from an a
   Scenario: An admin can create a new reason
     Given I am logged in as "admin@shf.se"
     When I am on the "new waiting for info reason" page
-    Then I should not see t("errors.not_permitted")
+    Then I should not see a message telling me I am not allowed to see that page
     And I should see t("admin_only.member_app_waiting_reasons.new.title")
 
 
@@ -138,7 +138,7 @@ Feature: Admin manages the list of reasons why SHF is waiting for info from an a
   Scenario: An admin can edit a reason
     Given I am logged in as "admin@shf.se"
     When I am on the edit member app waiting reason with name_sv "namn 1"
-    Then I should not see t("errors.not_permitted")
+    Then I should not see a message telling me I am not allowed to see that page
     And I should see t("admin_only.member_app_waiting_reasons.edit.title", name_sv: "namn 1", name_en: "name 1")
 
 

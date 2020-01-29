@@ -186,7 +186,7 @@ Feature: Edit SHF Application
   Scenario: Applicant can view accepted application
     Given I am logged in as "nils@random.com"
     And I am on the "show my application" page for "nils@random.com"
-    Then I should not see t("errors.not_permitted")
+    Then I should not see a message telling me I am not allowed to see that page
     And I should see t("shf_applications.accepted")
 
   Scenario: Applicant can not edit rejected application
@@ -197,7 +197,7 @@ Feature: Edit SHF Application
   Scenario: Applicant can view rejected application
     Given I am logged in as "bob@barkybobs.com"
     And I am on the "show my application" page for "bob@barkybobs.com"
-    Then I should not see t("errors.not_permitted")
+    Then I should not see a message telling me I am not allowed to see that page
     And I should see t("shf_applications.rejected")
 
   Scenario: Member wants to view their own application

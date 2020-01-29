@@ -57,5 +57,5 @@ Feature: Redirect User to the login page if they need to be logged in
 
   Scenario: I can access a page that does not require a login (detail for 1 company)
     When  I am the page for company number "5560360793"
-    Then I should not see t("errors.not_permitted")
+    Then I should not see a message telling me I am not allowed to see that page
     And I should not see t("errors.try_login")

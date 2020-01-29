@@ -49,7 +49,7 @@ Feature: Only members and admins can see members only (hidden) pages
     Given I am logged in as "emma@happymutts.com"
     And  I am on the static workgroups page
     Then I should see "Yrkesrad"
-    Then I should not see t("errors.not_permitted")
+    Then I should not see a message telling me I am not allowed to see that page
 
   @time_adjust
   Scenario: Member can see members only menu
@@ -62,7 +62,7 @@ Feature: Only members and admins can see members only (hidden) pages
     Given I am logged in as "admin@shf.se"
     And  I am on the static workgroups page
     Then I should see "Yrkesrad"
-    Then I should not see t("errors.not_permitted")
+    Then I should not see a message telling me I am not allowed to see that page
 
   Scenario: Admin can see members only menu
     Given I am logged in as "admin@shf.se"
