@@ -179,13 +179,13 @@ Feature: Show user account (details) information to me
   Scenario: a visitor cannot see a user page
     Given I am logged out
     When I am on the "user account" page for "lars-member@example.com"
-    Then I should see t("errors.not_permitted")
+    Then I should see a message telling me I am not allowed to see that page
 
 
   Scenario: user cannot see the user page for another user
     Given I am logged in as "emma-member@example.com"
     When I am on the "user account" page for "lars-member@example.com"
-    Then I should see t("errors.not_permitted")
+    Then I should see a message telling me I am not allowed to see that page
 
 
   Scenario: a user can see their own user page
@@ -199,7 +199,7 @@ Feature: Show user account (details) information to me
   Scenario: member cannot see the user page for another user
     Given I am logged in as "lars-member@example.com"
     When I am on the "user account" page for "emma-member@example.com"
-    Then I should see t("errors.not_permitted")
+    Then I should see a message telling me I am not allowed to see that page
 
 
   Scenario: a member can see their own user page
