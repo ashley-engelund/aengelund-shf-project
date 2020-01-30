@@ -10,7 +10,6 @@ class CompaniesController < ApplicationController
   before_action :authorize_company, only: [:update, :show, :edit, :destroy]
   before_action :set_app_config, only: [:company_h_brand]
   before_action :allow_iframe_request, only: [:company_h_brand]
-  before_action :set_page_meta_robots_none, only: [:edit]
 
 
   def index
@@ -89,7 +88,6 @@ class CompaniesController < ApplicationController
 
   def show
     setup_events_and_events_pagination
-
     set_meta_tags_for_company(@company)
 
     show_events_list if request.xhr?
@@ -224,10 +222,10 @@ class CompaniesController < ApplicationController
     payment = @company.most_recent_branding_payment
     payment.update!(payment_params) if payment
 
-    render partial: 'branding_payment_status', locals: { company: @company }
+    render partial: 'branding_term_status', locals: { company: @company }
 
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved
-    render partial: 'branding_payment_status',
+    render partial: 'branding_term_status',
            locals: { company: @company, error: t('companies.update.error') }
   end
 
@@ -256,6 +254,9 @@ class CompaniesController < ApplicationController
     params.require(:company).permit(:name, :company_number, :phone_number,
                                     :email,
                                     :website,
+                                    :facebook_url,
+                                    :instagram_url,
+                                    :youtube_url,
                                     :description,
                                     :dinkurs_company_id,
                                     :show_dinkurs_events,
@@ -282,6 +283,9 @@ class CompaniesController < ApplicationController
 
   def sanitize_params(params)
     params['website'] = InputSanitizer.sanitize_url(params.fetch('website', ''))
+    params['facebook_url'] = InputSanitizer.sanitize_url(params.fetch('facebook_url', ''))
+    params['instagram_url'] = InputSanitizer.sanitize_url(params.fetch('instagram_url', ''))
+    params['youtube_url'] = InputSanitizer.sanitize_url(params.fetch('youtube_url', ''))
     params['description'] = InputSanitizer.sanitize_html(params.fetch('description', ''))
     params
   end

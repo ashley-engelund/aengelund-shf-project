@@ -37,10 +37,15 @@ en:
   save: &save Save
   back: &back Back
   search: &search Search
+  close: Close
+  lastupdated: &last_updated Last Updated
+
   'yes': &yes 'Yes'
   'no': &no 'No'
   'Yes': *yes
   'No': *no
+
+
   application: &application Application
   user_activity: User Activity
   none: &none None
@@ -67,6 +72,8 @@ en:
   info:
     logged_in_as_admin: You are logged in as an admin.
     under_construction: This page is under construction.  More information and features are coming.
+
+  membership: &membership membership
 
   apply_for_membership: 'Apply for membership'
 
@@ -129,7 +136,7 @@ en:
         other: &business_categories Categories
 
       company:
-        one: Company
+        one: &company_one Company
         other: Companies
 
       shf_document:
@@ -171,9 +178,12 @@ en:
 
       payment:
         payment_type: Payment Type
+        status: Status
         start_date: Start Date
         expire_date: &expire_date Expire Date
         notes: Notes
+        created: *created
+        last_updated: *last_updated
 
       shf_application:
         company_number: &company_number "Company number"
@@ -220,7 +230,10 @@ en:
         kommun: *kommun
         region: *region
         region_short: *region_short
-        website: Website
+        website: &company_website Website
+        facebook_url: Facebook page URL
+        instagram_url: Instagram URL
+        youtube_url: Youtube channel
         org_nr: *org_nr
         dinkurs_key: &dinkurs_company_key Dinkurs Company key
         dinkurs_company_id: Dinkurs company key
@@ -253,6 +266,7 @@ en:
         og_type: &site_og_type OG type
         twitter_card_type: &site_twitter_card_type Twitter card type
         facebook_app_id: &site_facebook_app_id Facebook Application ID
+        payment_too_soon_days: &payment_too_soon_days Number of days that a user will be warned that a payment is 'too soon'
 
       task_attempt:
         task_name: Task name
@@ -350,6 +364,24 @@ en:
     kommun: *kommun
     none: *none
 
+
+  payors:
+    status: Status
+    no_payment_due_now: &no_payment_due_now No payment is due now.
+    due: Payment is due now.
+    past_due: Payment is past due!
+    due_by: Payment is due by %{due_date}.
+    too_early: *no_payment_due_now
+    term_paid_through: &term_paid_through Paid through
+    you_are_paid_until: You are already paid until
+    you_dont_owe_until_then: You do not owe a payment until then.
+    paying_now_extends_until: "Making a %{fee_name_payment} now will extend your %{term_name} to %{extended_end_date}."
+    do_you_want_to_pay_now: Do you really want to make a payment now?
+    yes_pay_answer: 'Yes, make a payment'
+    no_pay_answer: 'No. Nevermind. Do not make a payment'
+    admin_cant_edit: Membership status can't be updated. (Perhaps no payments have been made.)
+
+
   payment:
     payment_type:
       member_fee: Member Fee
@@ -357,6 +389,16 @@ en:
     status:
       paid: &paid Paid
       never_paid: &never_paid Never Paid
+    processor_status: Processor Status
+    status_from_payment_processor:
+      skapad: created
+      avvaktan: pending
+      betald: successful
+      utgånget: expired
+      väntar_på_betalning: awaiting payments
+    term_start_date: Term Start Date
+    term_expiry_date: Term Expiry Date
+    no_payment_due_now: *no_payment_due_now
 
 
   # Automatic and manual lookup for views:
@@ -492,6 +534,11 @@ en:
         h_expires_html: 'Your H-branding fee-payment for company <b>%{company}</b> expired:'
         pay_h_here_html: 'Your H-branding fee for company <b>%{company}</b> needs to be paid:'
 
+    shf_application_min_info_as_table:
+      view_application: View application
+      org_nr: *org_nr
+      company_name: *name
+
     shf_application_fields:
       company_numbers_tooltip: You can enter multiple company numbers, separated by
                                a comma or blank spaces
@@ -606,6 +653,7 @@ en:
       success_with_dinkurs_problem: THE COMPANY WAS CREATED, BUT PLEASE NOTE PROBLEM(S) BELOW
     edit:
       title: 'Editing: %{company_name}'
+      social_media_links: Social Media Links
     update:
       error: There was a problem updating the company.
       success: The company was updated.
@@ -617,7 +665,7 @@ en:
       main_address: Main Address
       other_addresses: Other Addresses
       address: Address
-      mailing_address: Mail
+      mailing_address: &post_address Mail
       street: *street
       post_code: *post_code
       city: *city
@@ -626,18 +674,26 @@ en:
       website: Company website
       org_nr: *org_nr
       delete: "Delete company"
-      confirm_are_you_sure: '*are_you_sure_confirm you want to delete the company?'
+      confirm_are_you_sure: *are_you_sure_confirm
       add_address: 'Add address'
       click_to_edit: 'click to edit'
+      hbrand_status_paid: Can use the H-Brand image. (License fee is paid)
+      hbrand_status_not_paid: Cannot use the H-Brand image. (License fee is not paid)
+      term_paid_through: *term_paid_through
+      no_payment_due_now: *no_payment_due_now
+      hbrand_term_payment: H-Brand license fee payment
+      hbrand_fee: H-Brand license fee
+      hbrand_term: H-Brand license term
       edit_branding_status: Edit Branding Status
       branding_license: H-Branding License
-      pay_branding_fee_tooltip: Paying H-Branding fee will extend your branding
-                                license for one year
-      branding_fee_expire_date_tooltip: Branding license expires after this date
+      payment_tooltip: Paying the H-Branding fee will extend the branding license for one year.
+      branding_fee_expire_date_tooltip: &branding_fee_expire_date_tooltip Branding license expires after this date
+      term_expire_date_tooltip : *branding_fee_expire_date_tooltip
       members: Company Members
       dinkurs_fetch_events: Get Dinkurs Events
       dinkurs_fetching: Fetching events ... please wait
       dinkurs_key: *dinkurs_company_key
+      pay_branding_fee: &pay_branding_fee Pay H-Branding Fee
 
     index:
       title: Find H-labeled companies
@@ -761,25 +817,19 @@ en:
     all_business_categories: All categories
 
   users:
+    edit_user_account: &edit_user_account Edit the account for %{name}
+
     index:
       title: All Users
       no_search_results: No records matched your search criteria.
 
-    delete_user: Delete %{user}
+    delete_user: &delete_user "Delete %{user}"
 
     show:
+      edit_user_account: *edit_user_account
       membership_number: *membership_number
-      email: *email
-      current_sign_in_at: *user_current_signed_in_time
-      current_sign_in_ip: *user_current_ip
-      last_login: *user_last_login
-      last_login_ip: *user_last_login_ip
-      logged_in_count: *sign_in_count
-      created: *created
-      reset_password_sent_at: *user_reset_password_sent_at
-      password_never_reset: Password has never been reset by the user.
-      user_has_never_signed_in: has never logged in.
-      is_an_admin: Is an Admin
+      is_an_admin: &is_an_admin Is an Admin
+
       'yes': *yes
       'no': *no
       reset_password: Change the Password
@@ -789,34 +839,65 @@ en:
       please_note_new_password: Please record this in a safe and secure place. Once you press the Save button below you will not be able to see the password again and there is no way to display it again.
       submit_new_password: Save the New Password
       member: *member
-      pay_membership_tooltip: Paying membership fee will extend your membership
-                              for one year
-      membership_expire_date_tooltip: Membership expires after this date
-      proof_of_membership: Proof of Membership
-      proof_of_membership_describe: This image is your proof of membership in SHF.
-      proof_of_membership_photo_needed: 'If you see "Photo Unavailable" then please
-                                         upload a photo of yourself here: '
-      image_how_to_use_html: You can download the image, take a screenshot,
-                            link to it from your website and use it in social media,
-                            or print it have and show (ex. show it to a customer/client).
-      image_use_guidelines_html: Please note that your use of this image is subject to
-                                 these %{use_guidelines_link}.
-      use_guidelines: guidelines
-      download_image: Download Image
-      show_image: Show image
-      copy_image_url: Copy image link
-      copied: Copied
-      image_dimensions_html: "The image width is <span id='%{width_id}'></span>
-                             pixels and the height is
-                             <span id='%{height_id}'></span> pixels."
-      use_this_image_link_html: "<span style='font-weight: bold'>
-                                Use this link in an external website:
-                                </span>"
-      company_h_brand: Company H-Brand for %{company}
-      company_h_brand_describe: This image is your company's H-Brand.
-      member_packet: &member_packet member packet
+      membership_status: &membership_status Membership Status
+      not_a_member: &not_a_member Not a member
+      is_a_member: &is_a_member Member in good standing
+      term_paid_through: *term_paid_through
+      no_payment_due_now: *no_payment_due_now
+      membership_fee_payment: membership payment
+      membership_fee: membership fee
+      membership_term: membership term
+      payment_tooltip: Paying the membership fee will extend your membership for one year.
+      membership_expire_date_tooltip: &membership_expire_date_tooltip Membership expires after this date
+      term_expire_date_tooltip : *membership_expire_date_tooltip
+      edit_member_status: &edit_member_status Edit Member Status
+      pay_membership: &pay_membership Pay Membership Fee
+      edit_user_profile: &edit_user_profile Edit the profile for %{name}
+
+    show_login_email_row_cols:
+      email: *email
+
+    show_info_for_admin_only:
+      admin_user_info_title: &admin_user_info_title Användare Info
+      created: *created
+      reset_password_sent_at: *user_reset_password_sent_at
+      password_never_reset: &password_never_reset Password has never been reset by the user.
+      user_has_never_signed_in: &user_has_never_signed_in has never logged in.
+      last_login: *user_last_login
+      last_login_ip: *user_last_login_ip
+      logged_in_count: *sign_in_count
+      current_sign_in_at: *user_current_signed_in_time
+      current_sign_in_ip: *user_current_ip
+      member_packet: &member_packet pkt
       sent: sent
       not_sent: not sent
+
+    show_member_images_row_cols:
+      email: *email
+      proof_of_membership: &proof_of_membership Proof of Membership
+      proof_of_membership_describe: &proof_of_membership_describe This image is your proof of membership in SHF.
+      proof_of_membership_photo_needed: &proof_of_membership_photo_needed 'If you see "Photo Unavailable" then please
+                                           upload a photo of yourself here: '
+      company_h_brand: &company_h_brand Company H-Brand for %{company}
+      company_h_brand_describe: &company_h_brand_describe This image is your company's H-Brand.
+
+      image_how_to_use_html: &image_how_to_use_html "You can download the image, take a screenshot,
+        link to it from your website and use it in social media,
+        or print it have and show (ex. show it to a customer/client)."
+      image_use_guidelines_html: &image_use_guidelines_html Please note that your use of this image is subject to these %{use_guidelines_link}.
+      use_guidelines: &use_guidelines guidelines
+
+      show_image: &show_image Show image
+      download_image: &download_image Download Image
+      copy_image_url: &copy_image_url Copy image link
+      copied: &copied Copied
+      image_dimensions_html: "The image width is <span id='%{width_id}'></span>
+                               pixels and the height is
+                               <span id='%{height_id}'></span> pixels."
+      use_this_image_link_html: "<span style='font-weight: bold'>
+                                  Use this link in an external website:
+                                  </span>"
+
 
     update:
       passwords_dont_match: "The two passwords entered don't match."
@@ -841,11 +922,13 @@ en:
       all_users: 'All users'
 
     user:
-      user_has_never_signed_in: has never logged in.
+      user_has_never_signed_in: &user_has_never_signed_in has never logged in.
       'yes': *yes # https://coderwall.com/p/ld65tq/rails-i18n-yes-no-translation
       'no': *no
-      edit_member_status: Edit Member Status
+      edit_member_status: *edit_member_status
       submit_button_label: Update Status
+      edit_user_account: *edit_user_account
+      edit_user_profile: *edit_user_profile
 
     users_list:
       membership_number: *membership_number_short
@@ -860,9 +943,15 @@ en:
       applications_tooltip: User has an open application
       expire_date: *expire_date
       member_packet: *member_packet
+      edit_profile: Edit Profile
+      edit_account: (Edit Acct.)
 
     destroy:
       success: User deleted successfully.
+
+  user_profiles:
+    edit:
+      edit_user_account: *edit_user_account
 
   payments:
     create:
@@ -1035,6 +1124,7 @@ en:
         twitter_card_type: *site_twitter_card_type
         facebook_app_id: *site_facebook_app_id
         missing: *missing
+        payment_too_soon_days: *payment_too_soon_days
 
       show:
         title: *application_configuration
@@ -1052,6 +1142,7 @@ en:
         twitter_card_type: *site_twitter_card_type
         facebook_app_id: *site_facebook_app_id
         missing: *missing
+        payment_too_soon_days: *payment_too_soon_days
 
       update:
         success: Application data updated successfully
@@ -1100,12 +1191,51 @@ en:
     user_profile:
       edit:
         title: 'Edit profile: %{user}'
-        become_this_user: Become this User
+        become_this_user: &become_this_user Become this User
+        delete_this_user: *delete_user
       update:
         success: User profile updated successfully
         error: One or more problems prevented the profile from being updated.
       become:
         have_become: "You are now acting as user %{user_name} (id: %{user_id}). Log out then log back in as the admin if you need to administrate again."
+      become_user_button:
+        become_this_user: *become_this_user
+
+    user_account:
+      edit:
+        is_an_admin: *is_an_admin
+        edit_user_profile: *edit_user_profile
+        email: *email
+        membership_number: *membership_number
+        admin_user_info_title: *admin_user_info_title
+        created: *created
+
+        user_has_never_signed_in: *user_has_never_signed_in
+        current_sign_in_at: *user_current_signed_in_time
+        current_sign_in_ip: *user_current_ip
+        last_login: *user_last_login
+        last_login_ip: *user_last_login_ip
+        logged_in_count: *sign_in_count
+        reset_password_sent_at: *user_reset_password_sent_at
+        password_never_reset: *password_never_reset
+
+        proof_of_membership: *proof_of_membership
+        proof_of_membership_describe: *proof_of_membership_describe
+        proof_of_membership_photo_needed: *proof_of_membership_photo_needed
+        company_h_brand: *company_h_brand
+        company_h_brand_describe: *company_h_brand_describe
+        image_how_to_use_html: *image_how_to_use_html
+        image_use_guidelines_html: *image_use_guidelines_html
+        use_guidelines: *use_guidelines
+        download_image: *download_image
+        show_image: *show_image
+        copy_image_url: *copy_image_url
+        copied: *copied
+
+
+      update:
+        error: A problem kept the user account from being updated.
+        success: The user account was updated.
 
 
 
@@ -1150,7 +1280,7 @@ en:
           new_app_arrived: "A new membership application has been submitted that you should look at: "
           from: From
           view_app_here: "You can view the membership application here: "
-          must_be_logged_in: "(You must be logged in as the administrator to view it.)"
+          must_be_logged_in: &must_be_logged_in_as_admin "(You must be logged in as the administrator to view it.)"
 
       member_unpaid_over_x_months:
         subject: Members unpaid for more than %{num_months} months
@@ -1159,6 +1289,20 @@ en:
           full_name: Name
 
         error_sending:  FIXME - need text to display if there is a problem sending this email
+
+
+      new_membership_granted_co_hbrand_paid:
+        subject: New Member to welcome and send packet to
+        message_text:
+          this_is_member: "This person has paid and is now a member. Welcome them and send member package, you clever creature!"
+          member_number: *membership_number
+          categories: *business_categories
+          company: *company_one
+          company_website: *company_website
+          company_facebook_url: Facebook
+          company_postal_address: *post_address
+
+          must_be_logged_in: *must_be_logged_in_as_admin
 
 
     shf_application_mailer:
@@ -1234,7 +1378,7 @@ en:
         message_text:
           expire_alert_html: "Your SHF membership term ended on <span class='date-warning'> %{expire_date}.</span>"
           renew_membership: You can renew your membership and keep taking advantage of SHF member benefits by logging in and paying your membership fee.
-          pay_on_acct_page: "Go to your account page to pay:"
+          pay_on_acct_page: &pay_on_acct_page "Go to your account page to pay:"
 
 
       co_info_incomplete:
@@ -1249,6 +1393,11 @@ en:
           please_complete: "Please add the above information so the company information is complete."
           company_link_login_msg: "Here's the link to the company so you can edit it: "
 
+      first_membership_fee_owed:
+        subject: "Approved, but haven't paid yet?"
+        greeting: *email_greeting
+        message_text: "You have been approved to become a member, but you must pay a membership fee in order to take advantage of the benefits, offers and discounts included in the membership. You can easily pay by following the steps below."
+
 
   devise:
     min_length: '(at least %{minimum_length} characters)'
@@ -1262,7 +1411,9 @@ en:
         submit_button_label: Sign up
         success: You have signed up successfully
       edit:
-        title: Edit your profile
+        my_profile_title: &my_profile_title Edit your profile
+        title: *my_profile_title
+        edit_profile_for_title: 'Edit profile: %{user}'
         unconfirmed_email_for: 'Unconfirmed email address for: %{unconfirmed_email}'
         confirm_password: *confirm_password
         current_password: Current password
@@ -1373,10 +1524,10 @@ en:
           view_company: View Company
           edit_company: Edit My Company
         my_application: *my_application
-        pay_membership: Pay Membership Fee
+        pay_membership: *pay_membership
 
       company:
-        pay_branding_fee: Pay H-Branding Fee
+        pay_branding_fee: *pay_branding_fee
 
       admin:
         shf_main_site: *shf_main_site

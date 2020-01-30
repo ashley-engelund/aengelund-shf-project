@@ -1,5 +1,6 @@
 @import 'shf-custom-colors';
 
+// TODO - what is the purpose/scope of this stylesheet?  should these be put into their respective model stylesheets? or if it's general, into custom ?
 
 #admin-change-status-buttons input {
   margin-left: 1em;
@@ -90,11 +91,25 @@ margin-bottom:0;
   padding-top: .7em;
 }
 
+// the shf-application stylesheet doesn't seem to be used right now (it should be used; it should be put into the list in application.scss).  Until it is, these styles are here so they will be used
+.shf-applications-minimal-info {
+  .org-and-name {
+    font-size: smaller;
+    font-weight: normal;
+  }
+}
+
+
 .btco-menu .active a:focus,
 .btco-menu li a:focus,
 .navbar > .show > a:focus {
   background: transparent;
   outline: 0;
+}
+
+a.btn.disabled, {
+  border-color: $lightgray;
+  color: $gray;
 }
 
 .btco-menu li > a {
@@ -230,7 +245,7 @@ margin: 5px 0 0 0;
 }
 
 .infotext p {
-  margin: 0.5rem 0 0.5rem 0;
+  margin-bottom: 1rem; // margin: 0.5rem 0 0.5rem 0;
 }
 
 .login {
@@ -299,6 +314,8 @@ margin: 5px 0 0 0;
 
 .post-categories li {
   display: inline-block;
+  font-size: larger;
+  font-weight: bold;
   list-style: none;
 }
 
@@ -337,6 +354,10 @@ margin-top:20px;
 .table th {
   border-top:none;
   padding: .15rem .75rem;
+}
+
+.table-sm th {
+  padding: 0.3rem;
 }
 
 .text-nicelabel {
@@ -566,7 +587,7 @@ table {
 }
 
 @media (max-width: 768px) {
-  .dropdown-menu a, 
+  .dropdown-menu a,
   nav.navbar .dropdown-menu li a {
     border: 0;
   }

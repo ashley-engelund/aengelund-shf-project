@@ -7,16 +7,20 @@
 
   %header.entry-header
     %h1.entry-title= @company.name
-  .entry-content
+  .entry-content.container
     .row
       .col
         - if @company.categories
           .categories
             = render 'business_categories/as_list',
-              categories: @company.business_categories
+              categories: @company.business_categories.distinct
         - if payment_visible_for_user?(current_user, @company)
           %hr
-          = render partial: 'branding_payment_status', locals: { company: @company }
+            .branding-license
+              -# FIXME I18n
+              %h3.section-title H-markt License
+              .section
+                = render partial: 'branding_term_status', locals: { company: @company }
           %hr
 
     .row
@@ -36,6 +40,12 @@
         = field_or_none t('.email'), mail_to(@company.email), tag_options: {class: 'email'}
 
         = field_or_none t('.website'), link_to(@company.website, sanitize(full_uri(@company)), target: '_blank'), tag_options: {class: 'website'}
+
+        .social-media
+          = icon_link(@company.facebook_url, 'facebook')
+          = icon_link(@company.instagram_url, 'instagram')
+          = icon_link(@company.youtube_url, 'youtube-square')
+
 
       .col-md-7
         - if @company.any_visible_addresses?
@@ -89,4 +99,4 @@
                   class:'btn btn-danger btn-sm delete-company',
                   data: { confirm: "#{t('.confirm_are_you_sure')}" }
 
-= render 'edit_branding_modal', company: @company
+= render('edit_branding_modal', company: @company) if current_user.admin?

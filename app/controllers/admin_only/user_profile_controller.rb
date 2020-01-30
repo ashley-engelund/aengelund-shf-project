@@ -1,6 +1,7 @@
 module AdminOnly
 
-  class UserProfileController < ApplicationController
+
+  class UserProfileController < AdminOnlyController
 
     before_action :authorize_admin
     before_action :get_user
@@ -23,19 +24,29 @@ module AdminOnly
     end
 
     def update
-      if @user.update(get_params)
+
+      # The admin must enter the (admin's) current password to make changes to a User's Profile
+      user_params = params[:user]
+      current_password = user_params.delete(:current_password)
+      update_successful = if @current_user.valid_password?(current_password)
+        @user.update(get_params)
+      else
+        @user.update(get_params)
+        @user.errors.add(:current_password, current_password.blank? ? :blank : :invalid)
+        false
+      end
+
+      if update_successful
         helpers.flash_message(:notice, t('.success'))
       else
         helpers.flash_message(:alert, t('.error'))
       end
+
       render :edit
     end
 
     private
 
-    def authorize_admin
-      authorize AdminOnly::UserProfile
-    end
 
     def get_user
       @user = User.find(params[:id])
@@ -60,8 +71,11 @@ module AdminOnly
         params[:user][:membership_number] = nil
       end
 
-      params.require(:user).permit(:first_name, :last_name, :email, :password,
-                                   :password_confirmation, :membership_number,
+      params.require(:user).permit(:first_name, :last_name, :email,
+                                   :password, :password_confirmation,
+                                   :current_password,
+                                   :membership_number,
+                                   :member_photo,
                                    shf_application_attributes: [ :contact_email, :id ])
     end
   end
