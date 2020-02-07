@@ -45,15 +45,8 @@ append :linked_files, 'config/database.yml', 'config/secrets.yml', '.env', 'publ
 # deployment to the next, it should be listed here.
 # These directories are in the 'shared' directory on the production system: /var/www/shf/shared/
 # (That is the convention for Capistrano deployments.)
-set :linked_dirs, %w{
-  log tmp/pids tmp/cache tmp/sockets vendor/bundle
-  public/system
-  public/uploads
-  public/.well-known
-  public/storage
-  public/ckeditor_assets
-  app/views/pages
-}
+append  :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', 'public/system', 'public/uploads', 'public/.well-known', 'public/storage', 'public/ckeditor_assets', 'app/views/pages',
+
 
 # public/.well-known  created by diffouo (raoul) when this was set up. used for ??? (not used?)
 # public/system       created by diffouo (raoul) when this was set up. used for ??? (not used?)
