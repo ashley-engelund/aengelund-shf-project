@@ -30,7 +30,14 @@ set :deploy_to, ENV['APP_PATH']
 # deployment to the next, it should be listed here.
 # These individual files are in the 'shared' directory on the production system: /var/www/shf/shared/
 # (That is the convention for Capistrano deployments.)
-set :linked_files, %w{config/database.yml config/secrets.yml .env}
+#
+# The public/google......html files are files that Google Webmaster tools looks
+#   for to verify ownership and access to this site.
+#   These files verify that  Google webmasters (e.g. Susanna & Ashley as of 2020/02/02)
+#   are verified as to access this site with Google webmaster tools.
+#   Do not remove these files!
+append :linked_files, 'config/database.yml', 'config/secrets.yml', '.env', 'public/google052aa706351efdce.html', 'public/google979ebbe196e9bd30.html', 'public/favicon.ico', 'public/apple-touch-icon.png', 'public/apple-touch-icon-precomposed.png',
+
 
 # These directories are shared among all deployments.  Every deployment has a
 # link to these directories.  They are not recreated (new) for each deployment.
