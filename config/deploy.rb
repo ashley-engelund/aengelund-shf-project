@@ -36,7 +36,14 @@ set :deploy_to, ENV['APP_PATH']
 #   These files verify that  Google webmasters (e.g. Susanna & Ashley as of 2020/02/02)
 #   are verified as to access this site with Google webmaster tools.
 #   Do not remove these files!
-append :linked_files, 'config/database.yml', 'config/secrets.yml', '.env', 'public/google052aa706351efdce.html', 'public/google979ebbe196e9bd30.html', 'public/favicon.ico', 'public/apple-touch-icon.png', 'public/apple-touch-icon-precomposed.png',
+append :linked_files, 'config/database.yml',
+       'config/secrets.yml',
+       '.env',
+       'public/google052aa706351efdce.html',
+       'public/google979ebbe196e9bd30.html',
+       'public/favicon.ico',
+       'public/apple-touch-icon.png',
+       'public/apple-touch-icon-precomposed.png'
 
 
 # These directories are shared among all deployments.  Every deployment has a
@@ -45,7 +52,17 @@ append :linked_files, 'config/database.yml', 'config/secrets.yml', '.env', 'publ
 # deployment to the next, it should be listed here.
 # These directories are in the 'shared' directory on the production system: /var/www/shf/shared/
 # (That is the convention for Capistrano deployments.)
-append  :linked_dirs, 'log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', 'public/system', 'public/uploads', 'public/.well-known', 'public/storage', 'public/ckeditor_assets', 'app/views/pages',
+append  :linked_dirs, 'log',
+        'tmp/pids',
+        'tmp/cache',
+        'tmp/sockets',
+        'vendor/bundle',
+        'public/system',
+        'public/uploads',
+        'public/.well-known',
+        'public/storage',
+        'public/ckeditor_assets',
+        'app/views/pages',
 
 
 # public/.well-known  created by diffouo (raoul) when this was set up. used for ??? (not used?)
