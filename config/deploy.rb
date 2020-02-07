@@ -59,7 +59,6 @@ append  :linked_dirs, 'log',
         'vendor/bundle',
         'public/system',
         'public/uploads',
-        'public/.well-known',
         'public/storage',
         'public/ckeditor_assets',
         'app/views/pages'
