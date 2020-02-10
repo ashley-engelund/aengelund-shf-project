@@ -1,3 +1,4 @@
+-# The variables below are also used in the javascript
 - checkbox_id = 'completed-checkbox'
 - is_completed_icon_id = 'fas-is-complete-icon'
 - inner_progress_bar_id = 'progress-bar'
@@ -30,8 +31,8 @@
         .col
           -# Can't make the card a partial because we need to update the progress bar.
           -# This is an excellent use case for using Vue or React (to take advantage of components automatically reacting to change)
-          %div.card
-            %div.card-body
+          .card
+            .card-body
 
               %h4.card-title.guideline-name
                 %span.is-complete.show-inline#is-complete-icon
@@ -51,22 +52,22 @@
                       onchange:"toggleCompletedCheckbox(#{@user.id}, #{@user_checklist.id})" })
 
                 = label_tag checkbox_id, { onchange:"toggleCompletedCheckbox(#{@user.id}, #{@user_checklist.id})" } do
-                  =t('.read_and_agree_start')
+                  = t('.read_and_agree_start')
                   %span.name= @user_checklist.name
-                  =t('.read_and_agree_end')
+                  = t ('.read_and_agree_end')
 
-            %div.card-footer
+            .card-footer
               .row
                 .col
                   %p.contact-if-questions
-                    %div#contact-us-footer
+                    #contact-us-footer
                       = t('.contact_if_questions')
                       = mail_to(t('.email_display_name'), ENV['SHF_MEMBERSHIP_EMAIL'])
 
                   - next_sibling = @user_checklist.next_sibling
                   - if next_sibling
                     .next
-                      = link_to  user_user_checklist_progress_path(@user, next_sibling), {id: next_link_id, class: 'hide'} do
+                      = link_to  user_user_checklist_progress_path(@user, next_sibling), {id: next_link_id, class: hide_class } do
                         = t('.next')
                         %span.next-arrow-icon.show-inline#next-arrow-icon
                           = next_arrow_icon(html_options: { class: 'fa-lg', id: next_arrow_id })
