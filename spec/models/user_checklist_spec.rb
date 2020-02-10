@@ -263,40 +263,40 @@ RSpec.describe UserChecklist, type: :model do
 
         it 'simple levels' do
           top1 = create(:user_checklist)
-          c1 = create(:user_checklist, :completed, parent: top1)
-          c2 = create(:user_checklist, :completed, parent: top1)
+          create(:user_checklist, :completed, parent: top1)
+          create(:user_checklist, :completed, parent: top1)
           expect(top1.percent_complete).to eq 100
 
           top2 = create(:user_checklist)
-          c2_1 = create(:user_checklist, :completed, parent: top2)
+          create(:user_checklist, :completed, parent: top2)
           expect(top2.percent_complete).to eq 100
 
           top3 = create(:user_checklist)
-          c3_1 = create(:user_checklist, parent: top3)
-          c3_2 = create(:user_checklist, parent: top3)
-          c3_3 = create(:user_checklist, :completed, parent: top3)
+          create(:user_checklist, parent: top3)
+          create(:user_checklist, parent: top3)
+          create(:user_checklist, :completed, parent: top3)
           expect(top3.percent_complete).to eq 33
 
 
           top4 = create(:user_checklist)
           c4_1 = create(:user_checklist, :completed, parent: top4)
           c4_1_1 = create(:user_checklist, :completed, parent: c4_1)
-          c4_1_1_1 = create(:user_checklist, :completed, parent: c4_1_1)
+          create(:user_checklist, :completed, parent: c4_1_1)
           expect(top4.percent_complete).to eq 100
 
           top5 = create(:user_checklist)
 
           c5_1 = create(:user_checklist, parent: top5) # 100% complete
           c5_1_1 = create(:user_checklist, :completed, parent: c5_1)
-          c5_1_1_1 = create(:user_checklist, :completed, parent: c5_1_1)
+          create(:user_checklist, :completed, parent: c5_1_1)
 
           c5_2 = create(:user_checklist, parent: top5) # 0% complete
           c5_2_1 = create(:user_checklist, parent: c5_2)
-          c5_2_1_1 = create(:user_checklist, parent: c5_2_1)
+          create(:user_checklist, parent: c5_2_1)
 
           c5_3 = create(:user_checklist, parent: top5) # 50% complete
-          c5_3_1 = create(:user_checklist, :completed, parent: c5_3)
-          c5_3_2 = create(:user_checklist, parent: c5_3)
+          create(:user_checklist, :completed, parent: c5_3)
+          create(:user_checklist, parent: c5_3)
 
           expect(c5_1.percent_complete).to eq 100
           expect(c5_2.percent_complete).to eq 0
@@ -322,28 +322,28 @@ RSpec.describe UserChecklist, type: :model do
           guidelines_root = create(:user_checklist, name: 'Membership Guidelines checklist')
 
           sec1 = create(:user_checklist, parent: guidelines_root, name: 'Respect the welfare of the dog.')
-          sec1_leaf1 = create(:user_checklist, parent: sec1, name: 'sec1_leaf1')
-          sec1_leaf2 = create(:user_checklist, parent: sec1, name: 'sec1_leaf2')
-          sec1_leaf3 = create(:user_checklist, parent: sec1, name: 'sec1_leaf3')
+          create(:user_checklist, parent: sec1, name: 'sec1_leaf1')
+          create(:user_checklist, parent: sec1, name: 'sec1_leaf2')
+          create(:user_checklist, parent: sec1, name: 'sec1_leaf3')
 
           sec2 = create(:user_checklist, parent: guidelines_root, name: 'Respect dog owner.')
-          sec2_leaf1 = create(:user_checklist, parent: sec2, name: 'sec2_leaf1')
-          sec2_leaf2 = create(:user_checklist, parent: sec2, name: 'sec2_leaf2')
-          sec2_leaf3 = create(:user_checklist, parent: sec2, name: 'sec2_leaf3')
-          sec2_leaf4 = create(:user_checklist, parent: sec2, name: 'sec2_leaf4')
+          create(:user_checklist, parent: sec2, name: 'sec2_leaf1')
+          create(:user_checklist, parent: sec2, name: 'sec2_leaf2')
+          create(:user_checklist, parent: sec2, name: 'sec2_leaf3')
+          create(:user_checklist, parent: sec2, name: 'sec2_leaf4')
 
           sec3 = create(:user_checklist, parent: guidelines_root, name: 'Keep updated in my field.')
-          sec3_leaf1 = create(:user_checklist, parent: sec3, name: 'sec3_leaf1')
-          sec3_leaf2 = create(:user_checklist, parent: sec3, name: 'sec3_leaf2')
-          sec3_leaf3 = create(:user_checklist, parent: sec3, name: 'sec3_leaf3')
+          create(:user_checklist, parent: sec3, name: 'sec3_leaf1')
+          create(:user_checklist, parent: sec3, name: 'sec3_leaf2')
+          create(:user_checklist, parent: sec3, name: 'sec3_leaf3')
 
           sec4 = create(:user_checklist, parent: guidelines_root, name: 'Follow applicable laws...')
-          sec4_leaf1 = create(:user_checklist, parent: sec4, name: 'sec4_leaf1')
-          sec4_leaf2 = create(:user_checklist, parent: sec4, name: 'sec4_leaf2')
-          sec4_leaf3 = create(:user_checklist, parent: sec4, name: 'sec4_leaf3')
-          sec4_leaf4 = create(:user_checklist, parent: sec4, name: 'sec4_leaf4')
-          sec4_leaf5 = create(:user_checklist, parent: sec4, name: 'sec4_leaf5')
-          sec4_leaf6 = create(:user_checklist, parent: sec4, name: 'sec4_leaf6')
+          create(:user_checklist, parent: sec4, name: 'sec4_leaf1')
+          create(:user_checklist, parent: sec4, name: 'sec4_leaf2')
+          create(:user_checklist, parent: sec4, name: 'sec4_leaf3')
+          create(:user_checklist, parent: sec4, name: 'sec4_leaf4')
+          create(:user_checklist, parent: sec4, name: 'sec4_leaf5')
+          create(:user_checklist, parent: sec4, name: 'sec4_leaf6')
 
           sec5 = create(:user_checklist, parent: guidelines_root, name: 'Respect my own role in relation to other professionals.')
           sec5_leaf1 = create(:user_checklist, parent: sec5, name: 'sec5_leaf1')
@@ -351,10 +351,10 @@ RSpec.describe UserChecklist, type: :model do
           sec5_leaf3 = create(:user_checklist, parent: sec5, name: 'sec5_leaf3')
 
           sec6 = create(:user_checklist, parent: guidelines_root, name: 'Represent Sweden dog owners in a positive way.')
-          sec6_leaf1 = create(:user_checklist, parent: sec6, name: 'sec6_leaf1')
-          sec6_leaf2 = create(:user_checklist, parent: sec6, name: 'sec6_leaf2')
-          sec6_leaf3 = create(:user_checklist, parent: sec6, name: 'sec6_leaf3')
-          sec6_leaf4 = create(:user_checklist, parent: sec6, name: 'sec6_leaf4')
+          create(:user_checklist, parent: sec6, name: 'sec6_leaf1')
+          create(:user_checklist, parent: sec6, name: 'sec6_leaf2')
+          create(:user_checklist, parent: sec6, name: 'sec6_leaf3')
+          create(:user_checklist, parent: sec6, name: 'sec6_leaf4')
 
           # 23 leaves = 4.35 % per leaf
           #  3 leaves = 13.043478260869565
