@@ -313,7 +313,8 @@ body.master_checklists.index {
 
 }
 
-table#no-longer-in-use {
+table.no-longer-in-use {
+
   td,
   th {
     padding-right: 1rem;
@@ -326,6 +327,7 @@ table#no-longer-in-use {
   }
 
   a {
-    border-bottom: none;
+    border-bottom: 0;
   }
 }
+
