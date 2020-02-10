@@ -1,25 +1,68 @@
-# Standardized icons and icon-related helpers to use in the app
+# Standardized icon helper methods and  names to use in this application.
 #
-# This information and methods provide standardized icons to use in the system.
-# This is the place to define exactly which FontAwesome icon should be used
-# for common things (they are standardized),
-# and the names of the helper methods to use when you need to display one of the icons.
+# This defines (creates) helper methods for using FontAwesome icons in the application.
+#  - itt defines a standard method for using an icon (ex: 'edit_icon'), and
+#  - it defines a standard method for getting the [String] name of the icon (ex: 'edit_icon_fa_name')
 #
-# For example, this defines the FontAwesome icon to always use for "edit" and provides
-# helper methods for it so you don't have to remember exactly which FontAwesome
-# to use.  You just need to call the "edit_icon" helper method and it will
-# use the correct (standardized) icon.
+# This defines exactly which FontAwesome icons are used.
 #
-# ** You should use the helper method(s) instead of specifying the FontAwesome icon yourself. **
+# ** You should ALWAYS USE THE HELPER METHODs instead of using the constants here
+#    or specifying the FontAwesome icon yourself. **
 #
 # That way, this is the only place the the FontAwesome icons need to be specified.
 # (It is DRY.)
 # And if we change them, this is the only place that needs to be changed.
 #
-# Provides a single point of connection (binding) to the FontAwesome icon method.
+# These methods provide a single point of connection (binding) to the FontAwesome icon method.
 #
-# Note:  There is a specific helper method 'fas_tooltip(...) that can be used. It is defined in application_helper.rb.
+# Here are some general examples. (More details are in the documentation and methods below.)
 #
+# @example: Assume that information below is set so that "edit_icon" is the
+#   helper method to use whenever you want to show an icon to the user to edit something.
+#   You could use the method like this in a view
+#     link_to(edit_icon, edit_user_profile_path(@user))
+#   This would show the icon as a link to the edit_user_profile(@user) path
+#
+#
+# @example: Assuming there a is 'destroy' icon defined and helper methods
+#   are defined to show when something needs to be _destroyed:_
+#   - assume "destroy_icon" is a method defined below that shows the right icon,
+#       and that it uses FA_DESTROY to define exactly this FontAwesome icon to use
+#   - assume that the constant FA_DESTROY is set to the "trash" FontAwesome icon.
+#
+#   You would use the "destroy_icon" method to display the correct icon, ex:
+#      link_to(destroy_icon, destroy_user_profile_path(@user))
+#   and it would display the "trash" FontAwesome icon in the line
+#
+#   Later, if we decide to use a different FontAwesome icon
+#     (e.g. the "dumpster_fire") FontAwesome icon,
+#   the "destroy_icon" method stays the same. None of the views that use that method
+#   need to be changed. We only need to change the FA_DESTROY constant here
+#   so that it refers to "dumpster_fire" instead of "trash".
+#    link_to(destroy_icon, destroy_user_profile_path(@user))  does not need to be changed.
+#   After the change, it will automatically now display the "dumpster_fire" FontAwesome icon.
+#
+# @example:
+#   To display the destroy icon with a tooltip (text that shows when you hover
+#   on the icon), you'd put this in your view:
+#
+#     destroy_icon(html_options: { 'data-toggle': 'tooltip',
+#                                  title: "Delete me!" })
+#
+#   This will:
+#     - display the icon defined in the METHODS_AND_ICONS array (e.g. FA_TRASH),
+#     - call the method 'destroy_icon' (see how it is defined in the  module_eval below)
+#     - per the HTML that is given with html_options:
+#         when the user hovers on the icon, display a tooltip with "Delete me!"
+#         (The title: string would really be a call to I18n.t to show it in the correct language. )
+#
+#
+# NOTE about tooltips:
+#   There is a specific helper method 'fas_tooltip(...) that can also be used.
+#   It is defined in application_helper.rb.
+#
+#
+# See the documentation below for more details.
 #
 module ShfIconsHelper
 
@@ -167,9 +210,9 @@ module ShfIconsHelper
   #      end
   #
   #
-  #
-  #---------------------
-  #
+  #-----------------------------------------------------------------------
+
+
   # Try to keep these in the same order as the icon constant groups above.
   #
   METHODS_AND_ICONS = [
