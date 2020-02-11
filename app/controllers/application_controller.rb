@@ -135,8 +135,8 @@ class ApplicationController < ActionController::Base
 
   ensure
     response_data = { status: status,
-                      status_text: status_text,
-                      error_text: error_text }.merge(additional_response_data)
+                      statusText: status_text,
+                      errorText: error_text }.merge(additional_response_data)
 
     render json: response_data
   end
