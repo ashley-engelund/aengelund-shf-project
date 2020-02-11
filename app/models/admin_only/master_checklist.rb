@@ -72,7 +72,7 @@ module AdminOnly
     # Delegate class methods
     class << self
 
-      # will get an error if I try to use the class direction, hence the constant
+      # will get an error if I try to use the class directly, hence the constant
       CHANGE_POLICY = AdminOnly::MasterChecklistChangePolicy
 
       delegate :attributes_can_change_with_completed,

@@ -110,7 +110,7 @@ class ApplicationController < ActionController::Base
   end
 
 
-  # Template method (wrapper) for doing an XHR request.
+  # Template method (wrapper) for handling an XHR request.
   # --> Expects the yield to return a Hash of information
   #     that will be merged into the response data rendered as JSON
   #     and sent back to the XHR requester.
