@@ -1,7 +1,7 @@
 .membership-guidelines
   - overall_progress = @overall_progress
 
-  = render partial: 'checklist_header', locals: {user: @current_user, user_checklist: @membership_guidelines }
+  = render partial: 'checklist_header', locals: { user: @current_user, user_checklist: @membership_guidelines }
 
   .entry-content.container
     .user-checklist.membership-guidelines-completed
@@ -12,15 +12,15 @@
 
       .row
         .col
-          %div.card
-            %div.card-body
+          .card
+            .card-body
               %h3.card-title= t('.i_commit_to')
 
               = render partial: 'checklist_tree_as_list', locals: { user_checklist: @membership_guidelines }
 
-            %div.card-footer
+            .card-footer
               .row
                 %h4
                   %span.is-complete.show-inline#all-complete-icon
                     = complete_check_icon(html_options: { class: 'fa-fw', id: 'fas-all-complete-icon' })
-                  =t('.agreed_to_all_terms')
+                  = t('.agreed_to_all_terms')

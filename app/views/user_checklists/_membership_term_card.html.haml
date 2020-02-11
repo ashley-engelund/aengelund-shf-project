@@ -4,8 +4,8 @@
 -#   user - the user this UserChecklist is for
 -#   overall_percent_complete - the initial percent complete for the progress bar.
 
-%div.card
-  %div.card-body
+.card
+  .card-body
 
     %h4.card-title
       %span.is-complete-icon.show-inline.fa-fw#is-complete-icon= complete_check_icon
@@ -13,12 +13,12 @@
 
     - if user_checklist.children?
       = arranged_tree_as_list(user_checklist.children.arrange,
-             {sort_by: [:list_position],
+             { sort_by: [:list_position],
              list_type: 'ul',
               ul_class: ['checklist-items' ],
               ul_id_method: ul_id,
               li_class: ['checklist-item'],
-              li_id_method: li_id}) do | child_entry |
+              li_id_method: li_id }) do | child_entry |
 
         - child_entry_li_id = li_id.call(child_entry)
         %span.name{ class: list_entry_css_classes(child_entry) }
@@ -28,12 +28,12 @@
       %p.have-read-confirmation
         = check_box_tag("completed-checkbox", 'checked', user_checklist.all_completed?,
           { class: "checkbox-date-completed",
-            onchange:"toggleCompletedCheckbox(#{user.id}, #{user_checklist.id})" })
+            onchange:"toggleCompletedCheckbox(#{ user.id }, #{ user_checklist.id })" })
         I have read and agree to all of the
         %span.name= user_checklist.name
         terms.
 
-  %div.card-footer
+  .card-footer
     .row
       - prev_sibling = user_checklist.previous_sibling
       - if prev_sibling

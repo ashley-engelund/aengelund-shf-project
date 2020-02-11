@@ -1,8 +1,8 @@
 - if master_checklist.can_delete?
-  = link_to "#{t('.delete', name: master_checklist.name.truncate(40, separator: ' '))}",
+  = link_to "#{ t('.delete', name: master_checklist.name.truncate(40, separator: ' ')) }",
             admin_only_master_checklist_path(master_checklist),
             method: :delete,
-            data: { confirm: "#{t('.delete_confirm', name: master_checklist.name)}" },
+            data: { confirm: "#{ t('.delete_confirm', name: master_checklist.name) }" },
             class: 'btn btn-sm btn-danger'
 
 - else

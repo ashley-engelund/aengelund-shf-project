@@ -22,14 +22,14 @@
             %col.list-position
             %col.delete
             %tr.line1
-              %td.name{colspan: "2"}= t('.name')
+              %td.name{ colspan: "2" }= t('.name')
               -#%td.parent-list= t('.in_parent_col')
               -#%td.parent-list
               %td.list-position #
               %td.delete
             %tr.line2
               %td.col1-spacer
-              %td.small-title.displayed-text{width: "80%"}= t('.displayed_text')
+              %td.small-title.displayed-text{ width: "80%" }= t('.displayed_text')
               %td.col1-spacer
             -#%tr.line3
             -#  %td.col1-spacer
@@ -47,7 +47,7 @@
               %col.list-position
               %col.delete
               %tr.line1
-                %td.name{colspan: "2", class: list_entry_css_classes(checklist_master)}
+                %td.name{ colspan: "2", class: list_entry_css_classes(checklist_master) }
                   = link_to checklist_master.display_name_with_depth(prefix: '  -').truncate(name_length, separator: ' '), checklist_master
                   -#%span.expand-collapse-arrow
                   -#  %a.btn{ 'aria-controls': children_ul_id, 'aria-expanded': 'true', 'data-toggle': 'collapse', href: children_ul_id, role: 'button' }
@@ -59,7 +59,7 @@
 
               %tr.line2
                 %td.col1-spacer
-                %td.displayed-text{width: "80%"}= link_to checklist_master.displayed_text.truncate(display_text_length, separator: ' '), checklist_master
+                %td.displayed-text{ width: "80%" }= link_to checklist_master.displayed_text.truncate(display_text_length, separator: ' '), checklist_master
                 -#%td
                 %td.col1-spacer
 

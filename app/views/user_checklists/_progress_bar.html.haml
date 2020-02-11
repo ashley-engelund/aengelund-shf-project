@@ -1,5 +1,5 @@
 -# this partial expects these locals:
 -#   percent_complete - [Integer] the value for the progress bar
 .progress#progress
-  .progress-bar#progress-bar{role: 'progressbar', style: "width: #{percent_complete}%", 'aria-valuenow':"#{percent_complete}", 'aria-valuemin': '0', 'aria-valuemax': '100'}
-    %span.percent-text= "#{percent_complete}% #{t('.complete')}"
+  .progress-bar#progress-bar{ role: 'progressbar', style: "width: #{ percent_complete }%", 'aria-valuenow':"#{ percent_complete }", 'aria-valuemin': '0', 'aria-valuemax': '100' }
+    %span.percent-text= "#{ percent_complete }% #{ t('.complete') }"

@@ -3,7 +3,7 @@
 
 - if user_checklist.children?
   = arranged_tree_as_list(user_checklist.children.arrange,
-         {sort_by: [:list_position],
+         { sort_by: [:list_position],
          list_type: 'ul',
           ul_class: ['checklist-items' ],
           ul_id_method: ul_id,

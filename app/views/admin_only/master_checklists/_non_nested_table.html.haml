@@ -14,7 +14,7 @@
 
   %tbody
     - no_longer_in_use.each do | checklist_master |
-      %tr.master-list-item{data: {href: admin_only_master_checklist_url(checklist_master) } }
+      %tr.master-list-item{ data: { href: admin_only_master_checklist_url(checklist_master) } }
         %td.name= link_to checklist_master.name, checklist_master
         %td.displayed-text= link_to checklist_master.displayed_text.truncate(name_length, separator: ' '), checklist_master
         %td.list-position= checklist_master.list_position + 1

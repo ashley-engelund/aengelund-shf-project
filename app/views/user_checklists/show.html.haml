@@ -1,17 +1,17 @@
 
-= render partial: 'checklist_header', locals: {user: @current_user, user_checklist: @user_checklist }
+= render partial: 'checklist_header', locals: { user: @current_user, user_checklist: @user_checklist }
 
 .entry-content.container
   - percent_complete = @user_checklist.percent_complete
 
   .user-checklist
-    - li_id = "li-id-#{@user_checklist.id}"
+    - li_id = "li-id-#{ @user_checklist.id }"
 
     .row.mt-2
       .col
         - unless @user_checklist.description.nil?
           %p
-            %b #{t('.description')}:
+            %b #{ t('.description') }:
             = @user_checklist.description
 
     - if @current_user.admin?
@@ -20,12 +20,12 @@
           %p
             %b
               -# TODO i18n
-              For user #{@user_checklist.user.full_name}
+              For user #{ @user_checklist.user.full_name }
 
 
     .row.mt-2
       .col
-        %p#date-completed{style: 'display: none'}
+        %p#date-completed{ style: 'display: none' }
           -# TODO i18n
           Date completed:
           %span#date-completed-value
@@ -37,13 +37,13 @@
 
     .row.mt-2
       .col
-        %p{style: "display: #{@user_checklist.children? ? 'none' : 'inherit'}"}
+        %p{ style: "display: #{ @user_checklist.children? ? 'none' : 'inherit' }" }
           %b
             -# TODO i18n
             Completed?
-            - disabled_setting = @user_checklist.children? ? {disabled: true} : {}
-            = check_box_tag("completed-checkbox-#{li_id}", 'checked', @user_checklist.all_completed?, { class: "checkbox-date-completed",
-                onchange:"toggleCompletedCheckbox(#{current_user.id}, #{@user_checklist.id})" }.merge(disabled_setting))
+            - disabled_setting = @user_checklist.children? ? { disabled: true } : { }
+            = check_box_tag("completed-checkbox-#{ li_id }", 'checked', @user_checklist.all_completed?, { class: "checkbox-date-completed",
+                onchange:"toggleCompletedCheckbox(#{ current_user.id }, #{ @user_checklist.id })" }.merge(disabled_setting))
 
 
 
@@ -61,8 +61,8 @@
         -# TODO: I18n 'Entries'
         %h4.children Entries:
         = arranged_tree_as_list(@user_checklist.children.arrange,
-         {sort_by: [:list_position], list_type: :ol,
-          ul_class: ['child-entries'], li_class: ['child-entry']}) do | child_entry |
+         { sort_by: [:list_position], list_type: :ol,
+          ul_class: ['child-entries'], li_class: ['child-entry'] }) do | child_entry |
           -# = fa_is_complete_checkbox(child_entry)
           = link_to  child_entry.name,
                     user_user_checklist_path(child_entry.user, child_entry),
@@ -70,9 +70,9 @@
           - if child_entry.all_completed?
             %span.date-completed
               -# TODO i18n
-              Date completed: #{child_entry.date_completed}
+              Date completed: #{ child_entry.date_completed }
           - else
-            ="#{child_entry.percent_complete}% complete"
+            = "#{ child_entry.percent_complete }% complete"
 
 
   %hr
@@ -108,11 +108,11 @@
   function updateDateSuccessfulFor(responseData) {
     let changedChecklists = responseData.changed_checklists;
 
-    console.log('id = #{@user_checklist.id}')
+    console.log('id = #{ @user_checklist.id }')
     changedChecklists.forEach(function(checklist){
       console.log(checklist);
       // changedChecklists should only contain the the checklist that we are showing, but we check to be sure
-      if (checklist.checklist_id == #{@user_checklist.id}) {
+      if (checklist.checklist_id == #{ @user_checklist.id }) {
         let updatedDateCompleted = checklist.date_completed;
         dateCompletedElement = document.getElementById("date-completed-value");
         dateCompletedElement.innerHTML = ''; // clear existing

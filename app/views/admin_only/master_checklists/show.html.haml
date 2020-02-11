@@ -4,7 +4,7 @@
 - no_more_changes_class = @master_checklist.no_more_major_changes? ? 'no-more-major-changes' : ''
 
 %header.entry-header
-  %h1.entry-title#h1{ class: "#{not_in_use_class}" }= @master_checklist.name
+  %h1.entry-title#h1{ class: "#{ not_in_use_class }" }= @master_checklist.name
   - if @master_checklist.root?
     .entry-content
       .row.mt-2
@@ -15,7 +15,7 @@
             = t('.subtitle_list_type_end')
 
 
-.entry-content.container{ class: "#{no_more_changes_class}"}
+.entry-content.container{ class: "#{ no_more_changes_class }" }
 
   .master-checklist-item
 
@@ -46,7 +46,7 @@
       .col
         %h4 Users see:
 
-        %div.what-users-see
+        .what-users-see
           %p.displayed-text.displayed-to-users=  @master_checklist.displayed_text
           %p.description.displayed-to-users= @master_checklist.description
 
@@ -57,12 +57,12 @@
     - if @master_checklist.children?
       %h5.children-title.label= t('.child_items') + ':'
       = arranged_tree_as_list(@master_checklist.descendants_in_use.arrange,
-       {sort_by: [:list_position], list_type: :ol,
-        ul_class: ['child-entries'], li_class: ['child-entry']}) do | child_entry |
+       { sort_by: [:list_position], list_type: :ol,
+        ul_class: ['child-entries'], li_class: ['child-entry'] }) do | child_entry |
         = link_to  child_entry.name,
                    admin_only_master_checklist_path(child_entry),
                    class: list_entry_css_classes(child_entry)
-        = render partial: 'completed_numbers_span', locals: {master_checklist: child_entry}
+        = render partial: 'completed_numbers_span', locals: { master_checklist: child_entry }
 
     - if @master_checklist.can_add_child?
       - new_button_text = @master_checklist.children? ? t('.new_child_in_list') : t('.new_child_makes_this_a_list')
@@ -72,12 +72,12 @@
     .row.mt-2.notes.admin-only
       .col
         %p
-          #{t('.notes')}:
+          #{ t('.notes') }:
           = @master_checklist.notes
 
     - unless @no_longer_in_use.empty?
       %h5 Items that are no longer in use (archived)
-      = render partial: 'admin_only/master_checklists/non_nested_table', locals: { no_longer_in_use: @no_longer_in_use}
+      = render partial: 'admin_only/master_checklists/non_nested_table', locals: { no_longer_in_use: @no_longer_in_use }
 
 
   %hr
@@ -96,7 +96,6 @@
       = link_to t('.all_list_items'), admin_only_master_checklists_path, class: 'btn btn-sm btn-light'
 
 
-
 :javascript
 
   const IsInUseElementID = "is-in-use-checkbox";
@@ -111,7 +110,7 @@
   }
 
   function toggleIsInUseCheckbox() {
-    $.post( ToggleIsInUsePostURL, { id: #{@master_checklist.id} })
+    $.post( ToggleIsInUsePostURL, { id: #{ @master_checklist.id } })
       .done(function(responseData) {
 
         if (responseData.status !== 200 ) { return failedRequest(responseData) }
@@ -141,7 +140,7 @@
 
 
   function updateBasedOnIsInUse() {
-    let isInUse = #{@master_checklist.is_in_use};
+    let isInUse = #{ @master_checklist.is_in_use };
 
     // let isInUseChangedAtElement = document.getElementsByClassName(IsInUseDateChangedClass)[0];
     let heading = document.getElementById('h1');

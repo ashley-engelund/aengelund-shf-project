@@ -3,9 +3,9 @@
 - not_in_use_class = @master_checklist.is_in_use ? '' : 'not-in-use'
 - no_more_changes_class = @master_checklist.no_more_major_changes? ? 'no-more-major-changes' : ''
 %header.entry-header
-  %h1.entry-title{class: @master_checklist.is_in_use ? '' : 'not-in-use'}= @master_checklist.name
+  %h1.entry-title{ class: @master_checklist.is_in_use ? '' : 'not-in-use' }= @master_checklist.name
 
-.entry-content.container{ class: "#{no_more_changes_class}"}
+.entry-content.container{ class: "#{ no_more_changes_class }" }
   .master-checklist-item
 
     = render partial: 'no_more_major_changes_note_if_needed', locals: { master_checklist: @master_checklist }
@@ -13,9 +13,9 @@
     = render partial: 'status_numbers_row', locals: { master_checklist: @master_checklist }
 
 
-    = render 'form', locals: {master_checklist: @master_checklist,
+    = render 'form', locals: { master_checklist: @master_checklist,
        all_allowable_parents: @all_allowable_parents,
-       class_name: 'edit-master-checklist-item'}
+       class_name: 'edit-master-checklist-item' }
 
   %hr
     .text-center
