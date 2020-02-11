@@ -59,13 +59,13 @@ module AdminOnly
     # The difference between this method and can_be_changed? is can_be_changed?
     # considers whether specific attributes can be changed.
     def self.no_more_major_changes?(master_checklist)
-      user_checklists.any?
+      master_checklist.user_checklists.any?
     end
 
 
     # Cannot change if there are any user checklists.
     def self.can_add_child?(master_checklist)
-      !no_more_major_changes?
+      !no_more_major_changes?(master_checklist)
     end
 
 
