@@ -70,11 +70,6 @@ And("I should get a routing error when I try to visit the {capture_string} page"
 end
 
 
-And("I should get a routing error when I try to visit the {capture_string} page") do | page |
-  expect{visit path_with_locale(get_path(page, @user))}.to raise_error(ActionController::RoutingError)
-end
-
-
 When(/^I fail to visit the "([^"]*)" page$/) do |page|
   path = get_path(page)
   visit path_with_locale(path)
