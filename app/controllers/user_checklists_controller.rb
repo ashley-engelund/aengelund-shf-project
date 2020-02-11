@@ -177,7 +177,6 @@ class UserChecklistsController < ApplicationController
 
   def membership_guidelines_percent_complete(uc_user)
     membership_guidelines = membership_guideline_root_user_checklist(uc_user)
-    puts "\n  >>> membership_guidelines.percent_complete = #{membership_guidelines.percent_complete}\n"
     membership_guidelines.percent_complete
   end
 

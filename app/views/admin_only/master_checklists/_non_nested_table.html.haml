@@ -31,7 +31,6 @@
   // document.addEventListener('turbolinks:load', function() {
     $(document).ready(function() {
       $("tr[data-href]").click(function(event){
-        console.log("click")
         window.location.href = $(this).data("href")
         event.preventDefault();
       });
