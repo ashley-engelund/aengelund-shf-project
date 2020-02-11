@@ -49,11 +49,11 @@ var Utility = {
     }
   },
 
-  handleError: function(event, response) {
-
-    if (response.status !== 200 || (response.statusText !== 'OK')) {
-      // HTTP error or Action cannot be completed
-      event.stopPropagation();
+  checkHttpError: function(response) {
+    // Check HTTP error code in jquery response
+    // Show alert if error.
+    // Return true if error, false otherwise
+    if (response.status !== 200 || response.statusText !== 'OK') {
       alert(I18n.t('errors.something_wrong'));
       return true;
     }
