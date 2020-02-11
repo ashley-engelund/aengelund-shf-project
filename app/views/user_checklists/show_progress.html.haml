@@ -7,10 +7,10 @@
 - next_link_id = 'next-link'
 - contact_us_footer_id = 'contact-us-footer'
 
-- blank_icon_name = complete_check_fa_icon_name
-- completed_icon_name = complete_check_fa_icon_name
+- flex_class = 'flex'
 - whiteout_class = 'whiteout'
 - show_class = 'is-complete'
+- hide_class = 'd-none' # Bootstrap 4 class
 
 .membership-guidelines
   - overall_progress = @overall_progress
@@ -78,36 +78,38 @@
   const setCompleteUrl = "/anvandare/lista/set-all-completed/"
   const setUncompleteUrl = "/anvandare/lista/set-all-uncompleted/"
 
-  const checkboxId = "#{checkbox_id}"
-  const isCompleteIconId = "#{is_completed_icon_id}"
-  const innerProgressBarId = "#{inner_progress_bar_id}"
-  const percentTextClass = "#{percent_text_class}"
-  const nextLinkId = "#{next_link_id}"
-  const contactUsFooterId = "#{contact_us_footer_id}"
+  const checkboxId = "##{checkbox_id}";
+  const isCompleteIconId = "##{is_completed_icon_id}";
+  const innerProgressBarId = "##{inner_progress_bar_id}";
+  const percentTextClass = ".#{percent_text_class}";
+  const nextLinkId = "##{next_link_id}";
+  const contactUsFooterId = "##{contact_us_footer_id}";
 
-  const blankIcon = "#{blank_icon_name}"
-  const completedIcon = "#{completed_icon_name}"
-
-  const flexClass = "flex";
+  const flexClass = "#{flex_class}";
   const whiteoutClass = "#{whiteout_class}";
   const showClass = "#{show_class}";
+  const hideClass = "#{hide_class}";
 
   window.onload = function(){
     updateBasedOnCompletedCheckbox();
   }
 
+
   function toggleCompletedCheckbox(userId, checklistId) {
-      let checkbox = getCheckboxElement();
-      ajaxPostURL = (checkbox.checked ? setCompleteUrl : setUncompleteUrl)
+      let checkbox = $(checkboxId); //getCheckboxElement();
+      ajaxPostURL = (checkbox.prop("checked") ? setCompleteUrl : setUncompleteUrl)
 
       $.post( ajaxPostURL + checklistId)
 
         .done(function(responseData) {
-           updateBasedOnCompletedCheckbox();
-          let newPercentComplete = responseData.overall_percent_complete;
-          updateProgressBar(newPercentComplete);
-          if (newPercentComplete == 100) {
-            window.location.reload(true);
+          if (Utility.checkHttpError(responseData) === false) {
+            // success
+            updateBasedOnCompletedCheckbox();
+            newPercentComplete = responseData.overall_percent_complete;
+            updateProgressBar(newPercentComplete);
+            if (newPercentComplete == 100) {
+              window.location.reload(true);
+            }
           }
         })
 
@@ -116,8 +118,8 @@
 
 
   function updateBasedOnCompletedCheckbox() {
-   let checkbox = getCheckboxElement();
-    if (checkbox.checked) {
+   let checkbox = $(checkboxId);
+    if (checkbox.prop("checked")) {
       showCompleteCheckIcon();
       hideContactUs();
       showNextLink();
@@ -129,66 +131,37 @@
     }
   }
 
+
+  function updateProgressBar(progressPercent = 0) {
+    let progressBar = $(innerProgressBarId);
+    let percentText = progressBar.find(percentTextClass);
+    let progressPercentString = progressPercent + "%";
+    percentText.text(progressPercentString + " #{t('.complete')}");
+    progressBar.innerWidth(progressPercentString);
+    progressBar.attr('aria-valuenow', progressPercent);
+  }
+
+
   function showContactUs() {
-    let contactUsElement = getContactUsElement();
-    showElementWithClass(contactUsElement, flexClass)
+    $(contactUsFooterId).toggleClass(showClass, true).toggleClass(hideClass, false);
   }
 
   function hideContactUs() {
-    let contactUsElement = getContactUsElement();
-    hideElementWithClass(contactUsElement, flexClass)
+    $(contactUsFooterId).toggleClass(showClass, false).toggleClass(hideClass, true);
   }
 
   function showNextLink() {
-    let nextLinkElement = getNextLinkElement();
-    showElementWithClass(nextLinkElement, flexClass)
+    $(nextLinkId).toggleClass(flexClass, true).toggleClass(hideClass, false);
   }
 
   function hideNextLink() {
-    let nextLinkElement = getNextLinkElement();
-    hideElementWithClass(nextLinkElement, flexClass)
+    $(nextLinkId).toggleClass(flexClass, false).toggleClass(hideClass, true);
   }
 
   function hideCompleteCheckIcon() {
-    let checkCompleteIcon = getCheckedCompleteIconElement();
-    // replaceClass(checkCompleteIcon, completedIcon, blankIcon);
-    replaceClass(checkCompleteIcon, showClass, whiteoutClass);
+    $(isCompleteIconId).toggleClass(showClass, false).toggleClass(whiteoutClass, true);
   }
 
   function showCompleteCheckIcon() {
-    let checkCompleteIcon = getCheckedCompleteIconElement();
-    // replaceClass(checkCompleteIcon, blankIcon, completedIcon);
-    replaceClass(checkCompleteIcon, whiteoutClass, showClass);
-  }
-
-
-  function updateProgressBar(progressPercent = 0) {
-    let progressBar = getInnerProgressBarElement();
-    let progressPercentString = progressPercent + "%";
-    let percentText = progressBar.getElementsByClassName(percentTextClass)[0];
-    percentText.textContent = progressPercentString + " #{t('.complete')}";
-
-    progressBar.style.width = progressPercentString;
-    progressBar.setAttribute('aria-valuenow', progressPercent);
-  }
-
-
-  function getInnerProgressBarElement() {
-    return document.getElementById(innerProgressBarId);
-  }
-
-  function getCheckboxElement() {
-    return document.getElementById(checkboxId);
-  }
-
-  function getContactUsElement() {
-    return document.getElementById(contactUsFooterId);
-  }
-
-  function getCheckedCompleteIconElement() {
-    return document.getElementById(isCompleteIconId);
-  }
-
-  function getNextLinkElement() {
-    return document.getElementById(nextLinkId);
+    $(isCompleteIconId).toggleClass(showClass, true).toggleClass(whiteoutClass, false);
   }
