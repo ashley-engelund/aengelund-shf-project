@@ -1142,9 +1142,12 @@ en:
     all_list_items_for_user: &user_checklists_all_items_for_user Back to all user checklists for %{name}
     if_you_have_qs_email_us: &if_you_have_qs_email_us "If you have any question, email us at "
 
+    progress_bar:
+      complete: &progress_complete complete
 
     index:
       title: Checklists for %{name}
+      complete: *progress_complete
 
     show:
       title: "Checklist %{name}"
@@ -1158,9 +1161,6 @@ en:
 
     all_changed_by_completion_toggle:
       not_found:  &user_checklist_not_found "User Checklist id: %{user_checklist_id} not found"
-
-    progress_bar:
-      complete: &progress_complete complete
 
     show_progress:
       read_and_agree: Please read each one of these carefully. If you agree to the terms, check the box at the bottom. Then click 'Next' to go to the next list of terms.

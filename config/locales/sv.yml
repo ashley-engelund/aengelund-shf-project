@@ -1147,8 +1147,12 @@ sv:
 
     if_you_have_qs_email_us: &if_you_have_qs_email_us "Om du har några frågor om dessa, maila oss till "
 
+    progress_bar:
+      complete: &progress_complete komplett
+
     index:
       title: Checklists for %{name}
+      complete: *progress_complete
 
     show:
       title: "Checklist %{name}"
@@ -1167,9 +1171,6 @@ sv:
       agreed_to_all_terms: I have agreed to all membership terms.
       i_commit_to: "Som medlem i Sveriges Hundföretagare åtar jag mig att:"
       all_complete_percent: "100% komplett"
-
-    progress_bar:
-      complete: &progress_complete komplett
 
     show_progress:
       read_and_agree: Please read and agree to them. Check the box beside each item to show you agree.
