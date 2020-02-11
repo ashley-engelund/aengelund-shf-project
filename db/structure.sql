@@ -9,6 +9,20 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -30,7 +44,9 @@ CREATE TABLE public.addresses (
     latitude double precision,
     longitude double precision,
     visibility character varying DEFAULT 'street_address'::character varying,
-    mail boolean DEFAULT false
+    mail boolean DEFAULT false,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
 );
 
 
@@ -1841,6 +1857,7 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200108194625'),
 ('20200119054308'),
 ('20200122200839'),
-('20200122215813');
+('20200122215813'),
+('20200205213528');
 
 
