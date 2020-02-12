@@ -15,11 +15,11 @@
 .membership-guidelines
   - overall_progress = @overall_progress
 
-  = render partial: 'checklist_header', locals: {user: @current_user, user_checklist: @membership_guidelines }
+  = render partial: 'checklist_header', locals: { user: @current_user, user_checklist: @checklist_root }
 
   .entry-content.container
     .user-checklist
-      %p.description= @membership_guidelines.description
+      %p.description= @checklist_root.description
 
       = render partial: 'progress_bar', locals: {  percent_complete: overall_progress }
 
@@ -39,7 +39,7 @@
 
                   -# The 'fa-fw' class is essential: That font awesome class sets a fixed width no matter what icon is shown.
                   -# It keeps the content to the right of the icon from 'jumping over' when there is no icon to display.
-                  = complete_check_icon(html_options: { class: "fa-fw #{whiteout_class}", id: is_completed_icon_id })
+                  = complete_check_icon(html_options: { class: "fa-fw #{ whiteout_class }", id: is_completed_icon_id })
 
                 = @user_checklist.name
 
@@ -49,9 +49,9 @@
 
                 = check_box_tag(checkbox_id, 'checked', @user_checklist.all_completed?,
                     { class: "fa-check-square",
-                      onchange:"toggleCompletedCheckbox(#{@user.id}, #{@user_checklist.id})" })
+                      onchange:"toggleCompletedCheckbox(#{ @user.id }, #{ @user_checklist.id })" })
 
-                = label_tag checkbox_id, { onchange:"toggleCompletedCheckbox(#{@user.id}, #{@user_checklist.id})" } do
+                = label_tag checkbox_id, { onchange:"toggleCompletedCheckbox(#{ @user.id }, #{ @user_checklist.id })" } do
                   = t('.read_and_agree_start')
                   %span.name= @user_checklist.name
                   = t ('.read_and_agree_end')
@@ -67,7 +67,7 @@
                   - next_sibling = @user_checklist.next_sibling
                   - if next_sibling
                     .next
-                      = link_to  user_user_checklist_progress_path(@user, next_sibling), {id: next_link_id, class: hide_class } do
+                      = link_to  user_user_checklist_progress_path(@user, next_sibling), { id: next_link_id, class: hide_class } do
                         = t('.next')
                         %span.next-arrow-icon.show-inline#next-arrow-icon
                           = next_arrow_icon(html_options: { class: 'fa-lg', id: next_arrow_id })
@@ -78,17 +78,17 @@
   const setCompleteUrl = "/anvandare/lista/set-all-completed/"
   const setUncompleteUrl = "/anvandare/lista/set-all-uncompleted/"
 
-  const checkboxId = "##{checkbox_id}";
-  const isCompleteIconId = "##{is_completed_icon_id}";
-  const innerProgressBarId = "##{inner_progress_bar_id}";
-  const percentTextClass = ".#{percent_text_class}";
-  const nextLinkId = "##{next_link_id}";
-  const contactUsFooterId = "##{contact_us_footer_id}";
+  const checkboxId = "##{ checkbox_id }";
+  const isCompleteIconId = "##{ is_completed_icon_id }";
+  const innerProgressBarId = "##{ inner_progress_bar_id }";
+  const percentTextClass = ".#{ percent_text_class }";
+  const nextLinkId = "##{ next_link_id }";
+  const contactUsFooterId = "##{ contact_us_footer_id }";
 
-  const flexClass = "#{flex_class}";
-  const whiteoutClass = "#{whiteout_class}";
-  const showClass = "#{show_class}";
-  const hideClass = "#{hide_class}";
+  const flexClass = "#{ flex_class }";
+  const whiteoutClass = "#{ whiteout_class }";
+  const showClass = "#{ show_class }";
+  const hideClass = "#{ hide_class }";
 
   window.onload = function(){
     updateBasedOnCompletedCheckbox();
@@ -107,7 +107,7 @@
             updateBasedOnCompletedCheckbox();
             newPercentComplete = responseData.overall_percent_complete;
             updateProgressBar(newPercentComplete);
-            if (newPercentComplete == 100) {
+            if (newPercentComplete === 100) {
               window.location.reload(true);
             }
           }
@@ -136,7 +136,7 @@
     let progressBar = $(innerProgressBarId);
     let percentText = progressBar.find(percentTextClass);
     let progressPercentString = progressPercent + "%";
-    percentText.text(progressPercentString + " #{t('.complete')}");
+    percentText.text(progressPercentString + " #{ t('.complete') }");
     progressBar.innerWidth(progressPercentString);
     progressBar.attr('aria-valuenow', progressPercent);
   }

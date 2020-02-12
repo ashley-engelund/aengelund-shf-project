@@ -1,11 +1,11 @@
 .membership-guidelines
   - overall_progress = @overall_progress
 
-  = render partial: 'checklist_header', locals: { user: @current_user, user_checklist: @membership_guidelines }
+  = render partial: 'checklist_header', locals: { user: @current_user, user_checklist: @user_checklist.root }
 
   .entry-content.container
     .user-checklist.membership-guidelines-completed
-      %p.description= @membership_guidelines.description
+      %p.description= @user_checklist.root.description
 
       .completed-progress-bar
         = render partial: 'progress_bar', locals: {  percent_complete: overall_progress }
@@ -16,7 +16,7 @@
             .card-body
               %h3.card-title= t('.i_commit_to')
 
-              = render partial: 'checklist_tree_as_list', locals: { user_checklist: @membership_guidelines }
+              = render partial: 'checklist_tree_as_list', locals: { user_checklist: @user_checklist.root }
 
             .card-footer
               .row
@@ -24,3 +24,5 @@
                   %span.is-complete.show-inline#all-complete-icon
                     = complete_check_icon(html_options: { class: 'fa-fw', id: 'fas-all-complete-icon' })
                   = t('.agreed_to_all_terms')
+                %p (TBD: need to generalize this to work for all User Checklists, not just the Membership Guidelines.
+                %p This was originally hardcoded for the Membership Guidelines for getting design feedback.)

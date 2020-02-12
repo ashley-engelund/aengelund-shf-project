@@ -10,7 +10,6 @@ end
 # A user cannot create a new checklist, nor can a user edit one or destroy one.
 # Nor can an admin create a new one or edit one manually or destroy one
 #
-#
 
 class UserChecklistsController < ApplicationController
 
@@ -36,53 +35,45 @@ class UserChecklistsController < ApplicationController
   def show_progress
     @user = User.find(progress_params[:user_id])
 
-    @membership_guidelines = membership_guideline_root_user_checklist(@user)
-    @overall_progress = membership_guidelines_percent_complete(@user)
-
     @user_checklist = UserChecklist.find(progress_params[:user_checklist_id])
     authorize_user_checklist
-
+    @checklist_root = @user_checklist.root
+    @overall_progress = @checklist_root.percent_complete
     if @overall_progress == 100
-      render :membership_guidelines_completed
+      render :membership_guidelines_completed # TODO revise the partial: generalize to work for any User checklist
     end
   end
 
 
-  # @return Array[<Hash<checklist_id: [Date]>>] - a list of user_checklists that had their date_completed changed.
-  #   Each item in the list is a simple Hash of { checklist_id: <id>, date_completed: <the updated date_completed>}
-  #   and a success or fail with error message.
+  # (XHR request)
+  # Toggle the date_completed for the checklist, then update all lists that
+  # need to be changed because of it.
   #
-  # Don't render a new page.  Just update info as needed and send
-  # 'success' or 'fail' info back.
+  # Return data for all of the checklists that had to be changed:
+  #  the updated date_completed and percent complete.
+  #
   def all_changed_by_completion_toggle
-    raise 'Unsupported request' unless request.xhr?
+    handle_xhr_request do
+      raise MissingUserChecklistParameterError, t('.missing-checklist-param-error') if params[:user_checklist_id].blank?
 
-    authorize UserChecklist
+      user_checklist_id = params[:user_checklist_id]
+      user_checklist = UserChecklist.find(user_checklist_id)
+      raise ActiveRecord::RecordNotFound, t('.not_found', id: user_checklist_id) if user_checklist.nil?
 
-    changed_checklists = []
-
-    user_checklist_id = params[:user_checklist_id]
-    user_checklist = UserChecklist.find_by_id(user_checklist_id)
-
-    date_completed = nil # default
-    status = 'ok'
-    error_text = ''
-
-    if user_checklist
-      # list of all those changed_by date_completed toggled
-      # toggle the date_completed and give me the list of all those changed
-      # all_changed_by_completion_toggle
+      # toggle the date_completed and get the list of all those changed
       checklists_changed = user_checklist.all_changed_by_completion_toggle
-      changed_checklists.concat(checklists_changed.map { |checklist_changed| hash_id_date_completed(checklist_changed) })
-    else
 
-      status = 'error' # not found
-      error_text = t('.not_found', user_checklist_id: user_checklist_id)
+      changed_checklists.concat(checklists_changed.map do |checklist_changed|
+        # use just the Date, not the time
+        date_complete = checklist_changed.date_completed.nil? ? nil : checklist_changed.date_completed.to_date
+        { checklist_id: checklist_changed.id,
+          date_completed: date_complete,
+          overall_percent_complete: checklist_changed.root.percent_complete
+        }
+      end)
 
-      #raise ActiveRecord::RecordNotFound,  "UserChecklist not found! user_checklist_id = #{user_checklist_id}"
+      { changed_checklists: changed_checklists }
     end
-
-    render json: { status: status, changed_checklists: changed_checklists, date_completed: date_completed, error_text: error_text }
   end
 
 
@@ -148,36 +139,28 @@ class UserChecklistsController < ApplicationController
 
 
   def set_uc_and_kids_date_completed(action_params, new_date_completed = Time.zone.now)
-    if action_params[:id].blank?
-      raise MissingUserChecklistParameterError, t('.missing-checklist-param-error')
+
+    raise MissingUserChecklistParameterError, t('.missing-checklist-param-error') if action_params[:id].blank?
+
+    user_checklist_id = action_params[:id]
+    user_checklist = UserChecklist.find(user_checklist_id)
+
+    if user_checklist
+      if new_date_completed
+        user_checklist.set_complete_including_children(new_date_completed)
+      else
+        user_checklist.set_uncomplete_including_children
+      end
+      new_percent_complete = user_checklist.root.percent_complete
+
+      { user_checklist_id: user_checklist_id,
+        date_completed: user_checklist.date_completed,
+        overall_percent_complete: new_percent_complete }
 
     else
-      user_checklist_id = action_params[:id]
-      user_checklist = UserChecklist.find(user_checklist_id)
-
-      if user_checklist
-        if new_date_completed
-          user_checklist.set_complete_including_children(new_date_completed)
-        else
-          user_checklist.set_uncomplete_including_children
-        end
-        new_percent_complete = membership_guidelines_percent_complete(user_checklist.user)
-
-        { user_checklist_id: user_checklist_id,
-          date_completed: user_checklist.date_completed,
-          overall_percent_complete: new_percent_complete }
-
-      else
-        raise UserChecklistNotFoundError, t('.not_found', id: user_checklist_id)
-
-      end
+      raise UserChecklistNotFoundError, t('.not_found', id: user_checklist_id)
     end
-  end
 
-
-  def membership_guidelines_percent_complete(uc_user)
-    membership_guidelines = membership_guideline_root_user_checklist(uc_user)
-    membership_guidelines.percent_complete
   end
 
 
