@@ -77,4 +77,43 @@ $indent-amount: 2rem;
 
   }
 
+  .code {
+    font-family: 'Courier New', Monospace, monospace;
+
+    .method-name {
+      font-weight: bold;
+    }
+  }
+
+  .xhr-example {
+
+    .intro {
+      margin-bottom: 2rem;
+    }
+
+    .example {
+      border-bottom: 1px;
+      border-bottom-color: #5692ce;
+      border-bottom-style: solid;
+
+      margin-bottom: 2rem;
+      margin-left: 2rem;
+      margin-top: 2rem;
+
+      padding-bottom: 1rem;
+
+      p {
+        line-height: 1.1rem;
+        font-size: smaller;
+      }
+    }
+
+    .bad-request {
+      background-color: white;
+      border-color: red;
+      color: red;
+      font-size: smaller;
+    }
+
+  }
 }

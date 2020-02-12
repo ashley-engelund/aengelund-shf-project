@@ -29,6 +29,9 @@
         %li.nav-item.h-branding
           - tab_title = t('tabs.payments_h_branding.tab-title', scope: i18n_scope)
           %a#tab-h-branding{ nav_tab_html_styles('#n5', tab_title) }= tab_title
+        %li.nav-item.xhr-example
+          - tab_title = 'XHR example'
+          %a#tab-xhr-example{ nav_tab_html_styles('#n8', tab_title) }= tab_title
 
 
       .tab-content#nav-tab-content
@@ -85,3 +88,8 @@
              users_grouped_by_membership: @data_gatherer.translated_users,
              users_grouped_by_day_created: User.all.group_by_day(:created_at).count,
              not_members: User.all.reject(&:member?)
+
+
+        .tab-pane.fade.show.active#n8{ role: "tabpanel", 'aria-labelledby': "tab-xhr-example" }
+          .section
+            = render 'xhr_example'
