@@ -1,4 +1,5 @@
-# Steps for navigating through the site: Visiting pages (I am on the "zzz" page), etc.
+# Steps for navigating through the site: Visiting pages (I am on the "zzz" page),
+# going to the next page, etc.
 #
 
 
@@ -122,4 +123,9 @@ end
 
 When(/^I reload the page$/) do
   visit current_path
+end
+
+
+When("I click on the pagination link to go to the next page") do
+  step %{I click on t("will_paginate.next_label") link}
 end
