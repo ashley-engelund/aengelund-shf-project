@@ -1150,6 +1150,9 @@ sv:
     progress_bar:
       complete: &progress_complete komplett
 
+    missing-checklist-param-error: &missing-checklist-param-error User Checklist missing parameter error!
+    not_found: &user_checklist_not_found "User Checklist id: %{user_checklist_id} not found"
+
     index:
       title: Checklists for %{name}
       complete: *progress_complete
@@ -1162,7 +1165,8 @@ sv:
       all_list_items_for_user: *user_checklists_all_items_for_user
 
     all_changed_by_completion_toggle:
-      not_found: &user_checklist_not_found "User Checklist id: %{user_checklist_id} not found"
+      missing-checklist-param-error: *missing-checklist-param-error
+      not_found: *user_checklist_not_found
 
     new:
       title: New User Checklist
@@ -1186,7 +1190,7 @@ sv:
 
     set_uc_and_kids_date_completed:
       not_found: *user_checklist_not_found
-      missing-checklist-param-error: User Checklist missing parameter error!
+      missing-checklist-param-error: *missing-checklist-param-error
 
 
   admin:

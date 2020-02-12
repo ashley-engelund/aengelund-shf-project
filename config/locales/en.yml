@@ -1145,6 +1145,9 @@ en:
     progress_bar:
       complete: &progress_complete complete
 
+    missing-checklist-param-error: &missing-checklist-param-error User Checklist missing parameter error!
+    not_found:  &user_checklist_not_found "User Checklist id: %{user_checklist_id} not found"
+
     index:
       title: Checklists for %{name}
       complete: *progress_complete
@@ -1160,7 +1163,8 @@ en:
       title: New User Checklist
 
     all_changed_by_completion_toggle:
-      not_found:  &user_checklist_not_found "User Checklist id: %{user_checklist_id} not found"
+      missing-checklist-param-error: *missing-checklist-param-error
+      not_found:  *user_checklist_not_found
 
     show_progress:
       read_and_agree: Please read each one of these carefully. If you agree to the terms, check the box at the bottom. Then click 'Next' to go to the next list of terms.
@@ -1181,7 +1185,7 @@ en:
 
     set_uc_and_kids_date_completed:
       not_found: *user_checklist_not_found
-      missing-checklist-param-error: User Checklist missing parameter error!
+      missing-checklist-param-error: *missing-checklist-param-error
 
 
   admin:
