@@ -23,12 +23,12 @@ $indent-amount: 2rem;
 
     border-color: #aaa;
     margin-top: .4rem;
-    padding: .3rem .3rem 0 .3rem;
+    padding: 0.3rem 0.3rem 0;
 
 
     :hover,
     :focus {
-      border-color: blue;
+      border-color: $primary;
     }
 
     li {
@@ -36,8 +36,8 @@ $indent-amount: 2rem;
     }
 
     .active {
-      border-color: $shf-blue;
       background-color: #5897fb14;
+      border-color: $shf-blue;
     }
 
   }
@@ -114,9 +114,9 @@ $indent-amount: 2rem;
 
       .unpaid-payor {
         i {
+          color: lighten($link-dark-brown, 50%);
           font-size: 30%;
           vertical-align: text-top;
-          color: lighten($link-dark-brown, 50%);
         }
       }
 

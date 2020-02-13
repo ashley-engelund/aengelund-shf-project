@@ -18,13 +18,14 @@
 -#
 
 -# ensure we have resonable values:
-- displayed_title = title.blank? ? '' : title
-- payor_display_method = payor_display_method.nil? ? :to_s : payor_display_method
-- are_paid_str = are_paid_text.blank? ? 'have paid' : are_paid_text
-- total_number_str = total_number_text.blank? ? 'total in the system' : total_number_text
-- have_not_paid_str = have_not_paid_text.blank? ? 'have not paid' : have_not_paid_text
-- total_num = num_total <= 0 ? 1 : num_total
-- total_num_paid = num_paid.nil? ? 0 : num_paid
+:ruby
+  displayed_title = title.blank? ? '' : title
+  payor_display_method = payor_display_method.nil? ? :to_s : payor_display_method
+  are_paid_str = are_paid_text.blank? ? 'have paid' : are_paid_text
+  total_number_str = total_number_text.blank? ? 'total in the system' : total_number_text
+  have_not_paid_str = have_not_paid_text.blank? ? 'have not paid' : have_not_paid_text
+  total_num = num_total <= 0 ? 1 : num_total
+  total_num_paid = num_paid.nil? ? 0 : num_paid
 
 .payors-payment-status
 
@@ -46,7 +47,7 @@
       %a.btn.btn-success{ 'aria-controls': 'list-unpaid', 'aria-expanded': 'false', 'data-toggle': 'collapse', href: '#list-unpaid', role: 'button' }
         = those_not_paid_list_title
 
-    .collapse#list-unpaid.list-unpaid
+    .collapse.list-unpaid#list-unpaid
       .card.card-body
         - those_not_paid.each do | not_paid |
           = link_to not_paid, target: '_blank' do
