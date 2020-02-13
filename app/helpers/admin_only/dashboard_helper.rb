@@ -92,9 +92,9 @@ module AdminOnly
     #
     # @return [Hash] - the HTML styles to apply to a navigation tab on the dashboard
     def nav_tab_html_styles(id, display_text, is_active: false)
-      active_class = is_active ? 'active' : ''
+      active_class = is_active ? ' active' : ''
       {role: 'tab',
-       class: "nav-link #{active_class}",
+       class: "nav-link#{active_class}",
        href: id,
        'data-toggle': 'tab',
        'aria-controls': display_text,

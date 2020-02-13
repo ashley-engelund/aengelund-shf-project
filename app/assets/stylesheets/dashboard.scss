@@ -6,6 +6,8 @@
 
 $indent-amount: 2rem;
 
+$tab-active-background-color: #5897fb14;
+
 .radio-button {
   font-weight: normal;
   margin-left: 2rem;
@@ -14,15 +16,15 @@ $indent-amount: 2rem;
 .admin {
 
   .nav-tabs {
-    border-bottom: 1px solid #888;
+    border-bottom: 1px solid $gray;
   }
 
 
   .nav.nav-tabs,
   .nav-tabs .nav-link {
 
-    border-color: #aaa;
-    margin-top: .4rem;
+    border-color: $verylightgray;
+    margin-top: 0.4rem;
     padding: 0.3rem 0.3rem 0;
 
 
@@ -36,7 +38,7 @@ $indent-amount: 2rem;
     }
 
     .active {
-      background-color: #5897fb14;
+      background-color: $tab-active-background-color;
       border-color: $shf-blue;
     }
 
