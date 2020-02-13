@@ -13,10 +13,33 @@ $indent-amount: 2rem;
 
 .admin {
 
-  .nav.nav-tabs {
+  .nav-tabs {
+    border-bottom: 1px solid #888;
+  }
+
+
+  .nav.nav-tabs,
+  .nav-tabs .nav-link {
+
+    border-color: #aaa;
+    margin-top: .4rem;
+    padding: .3rem .3rem 0 .3rem;
+
+
+    :hover,
+    :focus {
+      border-color: blue;
+    }
+
     li {
       margin-right: 1em;
     }
+
+    .active {
+      border-color: $shf-blue;
+      background-color: #5897fb14;
+    }
+
   }
 }
 
@@ -84,6 +107,22 @@ $indent-amount: 2rem;
       font-weight: bold;
     }
   }
+
+  .payors-payment-status {
+
+    .those-not-paid {
+
+      .unpaid-payor {
+        i {
+          font-size: 30%;
+          vertical-align: text-top;
+          color: lighten($link-dark-brown, 50%);
+        }
+      }
+
+    }
+  }
+
 
   .xhr-example {
 
