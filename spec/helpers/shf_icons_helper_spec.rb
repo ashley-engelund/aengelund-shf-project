@@ -44,7 +44,6 @@ RSpec.describe ShfIconsHelper, type: :helper do
 
         it "fa_style: 'far' is set for the entry" do
           destroy_icon_html = helper.destroy_icon
-          puts "destroy_icon_html: #{destroy_icon_html}"
           expect(destroy_icon_html).to match(/<i(.*)class="far (.*)"(.*)><\/i>/)
         end
       end
