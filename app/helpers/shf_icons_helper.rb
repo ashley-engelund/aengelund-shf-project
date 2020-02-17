@@ -101,9 +101,9 @@ module ShfIconsHelper
   FA_WARNING = 'exclamation-triangle'
   FA_PROBLEM = 'times-circle'
 
-  FA_TOOLTIP = 'info-circle'  # Note that there is a specific helper method 'fas_tooltip(...) that can be used (Defined in application_helper.rb)
+  FA_TOOLTIP = 'info-circle' # Note that there is a specific helper method 'fas_tooltip(...) that can be used (Defined in application_helper.rb)
 
-  FA_BLANK = 'blank'  # placeholder
+  FA_BLANK = 'blank' # placeholder
 
 
   # arrows
@@ -227,18 +227,16 @@ module ShfIconsHelper
   # Try to keep these in the same order as the icon constant groups above.
   #
   METHODS_AND_ICONS = [
-      { method_name_start: 'edit', icon: FA_EDIT,
-        html_options:{ class: 'edit'} },
+      { method_name_start: 'edit', icon: FA_EDIT },
 
       { method_name_start: 'view', icon: FA_VIEW,
         color: 'blue',
-        fa_style: 'far',
-        html_options:{ class: 'view'}},
+        fa_style: 'far'
+      },
 
       { method_name_start: 'destroy', icon: FA_DESTROY,
         color: 'red',
-        fa_style: 'far',
-        html_options:{ class: 'delete'}
+        fa_style: 'far'
       },
 
 
@@ -284,6 +282,7 @@ module ShfIconsHelper
   def self.methods_and_icons
     METHODS_AND_ICONS
   end
+
 
   def methods_and_icons
     self.class.methods_and_icons
