@@ -5,6 +5,7 @@ Feature: Whole process of a new user creating a login, applying, being approved,
 
   Background:
     Given the App Configuration is not mocked and is seeded
+    And the Membership Ethical Guidelines Master Checklist exists
 
     Given the following users exist:
       | email                | admin | first_name | last_name | password       |
