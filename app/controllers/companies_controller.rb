@@ -23,16 +23,12 @@ class CompaniesController < ApplicationController
 
     @search_params = Company.ransack(action_params)
 
-    # put the companies in the desired order
-    @order_companies_by = company_order
-
     # only select companies that are 'complete'; see the Company.complete scope
-
     @all_companies = @search_params.result(distinct: true)
                          .includes(:business_categories)
                          .includes(addresses: [:region, :kommun])
                          .joins(addresses: [:region, :kommun])
-                         .order(@order_companies_by)
+                         .order(company_order)
 
     # The last qualifier ("joins") on above statement ("addresses: :region") is
     # to get around a problem with DISTINCT queries used with ransack when also

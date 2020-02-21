@@ -165,7 +165,6 @@ Feature: Visitor sees all companies
     Given the date is set to "2017-10-01"
     Given I am Logged out
     And I am on the "landing" page
-    And show me the page
     Then I should see "Company02" in the list of companies
     And I should not see "2120000142" in the list of companies
     And I should see "Company01" in the list of companies
