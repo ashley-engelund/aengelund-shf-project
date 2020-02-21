@@ -109,6 +109,11 @@ module Adapters
     end
 
 
+    # surround the item with double quotes ("")
+    def quote(item)
+      "\"#{item}\""
+    end
+
   end # ShfApplicationToCsvAdapter
 
 
