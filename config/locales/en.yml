@@ -991,13 +991,13 @@ en:
       never_paid: *never_paid
       fee_payment_url: "Log in and pay here: https://hitta.sverigeshundforetagare.se%{payment_url}"
 
-  export_payments_csv:
-    success: *export_success
-    error: *export_error
+    export_payments_csv:
+      success: *export_success
+      error: *export_error
 
-  export_payments_covering_year_csv:
-    success: *export_success
-    error: *export_error
+    export_payments_covering_year_csv:
+      success: *export_success
+      error: *export_error
 
 
 
