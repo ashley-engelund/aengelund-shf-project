@@ -59,12 +59,6 @@ module Adapters
       raise NoMethodError, "subclasses must implement #{__method__}"
     end
 
-
-    # surround the item with double quotes ("")
-    def quote(item)
-      "\"#{item}\""
-    end
-
   end
 
 end
