@@ -185,7 +185,7 @@ class AdminController < AdminOnlyController
   def create_header_str(header_entries)
     out_str = '' # is this stmt needed?
 
-    out_str << header_entries.map { |header_str| "#{header_str.strip}" }.join(',')
+    out_str << header_entries.map { |header_str| "'#{header_str.strip}'" }.join(',')
 
     out_str << "\n"
   end
