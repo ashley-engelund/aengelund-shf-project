@@ -15,12 +15,10 @@ module Adapters
   #
   #
   #--------------------------
-  class PaymentCoveringYearToCsvAdapter < AbstractAdapter
+  class PaymentCoveringYearToCsvAdapter < AbstractCsvAdapter
 
 
-    def target_class
-      CsvRow
-    end
+    I18N_PAYMENT_ATTRIBS = 'activerecord.attributes.payment'.freeze
 
 
     def set_target_attributes(target)
@@ -34,6 +32,7 @@ module Adapters
       target << payment.id
       target << quote(payment.user.full_name)
       target << payment.user.email
+      target << payment.user.membership_number
 
       if payment.payment_type == Payment::PAYMENT_TYPE_BRANDING
         co_name = payment.company.name
@@ -66,6 +65,35 @@ module Adapters
       target << quote(payment.notes)
 
       target
+    end
+
+
+    # @return [Array<String] - a list of the header strings
+    #
+    def self.headers(year)
+
+      ["#{I18n.t('activerecord.models.payment.one')} db id",
+       I18n.t('name'),
+       'E-post',
+       I18n.t('activerecord.attributes.user.membership_number'),
+       I18n.t('payment_type', scope: I18N_PAYMENT_ATTRIBS),
+       'total payment',
+
+       'Term ' + I18n.t('start_date', scope: I18N_PAYMENT_ATTRIBS),
+       'Term ' + I18n.t('expire_date', scope: I18N_PAYMENT_ATTRIBS),
+       'total # days paid',
+
+       'SEK / dag',
+       "# days #{year} paid for",
+       "SEK paid in #{year}",
+
+       'Pay. date',
+       'Org.',
+       I18n.t('org_nr'),
+       I18n.t('status', scope: I18N_PAYMENT_ATTRIBS),
+       'HIPS id',
+       I18n.t('notes', scope: I18N_PAYMENT_ATTRIBS)
+      ]
     end
 
 

@@ -14,12 +14,9 @@ module Adapters
   #
   #
   #--------------------------
-  class PaymentToCsvAdapter < AbstractAdapter
+  class PaymentToCsvAdapter < AbstractCsvAdapter
 
-
-    def target_class
-      CsvRow
-    end
+    I18N_PAYMENT_ATTRIBS = 'activerecord.attributes.payment'.freeze
 
 
     def set_target_attributes(target)
@@ -28,9 +25,13 @@ module Adapters
       amount = 0
 
       payment = @adaptee
+
       target << payment.id
       target << quote(payment.user.full_name)
       target << payment.user.email
+      target << payment.user.membership_number
+
+      target << payment.payment_type
 
       if payment.payment_type == Payment::PAYMENT_TYPE_BRANDING
         co_name = payment.company.name
@@ -42,15 +43,13 @@ module Adapters
 
       target << amount
 
-      target << quote(co_name)
-      target << co_num
-
-      target << payment.payment_type
-
       target << quote(payment.start_date)
       target << quote(payment.expire_date)
 
       target << quote(payment.created_at.strftime('%F'))
+
+      target << quote(co_name)
+      target << co_num
 
       target << payment.status
       target << payment.hips_id
@@ -60,6 +59,27 @@ module Adapters
       target
     end
 
+
+    def self.headers(*args)
+
+      ["#{I18n.t('activerecord.models.payment.one')} db id",
+       I18n.t('name'),
+       'E-post',
+       I18n.t('activerecord.attributes.user.membership_number'),
+       I18n.t('payment_type', scope: I18N_PAYMENT_ATTRIBS),
+       'SEK',
+
+       'Term ' + I18n.t('start_date', scope: I18N_PAYMENT_ATTRIBS),
+       'Term ' + I18n.t('expire_date', scope: I18N_PAYMENT_ATTRIBS),
+
+       'Pay. date',
+       'Org.',
+       I18n.t('org_nr'),
+       I18n.t('status', scope: I18N_PAYMENT_ATTRIBS),
+       'HIPS id',
+       I18n.t('notes', scope: I18N_PAYMENT_ATTRIBS)
+      ]
+    end
 
   end
 
