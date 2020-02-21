@@ -29,7 +29,11 @@ class AdminController < AdminOnlyController
   def export_payments_csv
     payments = Payment.includes(:user).includes(:company).all
     export_name = "betalningar-#{Time.zone.now.strftime('%Y-%m-%d--%H-%M-%S')}.csv"
-    file_contents = items_export_str(payments, Adapters::PaymentToCsvAdapter, export_payments_header_str)
+
+    csv_adapter_class = Adapters::PaymentToCsvAdapter
+    header_str = csv_adapter_class.header_str
+
+    file_contents = items_export_str(payments, csv_adapter_class, header_str)
 
     export_file(file_contents, export_name, success_msg: t('.success'), error_msg: t('.error'))
   end
@@ -44,8 +48,11 @@ class AdminController < AdminOnlyController
     payments_for_year = payments.map { |payment| PaymentCoveringYear.new(payment: payment, year: year) }
 
     export_name = "betalningar-for-#{year}--#{Time.zone.now.strftime('%Y-%m-%d--%H-%M-%S')}.csv"
-    file_contents = items_export_str(payments_for_year, Adapters::PaymentCoveringYearToCsvAdapter,
-                                     export_payments_covering_year_header_str(year))
+
+    csv_adapter_class = Adapters::PaymentCoveringYearToCsvAdapter
+    header_str = csv_adapter_class.header_str(year)
+    file_contents = items_export_str(payments_for_year, csv_adapter_class,
+                                     header_str)
 
     export_file(file_contents, export_name, success_msg: t('.success'), error_msg: t('.error'))
   end
@@ -101,7 +108,7 @@ class AdminController < AdminOnlyController
   end
 
 
-  # FIXME - these headers should belong to the Adapters
+  # FIXME - these headers should be in the Adapter
 
   # build the CSV export ShfApplications header string from strings in the locale file(s)
   def export_shf_apps_header_str
@@ -126,57 +133,6 @@ class AdminController < AdminOnlyController
                    t('activerecord.attributes.address.kommun'),
                    t('activerecord.attributes.address.region'),
                    t('activerecord.attributes.address.country'),
-    ]
-    create_header_str(header_strs)
-  end
-
-
-  # build the CSV export Payments header string from strings in the locale file(s)
-  def export_payments_header_str
-    payment_attribs = 'activerecord.attributes.payment'
-
-    header_strs = ['id',
-                   t('name'),
-                   'E-post',
-                   'SEK',
-                   'Org.',
-                   t('org_nr'),
-                   t('payment_type', scope: payment_attribs),
-                   t('start_date', scope: payment_attribs),
-                   t('expire_date', scope: payment_attribs),
-                   t('created', scope: payment_attribs),
-                   t('status', scope: payment_attribs),
-                   'HIPS id',
-                   t('notes', scope: payment_attribs)
-    ]
-    create_header_str(header_strs)
-  end
-
-
-  def export_payments_covering_year_header_str(year)
-    payment_attribs = 'activerecord.attributes.payment'
-
-    header_strs = ['id',
-                   t('name'),
-                   'E-post',
-
-                   t('payment_type', scope: payment_attribs),
-                   'total payment',
-
-                   'Term ' + t('start_date', scope: payment_attribs),
-                   'Term ' + t('expire_date', scope: payment_attribs),
-                   'total # days paid',
-
-                   'SEK / dag',
-                   "# days #{year} paid for",
-                   "SEK paid in #{year}",
-
-                   'Pay. date',
-                   'Org.',
-                   t('org_nr'),
-                   t('status', scope: payment_attribs),
-                   'HIPS id',
-                   t('notes', scope: payment_attribs)
     ]
     create_header_str(header_strs)
   end
