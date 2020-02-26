@@ -54,9 +54,11 @@ en:
   none_n: *none
   name_missing: Name Missing
 
+  unknown: unknown
+
   time_ago: '%{amount_of_time} ago'
 
-  confirm_are_you_sure: &are_you_sure_confirm Are you sure
+  confirm_are_you_sure: &are_you_sure_confirm Are you sure?
 
   hello: 'Hello, %{name}'
 
@@ -242,6 +244,7 @@ en:
       business_category:
         name: &business_category_name  Name
         description: &description  Description
+        subcategory: &subcategory Subcategory
 
       shf_document:
         title: &title Title
@@ -781,6 +784,10 @@ en:
       edit: *edit
       delete: *remove
       delete_confirm: *are_you_sure_confirm
+      add_subcategory: Add Subcategory
+      add_category: Add Category
+      edit_subcategory: Edit Subcategory
+      edit_category: Edit Category
 
     show:
       title: Business category (type of dog-related service)
@@ -814,6 +821,7 @@ en:
       clue_selected_categories: &clue_selected_categories Blue box = selected categories
 
     new_business_category: New business category
+    new_business_subcategory: New subcategory
     all_business_categories: All categories
 
   users:
@@ -980,8 +988,8 @@ en:
     all_applications_received: All applications received
 
     export_ansokan_csv:
-      success: Export successful. Check your browser downloads for the file.
-      error: There was a problem with the export.
+      success: &export_success Export successful. Check your browser downloads for the file.
+      error: &export_error There was a problem with the export.
       date_state_changed: Date State changed
       member_fee_paid: M fee paid
       member_fee_expires: M Expires
@@ -990,6 +998,15 @@ en:
       paid: *paid
       never_paid: *never_paid
       fee_payment_url: "Log in and pay here: https://hitta.sverigeshundforetagare.se%{payment_url}"
+
+    export_payments_csv:
+      success: *export_success
+      error: *export_error
+
+    export_payments_covering_year_csv:
+      success: *export_success
+      error: *export_error
+
 
 
   shf_documents:
@@ -1151,6 +1168,12 @@ en:
     dashboard:
       title: ADMIN DASHBOARD
 
+      payments:
+        export_all_payments: &dash_export_all_payments Export all payments
+        export_payments_year: &dash_export_payments_year Export payments covering year
+        export_payments_year_explain: Payments that cover any of the days in the year.
+
+
       tabs:
         current:
           tab-title: Current
@@ -1180,7 +1203,13 @@ en:
           title: *members
           total_members: *members
 
-        payments_memberships:
+        payments:
+          tab-title: &payments "Payments"
+          title: *payments
+          export_all_payments: Export all payments
+          export_payments_year: Export payments covering year
+
+        payments_membership:
           tab-title: &payments_membership "Payments: Membership"
           title: *payments_membership
 
