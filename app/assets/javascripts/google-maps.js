@@ -72,7 +72,7 @@ function addMarkerClustererToMap (map, locations) {
     }
 
     var markerCluster = new MarkerClusterer(map, markers, {
-        imagePath: 'm'
+        imagePath: 'map-markers/m'
     });
 
     // fit the map center and zoom to see all markers, if markers exist
