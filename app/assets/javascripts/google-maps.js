@@ -50,7 +50,7 @@ function addMarkerClustererToMap (map, locations) {
     markers = [];
 
     var infoWindow = new google.maps.InfoWindow();
-    
+
     locations.forEach(addMarker);
 
     // For each location create a marker and add an event listener to open infoWindow
@@ -72,7 +72,7 @@ function addMarkerClustererToMap (map, locations) {
     }
 
     var markerCluster = new MarkerClusterer(map, markers, {
-        imagePath: 'assets/m'
+        imagePath: 'm'
     });
 
     // fit the map center and zoom to see all markers, if markers exist
