@@ -818,7 +818,8 @@ RSpec.describe UserChecklist, type: :model do
       child1_1_1_complete = create(:user_checklist, :completed, parent: child1_1, name: 'child1_1_1')
       child2_complete = create(:user_checklist, :completed, parent: root, name: 'child2')
 
-      child1_1_1_complete_orig_date_completed = child1_1_1_complete.date_completed
+      child1_1_1_completed_time = child1_1_1_complete.reload.date_completed
+      child1_1_1_complete_orig_date_completed = child1_1_1_completed_time
       child2_complete_orig_date_completed = child2_complete.date_completed
 
       expect(root.all_that_are_uncompleted.count).to eq 3
@@ -836,7 +837,8 @@ RSpec.describe UserChecklist, type: :model do
       expect(child1_1.reload.completed?).to be_truthy
 
       # descendants that were already complete are not changed
-      expect(child1_1_1_complete.reload.date_completed).to eq child1_1_1_complete_orig_date_completed
+      str_format = '%F%T%L'  # use strftime to check the date and time only to thousands of a second.  Was slightly different running on Semaphore
+      expect(child1_1_1_completed_time.strftime(str_format)).to eq child1_1_1_complete_orig_date_completed.strftime(str_format)
       expect(child2_complete.reload.date_completed).to eq child2_complete_orig_date_completed
     end
 
