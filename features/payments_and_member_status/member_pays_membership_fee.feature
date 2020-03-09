@@ -6,17 +6,22 @@ Feature: Member pays membership fee
 
   Background:
     Given the App Configuration is not mocked and is seeded
+    And the Membership Ethical Guidelines Master Checklist exists
 
     Given the date is set to "2018-01-01"
 
     Given the following users exist:
-      | email          | admin | member    | membership_number |
-      | emma@mutts.com |       | true      | 1001              |
-      | admin@shf.se   | true  | false     |                   |
+      | email          | admin | member | membership_number |
+      | emma@mutts.com |       | true   | 1001              |
+      | admin@shf.se   | true  | false  |                   |
+
+    And the following users have agreed to the Membership Ethical Guidelines:
+      | email          |
+      | emma@mutts.com |
 
     Given the following companies exist:
-      | name       | company_number | email                 | region    |
-      | HappyMutts | 2120000142     | woof@happymutts.com   | Stockholm |
+      | name       | company_number | email               | region    |
+      | HappyMutts | 2120000142     | woof@happymutts.com | Stockholm |
 
     Given the following applications exist:
       | user_email     | company_number | state    |
@@ -83,17 +88,17 @@ Feature: Member pays membership fee
 
   @selenium
   Scenario: Member starts payment process then abandons it so no payment is made
-    Given the date is set to "2018-12-31"
+    Given the date is set to "2018-12-30"
     And I am logged in as "emma@mutts.com"
     And I am on the "user account" page for "emma@mutts.com"
     And I should see "1001"
-    Then I click on t("menus.nav.members.pay_membership")
+    When I click on t("menus.nav.members.pay_membership")
     And I abandon the payment by going back to the previous page
-    And I should not see t("payments.success.success")
-    Then the user is paid through "2018-12-31"
+    Then I should not see t("payments.success.success")
+    And the user is paid through "2018-12-31"
 
   Scenario: Member incurs error in payment processing so no payment is made
-    Given the date is set to "2018-12-31"
+    Given the date is set to "2018-12-30"
     And I am logged in as "emma@mutts.com"
     And I am on the "user account" page for "emma@mutts.com"
     And I should see "1001"
