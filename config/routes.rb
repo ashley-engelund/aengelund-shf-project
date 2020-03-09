@@ -16,6 +16,7 @@ Rails.application.routes.draw do
 
         get 'payments', to: 'dashboard#payments'
 
+        resources :master_checklist_types
       end
 
 
@@ -136,10 +137,18 @@ Rails.application.routes.draw do
       # ---------------------------------------------------
       # UserChecklist as a nested resource under User, with path '/lista' in the URI
       resources :user_checklists, only: [:show, :index], path: 'lista' do
+        get 'progress', to: 'user_checklists#show_progress'
+
         post 'all_changed_by_completion_toggle', to: 'user_checklists#all_changed_by_completion_toggle'
       end
 
     end
+
+    # UserChecklist
+    post 'anvandare/lista/set-all-completed/:id', to: 'user_checklists#set_complete_including_kids',
+         as: 'user_checklist_set_complete_including_kids'
+    post 'anvandare/lista/set-all-uncompleted/:id', to: 'user_checklists#set_uncomplete_including_kids',
+         as: 'user_checklist_set_uncomplete_including_kids'
 
 
     get 'anvandare/:id/proof_of_membership', to: 'users#proof_of_membership',
