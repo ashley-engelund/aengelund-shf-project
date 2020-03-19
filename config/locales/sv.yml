@@ -48,6 +48,7 @@ sv:
   'Yes': *yes
   'No': *no
 
+
   application: &application Ansökan
   user_activity: Användaraktivitet
   none: Ingen eller Inget
@@ -1877,6 +1878,7 @@ sv:
         shf_meeting_minutes: *member_pages_board_meetings
         manage_applications: Hantera ansökningar
         app_configuration: Appkonfiguration
+        design_guide: Designguide
         master_checklists: Master Checklists
         dashboard: Dashboard
         design_guide: Design Guide
