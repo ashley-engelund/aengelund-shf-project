@@ -848,7 +848,7 @@ RSpec.describe UserChecklist, type: :model do
       child1 = create(:user_checklist, parent: root, name: 'child1')
       child1_1 = create(:user_checklist, parent: child1, name: 'child1_1')
       child1_1_1_complete = create(:user_checklist, parent: child1_1, name: 'child1_1_1')
-      child2_complete = create(:user_checklist, :completed, parent: root, name: 'child2')
+      create(:user_checklist, :completed, parent: root, name: 'child2')
 
       child1_1_1_complete.set_complete_including_children
       expect(child1_1_1_complete.reload.completed?).to be_truthy

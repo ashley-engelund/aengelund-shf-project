@@ -20,10 +20,8 @@ Given(/^the following users exist(?:[:])?$/) do |table|
 
     new_user = (is_legacy == 'true' ? FactoryBot.create(:user_without_first_and_lastname, user) : FactoryBot.create(:user, user))
 
-
     AdminOnly::UserChecklistFactory.create_member_guidelines_checklist_for(new_user)
-
-    new_user
+    # new_user
   end
 end
 

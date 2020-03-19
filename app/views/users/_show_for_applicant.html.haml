@@ -24,11 +24,6 @@
 
             = render partial: 'show_application_section_row_cols', locals: { user: user }
 
-            -# - if user.shf_application.applicant_can_edit?
-            -#   = render partial: 'shared/view_or_edit_my_application', locals: {shf_app: user.shf_application, classes: 'btn btn-primary btn-sm'}
-              -#%p.step-info You can change your application for now.  Once SHF starts reviewing it, you cannot change it.
-              -#%p.step-info If you need to make changes once the review has started, email us.
-
             - t_key = "app_status_#{user.shf_application.state}"
             %p.step-info= t(".#{t_key}")
             %p.tbd-note If it is rejected, what else to display or do?

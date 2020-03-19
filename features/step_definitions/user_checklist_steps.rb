@@ -138,10 +138,10 @@ And("the following users have agreed to the Membership Ethical Guidelines:") do 
     user = User.find_by(email: user_email)
     begin
       user_guidelines = if (found_guidelines = UserChecklistManager.membership_guidelines_list_for(user))
-        found_guidelines
-      else
-        AdminOnly::UserChecklistFactory.create_member_guidelines_checklist_for(user) unless UserChecklistManager.membership_guidelines_list_for(user)
-      end
+                          found_guidelines
+                        else
+                          AdminOnly::UserChecklistFactory.create_member_guidelines_checklist_for(user) unless UserChecklistManager.membership_guidelines_list_for(user)
+                        end
       user_guidelines.set_complete_including_children
 
     rescue => e
@@ -237,10 +237,10 @@ end
 # Create the Membership Guidelines user checklist(s) for the user if needed
 And ("I have agreed to all of the Membership Guidelines") do
   user_guidelines = if (found_guidelines = UserChecklistManager.membership_guidelines_list_for(@user))
-    found_guidelines
-  else
-    AdminOnly::UserChecklistFactory.create_member_guidelines_checklist_for(@user) unless UserChecklistManager.membership_guidelines_list_for(@user)
-  end
+                      found_guidelines
+                    else
+                      AdminOnly::UserChecklistFactory.create_member_guidelines_checklist_for(@user) unless UserChecklistManager.membership_guidelines_list_for(@user)
+                    end
   user_guidelines.set_complete_including_children
 end
 

@@ -71,11 +71,11 @@ And(/^the following Master Checklist exist:$/) do |table|
     create_guidelines_list_type_if_needed
 
     list_type = if type_name.blank?
-      AdminOnly::MasterChecklistType.membership_guidelines_type
-    else
-      l_type = AdminOnly::MasterChecklistType.find_by(name: type_name)
-      l_type.nil? ? AdminOnly::MasterChecklistType.membership_guidelines_type : l_type
-    end
+                  AdminOnly::MasterChecklistType.membership_guidelines_type
+                else
+                  l_type = AdminOnly::MasterChecklistType.find_by(name: type_name)
+                  l_type.nil? ? AdminOnly::MasterChecklistType.membership_guidelines_type : l_type
+                end
 
     AdminOnly::MasterChecklist.find_or_create_by(name: name) do
       FactoryBot.create(:master_checklist, name: name,
