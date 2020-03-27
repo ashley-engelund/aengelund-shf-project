@@ -1,5 +1,6 @@
 -# this partial expects these locals:
--#   percent_complete - [Integer] the value for the progress bar
+ percent_complete - [Integer] the value for the progress bar
+
 - is_complete_class = percent_complete == 100 ? 'is-complete' : ''
 .progress#progress
   .progress-bar#progress-bar{ role: 'progressbar', style: "width: #{ percent_complete }%",

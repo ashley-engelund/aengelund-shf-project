@@ -1,7 +1,8 @@
 -# TODO DRY with show view
-- checklist_master = locals.fetch(:master_checklist, nil)
-- all_allowable_parents = locals.fetch(:all_allowable_parents, [])
-- cannot_edit = @master_checklist.no_more_major_changes?
+:ruby
+  checklist_master = locals.fetch(:master_checklist, nil)
+  all_allowable_parents = locals.fetch(:all_allowable_parents, [])
+  cannot_edit = @master_checklist.no_more_major_changes?
 
 = form_for checklist_master, html: { class: "#{ locals.fetch(:class_name, '') }" }   do |f|
 

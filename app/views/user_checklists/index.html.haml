@@ -22,7 +22,7 @@
         - child_entry_li_id = li_id.call(child_entry)
         - disabled_setting = { }
 
-        -if child_entry.has_children?
+        - if child_entry.has_children?
           - children_ul_id = "##{ ul_id.call(child_entry) }"
           - disabled_setting = { disabled: true }
 
