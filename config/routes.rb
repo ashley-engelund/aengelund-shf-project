@@ -13,6 +13,10 @@ Rails.application.routes.draw do
         resources :master_checklists
         get  'master-checklists/max-list-position', to: 'master_checklists#max_list_position'
         post 'master-checklists/toggle-in-use', to: 'master_checklists#toggle_in_use'
+        post 'master-checklists/set-to-no-longer-used/:id', to: 'master_checklists#set_to_no_longer_used',
+             as: :master_checklists_set_to_no_longer_used
+
+        get 'master-checklists/next-onebased-list-position', to: 'master_checklists#next_one_based_list_position'
 
         get 'payments', to: 'dashboard#payments'
 
