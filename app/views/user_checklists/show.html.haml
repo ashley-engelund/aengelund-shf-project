@@ -1,7 +1,6 @@
 = render partial: 'checklist_header', locals: { user: @current_user, user_checklist: @user_checklist }
 
 .entry-content.container
-  - percent_complete = @user_checklist.percent_complete
 
   .user-checklist
     - li_id = "li-id-#{ @user_checklist.id }"
@@ -85,7 +84,7 @@
 
   window.onload = function(){
     displayOrHideDateCompleted();
-  }
+  };
 
 
   function toggleCompletedCheckbox(userId, checklistId) {
@@ -107,13 +106,14 @@
   function updateDateSuccessfulFor(responseData) {
     let changedChecklists = responseData.changed_checklists;
 
-    console.log('id = #{ @user_checklist.id }')
+    console.log('id = #{ @user_checklist.id }');
     changedChecklists.forEach(function(checklist){
       console.log(checklist);
       // changedChecklists should only contain the the checklist that we are showing, but we check to be sure
-      if (checklist.checklist_id == #{ @user_checklist.id }) {
+      if (checklist.checklist_id === #{ @user_checklist.id }) {
         let updatedDateCompleted = checklist.date_completed;
-        dateCompletedElement = document.getElementById("date-completed-value");
+        let dateCompletedElement = document.getElementById("date-completed-value");
+        // TODO use replaceChild() instead of innerHTML
         dateCompletedElement.innerHTML = ''; // clear existing
         dateCompletedElement.appendChild( document.createTextNode(updatedDateCompleted) );
         displayOrHideDateCompleted();
@@ -123,6 +123,7 @@
 
   function updatePercentComplete(percent) {
     let percentComplete = document.getElementById('percent-complete');
+    // TODO use replaceChild() instead of innerHTML
     percentComplete.innerHTML = ''; // clear existing
     percentComplete.appendChild( document.createTextNode(percent + "% complete") );
     // FIXME also update the progress bar

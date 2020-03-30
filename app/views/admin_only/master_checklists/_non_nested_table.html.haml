@@ -1,6 +1,7 @@
 -# This partial expects the following locals
-     master_checklists = list of MasterChecklist items that are no longer in use
-                         These are the MasterChecklist items displayed in this table
+  master_checklists = list of MasterChecklist items that are no longer in use
+    These are the MasterChecklist items displayed in this table
+
 - name_length = 90
 
 %table.table-hover.no-longer-in-use
@@ -30,7 +31,7 @@
   // document.addEventListener('turbolinks:load', function() {
     $(document).ready(function() {
       $("tr[data-href]").click(function(event){
-        window.location.href = $(this).data("href")
+        window.location.href = $(this).data("href");
         event.preventDefault();
       });
     });

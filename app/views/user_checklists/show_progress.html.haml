@@ -55,7 +55,7 @@
                 = label_tag checkbox_id, { onchange:"toggleCompletedCheckbox(#{ @user.id }, #{ @user_checklist.id })" } do
                   = t('.read_and_agree_start')
                   %span.name= @user_checklist.name
-                  = t ('.read_and_agree_end')
+                  = t('.read_and_agree_end')
 
             .card-footer
               .row
@@ -76,8 +76,8 @@
 
 :javascript
 
-  const setCompleteUrl = "/anvandare/lista/set-all-completed/"
-  const setUncompleteUrl = "/anvandare/lista/set-all-uncompleted/"
+  const setCompleteUrl = "/anvandare/lista/set-all-completed/";
+  const setUncompleteUrl = "/anvandare/lista/set-all-uncompleted/";
 
   const checkboxId = "##{ checkbox_id }";
   const isCompleteIconId = "##{ is_completed_icon_id }";
@@ -91,14 +91,16 @@
   const showClass = "#{ show_class }";
   const hideClass = "#{ hide_class }";
 
+  const ALL_COMPLETE = 100;
+
   window.onload = function(){
     updateBasedOnCompletedCheckbox();
-  }
+  };
 
 
   function toggleCompletedCheckbox(userId, checklistId) {
       let checkbox = $(checkboxId); //getCheckboxElement();
-      ajaxPostURL = (checkbox.prop("checked") ? setCompleteUrl : setUncompleteUrl)
+      let ajaxPostURL = (checkbox.prop("checked") ? setCompleteUrl : setUncompleteUrl);
 
       $.post( ajaxPostURL + checklistId)
 
@@ -106,9 +108,9 @@
           if (Utility.httpErrorOccurred(responseData) === false) {
             // success
             updateBasedOnCompletedCheckbox();
-            newPercentComplete = responseData.overall_percent_complete;
+            let newPercentComplete = responseData.overall_percent_complete;
             updateProgressBar(newPercentComplete);
-            if (newPercentComplete === 100) {
+            if (newPercentComplete === ALL_COMPLETE) {
               window.location.reload(true);
             }
           }

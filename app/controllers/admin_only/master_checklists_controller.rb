@@ -151,11 +151,7 @@ module AdminOnly
 
 
     # Set the master checklist to 'no longer in use'
-    # This is called only with an :id as the parameter, which is different from the typical resource actions above (e.g. master_checklist_params).
     def set_to_no_longer_used
-
-      @master_checklist = MasterChecklist.find(id_only_param)
-
       if @master_checklist
 
         if @master_checklist.set_is_in_use(false)

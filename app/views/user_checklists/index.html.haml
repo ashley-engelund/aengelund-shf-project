@@ -40,7 +40,7 @@
 
         -# only show progress bar for the top level items
         - if child_entry.root?
-          = render partial: 'progress_bar', locals: {  percent_complete: child_entry.percent_complete }
+          = render partial: 'shared/progress_bar', locals: {  percent_complete: child_entry.percent_complete }
 
 
 
@@ -74,10 +74,11 @@
       let checklistElement = $(checklistLiID);
       let progressBar = checklistElement.closest(".root").find(progressBarClass);
       let newPercentComplete = checklist['overall_percent_complete'];
+      let dateCompleted = checklistElement.find('.date-completed');
+
       updateProgressBar(newPercentComplete, progressBar);
 
-      let dateCompleted = checklistElement.find('.date-completed');
-      checklistDateCompleted = checklist['date_completed'];
+      let checklistDateCompleted = checklist['date_completed'];
       dateCompleted.text(dateCompletedText(checklistDateCompleted));
       setCheckboxBasedOnDateCompleted(checklistElement, checklistDateCompleted)
     }

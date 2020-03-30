@@ -97,6 +97,8 @@
 
 :javascript
 
+  const SUCCESS = 200;
+
   const IsInUseElementID = "is-in-use-checkbox";
   const IsInUseDateChangedClass = "is-in-use-changed-at";
 
@@ -106,15 +108,16 @@
 
   window.onload = function(){
     updateBasedOnIsInUse();
-  }
+  };
+
 
   function toggleIsInUseCheckbox() {
     $.post( ToggleIsInUsePostURL, { id: #{ @master_checklist.id } })
       .done(function(responseData) {
 
-        if (responseData.status !== 200 ) { return failedRequest(responseData) }
+        if (responseData.status !== SUCCESS ) { return failedRequest(responseData) }
 
-        let isInUse = responseData.is_in_use
+        let isInUse = responseData.is_in_use;
         let dateChanged = responseData.is_in_use_changed_at;
         // console.log('isInUse: ' + isInUse + 'dateChanged: ' + dateChanged);
         updateBasedOnIsInUse();
@@ -140,16 +143,12 @@
 
   function updateBasedOnIsInUse() {
     let isInUse = #{ @master_checklist.is_in_use };
-
-    // let isInUseChangedAtElement = document.getElementsByClassName(IsInUseDateChangedClass)[0];
     let heading = document.getElementById('h1');
 
     if (isInUse) {
-      // isInUseChangedAtElement.style.display = "none";
       removeNotInUseClass(heading);
     }
     else {
-      // isInUseChangedAtElement.style.display = "block";
       addNotInUseClass(heading);
     }
   }
@@ -181,8 +180,8 @@
 
   function addNotInUseClass(element) {
     // required to support IE 9 (it does not support .classlist)
-    arr = element.className.split(" ");
-    if (arr.indexOf(NotInUseStyle) == -1) {
+    let arr = element.className.split(" ");
+    if (arr.indexOf(NotInUseStyle) === -1) {
       element.className += " " + NotInUseStyle;
     }
   }

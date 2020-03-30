@@ -46,22 +46,21 @@
 
 :javascript
 
-  const setCompleteUrl = "/anvandare/lista/set-all-completed/"
-  const setUncompleteUrl = "/anvandare/lista/set-all-uncompleted/"
+  const setCompleteUrl = "/anvandare/lista/set-all-completed/";
+  const setUncompleteUrl = "/anvandare/lista/set-all-uncompleted/";
 
-  const checkboxId = "completed-checkbox"
-  const isCompleteIconId = "is-complete-icon"
-  const progressBarId = "progress-bar"
+  const checkboxId = "completed-checkbox";
+  const isCompleteIconId = "is-complete-icon";
 
 
   window.onload = function(){
     updateBasedOnCompletedCheckbox();
-  }
+  };
 
 
   function toggleCompletedCheckbox(userId, checklistId) {
       let checkbox = getCheckboxElement();
-      ajaxPostURL = (checkbox.checked ? setCompleteUrl : setUncompleteUrl)
+      let ajaxPostURL = (checkbox.checked ? setCompleteUrl : setUncompleteUrl);
       $.post( ajaxPostURL + checklistId, updateDateSuccessfulFor); // FIXME catch error and display as an alert
   }
 

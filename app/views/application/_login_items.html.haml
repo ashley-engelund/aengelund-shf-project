@@ -19,17 +19,9 @@
         %li
           = link_to t('menus.nav.admin.design_guide'), admin_only_designguide_path, class: 'nav-link'
 
-
-
-        %li
-          = link_to t('menus.nav.admin.design_guide'), admin_only_designguide_path, class: 'nav-link'
-
         - unless @user.nil?
           %li
             = link_to t('admin_only.user_profile.edit.become_this_user'), admin_only_become_user_path(@user), class: 'nav-link'
-
-        %li
-          = link_to 'Dashboard', admin_only_dashboard_path, class: 'nav-link'
 
       %li
         = link_to t('devise.sessions.destroy.log_out'),

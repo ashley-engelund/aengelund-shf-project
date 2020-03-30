@@ -8,6 +8,6 @@
 - else
   - if master_checklist.is_in_use?
     = link_to "Set to 'No Longer Used' (In use: cannot delete)",
-      admin_only_master_checklist_set_to_no_longer_used_path(master_checklist),
+      admin_only_master_checklists_set_to_no_longer_used_path(master_checklist),
       method: :post,
       class: 'btn btn-sm btn-danger'

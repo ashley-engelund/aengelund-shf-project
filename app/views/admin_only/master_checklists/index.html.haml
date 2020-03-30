@@ -29,7 +29,7 @@
           %p.details
             %span.displayed-text{ class: list_specific_classes }
               %span.label= t('.displayed_text') + ': '
-              %span.value=child_entry.displayed_text.truncate(displayed_text_length, separator: ' ', omission: '... (cont.)')
+              %span.value= child_entry.displayed_text.truncate(displayed_text_length, separator: ' ', omission: '... (cont.)')
 
             = render partial: 'completed_numbers_span', locals: { master_checklist: child_entry }
 

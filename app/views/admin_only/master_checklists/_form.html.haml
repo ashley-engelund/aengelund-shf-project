@@ -2,16 +2,17 @@
 :ruby
   checklist_master = locals.fetch(:master_checklist, nil)
   all_allowable_parents = locals.fetch(:all_allowable_parents, [])
-  cannot_edit = @master_checklist.no_more_major_changes?
+  max_list_position_zerobased = locals.fetch(:max_list_position_zerobased, 0)
+  cannot_edit = checklist_master.no_more_major_changes?
 
 = form_for checklist_master, html: { class: "#{ locals.fetch(:class_name, '') }" }   do |f|
 
   != model_errors_helper(checklist_master)
 
-  - unless @master_checklist.is_in_use
+  - unless checklist_master.is_in_use
     %p.not-in-use
       = t('.is_no_longer_used')
-      = t('.is_no_longer_used_as_of', date: @master_checklist.is_in_use_changed_at)
+      = t('.is_no_longer_used_as_of', date: checklist_master.is_in_use_changed_at)
 
 
   .row
@@ -38,7 +39,7 @@
             - if cannot_edit
               %p.displayed-text
                 %span.label= "#{ t('.displayed_text') }: "
-                %span.value.displayed-to-users= @master_checklist.displayed_text
+                %span.value.displayed-to-users= checklist_master.displayed_text
             - else
               .form-group
                 = f.label :displayed_text, t('.displayed_text'), class: 'required'
@@ -49,7 +50,7 @@
             - if cannot_edit
               %p.description
                 %span.label= "#{ t('.description') }: "
-                %span.value.displayed-to-users= @master_checklist.description
+                %span.value.displayed-to-users= checklist_master.description
             - else
               .form-group
                 = f.label :description, t('.description')
@@ -60,7 +61,7 @@
       - if cannot_edit
         %p.parent
           %span.label= "#{ t('.parent_list') }: "
-          %span.value= @master_checklist.parent.name
+          %span.value= checklist_master.parent.name
       - else
         .form-group
           = f.label :parent, t('.parent_list')
@@ -74,11 +75,11 @@
       - if cannot_edit
         %p.list-position
           %span.label= "#{ t('.list_position') }: "
-          %span.value= @master_checklist.list_position
+          %span.value= checklist_master.list_position
       - else
         .form-group
           -# order in list is ZERO based in the db.  Add 1 to the checklist_master.list_position here so it makes sense to normal humans.
-          - max_position = @max_list_position_zerobased + 1
+          - max_position = max_list_position_zerobased + 1
           = f.label :list_position, t('.list_position')
           = number_field_tag 'admin_only_master_checklist[list_position]', checklist_master.list_position + 1,
            min: 1, max: max_position, step: 1, id: 'master-list-position'
@@ -99,13 +100,15 @@
 
 :javascript
 
+  SUCCESS = 200;
+
   PARENT_ELEMENT_ID = "master-list-item-parent-id";
   NEXT_POSITION_URL = "/admin/master-checklists/next-onebased-list-position";
 
   window.onload = function(){
     // checklist_master.list_position is ZERO BASED so we need to add 1
-    if (!#{ cannot_edit }) { updateListPositionMax(#{ @max_list_position_zerobased + 1 }); }
-  }
+    if (!#{ cannot_edit }) { updateListPositionMax(#{ max_list_position_zerobased + 1 }); }
+  };
 
 
   // update the list_position field whenever the parent is changed
@@ -116,7 +119,7 @@
       let selectedParentId = document.getElementById(PARENT_ELEMENT_ID).value;
       $.get( NEXT_POSITION_URL, { id: selectedParentId })
         .done(function(responseData) {
-          if (responseData.status !== 200) { return failedRequest(responseData) }
+          if (responseData.status !== SUCCESS) { return failedRequest(responseData) }
           else { updateListPositionMax(responseData.max_position + 1); }  // max_position in the db is ZERO based, so we need to add 1
         })
       .fail(function(responseData) { return failedRequest(responseData) });
@@ -133,6 +136,5 @@
   // update the options in the List Position selection based on the current parent list selected
   function updateListPositionMax(maxValue = 1) {
     let listPositionInput = document.getElementById('master-list-position');
-    listPositionInput.setAttribute('max', maxValue);
-    console.info("updateListPositionOptions - maxValue is now: ", maxValue);
+    listPositionInput.setAttribute('max', maxValue.toString());
   }
