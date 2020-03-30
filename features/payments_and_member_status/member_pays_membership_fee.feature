@@ -35,14 +35,14 @@ Feature: Member pays membership fee
   Scenario: Member pays membership fee after term expires (after prior payment expiration date)
     Given the date is set to "2019-02-12"
     And I am logged in as "emma@mutts.com"
+    And I have agreed to all of the Membership Guidelines
     And I am on the "user account" page for "emma@mutts.com"
-    And I should see "1001"
-    And I should see t("payors.past_due")
-    Then I click on t("menus.nav.members.pay_membership")
+#    And I should see t("payors.past_due")
+    Then I click on t("users.show_for_applicant.pay_membership")
     And I complete the membership payment
     And I should see t("payments.success.success")
-    #And I should see t("payors.paying_now_extends_until", fee_name: 'membership fee', term_name: 'membership', extended_end_date: '2020-02-11')
     Then the user is paid through "2020-02-11"
+    And I should see "1001"
 
   @time_adjust
   Scenario: Member pays fee before term expires and extends membership

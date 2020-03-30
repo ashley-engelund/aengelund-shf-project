@@ -93,7 +93,7 @@ And(/^the following user checklist items have been completed:$/) do |table|
     begin
       user = User.find_by(email: user_email)
       master_checklist = AdminOnly::MasterChecklist.find_by(name: checklist_name)
-      user_checklist = UserChecklist.find_by(user: user, checklist: master_checklist)
+      user_checklist = UserChecklist.find_by(user: user, master_checklist: master_checklist)
     rescue => e
       raise e, "Could not find either the user or user_checklist (user_email: #{user_email}, checklist_name: #{checklist_name})\n #{e.inspect} "
     end

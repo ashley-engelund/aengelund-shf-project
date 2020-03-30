@@ -102,7 +102,6 @@ Feature: Applicant uploads a file for their application
     And I choose a file named "picture.png" to upload
     And I choose a file named "diploma.pdf" to upload
     Then I should see "diploma.pdf"
-    And  show me the page
     # FIXME - the following 2 lines sometimes fail:
     And I should not see "picture.jpg"
     And I should not see "picture.png"

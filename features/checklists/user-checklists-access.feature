@@ -1,5 +1,8 @@
 Feature: Access to User checklists (who can see/do what with User's Checklists)
 
+  An admin can always see all user checklists.
+  A user can only see the checklists that belong to them.
+
 
   Background:
 
