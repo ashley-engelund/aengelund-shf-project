@@ -1090,6 +1090,7 @@ sv:
       agreed_to_all_terms: I have agreed to all membership terms.
       i_commit_to: "Som medlem i Sveriges Hundföretagare åtar jag mig att:"
       all_complete_percent: "100% komplett"
+      back_to_my_profile: Back to my User Profile
 
     show_progress:
       read_and_agree: Please read and agree to them. Check the box beside each item to show you agree.

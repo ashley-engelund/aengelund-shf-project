@@ -1097,6 +1097,7 @@ en:
       agreed_to_all_terms: I have agreed to all membership terms.
       i_commit_to: "As a member of Sveriges Hundföretagare, I commit myself to:"
       all_complete_percent: "100% complete"
+      back_to_my_profile: Back to my User Profile
 
     set_uc_and_kids_date_completed:
       not_found: *user_checklist_not_found
