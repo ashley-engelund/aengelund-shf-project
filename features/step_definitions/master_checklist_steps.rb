@@ -145,8 +145,8 @@ And("I should see {digits} Master Checklist listed") do |num_items|
   expect(page).to have_selector(".#{MASTER_ITEM_CSSCLASS}", count: num_items)
 end
 
-And("I should see the item named {capture_string} in the list of Master Checklist items") do |item_name|
-  expect(page).to have_xpath(".//*[#{xpath_for_element_with_class(MASTER_ITEM_CSSCLASS)}]//*[#{xpath_for_element_with_class('name')} and contains(text(), '#{item_name}')]")
+And("I should{negate} see the item named {capture_string} in the list of Master Checklist items") do | negate, item_name|
+  expect(page).send (negate ? :not_to : :to), have_xpath(".//*[#{xpath_for_element_with_class(MASTER_ITEM_CSSCLASS)}]//*[#{xpath_for_element_with_class('name')} and contains(text(), '#{item_name}')]")
 end
 
 
