@@ -64,6 +64,8 @@ And(/^the following Master Checklist exist:$/) do |table|
     displayed_text = item.delete('displayed_text') || ''
     description = item.delete('description') || ''
     list_position = (item.delete('list position') || '0').to_i
+    is_in_use = item.delete('is in use') || true
+
     parent_name = item.delete('parent name') || ''
 
     type_name = item.delete('list type name') || ''
@@ -83,7 +85,8 @@ And(/^the following Master Checklist exist:$/) do |table|
                         displayed_text: displayed_text,
                         description: description,
                         parent_name: parent_name,
-                        list_position: list_position)
+                        list_position: list_position,
+                        is_in_use: is_in_use)
     end
   end
 end
