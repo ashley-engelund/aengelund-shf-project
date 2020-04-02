@@ -24,15 +24,15 @@ Feature: Admin creates, views,  edits, or deletes a Master Checklist item
 
 
     Given the following Master Checklist exist:
-      | name                         | displayed_text               | description                                                | list position | parent name           |
-      | Submit yer app               | Submit Your Application      | top level list with no parent                              | 0             | Membership            |
-      | Provide co nummer            | Provide Your Company Number  | provide the Org Nm. for at least 1 company                 | 1             | Submit yer app        |
-      | Document Business Categories | Document Business Categories | Provide documents for your business categories (skills)    | 2             | Submit yer app        |
-      | Some other list (SOL)        | some list                    | some other top level list                                  |               |                       |
-      | SOL entry 0                  | sol 0                        | entry 0 in Some other list (SOL); not a list (no children) | 0             | Some other list (SOL) |
-      | SOL entry 2                  | sol 2                        | entry 2 in Some other list (SOL); not a list (no children) | 2             | Some other list (SOL) |
-      | SOL entry 1                  | sol 1                        | entry 1 in Some other list (SOL); 1 child                  | 1             | Some other list (SOL) |
-      | SOL subentry 1.1             | sol 1 - subitem 1            | subentry 1.1                                               | 0             | SOL entry 1           |
+      | name                         | displayed_text               | description                                                | list position | parent name           | is in use |
+      | Submit yer app               | Submit Your Application      | top level list with no parent                              | 0             | Membership            | false     |
+      | Provide co nummer            | Provide Your Company Number  | provide the Org Nm. for at least 1 company                 | 1             | Submit yer app        | false     |
+      | Document Business Categories | Document Business Categories | Provide documents for your business categories (skills)    | 2             | Submit yer app        | false     |
+      | Some other list (SOL)        | some list                    | some other top level list                                  |               |                       | true      |
+      | SOL entry 0                  | sol 0                        | entry 0 in Some other list (SOL); not a list (no children) | 0             | Some other list (SOL) | true      |
+      | SOL entry 2                  | sol 2                        | entry 2 in Some other list (SOL); not a list (no children) | 2             | Some other list (SOL) | true      |
+      | SOL entry 1                  | sol 1                        | entry 1 in Some other list (SOL); 1 child                  | 1             | Some other list (SOL) | true      |
+      | SOL subentry 1.1             | sol 1 - subitem 1            | subentry 1.1                                               | 0             | SOL entry 1           | true      |
 
 
     Given I am logged in as "admin@shf.se"
@@ -58,15 +58,17 @@ Feature: Admin creates, views,  edits, or deletes a Master Checklist item
     And I should see the item named "Section 2" in the list of Master Checklist items as child 1 of "Medlemsåtagande"
     And I should see the item named "Guideline 2.1" in the list of Master Checklist items as child 0 of "Section 2"
 
-    And I should see the item named "Submit yer app" in the list of Master Checklist items
-    And I should see the item named "Provide co nummer" in the list of Master Checklist items as child 0 of "Submit yer app"
-    And I should see the item named "Document Business Categories" in the list of Master Checklist items as child 1 of "Submit yer app"
-
     And I should see the item named "Some other list (SOL)" in the list of Master Checklist items
     And I should see the item named "SOL entry 0" in the list of Master Checklist items as child 0 of "Some other list (SOL)"
     And I should see the item named "SOL entry 1" in the list of Master Checklist items as child 1 of "Some other list (SOL)"
     And I should see the item named "SOL subentry 1.1" in the list of Master Checklist items as child 0 of "SOL entry 1"
     And I should see the item named "SOL entry 2" in the list of Master Checklist items as child 2 of "Some other list (SOL)"
+
+    # These are not in use:
+    And I should see "Submit yer app" in the "archived-items" table
+    And I should see "Provide co nummer" in the "archived-items" table
+    And I should see "Document Business Categories" in the "archived-items" table
+
 
   Scenario: Clicking on an entry name will go to the view for it
     Given I am on the "manage checklist masters" page
@@ -262,23 +264,23 @@ Feature: Admin creates, views,  edits, or deletes a Master Checklist item
     And I should see t("admin_only.master_checklists.show.new_child_in_list")
 
 
-    Scenario: Master Checklist is in use: show note and Set to Not in Use button (but not delete button)
-      Given I am on the "manage checklist masters" page
-      When I click on "Section 1"
-      Then I should see "Section 1" in the h1 title
-      And I should see t("admin_only.master_checklists.no_more_major_changes_note_if_needed.no_more_changes_allowed")
-      And I should see t("admin_only.master_checklists.no_more_major_changes_note_if_needed.can_clone")
-
-      And I should see t("admin_only.master_checklists.action_buttons.mark_no_longer_used_clone")
-      And I should see t("admin_only.master_checklists.delete_button_if_applicable.set_to_not_used")
-      And I should not see t("admin_only.master_checklists.delete_button_if_applicable.delete", name: "Section 1")
-
-
-  Scenario: Show delete button if the list is not in use
+  Scenario: Master Checklist is in use: show note and Set to Not in Use button (but not delete button)
     Given I am on the "manage checklist masters" page
-    When I click on "SOL entry 1"
-    Then I should see "SOL entry 1" in the h1 title
-    And I should see t("admin_only.master_checklists.delete_button_if_applicable.delete", name: "SOL entry 1")
+    When I click on "Section 1"
+    Then I should see "Section 1" in the h1 title
+    And I should see t("admin_only.master_checklists.no_more_major_changes_note_if_needed.no_more_changes_allowed")
+    And I should see t("admin_only.master_checklists.no_more_major_changes_note_if_needed.can_clone")
+
+    And I should see t("admin_only.master_checklists.action_buttons.mark_no_longer_used_clone")
+    And I should see t("admin_only.master_checklists.delete_button_if_applicable.set_to_not_used")
+    And I should not see t("admin_only.master_checklists.delete_button_if_applicable.delete", name: "Section 1")
+
+
+  Scenario: Show delete button if the list is not in use and all children can be deleted
+    Given I am on the "manage checklist masters" page
+    When I click on "Submit yer app"
+    Then I should see "Submit yer app" in the h1 title
+    And I should see t("admin_only.master_checklists.delete_button_if_applicable.delete", name: "Submit yer app")
     And I should not see t("admin_only.master_checklists.delete_button_if_applicable.set_to_not_used")
 
 
@@ -408,23 +410,26 @@ Feature: Admin creates, views,  edits, or deletes a Master Checklist item
 
   Scenario: Delete an item that is a sub-item of a checklist
     Given I am on the "manage checklist masters" page
-    When I click on "SOL subentry 1.1"
-    Then I should see "SOL subentry 1.1" in the h1 title
-    When I click on t("admin_only.master_checklists.delete_button_if_applicable.delete", name: "SOL subentry 1.1")
+    When I click on "Provide co nummer"
+    Then I should see "Provide co nummer" in the h1 title
+    When I click on t("admin_only.master_checklists.delete_button_if_applicable.delete", name: "Provide co nummer")
     Then I should see t("admin_only.master_checklists.index.title") in the h1 title
     And I should see 13 Master Checklist listed
-    And I should not see the item named "SOL subentry 1.1" in the list of Master Checklist items
+
+    And I should not see "Provide co nummer" in the "archived-items" table
+    And I should see "Submit yer app" in the "archived-items" table
 
 
   Scenario: Delete an item that has sub-items (sublists)
     Given I am on the "manage checklist masters" page
     When I click on "Submit yer app"
     Then I should see "Submit yer app" in the h1 title
+    And I should see t("admin_only.master_checklists.delete_button_if_applicable.delete", name: "Submit yer app")
     When I click on t("admin_only.master_checklists.delete_button_if_applicable.delete", name: "Submit yer app")
     Then I should see t("admin_only.master_checklists.index.title") in the h1 title
     And I should see 11 Master Checklist listed
 
     # The checklist and all children were deleted
-    And I should not see the item named "Submit yer app" in the list of Master Checklist items
-    And I should not see the item named "Provide co nummer" in the list of Master Checklist items
-    And I should not see the item named "Document Business Categories" in the list of Master Checklist items
+    And I should not see "Submit yer app" in the "archived-items" table
+    And I should not see "Provide co nummer" in the "archived-items" table
+    And I should not see "Document Business Categories" in the "archived-items" table
