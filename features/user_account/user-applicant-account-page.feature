@@ -65,8 +65,7 @@ Feature: Applicant account page - version 1.0
     And I click on t("devise.sessions.new.log_in") button
     Then I should see t("devise.sessions.signed_in")
     And I should see t("users.show_for_applicant.apply_for_membership") link
-    And I wait for 2 seconds
-    And I should see t("users.ethical_guidelines_link_or_checklist.agree_to_guidelines")
+#    And I should see t("users.ethical_guidelines_link_or_checklist.agree_to_guidelines")
     And the link button t("users.show.pay_membership") should be disabled
 
 
