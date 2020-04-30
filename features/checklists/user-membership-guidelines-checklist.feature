@@ -39,6 +39,7 @@ Feature: User completes all, some, or none of the Membership Ethical Guidelines 
     Then I should see "100%"
     And I should see t("user_checklists.membership_guidelines_completed.agreed_to_all_terms")
     And I should see t("user_checklists.membership_guidelines_completed.back_to_my_profile")
+
     And I should not see t("next")
 
     When I am on the "user account" page for "new_user@example.com"
