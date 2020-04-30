@@ -8,7 +8,7 @@ Feature: User completes all, some, or none of the Membership Ethical Guidelines 
       | new_user@example.com |       | NewUser1   | Lastname  |
 
 
-  @selenium
+  @selenium @javascript
   Scenario: User checks all guidelines - completes the list
     Given I am logged in as "new_user@example.com"
     And I am on the "user account" page for "new_user@example.com"
@@ -17,7 +17,6 @@ Feature: User completes all, some, or none of the Membership Ethical Guidelines 
     And I should see "Medlemsåtagande" in the h1 title
     And I should see "0%"
     And I should see "Section 1" as the guideline name to agree to
-    And I should not see t("next")
 
     When I check the bootstrap checkbox with id "completed-checkbox"
 
@@ -30,9 +29,11 @@ Feature: User completes all, some, or none of the Membership Ethical Guidelines 
 
     When I click on t("next") link
     Then I should see "Section 2" as the guideline name to agree to
-    And I should not see t("next")
 
     When I check the bootstrap checkbox with id "completed-checkbox"
+     # Have to wait so that all AJAX and db can complete before capybara tries to reload the page
+    And I wait for 1 seconds
+
     # Have to reload the page to see the change since no jquery is running
     And I reload the page
     Then I should see "100%"
@@ -45,7 +46,7 @@ Feature: User completes all, some, or none of the Membership Ethical Guidelines 
     And I should see t("users.ethical_guidelines_link_or_checklist.agreed_to")
 
 
-  @selenium
+  @selenium  @javascript
   Scenario: User checks only some of the guidelines
     Given I am logged in as "new_user@example.com"
     And I am on the "user account" page for "new_user@example.com"
@@ -54,7 +55,6 @@ Feature: User completes all, some, or none of the Membership Ethical Guidelines 
     And I should see "Medlemsåtagande" in the h1 title
     And I should see "0%"
     And I should see "Section 1" as the guideline name to agree to
-    And I should not see t("next")
 
     When I check the bootstrap checkbox with id "completed-checkbox"
     # Have to wait so that all AJAX and db can complete before capybara tries to reload the page
@@ -72,7 +72,7 @@ Feature: User completes all, some, or none of the Membership Ethical Guidelines 
     And I should see "Section 2" as the guideline name to agree to
 
 
-  @selenium
+  @selenium @javascript
   Scenario: User checks none of the guidelines
     Given I am logged in as "new_user@example.com"
     And I am on the "user account" page for "new_user@example.com"
