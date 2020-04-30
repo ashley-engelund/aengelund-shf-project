@@ -8,10 +8,8 @@
   next_link_id = 'next-link'
   contact_us_footer_id = 'contact-us-footer'
 
-  flex_class = 'flex'
   whiteout_class = 'whiteout'
   show_class = 'is-complete'
-  hide_class = '' #'d-none' # Bootstrap 4 class
 
 .membership-guidelines
   - overall_progress = @overall_progress
@@ -65,7 +63,8 @@
 
                   - next_sibling = @user_checklist.next_sibling
                   - if next_sibling
-                    -# start with this not displayed; javascript below will display it via onchange
+                    -# Start with this not displayed; javascript below will display it via onchange
+                    -# Could use a class to change the display to none vs. setting it explicitly here. (Be careful to ensure that the DOM is set/updated correctly, especially for tests.)
                     .next{ id: next_link_id, style: 'display: none;' }
                       = link_to  user_user_checklist_progress_path(@user, next_sibling) do
                         = t('.next')
@@ -85,10 +84,8 @@
   const nextLinkId = "##{ next_link_id }";
   const contactUsFooterId = "##{ contact_us_footer_id }";
 
-  // const flexClass = "#{ flex_class }";
   const whiteoutClass = "#{ whiteout_class }";
   const showClass = "#{ show_class }";
-  // const hideClass = "#{ hide_class }";
 
   const ALL_COMPLETE = 100;
 
