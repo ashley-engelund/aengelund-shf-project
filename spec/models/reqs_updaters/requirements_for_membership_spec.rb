@@ -61,6 +61,7 @@ RSpec.describe RequirementsForMembership, type: :model do
 
 
       context 'membership guidelines are required' do
+        before(:each) { allow(UserChecklistManager).to receive(:membership_guidelines_reqd_start_date).and_return(Time.zone.now - 1.year) }
 
         context 'membership guidelines ARE agreed to' do
 
@@ -110,7 +111,7 @@ RSpec.describe RequirementsForMembership, type: :model do
 
         context 'membership guidelines NOT agreed to' do
 
-          it 'true if membership payment made AND it does not expire until AFTER the start of the membership guidelines requirements' do
+          it 'false if membership payment made AND it does not expire until AFTER the start of the membership guidelines requirements' do
             allow(UserChecklistManager).to receive(:membership_guidelines_agreement_required_now?).and_return(true)
             allow(UserChecklistManager).to receive(:completed_membership_guidelines_checklist?).and_return(false)
 
@@ -124,7 +125,7 @@ RSpec.describe RequirementsForMembership, type: :model do
                    start_date: start_date,
                    expire_date: expire_date)
 
-            expect(subject.requirements_met?({ user: approved_and_paid })).to be_truthy
+            expect(subject.requirements_met?({ user: approved_and_paid })).to be_falsey
           end
 
           it 'false if membership payment made and it HAS expired' do
@@ -157,6 +158,7 @@ RSpec.describe RequirementsForMembership, type: :model do
 
 
       context 'membership guidelines are NOT required' do
+        before(:each) { allow(UserChecklistManager).to receive(:membership_guidelines_reqd_start_date).and_return(Time.zone.now + 1.year) }
 
         context 'membership guidelines ARE agreed to' do
 
