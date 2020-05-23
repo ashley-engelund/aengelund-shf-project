@@ -78,8 +78,8 @@ module Seeders
           seeded_class.create!(fixed_up_attribs)
         else
           tell(" INFO: #{self.name}.#{__method__} : #{seeded_class} already exists; not seeded: \n #{found_item.inspect}")
+          nil # don't return the found object; nothing was created
         end
-        nil # don't return the found object; nothing was created
       else
         seeded_class.create!(fixed_up_attribs)
       end
