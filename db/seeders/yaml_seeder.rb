@@ -77,7 +77,7 @@ module Seeders
     #
     def self.seed(source_file_path = full_yaml_filename)
       yaml_entries = read_yaml(source_file_path)
-      objects_created = create_objects(yaml_entries)
+      objects_created = create_objects(yaml_entries).compact
 
       if objects_created.empty?
         tell_zero_objects_created_warning(self.name)
@@ -113,7 +113,7 @@ module Seeders
           raise error, "trying to create_object #{yaml_entry}\n   #{error.message}"
         end
       end
-      created_objects
+      created_objects.compact
     end
 
 

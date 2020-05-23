@@ -42,7 +42,7 @@ module Seeders
       end
     end
 
-
+    # @return [MasterChecklist | nil] - the object created (return nil if nothing was created)
     def self.find_or_create_object(obj_yaml_entry, associations_info = {}, parent_ordered_entry: nil)
 
       obj_yaml_entry.delete(:id)
@@ -53,7 +53,7 @@ module Seeders
       found_checklist = seeded_class.find_by(name: entry_name)
       if found_checklist
         tell(" INFO: #{self.name}.#{__method__} : #{seeded_class} already exists; not seeded: [id] name = [#{found_checklist.id}] #{found_checklist.name}")
-        found_checklist
+        nil # nothing was created; no created object is returned
       else
         seeded_class.create!(name: entry_name,
                              displayed_text: obj_yaml_entry[:displayed_text],
