@@ -20,17 +20,10 @@ module Seeders
     SEEDED_CLASS = AdminOnly::MasterChecklist
 
 
-    # FIXME
-    def self.create_ordered_entry(yaml_entry, parent_ordered_entry: nil)
-      # SEEDED_CLASS.create!(name: yaml_entry[:name],
-      #                      displayed_text: yaml_entry[:displayed_text],
-      #                      description: yaml_entry[:description],
-      #                      list_position: yaml_entry[:list_position] ? yaml_entry[:list_position] : 0,
-      #                      parent: parent_ordered_entry)
 
+    def self.create_ordered_entry(yaml_entry, parent_ordered_entry: nil)
       associations = find_or_create_associations(yaml_entry)
       find_or_create_object(yaml_entry, associations, parent_ordered_entry: parent_ordered_entry)
-
     end
 
 
