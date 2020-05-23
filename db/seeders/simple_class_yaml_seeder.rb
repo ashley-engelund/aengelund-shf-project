@@ -70,14 +70,16 @@ module Seeders
     #
     # @return [<SEEDED_CLASS>] - the object created
     #
-    def self.create_object(yaml_entry, ignore_if_already_exists = self.ignore_existing)
+    def self.create_object(yaml_entry, ignore_if_already_exists = self.ignore_existing, log: nil)
       fixed_up_attribs = stripped_attribs(yaml_entry)
       if ignore_if_already_exists
         found_item = seeded_class.find_by(fixed_up_attribs)
         if found_item.nil?
           seeded_class.create!(fixed_up_attribs)
         else
-          tell(" INFO: #{self.name}.#{__method__} : #{seeded_class} already exists; not seeded: \n #{found_item.inspect}")
+          info_str = " INFO: #{self.name}.#{__method__} : #{seeded_class} already exists; not seeded: \n #{found_item.inspect}"
+          tell(info_str)
+          log_str(info_str, log: log)
           nil # don't return the found object; nothing was created
         end
       else
