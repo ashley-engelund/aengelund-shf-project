@@ -40,6 +40,9 @@ sv:
   close: Stänga
   lastupdated: &last_updated Senast uppdaterad
 
+  next: &next Nästa
+  previous: &previous Föregående
+
   'yes': &yes Ja
   'no': &no Nej
   'Yes': *yes
@@ -77,12 +80,14 @@ sv:
 
   membership: &membership medlemskap
 
-  apply_for_membership: Ansök om medlemskap
+  apply_for_membership: &apply_for_membership "Ansök om medlemskap"
 
   theme_copyright: "© 2017 Tema av Theme Feeder. Alla rättigheter förbehållna."
 
   name: &name Namn
   org_nr: &org_nr Org nr.
+
+  complete: &complete komplett
 
   accordion_label:
     company_search_form:
@@ -126,6 +131,12 @@ sv:
     one: Mitt företag
     other: Mina företag
 
+  checklist_common:
+    done: &done Done
+    complete: &complete Complete
+    date_completed: &date_completed Date Completed
+
+
   # Automatisk och manuell sökning för Active Records
   activerecord:
     models:
@@ -157,6 +168,14 @@ sv:
         one: Task Attempt
         other: Task Attempts
 
+      master_checklist:
+        one: Master Checklist Item
+        other: Master Checklist Items
+
+      master_checklist_type:
+        one: Master Checklist Type
+        other: Master Checklist Types
+
 
     attributes:
 
@@ -183,7 +202,7 @@ sv:
         status: Status
         start_date: Startdatum
         expire_date: &expire_date Utgångsdatum
-        notes: Anteckningar
+        notes: &notes Anteckningar
         created: *created
         last_updated: *last_updated
 
@@ -279,6 +298,29 @@ sv:
         facebook_app_id: &site_facebook_app_id Facebook Application ID
         payment_too_soon_days: &payment_too_soon_days Number of days that a user will be warned that a payment is 'too soon'
 
+      user_checklist:
+        name: *name
+        description: *description
+        complete: *done
+        date_complete: *date_completed
+        completed: &checklist_completed Avslutad
+        not_completed: &checklist_not_completed Ännu inte slutförd
+
+      master_checklist:
+        name: *name
+        is_in_use: &master_checklist_in_use Is Used
+        is_no_longer_used: &no_longer_used No longer in use
+        is_in_use_changed_at: &master_checklist_in_use_changed_at Is use changed
+        displayed_text: &displayed_text Name displayed to users
+        description: *description
+        list_position: Position in list
+        ancestry: Parent lists
+        notes: &master_checklist_admin_notes Notes (admin only)
+        list_type: Type
+
+      master_checklist_type:
+        name: *name
+        description: *description
 
     errors:
       models:
@@ -362,6 +404,12 @@ sv:
           has_one: Kan inte ta bort post då beroende %{record} finns
           has_many: Kan inte ta bort poster då beroende %{record} finns
 
+
+  shared:
+    progress_bar:
+      complete: *complete
+
+
   address_visibility:
     street_address: *street
     post_code: *post_code
@@ -433,7 +481,7 @@ sv:
       application_dog_category: &application_dog_category "Ansöker som:"
       clue_selected_categories: &clue_selected_categories "Blå fält = valda. Relevant medlemskategori behöver fyllas i för att vi ska kunna hantera din ansökan."
 
-      upload_files_section: Underlag för att styrka min ansökan
+      upload_files_section: &app_upload_files_section Underlag för att styrka min ansökan
       upload_files_instructions: 'Dokumenten är mycket viktiga för att vi ska kunna bedöma din ansökan. Vi använder dem för att verifiera dina kunskaper och utbildningar. Detta säkerställer att vår medlemsstandard är fortsatt hög, vilket i förlängningen innebär att allmänheten vet att Sveriges hundföretagare är professionella och att lita på.'
       upload_files: 'Ladda upp filer från datorn (VIKTIGT)'
       upload_allowed_file_types: 'Tillåtna filtyper:'
@@ -689,8 +737,8 @@ sv:
       confirm_are_you_sure: *are_you_sure_confirm
       add_address: 'Lägg till adress'
       click_to_edit: 'klicka för att redigera'
-      hbrand_status_paid: Får använda H-märkesbilden. (H-märkespremie betalad)
-      hbrand_status_not_paid: Får inte använda H-märkesbilden. (H-märkespremie ej betad)
+      hbrand_status_paid: Får använda H-märkesbilden. (H-märkespremie betald)
+      hbrand_status_not_paid: Får inte använda H-märkesbilden. (H-märkespremie ej betald)
       edit_branding_status: Redigera Status
       branding_license: Betald H-märkespremie
       term_paid_through: *term_paid_through
@@ -892,14 +940,38 @@ sv:
       sent: skickat
       not_sent: inte skickat
 
+    show_for_member:
+      membership_number: *membership_number
+
+    show_for_applicant:
+      title: "Steg mot medlemskap:"
+      welcome: Välkommen till Sveriges Hundföretagare!
+      welcome_want_to_have_benefits: "Vill du finnas med i ett sammanhang som innebär en bekräftelse på att dina meriter, engagemang och hundkunskaper räknas?"
+      members_just_need_to_pay: Denna text visas just nu både för dig som vill bli medlem, och för dig som är medlem men ännu inte betalt medlemsavgift.  Du som redan är medlem men inte betalt behöver bara trycka på betala-knappen.
+      submit_application: Fyll i och skicka in din ansökan.
+      my_application: &my_application Min ansökan
+      apply_4_membership: *apply_for_membership
+      app_status_new: "Tack för att du skickat in din ansökan. Den kommer att handläggas."
+      app_status_under_review: "Tack för att du har skickat in din ansökan, vi bearbetar den."
+      app_status_waiting_for_applicant: "Tack för att du har skickat in din ansökan, vi bearbetar den."
+      app_status_ready_for_review: "Tack för att du uppdaterat din ansökan. Vi handlägger den så snart vi kan."
+      app_status_accepted: Din ansökan är godkänd och klar.
+      app_status_rejected: Din ansökan är avböjd.
+      pay_membership: *pay_membership
+      when_can_pay: När din ansökan är godkänd och du har skrivit under medlemsåtagandet (kryssat i alla rutor) kan du betala.
+
+
+    ethical_guidelines_link_or_checklist:
+      agree_to_guidelines: Skriv under medlemsåtagandet
+      agreed_to: Skrivit under 
+      membership_guidelines: Alla medlemsåtaganden
 
     show_member_images_row_cols:
       email: *email
       proof_of_membership: &proof_of_membership Behörighetsbevis
       proof_of_membership_describe: &proof_of_membership_describe Detta är ditt behörighetsbevis.
       proof_of_membership_photo_needed: &proof_of_membership_photo_needed 'Om du saknar profilbild (ser "Photo
-                                           Unavailable"), ladda upp en bild av dig
-                                           själv (utan hund) här: '
+                                           Unavailable"), ladda upp en bild av dig själv (utan hund) här '
       company_h_brand: &company_h_brand Företaget H-märke för %{company}
       company_h_brand_describe: &company_h_brand_describe Detta är ditt företags H-märke.
 
@@ -984,7 +1056,60 @@ sv:
       success: Betalning framgångsrikt genomförd - tack!
 
     error:
-      error: Det uppstod ett fel vid behandlingen av din betalning
+      error: Det uppstod ett fel vid hantering av din betalning
+
+  user_checklists:
+    all_list_items: &user_checklists_all_items Tillbaka till medlemsåtagandet
+    all_list_items_for_user: &user_checklists_all_items_for_user Tillbaka till alla listor för %{name} 
+
+    if_you_have_qs_email_us: &if_you_have_qs_email_us "Om du har några frågor om dessa, maila oss till "
+
+    progress_bar:
+      complete: &progress_complete klar
+
+    missing-checklist-param-error: &missing-checklist-param-error User Checklist missing parameter error!
+    not_found: &user_checklist_not_found "User Checklist id: %{user_checklist_id} not found"
+
+    index:
+      title: Checklists for %{name}
+      complete: *progress_complete
+
+    show:
+      title: "Checklist %{name}"
+      description: *description
+      delete_confirm: "Are you sure you want to delete the checklist '%{name}' for user %{user_name}?"
+      all_list_items: *user_checklists_all_items
+      all_list_items_for_user: *user_checklists_all_items_for_user
+
+    all_changed_by_completion_toggle:
+      missing-checklist-param-error: *missing-checklist-param-error
+      not_found: *user_checklist_not_found
+
+    new:
+      title: Medlemsåtagande
+
+    membership_guidelines_completed:
+      agreed_to_all_terms: Jag har läst och godkänt alla medlemsåtaganden.
+      i_commit_to: "Som medlem i Sveriges Hundföretagare åtar jag mig att:"
+      all_complete_percent: "100% komplett"
+      back_to_my_profile: Tillbaka till mitt konto
+
+    show_progress:
+      read_and_agree: Vänligen läs och godkän medlemsåtagandet. Kryssa för rutan för varje punkt för att visa att du läst och skriver under.
+      scroll_down_to_read_all: Scrolla ner för att läsa alla åtaganden och för att se knappen för att gå vidare.
+      read_and_agree_start: Jag har läst och skriver under på alla 
+      read_and_agree_end: medlemsåtaganden.
+      contact_if_questions: *if_you_have_qs_email_us
+      email_display_name: Ordförande
+
+      next: *next
+      previous: *previous
+      complete: *progress_complete
+
+    set_uc_and_kids_date_completed:
+      not_found: *user_checklist_not_found
+      missing-checklist-param-error: *missing-checklist-param-error
+
 
   admin:
     index:
@@ -1149,6 +1274,9 @@ sv:
         facebook_app_id: *site_facebook_app_id
         missing: *missing
         payment_too_soon_days: *payment_too_soon_days
+        membership_guideline_list: &membership_guideline_list Membership Guideline List
+        membership_guideline_list_tooltip: &membership_guideline_list_tooltip Choose a top level list that will be used as the Membership Guidelines list. (Only top level lists that are in use are shown.)
+        required_field: &required_field obligatoriskt fält
 
       show:
         title: *application_configuration
@@ -1167,6 +1295,8 @@ sv:
         facebook_app_id: *site_facebook_app_id
         missing: *missing
         payment_too_soon_days: *payment_too_soon_days
+        membership_guideline_list: *membership_guideline_list
+        required_field: *required_field
 
       update:
         success: Programdata uppdaterades framgångsrikt
@@ -1274,6 +1404,188 @@ sv:
         success: Användarens information uppdaterad.
         error: Ett problem hindrade användarinformationen från att uppdateras.
 
+
+    master_checklists:
+      new_item: &new_master_list_item New Master List Item
+      archived_items: &master_checklist_archived_items "Items that are no longer in use (archived)"
+
+      action_buttons:
+        view_list_item: View List Item
+        edit_list_item: Edit List Item
+        mark_no_longer_used_clone: "Mark as no longer used and create a clone"
+        all_list_items: &all_master_list_items All Master List items
+
+      delete_button_if_applicable:
+        delete: "Delete %{name}"
+        delete_confirm: &master_checklist_delete_confirm "Are you sure you want to delete the master checklist item %{name}?"
+        set_to_not_used: "Set to 'No Longer Used' (In use: cannot delete)"
+
+      errors:
+        master_checklist_id_not_found: &master_checklist_id_not_found "Master Checklist item with id %{id} was not found"
+        cannot_change_has_completed: &master_checklist_error_cant_change_has_completed (sv) Cannot change "%{attributes}" of '%{name}' because there are completed User checklists based on it.
+        cannot_change_user_visible: (sv) Cannot change the master checklist info that users see because there are User checklists based on it.
+
+      form:
+        name: *name
+        list_type: &master_checklist_list_type Listtyp
+        is_in_use: *master_checklist_in_use
+        is_no_longer_used: *no_longer_used
+        is_no_longer_used_as_of: "as of %{date}"
+        is_in_use_changed_at: *master_checklist_in_use_changed_at
+        displayed_text: *displayed_text
+        description: &master_checklist_description Description displayed to users
+        parent_list: &parent_list Parent list
+        list_position: &list_position Position in list
+        notes: *master_checklist_admin_notes
+        top_level_list: &top_level_list (This is a top level list.)
+        child_items: &child_items Items
+        leave_blank_adds_to_end: "Leave the position (order) blank to add this to the end of the list."
+
+      new:
+        title: New Master Checklist Item
+        name: *name
+        displayed_text: *displayed_text
+        description: *master_checklist_description
+        list_position: *list_position
+        all_list_items: *all_master_list_items
+      create:
+        error: "There was a problem creating and saving the master checklist item %{name}."
+        success: "%{name} was created and saved."
+      edit:
+        title: "Editing %{name}"
+        completed: *checklist_completed
+        not_completed: *checklist_not_completed
+
+      update:
+        error_cant_change_has_completed: *master_checklist_error_cant_change_has_completed
+        error:  "There was a problem updating the master checklist item %{name}."
+        success: "The master checklist item %{name} was updated."
+      index:
+        title: &master_checklist_index_title Master Checklists
+        name: *name
+        displayed_text: &master_checklist_index_displayed_text Displayed as
+        displayed_description: Displayed Description
+        in_parent_col: in list
+        pos_in_list: &pos_in_list "pos. in list"
+        completed: *checklist_completed
+        not_completed: *checklist_not_completed
+        new_item: *new_master_list_item
+        archived_items: *master_checklist_archived_items
+
+      index_as_table:
+        title: *master_checklist_index_title
+        delete_confirm: *master_checklist_delete_confirm
+        displayed_text: *master_checklist_index_displayed_text
+        name: *name
+        new_item: *new_master_list_item
+      show:
+        title: "Master Checklist Item"
+        is_in_use: *master_checklist_in_use
+        is_no_longer_used: *no_longer_used
+        is_no_longer_used_as_of: "as of %{date}"
+        is_in_use_changed_at: *master_checklist_in_use_changed_at
+        displayed_text: *displayed_text
+        description: *master_checklist_description
+        list_position: *list_position
+        notes: *master_checklist_admin_notes
+        parent_list: *parent_list
+        top_level_list: *top_level_list
+        child_items: *child_items
+        new_child_in_list: New Item in this list
+        new_child_makes_this_a_list: New Child item (makes this a list)
+        list_type: *master_checklist_list_type
+        subtitle_list_type_start: "Detta är en "
+        subtitle_list_type_end: " lista."
+        archived_items: *master_checklist_archived_items
+
+      destroy:
+        error: "There was a problem deleting the master checklist item '%{name}'. It was not deleted."
+        success: "'%{name}' was deleted."
+
+      max_list_position:
+        not_found: *master_checklist_id_not_found
+
+      set_to_no_longer_used:
+        not_found: *master_checklist_id_not_found
+        error: "There was a problem setting '%{name}' to no longer in use."
+        success: "'%{name}' is now set to no longer in use."
+
+      no_more_major_changes_note_if_needed:
+        no_more_changes_allowed: There are User Checklists based on this, so no more major changes are allowed.
+        can_clone: "If you need to make changes, you can clone this one, which will set it to 'no longer in use', and then edit the new (cloned) one."
+
+      toggle_in_use:
+        not_found: *master_checklist_id_not_found
+        cannot_change_has_completed: (sv) Cannot change the master checklist because there are completed User checklists based on it.
+        cannot_change_user_visible: (sv) Cannot change the master checklist info that users see because there are User checklists based on it.
+
+      status_numbers_row:
+        status: Status
+
+      completed_numbers_span:
+        completed: *checklist_completed
+        not_completed: *checklist_not_completed
+
+      non_nested_table:
+        name: *name
+        displayed_text: *displayed_text
+        completed: *checklist_completed
+        not_completed: *checklist_not_completed
+        pos_in_list: *pos_in_list
+
+      next_one_based_list_position:
+        not_found: *master_checklist_id_not_found
+
+
+    master_checklist_types:
+
+      new_master_checklist_type: &new_master_checklist_type "New Master Checklist Type"
+      edit_master_checklist_type: &edit_master_checklist_type "Edit Master Checklist Type '%{name}'"
+      all_master_checklist_types: &all_master_checklist_types "All Master Checklist Types"
+      delete_confirm_master_checklist_type: &delete_confirm_master_checklist_type "Delete master checklist type '%{name}'?"
+      view_master_checklist_type: &view_master_checklist_type "View '%{name}'"
+
+      index:
+        title: All Master Checklist Types
+        name: *name
+        description: *description
+        new_master_checklist_type: *new_master_checklist_type
+        delete_confirm: *delete_confirm_master_checklist_type
+
+      show:
+        name: *name
+        description: *description
+        all_master_checklist_types: *all_master_checklist_types
+        edit_master_checklist_type: *edit_master_checklist_type
+
+      new:
+        title: *new_master_checklist_type
+        name: *name
+        description: *description
+        all_master_checklist_types: *all_master_checklist_types
+
+      edit:
+        title: "Editting: %{name}"
+        name: *name
+        description: *description
+        view_master_checklist_type: *view_master_checklist_type
+        all_master_checklist_types: *all_master_checklist_types
+
+      form:
+        name: *name
+        description: *description
+
+      create:
+        error: "There was a problem creating and saving the master checklist type %{name}."
+        success: "%{name} was created and saved."
+
+      update:
+        error: "There was a problem updating the master checklist type %{name}."
+        success: "%{name} was updated."
+
+      destroy:
+        error: "There was a problem deleting the master checklist type '%{name}'. It was not deleted."
+        success: "'%{name}' was deleted."
 
 
   mailers:
@@ -1548,7 +1860,7 @@ sv:
         find_dog_businesses: Hitta hundföretagare
 
       users:
-        my_application: &my_application Min ansökan
+        my_application: *my_application
         apply_for_membership: Ansök om medlemsskap
         your_account: Mitt konto
 
@@ -1571,6 +1883,10 @@ sv:
         shf_meeting_minutes: *member_pages_board_meetings
         manage_applications: Hantera ansökningar
         app_configuration: Appkonfiguration
+        master_checklists: Master Checklists
+        dashboard: Dashboard
+        design_guide: Design Guide
+
         categories:
           submenu_title: Kategorier
           manage_categories: Hantera kategorier
