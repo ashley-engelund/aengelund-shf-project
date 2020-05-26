@@ -11,13 +11,6 @@ namespace :shf do
         end
       end
 
-      required_seed_yaml_data = %w(master-checklist-types-data.yml master-checklists.yml)
-      required_seed_yaml_data.each do |file|
-        Dir[File.join(Rails.root, 'db', 'seeders', 'yaml-data', '**', '*.rb')].each do |file|
-          require file
-        end
-      end
-
       full_task_name = this_task.to_s
       task_name = full_task_name.split(':').last # the task name without the namespace(s)
 

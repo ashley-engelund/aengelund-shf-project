@@ -125,7 +125,7 @@ module Seeders
     #
     # @return [Object] - the object created
     #
-    def self.create_object(_yaml_entry, log: nil)
+    def self.create_object(_yaml_entry, _log: nil)
       raise NoMethodError, "Subclass must define the #{__method__} method", caller
     end
 

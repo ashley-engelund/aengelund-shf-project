@@ -64,16 +64,16 @@ RSpec.describe Seeders::SimpleClassYamlSeeder do
 
       context 'object already exists' do
         it 'uses tell to display a message when an object already exists' do
-        allow(described_class).to receive(:ignore_existing).and_return(true)
+          allow(described_class).to receive(:ignore_existing).and_return(true)
 
-        faux_ar_class = double("Faux ActiveRecord class")
-        allow(faux_ar_class).to receive(:find_by).and_return(true)
+          faux_ar_class = double("Faux ActiveRecord class")
+          allow(faux_ar_class).to receive(:find_by).and_return(true)
 
-        allow(described_class).to receive(:seeded_class).and_return(faux_ar_class)
+          allow(described_class).to receive(:seeded_class).and_return(faux_ar_class)
 
-        expect(described_class).to receive(:tell).with(/already exists; not seeded/)
-        described_class.create_object({ id: 1, name: 'this' })
-      end
+          expect(described_class).to receive(:tell).with(/already exists; not seeded/)
+          described_class.create_object({ id: 1, name: 'this' })
+        end
       end
 
       context 'object does not already exist' do
