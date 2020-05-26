@@ -52,6 +52,9 @@ module Seeders
       end
       entries_created << new_ordered_entry
 
+      # get the parent. Need to get from the db because if it already existed, new_ordered_entry will be nil
+      parent = new_ordered_entry.nil? ? self::SEEDED_CLASS.find_by(name: yaml_hash[:name]) : new_ordered_entry
+
       yaml_hash.fetch(:children, []).each do |yaml_child_entry|
         begin
           entries_created.concat(create_entry_and_children(yaml_child_entry, parent_ordered_entry: parent, log: log))
