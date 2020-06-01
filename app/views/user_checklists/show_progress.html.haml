@@ -40,7 +40,7 @@
 
                 = @user_checklist.name
 
-              %div.agree-to-sub-guidelines
+              .agree-to-sub-guidelines
                 %p.i-commit-to= t('.i_commit_to')
 
                 = render partial: 'checklist_tree_as_list', locals: { user_checklist: @user_checklist }
