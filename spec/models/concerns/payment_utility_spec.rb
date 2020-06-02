@@ -461,4 +461,23 @@ RSpec.describe User, type: :model do
     end
 
   end
+
+
+  describe 'record_deleted_payorinfo_in_payment_notes' do
+
+    it 'each payment records info in notes about this payor' do
+      u = build(:user)
+
+      membership_payment = build(:membership_fee_payment)
+      hbranding_payment = build(:h_branding_fee_payment)
+
+      allow(u).to receive(:payments).and_return([membership_payment, hbranding_payment])
+
+      expect(membership_payment).to receive(:note_payor_deleted)
+      expect(hbranding_payment).to receive(:note_payor_deleted)
+
+      u.record_deleted_payorinfo_in_payment_notes
+    end
+
+  end
 end
