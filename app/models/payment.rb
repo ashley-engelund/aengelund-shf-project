@@ -108,7 +108,7 @@ class Payment < ApplicationRecord
 
   def note_payor_deleted(payor_type = NOTES_DEFAULT_PAYOR,
                          payor_email = NOTES_UNKNOWN_EMAIL,
-                         deleted_time = Time.now.utc)
+                         deleted_time = Time.zone.now)
     deleted_note = "#{payor_type} #{payor_email} for this payment was deleted on #{deleted_time}"
     update(notes: (notes.nil? ? deleted_note : "#{notes}#{NOTES_SEPARATOR}#{deleted_note}") )
   end

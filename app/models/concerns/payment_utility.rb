@@ -179,9 +179,9 @@ module PaymentUtility
 
 
   # record info about this user in any associated payments so payment history for this user is not lost
-  def record_deleted_payorinfo_in_payment_notes(payor_class = self.class::THIS_PAYMENT_TYPE,
+  def record_deleted_payorinfo_in_payment_notes(payor_class = self.class,
                                                 email = self.email,
-                                                time_deleted = Time.now.utc)
+                                                time_deleted = Time.zone.now)
     payments.each do |payment|
       payment.note_payor_deleted(payor_class, email, time_deleted)
     end

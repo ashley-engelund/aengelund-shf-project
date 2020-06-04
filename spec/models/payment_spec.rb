@@ -332,11 +332,12 @@ RSpec.describe Payment, type: :model do
           expect(subject.notes).to match(/^\w+ <email unknown>/)
         end
 
-        it 'deleted_time: Time.now.utc' do
+        it 'deleted_time: Time.zone.now' do
           expect(subject.notes).to be_nil
-          Timecop.freeze(2020, 12, 1, 1, 2, 3) do
+          tz_now = Time.zone.now
+          Timecop.freeze(tz_now) do
             subject.note_payor_deleted
-            expect(subject.notes).to match(/2020-12-01 01:02:03 UTC$/)
+            expect(subject.notes).to match(/#{tz_now}$/)
           end
         end
       end
