@@ -26,14 +26,6 @@ RSpec.describe AdminOnly::MasterChecklistChangePolicy do
     list
   end
 
-  # TODO figure out why this cleanup needs to be done explicitly.
-  after(:all) do
-    DatabaseCleaner.clean
-    UserChecklist.delete_all
-    AdminOnly::MasterChecklist.delete_all
-    User.delete_all
-  end
-
 
   describe '.change_with_completed_user_checklists?' do
 

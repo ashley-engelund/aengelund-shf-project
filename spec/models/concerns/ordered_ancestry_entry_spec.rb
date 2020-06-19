@@ -29,21 +29,8 @@ RSpec.describe "module OrderedAncestryEntry" do
     list
   end
 
-  after(:each) {AdminOnly::MasterChecklist.delete_all;  DatabaseCleaner.clean }
-
-  after(:all) do
-    DatabaseCleaner.clean
-    UserChecklist.delete_all
-    AdminOnly::MasterChecklist.delete_all
-    User.delete_all
-  end
-
 
   describe 'all_as_array' do
-
-    before(:each) { DatabaseCleaner.clean }
-
-    after(:each) {AdminOnly::MasterChecklist.delete_all;  DatabaseCleaner.clean }
 
     it "calls arrange_as_array with the order [ancestry, list_position]" do
       AdminOnly::MasterChecklist.delete_all
@@ -62,11 +49,6 @@ RSpec.describe "module OrderedAncestryEntry" do
 
 
   describe 'arrange_as_array(options = {}, nodes_to_arrange_hash = nil)' do
-
-    before(:each) { DatabaseCleaner.clean }
-
-    after(:all) { DatabaseCleaner.clean }
-
 
     def fail_message(expected_array, actual_array)
       "\nExpected:\n   #{expected_array.pretty_inspect}\nActual:\n   #{actual_array.pretty_inspect}"
@@ -499,8 +481,6 @@ RSpec.describe "module OrderedAncestryEntry" do
 
 
   describe 'allowable_as_parents' do
-
-    after(:all) { DatabaseCleaner.clean }
 
     it 'an emtpy list will just return that same empty list as allowed parents' do
       AdminOnly::MasterChecklist.delete_all

@@ -19,14 +19,6 @@ RSpec.describe UserChecklist, type: :model do
   }
 
 
-  after(:all) do
-    DatabaseCleaner.clean
-    UserChecklist.delete_all
-    AdminOnly::MasterChecklist.delete_all
-    User.delete_all
-  end
-
-
   describe 'Factory' do
 
     it 'default factory is valid' do
