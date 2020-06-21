@@ -7,6 +7,10 @@
 # In addition, here are a few helpful links:
 #   Good basic example of entire process using capistrano to deploy a Ruby on Rails application: https://semaphoreci.com/community/tutorials/how-to-use-capistrano-to-deploy-a-rails-application-to-a-puma-server
 #   Good write-up explaining some about capistrano: https://piotrmurach.com/articles/working-with-capistrano-tasks-roles-and-variables/
+#
+#
+# Note: Many comments are commands/statements that can be run locally instead of on a remote server, e.g. when developing
+#
 
 # ============================================
 # Capistrano configuration settings
@@ -59,7 +63,7 @@ append :linked_files,
 # Google webmaster files
 # The public/google......html files are files that Google Webmaster tools looks
 #   for to verify ownership and access to this site.
-#   These files verify that  Google webmasters (e.g. Susanna & Ashley as of 2020/02/02)
+#   These files verify that Google webmasters (e.g. Susanna & Ashley as of 2020/02/02)
 #   are verified as to access this site with Google webmaster tools.
 #   Do not remove these files!
 append :linked_files,
@@ -110,13 +114,12 @@ append :linked_files,
 # public/uploads      created by diffouo (raoul) when this was set up. used for ??? (not used?)
 
 append :linked_dirs, 'log',
-        'tmp/pids',
-        'tmp/cache',
-        'tmp/sockets',
-        'vendor/bundle',
-        'public/system',
-        'public/uploads'
-
+       'tmp/pids',
+       'tmp/cache',
+       'tmp/sockets',
+       'vendor/bundle',
+       'public/system',
+       'public/uploads'
 
 # Files uploaded for membership applications
 append :linked_dirs, 'public/storage'
@@ -124,24 +127,24 @@ append :linked_dirs, 'public/storage'
 # Member Documents are stored here.  (Eventually they should moved to a different directory)
 append :linked_dirs, 'app/views/pages'
 
-# Files uploaded by members, admins when using the ckeditor (ex: company page custom infor, SHF member documents)
+# Files uploaded by members and admins when using the ckeditor (ex: company page custom infor, SHF member documents)
 append :linked_dirs, 'public/ckeditor_assets'
 
 # Map Markers:
-# We require 6 (!) directories for the map markers:
-#  public/map-markers,
-       #  public/en/map-markers,
-       #  public/sv/map-markers,
-       #  public/hundforetag,
-       #  public/en/hundforetag/map-markers,
-       #  public/sv/hundforetag/map-markers
+#  We require 6 (!) directories for the map markers:
+#   public/map-markers,
+#   public/en/map-markers,
+#   public/sv/map-markers,
+#   public/hundforetag,
+#   public/en/hundforetag/map-markers,
+#   public/sv/hundforetag/map-markers
 #
-# The application will create paths with the locale [sv|en] prepended, and then google-maps.js will
-# use those in the relative path that it constructs to get the map-marker image files (m*.png files).
-# The application creates the locale  paths because of the locale filter gem (used in the routes.rb) file.
+#  The application will create paths with the locale [sv|en] prepended, and then google-maps.js will
+#  use those in the relative path that it constructs to get the map-marker image files (m*.png files).
+#  The application creates the locale paths because of the locale filter gem (used in the routes.rb) file.
 #  The root route (for non-logged in visitors) will look for the map markers in /public[/sv|en]/map-markers.
-# But often the path is specific to companies and so is /public[/sv|en]/hundforetag
-# /sv/[hundforetag/]map-markers and /en/[hundforetag/]map-markers just have symbolic markers to the public/map-markers directory.
+#  But often the path is specific to companies and so is /public[/sv|en]/hundforetag
+#  /sv/[hundforetag/]map-markers and /en/[hundforetag/]map-markers just have symbolic markers to the public/map-markers directory.
 #   (This all seems a bit too complex, but it's what is needed to get this working.)
 #
 append :linked_dirs,
@@ -155,155 +158,153 @@ append :linked_dirs,
 
 # Tasks that should be run just once.
 #  Files are renamed once they are run, so we don't want to keep overwriting them each time we deploy.
-append :linked_dirs,
-        'lib/tasks/one_time'
+append :linked_dirs, 'lib/tasks/one_time'
 
 # per the capistrano-bundle gem (https://github.com/capistrano/bundler), this needs to be added to linked_dirs:
 append :linked_dirs, '.bundle'
-
 
 
 # ============================================
 # Tasks
 #   See Task sequencing below, after the code for the tasks
 
-namespace :deploy do
+namespace :shf do
+
+  namespace :deploy do
+
+    # this ensures that the description (a.k.a. comment) for each task will be recorded
+    Rake::TaskManager.record_task_metadata = true
 
 
-  # this ensures that the description (a.k.a. comment) for each task will be recorded
-  Rake::TaskManager.record_task_metadata = true
-
-  # ----------------------------------------------------
-  # Tasks
-  #
-
-  desc 'run load_conditions task to put conditions into the DB'
-  task run_load_conditions: [:set_rails_env] do | this_task |
-    info_if_not_found = "The Conditions will NOT be loaded into the database. (task #{this_task} in #{__FILE__ })"
-    run_task_from(this_task, 'shf:load_conditions', info_if_not_found)
-  end
-
-
-  desc 'run any one-time tasks that have not yet been run successfully'
-  task run_one_time_tasks: [:set_rails_env] do | this_task |
-    info_if_not_found = "No 'one_time' tasks will be run! (task #{this_task} in #{__FILE__ })"
-    run_task_from(this_task, 'shf:one_time:run_onetime_tasks', info_if_not_found)
-  end
-
-
-  desc 'Restart application'
-  task :restart do
-    on roles(:app), in: :sequence, wait: 5 do
-      info 'Restarting...'
-      execute :touch, release_path.join('tmp/restart.txt')
+    desc 'run load_conditions task to put conditions into the DB'
+    task run_load_conditions: ["deploy:set_rails_env"] do |this_task|
+      info_if_not_found = "The Conditions will NOT be loaded into the database. (task #{this_task} in #{__FILE__ })"
+      run_task_from(this_task, 'shf:load_conditions', info_if_not_found)
     end
-  end
 
 
-  # Note: another way to accomplish this would be to put an entry in .gitattributes for every file to ignore.
-  # However, I don't like mixing deployment information into git files.  (That couples the two systems and mixes responsibilities.)
-  desc 'Remove testing related files'
-  task :remove_test_files do
-
-    on release_roles :all do
-
-      # Because gems for these are not deployed,
-      # Rake cannot load these files,
-      # which then causes problems when trying to run any rake tasks on the deployment server.
-      remove_files = ["#{current_path}/lib/tasks/ci.rake",
-                      "#{current_path}/lib/tasks/cucumber.rake",
-                      "#{current_path}/script/cucumber"].freeze
-
-      remove_files.each { |remove_f| remove_file remove_f }
+    desc 'run any one-time tasks that have not yet been run successfully'
+    task run_one_time_tasks: ["deploy:set_rails_env"] do |this_task|
+      info_if_not_found = "No 'one_time' tasks will be run! (task #{this_task} in #{__FILE__ })"
+      run_task_from(this_task, 'shf:one_time:run_onetime_tasks', info_if_not_found)
+    end
 
 
-      # Remove testing directories since the gems for using them are not deployed.
-      remove_dirs = ["#{current_path}/spec",
-                     "#{current_path}/features"].freeze
-      remove_dirs.each { |remove_d| remove_dir remove_d }
+    desc 'Restart application'
+    task :restart do
+      on roles(:app), in: :sequence, wait: 5 do
+        info 'Restarting...'
+        execute :touch, release_path.join('tmp/restart.txt')
+      end
+    end
+
+
+    # Note: another way to accomplish this would be to put an entry in .gitattributes for every file to ignore.
+    # However, I don't like mixing deployment information into git files.  (That couples the two systems and mixes responsibilities.)
+    desc 'Remove testing related files'
+    task :remove_test_files do
+
+      on release_roles :all do
+
+        # Because gems for these are not deployed,
+        # Rake cannot load these files,
+        # which then causes problems when trying to run any rake tasks on the deployment server.
+        remove_files = ["#{current_path}/lib/tasks/ci.rake",
+                        "#{current_path}/lib/tasks/cucumber.rake",
+                        "#{current_path}/script/cucumber"].freeze
+
+        remove_files.each { |remove_f| remove_file remove_f }
+
+
+        # Remove testing directories since the gems for using them are not deployed.
+        remove_dirs = ["#{current_path}/spec",
+                       "#{current_path}/features"].freeze
+        remove_dirs.each { |remove_d| remove_dir remove_d }
+
+      end
 
     end
-  end
 
 
-  desc 'refresh sitemaps'
-  task sitemap_refresh: [:set_rails_env] do | this_task |
-    run_task_from(this_task, 'sitemap:refresh', 'Unable to refresh the SITEMAPs (/public/sitemap.* ...)')
-  end
+    # ----------------------------------------------------
+    # Supporting methods
+    # ----------------------------------------------------
 
+    # execute a task and show an info line
+    # If the task is not defined, print out the warning with info_if_missing appended.
+    def run_task_from(_calling_task, task_name_to_run, info_if_missing = '')
 
-  # ----------------------------------------------------
-  # Task sequencing:
-  # ----------------------------------------------------
+      on release_roles :all do
+        within release_path do
+          with rails_env: fetch(:rails_env) do
 
-  before :publishing, :run_load_conditions
-  after :run_load_conditions, :run_one_time_tasks
-
-  # Have to wait until all files are copied and symlinked before trying to remove
-  # these files.  (They won't exist until then.)
-  before :restart, :remove_test_files
-
-  after :publishing, :restart
-
-  # Refresh the sitemaps
-  after :restart, :sitemap_refresh
-
-
-  # ----------------------------------------------------
-  # Supporting methods
-  # ----------------------------------------------------
-
-  # execute a task and show an info line
-  # If the task is not defined, print out the warning with info_if_missing appended.
-  def run_task_from(_calling_task, task_name_to_run, info_if_missing = '')
-
-    on release_roles :all do
-      within release_path do
-        with rails_env: fetch(:rails_env) do
-
-          if task_is_defined?(task_name_to_run)
-            #info task_invoking_info(calling_task.name, task_name_to_run)
-            execute :rake, task_name_to_run
-          else
-            puts "\n>> WARNING! No task named #{task_name_to_run}. #{info_if_missing}\n\n"
+            if task_is_defined?(task_name_to_run)
+              #info task_invoking_info(calling_task.name, task_name_to_run)
+              execute :rake, task_name_to_run
+            else
+              puts "\n>> WARNING! No task named #{task_name_to_run}. #{info_if_missing}\n\n"
+            end
           end
         end
       end
     end
-  end
 
 
-  # information string about a task that invoked another one
-  def task_invoking_info(task_name, task_invoked_name)
-    "[#{task_name}] invoking #{task_invoked_name}"
-  end
-
-
-  def remove_file(full_fn_path)
-    if test("[ -f #{full_fn_path} ]") # if the file exists on the remote server
-      execute %{rm -f #{full_fn_path} }
-    else
-      warn "File doesn't exist, so it could not be removed: #{full_fn_path}" # log and puts
+    # information string about a task that invoked another one
+    def task_invoking_info(task_name, task_invoked_name)
+      "[#{task_name}] invoking #{task_invoked_name}"
     end
-  end
 
 
-  def remove_dir(full_dir_path)
-    if test("[ -d #{full_dir_path} ]") # if the directory exists on the remote server
-      execute %{rm -r #{full_dir_path} }
-    else
-      warn "Directory doesn't exist, so it could not be removed: #{full_dir_path}" # log and puts
+    def remove_file(full_fn_path)
+      if test("[ -f #{full_fn_path} ]") # if the file exists on the remote server
+        execute %{rm -f #{full_fn_path} }
+      else
+        warn "File doesn't exist, so it could not be removed: #{full_fn_path}" # log and puts
+      end
     end
+
+
+    def remove_dir(full_dir_path)
+      if test("[ -d #{full_dir_path} ]") # if the directory exists on the remote server
+        execute %{rm -r #{full_dir_path} }
+      else
+        warn "Directory doesn't exist, so it could not be removed: #{full_dir_path}" # log and puts
+      end
+    end
+
+
+    def task_is_defined?(task_name)
+      puts "( checking to see if #{task_name} is defined )"
+      result = %x{bundle exec rake --tasks #{task_name} }
+      result.include?(task_name) ? true : false
+    end
+
   end
 
-
-  def task_is_defined?(task_name)
-    puts "( checking to see if #{task_name} is defined )"
-    result =  %x{bundle exec rake --tasks #{task_name} }
-    result.include?(task_name) ? true : false
+  desc 'refresh sitemaps'
+  task sitemap_refresh: ["deploy:set_rails_env"] do |this_task|
+    run_task_from(this_task, 'sitemap:refresh', 'Unable to refresh the SITEMAPs (/public/sitemap.* ...)')
   end
 
 end
+
+
+# ----------------------------------------------------
+# Task sequencing:
+# ----------------------------------------------------
+
+before "deploy:publishing", "shf:deploy:run_load_conditions"
+after "shf:deploy:run_load_conditions", "shf:deploy:run_one_time_tasks"
+
+# Have to wait until all files are copied and symlinked before trying to remove
+#   these files.  (They won't exist until then.)
+before "deploy:restart", "shf:deploy:remove_test_files"
+
+after "deploy:publishing", "deploy:restart"
+
+# Refresh the sitemaps
+after "deploy:restart", "shf:sitemap_refresh"
 
 
 # Run a rails console or a rails dbconsole
