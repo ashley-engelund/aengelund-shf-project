@@ -121,8 +121,12 @@ append  :linked_dirs, 'log',
 # public/ckeditor_assets Files uploaded by members, admins when using the ckeditor (ex: company page custom infor, SHF member documents)
 # app/views/pages  Member Documents are stored here.  (Eventually they should moved to a different directory)
 
-# ensure the binstubs (files in /bin) are generated
-set :bundle_binstubs, nil
+
+# per the capistrano-bundle gem (https://github.com/capistrano/bundler), this needs to be added to linked_dirs:
+append :linked_dirs, '.bundle'
+
+# Ensure the binstubs (files in /bin) are generated on each deploy. (From capistrano-bundle gem: https://github.com/capistrano/bundler)
+set :bundle_binstubs, -> { shared_path.join('bin') }
 
 set :keep_releases, 5
 
