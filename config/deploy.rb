@@ -35,6 +35,84 @@ set :keep_releases, 5
 
 set :migration_role, :app
 
+
+# -------------------------
+# Map Markers
+#  The map marker files are used to display markers on Google maps.
+#
+#  We require 6 (!) directories for the map markers:
+#   public/map-markers,
+#   public/sv/map-markers,
+#   public/sv/hundforetag/map-markers,
+#   public/en/map-markers,
+#   public/en/hundforetag/map-markers,
+#   public/hundforetag/map-markers,
+#
+#  The 'source' (main) files are in the public/map-markers directory.
+#
+#  The application will create paths with the locale [sv|en] prepended, and then google-maps.js will
+#  use those in the relative path that it constructs to get the map-marker image files (m*.png files).
+#  The application creates the locale paths because of the locale filter gem (used in the routes.rb) file.
+#  The root route (for non-logged in visitors) will look for the map markers in /public[/sv|en]/map-markers.
+#  But often the path is specific to companies and so is /public[/sv|en]/hundforetag
+#
+#  /sv/[hundforetag/]map-markers and /en/[hundforetag/]map-markers just have symbolic markers to the public/map-markers directory.
+#   (This all seems a bit too complex, but it's what is needed to get this working.)
+set :map_marker_root_dir, 'public'
+set :map_marker_dir, 'map-markers'
+set :map_marker_linked_dirs, ['sv', 'en', 'hundforetag', 'sv/hundforetag', 'en/hundforetag']
+set :map_marker_filenames, ['m1.png', 'm2.png', 'm3.png', 'm4.png', 'm5.png']
+
+
+def mapmarker_root_path
+  # map_marker_root_dir = 'public'
+  # shared_path = Pathname.new('.')
+  # mapmarker_root_path = shared_path.join(map_marker_root_dir)
+  shared_path.join(fetch(:map_marker_root_dir))
+end
+
+
+def mapmarker_main_path
+  # map_marker_dir = 'map-markers'
+  # markers_path = Pathname.new(map_marker_dir)
+  markers_path = Pathname.new(fetch(:map_marker_dir))
+  mapmarker_root_path.join(markers_path)
+end
+
+
+# @return Array[String] - list of all files in the main mapmarkers directory
+def mapmarker_main_files
+  # ['m1.png', 'm2.png', 'm3.png', 'm4.png', 'm5.png']
+  fetch(:map_marker_filenames, [])
+end
+
+
+def mapmarker_linked_paths
+  # markerlinked_dirs = ['sv', 'en','hundforetag','sv/hundforetag', 'en/hundforetag']
+  # map_marker_dir = 'map-markers'
+  markerlinked_dirs = fetch(:map_marker_linked_dirs, [])
+  map_marker_dir = fetch(:map_marker_dir)
+  markerlinked_dirs.map { |marker_linked_dir| mapmarker_root_path.join(marker_linked_dir).join(map_marker_dir) }
+end
+
+
+# @return Array[String] - list of all Map Marker directories, including those that are symlinks.
+#   Note these are not Pathnames
+def all_mapmarker_dirs
+  ["#{mapmarker_main_path}"].concat(mapmarker_linked_paths.map(&:to_s))
+end
+
+
+# @return Array[String] - list of all Map Marker files in all directories, including those that are symlinks
+def all_mapmarker_fpaths
+  all_fpaths = []
+  all_mapmarker_dirs.each do |mapmarker_dir|
+    all_fpaths.concat(mapmarker_main_files.map { |source_fn| "#{mapmarker_dir}/#{source_fn}" })
+  end
+  all_fpaths
+end
+
+
 # -------------------
 # LINKED FILES
 #
@@ -71,33 +149,7 @@ append :linked_files,
        'public/google979ebbe196e9bd30.html'
 
 # Map marker files.
-# See the note below in the :linked_directories section for information about all of the map-markers files
-append :linked_files,
-       'public/map-markers/m1.png',
-       'public/map-markers/m2.png',
-       'public/map-markers/m3.png',
-       'public/map-markers/m4.png',
-       'public/map-markers/m5.png',
-       'public/map-markers/sv/m1.png',
-       'public/map-markers/sv/m2.png',
-       'public/map-markers/sv/m3.png',
-       'public/map-markers/sv/m4.png',
-       'public/map-markers/sv/m5.png',
-       'public/map-markers/en/m1.png',
-       'public/map-markers/en/m2.png',
-       'public/map-markers/en/m3.png',
-       'public/map-markers/en/m4.png',
-       'public/map-markers/en/m5.png',
-       'public/map-markers/sv/hundforetag/m1.png',
-       'public/map-markers/sv/hundforetag/m2.png',
-       'public/map-markers/sv/hundforetag/m3.png',
-       'public/map-markers/sv/hundforetag/m4.png',
-       'public/map-markers/sv/hundforetag/m5.png',
-       'public/map-markers/en/hundforetag/m1.png',
-       'public/map-markers/en/hundforetag/m2.png',
-       'public/map-markers/en/hundforetag/m3.png',
-       'public/map-markers/en/hundforetag/m4.png',
-       'public/map-markers/en/hundforetag/m5.png'
+append :linked_files, *all_mapmarker_fpaths
 
 
 # -------------------
@@ -124,37 +176,14 @@ append :linked_dirs, 'log',
 # Files uploaded for membership applications
 append :linked_dirs, 'public/storage'
 
-# Member Documents are stored here.  (Eventually they should moved to a different directory)
+# Member Documents are stored here:  (Eventually they should moved to a different directory)
 append :linked_dirs, 'app/views/pages'
 
 # Files uploaded by members and admins when using the ckeditor (ex: company page custom infor, SHF member documents)
 append :linked_dirs, 'public/ckeditor_assets'
 
-# Map Markers:
-#  We require 6 (!) directories for the map markers:
-#   public/map-markers,
-#   public/en/map-markers,
-#   public/sv/map-markers,
-#   public/hundforetag,
-#   public/en/hundforetag/map-markers,
-#   public/sv/hundforetag/map-markers
-#
-#  The application will create paths with the locale [sv|en] prepended, and then google-maps.js will
-#  use those in the relative path that it constructs to get the map-marker image files (m*.png files).
-#  The application creates the locale paths because of the locale filter gem (used in the routes.rb) file.
-#  The root route (for non-logged in visitors) will look for the map markers in /public[/sv|en]/map-markers.
-#  But often the path is specific to companies and so is /public[/sv|en]/hundforetag
-#  /sv/[hundforetag/]map-markers and /en/[hundforetag/]map-markers just have symbolic markers to the public/map-markers directory.
-#   (This all seems a bit too complex, but it's what is needed to get this working.)
-#
-append :linked_dirs,
-        'public/map-markers',
-        'public/sv/map-markers',
-        'public/en/map-markers',
-        'public/hundforetag/map-markers',
-        'public/sv/hundforetag/map-markers',
-        'public/en/hundforetag/map-markers'
-
+# Map Marker directories:
+append :linked_dirs, *all_mapmarker_dirs
 
 # Tasks that should be run just once.
 #  Files are renamed once they are run, so we don't want to keep overwriting them each time we deploy.
@@ -174,6 +203,61 @@ namespace :shf do
 
     # this ensures that the description (a.k.a. comment) for each task will be recorded
     Rake::TaskManager.record_task_metadata = true
+
+    namespace :check do
+      desc 'Ensure public/map-marker files exist. (Needed for Google maps)'
+      task :main_mapmarker_files do
+
+        on release_roles :all do |host|
+          target_markers_path = mapmarker_main_path
+          source_files = mapmarker_main_files
+
+          source_files.each do |marker_file|
+            full_fn = target_markers_path.join(marker_file)
+            unless test "[ -f #{full_fn} ]"
+              # unless File.exist?(full_fn)
+              error "Map marker file #{full_fn} must exist but doesn't.  host: #{host}"
+              exit 1
+            end
+          end
+        end
+
+      end
+    end
+
+
+    desc 'Create sym links to public/map-markers files if needed'
+    task create_mapmarker_symlinks: ["deploy:set_rails_env", "check:main_mapmarker_files"] do
+
+      on release_roles :all do |_host|
+
+        target_markers_path = mapmarker_main_path
+        source_files = mapmarker_main_files
+
+        #  Note that the links are RELATIVE paths.  This makes testing on a local dev machine easier.
+        mapmarker_linked_paths.each do |markerlinked_dir|
+          # create the dir and any intermediate dirs only if it doesn't exist
+          execute :mkdir, "-p", markerlinked_dir
+          # FileUtils.mkdir_p(markerlinked_dir)
+
+          relative_target_path = target_markers_path.relative_path_from(markerlinked_dir)
+
+          source_files.each do |source_fname|
+            linked_file = markerlinked_dir.join(source_fname)
+
+            unless test("[ -l #{linked_file} ]")
+              # unless File.symlink?(linked_file)
+              execute :rm, target if test "[ -f #{linked_file} ]"
+              # File.delete(linked_file) if File.exist?(linked_file)
+
+              execute :ln, "-s", "#{relative_target_path}/#{source_fname}", linked_file
+              # File.symlink "#{relative_target_path}/#{source_fname}", "#{linked_file}"
+            end
+          end
+        end
+
+      end
+    end
 
 
     desc 'run load_conditions task to put conditions into the DB'
@@ -293,6 +377,10 @@ end
 # ----------------------------------------------------
 # Task sequencing:
 # ----------------------------------------------------
+
+# Run the task :create_mapmarker_symlinks before the (capistrano defined) deploy:check:linked_files task is run
+#   so that the Mapmarker files and symlinks definitely exist.
+before "deploy:check:linked_files", "shf:deploy:create_mapmarker_symlinks"
 
 before "deploy:publishing", "shf:deploy:run_load_conditions"
 after "shf:deploy:run_load_conditions", "shf:deploy:run_one_time_tasks"
