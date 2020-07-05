@@ -1,0 +1,91 @@
+version: v1.0
+name: Test MyApp
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: Test
+    task:
+      env_vars:
+        - name: DATABASE_URL
+          value: 'postgresql://postgres:@0.0.0.0:5432/myapp_test'
+        - name: RAILS_ENV
+          value: test
+        - name: RAILS_SERVE_STATIC_FILES
+          value: 'true'
+        - name: SEMAPHORECI
+          value: 'true'
+        - name: GOOGLE_MAP_API
+          value: AIzaSyAhSCR7wvLZnInHGJu7XQ5PrPCyt3VDnU0
+        - name: SHF_AWS_S3_BACKUP_PATH
+          value: everywhere
+        - name: SHF_AWS_S3_BACKUP_BUCKET
+          value: there
+        - name: SHF_AWS_S3_BACKUP_REGION
+          value: here
+        - name: SHF_AWS_S3_BACKUP_SECRET_ACCESS_KEY
+          value: blorf
+        - name: SHF_AWS_S3_BACKUP_KEY_ID
+          value: blorf
+        - name: SHF_SLACK_CHANNEL
+          value: '''notification-testing'''
+        - name: SHF_SLACK_USERNAME
+          value: '''incoming_webhook'''
+        - name: SHF_SLACK_WEBHOOKURL
+          value: 'https://hooks.slack.com/services/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'
+        - name: SHF_ADMIN_EMAIL
+          value: info@sverigeshundforetagare.se
+        - name: SHF_ADMIN_PWD
+          value: hundapor
+        - name: SHF_FROM_EMAIL
+          value: info@sverigeshundforetagare.se
+        - name: SHF_EMAIL_DISPLAY_NAME
+          value: Sveriges Hundföretagare
+        - name: SHF_REPLY_TO_EMAIL
+          value: medlem@sverigeshundforetagare.se
+        - name: SHF_MAILGUN_API_KEY
+          value: key-746df11654361b390b1b5018b05859ac
+        - name: SHF_MAILGUN_DOMAIN
+          value: sverigeshundforetagare.se
+        - name: SHF_SHOW_FEATURE
+          value: 'yes'
+        - name: DINKURS_COMPANY_TEST_ID
+          value: yFKGQJ
+        - name: DINKURS_URL_COMPANY_ARG
+          value: company_key
+        - name: SHF_DINKURS_XML_URL
+          value: 'https://dinkurs.se/lxml.asp'
+        - name: DINKURS_URL
+          value: 'https://dinkurs.se'
+        - name: SHF_HIPS_PRIVATE_KEY
+          value: private_cC9juYGJ87RxApHtK8iA7Q9f
+        - name: SHF_HIPS_PUBLIC_KEY
+          value: public_ragWrGp9VigMWpcxxpRUXgtT
+        - name: SHF_HIPS_PRIVATE_KEY_DEV
+          value: private_GCzHecUJWEPZWNpPvQoiNxvy
+        - name: SHF_HIPS_PUBLIC_KEY_DEV
+          value: public_ragWrGp9VigMWpcxxpRUXgtT
+        - name: SHF_HIPS_JS_CDN
+          value: 'https://cdn.hips.com/js/v1/hips.js'
+        - name: SHF_HIPS_URL
+          value: 'https://api.hips.com/v1/'
+        - name: SHF_MEMBERSHIP_EMAIL
+          value: medlem@sverigeshundforetagare.se
+        - name: SHF_SENDER_EMAIL
+          value: noreply@sverigeshundforetagare.se
+        - name: SHF_NOREPLY_EMAIL
+          value: noreply@sverigeshundforetagare.se
+      jobs:
+        - name: Test - RSpec
+          commands:
+            - checkout
+            - sem-service start postgres 11
+            - sem-version ruby 2.6.5
+            - cache restore
+            - bundle install --deployment --path vendor/bundle
+            - cache store
+            - 'bundle exec rake db:create db:migrate'
+            - 'bundle exec rake db:schema:dump'
+            - 'bundle exec rake db:test:prepare'
+            - bundle exec rspec
