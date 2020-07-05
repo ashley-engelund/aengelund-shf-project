@@ -80,10 +80,10 @@ blocks:
         - name: Test - RSpec
           commands:
             - checkout
-            - sem-service start postgres 11
-            - sem-version ruby 2.6.5
+            - sem-service start postgres 9.6
+            - sem-version ruby 2.5.1
             - cache restore
-            - bundle install --deployment --path vendor/bundle
+            - bundle install --deployment
             - cache store
             - 'bundle exec rake db:create db:migrate'
             - 'bundle exec rake db:schema:dump'
