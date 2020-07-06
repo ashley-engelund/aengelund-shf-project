@@ -16,8 +16,6 @@ blocks:
           value: 'true'
         - name: SEMAPHORECI
           value: 'true'
-        - name: GOOGLE_MAP_API
-          value: AIzaSyAhSCR7wvLZnInHGJu7XQ5PrPCyt3VDnU0
         - name: SHF_AWS_S3_BACKUP_PATH
           value: everywhere
         - name: SHF_AWS_S3_BACKUP_BUCKET
@@ -32,8 +30,6 @@ blocks:
           value: '''notification-testing'''
         - name: SHF_SLACK_USERNAME
           value: '''incoming_webhook'''
-        - name: SHF_SLACK_WEBHOOKURL
-          value: 'https://hooks.slack.com/services/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'
         - name: SHF_ADMIN_EMAIL
           value: info@sverigeshundforetagare.se
         - name: SHF_ADMIN_PWD
@@ -44,26 +40,14 @@ blocks:
           value: Sveriges Hundföretagare
         - name: SHF_REPLY_TO_EMAIL
           value: medlem@sverigeshundforetagare.se
-        - name: SHF_MAILGUN_API_KEY
-          value: key-746df11654361b390b1b5018b05859ac
-        - name: SHF_MAILGUN_DOMAIN
-          value: sverigeshundforetagare.se
         - name: SHF_SHOW_FEATURE
           value: 'yes'
-        - name: DINKURS_COMPANY_TEST_ID
-          value: yFKGQJ
         - name: DINKURS_URL_COMPANY_ARG
           value: company_key
         - name: SHF_DINKURS_XML_URL
           value: 'https://dinkurs.se/lxml.asp'
         - name: DINKURS_URL
           value: 'https://dinkurs.se'
-        - name: SHF_HIPS_PRIVATE_KEY
-          value: private_cC9juYGJ87RxApHtK8iA7Q9f
-        - name: SHF_HIPS_PUBLIC_KEY
-          value: public_ragWrGp9VigMWpcxxpRUXgtT
-        - name: SHF_HIPS_PRIVATE_KEY_DEV
-          value: private_GCzHecUJWEPZWNpPvQoiNxvy
         - name: SHF_HIPS_PUBLIC_KEY_DEV
           value: public_ragWrGp9VigMWpcxxpRUXgtT
         - name: SHF_HIPS_JS_CDN
