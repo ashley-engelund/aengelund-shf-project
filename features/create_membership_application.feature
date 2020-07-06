@@ -226,7 +226,7 @@ Feature: Create a new membership application
     And I should see t("shf_applications.create.success_with_app_files_missing")
 
 
-  @selenium @skip_ci_test
+  @selenium
   Scenario: A user cannot submit a new Membership Application with no category [SAD PATH]
     Given I am on the "user instructions" page
     And I click on first t("menus.nav.users.apply_for_membership") link
