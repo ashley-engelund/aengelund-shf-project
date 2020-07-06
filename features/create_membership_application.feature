@@ -176,7 +176,7 @@ Feature: Create a new membership application
     When I am on the "show my application" page for "applicant_1@random.com"
     And I should see "5560360793, 2120000142"
 
-  @selenium @skip_ci_test
+  @selenium
   Scenario: User creates App with two companies, creates one company, corrects error in company number
     Given I am on the "user instructions" page
     And I click on first t("menus.nav.users.apply_for_membership") link
