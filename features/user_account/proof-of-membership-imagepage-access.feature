@@ -2,7 +2,6 @@ Feature: Who can access a member's Proof of Membership download page
 
 
   Background:
-    Given the App Configuration is not mocked and is seeded
     Given the Membership Ethical Guidelines Master Checklist exists
 
     Given the following users exist
@@ -31,17 +30,26 @@ Feature: Who can access a member's Proof of Membership download page
 
   Scenario: An admin can see a member's proof of membership
     Given I am logged in as "admin@shf.se"
-
+    And I am on the "proof of membership image" page for "member-emma@mutts.se"
+    Then I should see t("users.proof_of_membership.proof_title")
+    And I should see "1001"
+    When I am on the "proof of membership image" page for "member-lars@mutts.se"
+    Then I should see t("users.proof_of_membership.proof_title")
+    And I should see "1002"
 
   Scenario: A member can access their own proof of membership download page
     Given I am logged in as "member-emma@mutts.se"
-
+    And I am on the "proof of membership image" page for "member-emma@mutts.se"
+    Then I should see t("users.proof_of_membership.proof_title")
+    And I should see "1001"
 
   Scenario: A member cannot access someone else's proof of membership download page
     Given I am logged in as "member-emma@mutts.se"
-
+    And I am on the "proof of membership image" page for "member-lars@mutts.se"
+    Then I should see a message telling me I am not allowed to see that page
 
   Scenario: A visitor cannot access the proof of membership download image for a member
     Given I am logged out
-
+    And I am on the "proof of membership image" page for "member-lars@mutts.se"
+    Then I should see a message telling me I am not allowed to see that page
 
