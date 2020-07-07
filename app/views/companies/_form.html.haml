@@ -20,7 +20,7 @@
     .row
       .col.form-group
         = f.label :website, t('companies.website_include_http')
-        = f.text_field :website,  class: 'form-control'
+        = f.url_field :website,  class: 'form-control'
       .col.form-group.dinkurs-company-id
         = f.label :dinkurs_company_id, t('companies.show.dinkurs_key')
         = fas_tooltip(t('.dinkurs_id_tooltip'))
@@ -37,13 +37,13 @@
     .row
       .col.form-group
         = f.label :facebook_url, t('activerecord.attributes.company.facebook_url')
-        = f.text_field :facebook_url,  class: 'form-control'
+        = f.url_field :facebook_url,  class: 'form-control'
       .col.form-group
         = f.label :instagram_url, t('activerecord.attributes.company.instagram_url')
-        = f.text_field :instagram_url,  class: 'form-control'
+        = f.url_field :instagram_url,  class: 'form-control'
       .col.form-group
         = f.label :youtube_url, t('activerecord.attributes.company.youtube_url')
-        = f.text_field :youtube_url,  class: 'form-control'
+        = f.url_field :youtube_url,  class: 'form-control'
 
     .row
       .col.form-group
