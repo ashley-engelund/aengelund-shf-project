@@ -782,6 +782,13 @@ sv:
       dinkurs_id_tooltip: Om du har ett Dinkurs.se konto och vill visa
                           företagshändelser här, ange Dinkurs.se företagsnyckel.
                           (Du kan lämna den tom om du inte har ett Dinkurs.se konto.)
+      facebook_url: URL till din Facebook-sida
+      facebook_url_ex: "Ex: http://facebook.com/YourFacebookName"
+      bad_url_must_start_with: 'Ogiltig url. Det måste börja med %{url_start} och ange din sida'
+      instagram_url: URL till din Instagram-sida
+      instagram_url_ex: "Ex: http://instagram.com/YourInstagramName"
+      youtube_url: URL till din YouTube-sida
+      youtube_url_ex: "Ex: http://youtube.com/YourYouTubePage"
 
     company:
       submit_button_label: Uppdatera status
