@@ -1,3 +1,8 @@
+-# jQuery validate plugin:
+- content_for :javascript_for_view do
+  = javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js'
+
+
 = form_for @company, html: { class: "#{class_name}" } do |f|
 
   != model_errors_helper(@company)
@@ -36,14 +41,17 @@
     %hr
     .row
       .col.form-group
-        = f.label :facebook_url, t('activerecord.attributes.company.facebook_url')
+        = f.label :facebook_url, t('.facebook_url')
         = f.url_field :facebook_url,  class: 'form-control'
+        .url-example= t('.facebook_url_ex')
       .col.form-group
-        = f.label :instagram_url, t('activerecord.attributes.company.instagram_url')
+        = f.label :instagram_url, t('.instagram_url')
         = f.url_field :instagram_url,  class: 'form-control'
+        .url-example= t('.instagram_url_ex')
       .col.form-group
-        = f.label :youtube_url, t('activerecord.attributes.company.youtube_url')
+        = f.label :youtube_url, t('.youtube_url')
         = f.url_field :youtube_url,  class: 'form-control'
+        .url-example= t('.youtube_url_ex')
 
     .row
       .col.form-group
@@ -53,6 +61,60 @@
     = f.submit t('submit'), class: 'btn btn-primary mb-2 form-control'
 
 :javascript
+  "use strict";
   $(document).on('ready page:change', function() {
     $('input[type="checkbox"].toggle').bootstrapToggle(); // assumes the checkboxes have the class "toggle"
+  });
+
+  const FacebookHost = "facebook.com";
+  const InstagramHost = "instagram.com";
+  const YouTubeHost = "youtube.com";
+  const FacebookURLError = '#{ I18n.t('companies.form.bad_url_must_start_with', url_start: 'http://facebook.com/') }';
+  const InstagramURLError = '#{ I18n.t('companies.form.bad_url_must_start_with', url_start: 'http://instagram.com/') }';
+  const YouTubeURLError = '#{ I18n.t('companies.form.bad_url_must_start_with', url_start: 'http://youtube.com/') }';
+
+
+  // ensure that the url has the expected host and that the pathname is not empty
+  function urlHasHostAndSomePath(urlString = "", expectedHost = FacebookHost) {
+    let urlObj = new URL(urlString);
+    let path = urlObj.pathname.replace("/", "").trim(); // replace the first '/' with ''
+    return (urlObj.hostname === expectedHost && path.length != 0);
+  }
+
+  // Add a custom validator method that calls the urlHasHostAndSomePath function, with a name and error message
+  function addCustomValidator(validatorInfo) {
+     jQuery.validator.addMethod(validatorInfo.name, function(value, element){
+      let isValidURL = $.validator.methods.url.call(this, value, element);
+      return (isValidURL ? urlHasHostAndSomePath(value, validatorInfo.expectedHost) : false);
+    }, validatorInfo.errorMsg);
+  }
+
+  // Add custom validation methods to the jQuery validator plugin  https://jqueryvalidation.org/
+  [
+    {name: "facebookURL", expectedHost: FacebookHost, errorMsg: FacebookURLError},
+    {name: "instagramURL", expectedHost: InstagramHost, errorMsg: InstagramURLError},
+    {name: "youtubeURL", expectedHost: YouTubeHost, errorMsg: YouTubeURLError}
+  ].forEach(addCustomValidator);
+
+
+  let form_id = "#" + $('form').attr('id');
+  // validate() method used by the jQuery-validation plugin https://jqueryvalidation.org/
+  $(form_id).validate({
+    rules: {
+      "company[facebook_url]": {
+        facebookURL: true
+      },
+      "company[instagram_url]": {
+        instagramURL: true
+      },
+      "company[youtube_url]": {
+        youtubeURL: true
+      }
+    },
+    messages: {
+      "company[facebook_url]": FacebookURLError,
+      "company[instagram_url]": InstagramURLError,
+      "company[youtube_url]": YouTubeURLError
+    },
+    errorLabelContainer: ".validation-error"
   });
