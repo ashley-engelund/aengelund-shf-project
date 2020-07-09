@@ -2,6 +2,16 @@
 - content_for :javascript_for_view do
   = javascript_include_tag 'https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/jquery.validate.min.js'
 
+:ruby
+  protocol_https = "https:"
+  facebook_host = "facebook.com"
+  instagram_host = "instagram.com"
+  youtube_host = "youtube.com"
+
+  facebook_url_start = protocol_https + "//" + facebook_host
+  instagram_url_start = protocol_https + "//" + instagram_host
+  youtube_url_start = protocol_https + "//" + youtube_host
+
 
 = form_for @company, html: { class: "#{class_name}" } do |f|
 
@@ -43,15 +53,15 @@
       .col.form-group
         = f.label :facebook_url, t('.facebook_url')
         = f.url_field :facebook_url,  class: 'form-control'
-        .url-example= t('.facebook_url_ex')
+        .url-example= t('.social_url_ex', example_url: "#{facebook_url_start}/#{t('.facebook_url_ex_path')}")
       .col.form-group
         = f.label :instagram_url, t('.instagram_url')
         = f.url_field :instagram_url,  class: 'form-control'
-        .url-example= t('.instagram_url_ex')
+        .url-example= t('.social_url_ex', example_url: "#{instagram_url_start}/#{t('.instagram_url_ex_path')}")
       .col.form-group
         = f.label :youtube_url, t('.youtube_url')
         = f.url_field :youtube_url,  class: 'form-control'
-        .url-example= t('.youtube_url_ex')
+        .url-example= t('.social_url_ex', example_url: "#{youtube_url_start}/#{t('.youtube_url_ex_path')}")
 
     .row
       .col.form-group
@@ -66,19 +76,21 @@
     $('input[type="checkbox"].toggle').bootstrapToggle(); // assumes the checkboxes have the class "toggle"
   });
 
-  const FacebookHost = "facebook.com";
-  const InstagramHost = "instagram.com";
-  const YouTubeHost = "youtube.com";
-  const FacebookURLError = '#{ I18n.t('companies.form.bad_url_must_start_with', url_start: 'http://facebook.com/') }';
-  const InstagramURLError = '#{ I18n.t('companies.form.bad_url_must_start_with', url_start: 'http://instagram.com/') }';
-  const YouTubeURLError = '#{ I18n.t('companies.form.bad_url_must_start_with', url_start: 'http://youtube.com/') }';
+  const ProtocolHTTPS = "#{protocol_https}";
+  const FacebookHost = "#{facebook_host}";
+  const InstagramHost = "#{instagram_host}";
+  const YouTubeHost = "#{youtube_host}";
+
+  const FacebookURLError = '#{ I18n.t('companies.form.bad_url_must_start_with', url_start: facebook_url_start) }';
+  const InstagramURLError = '#{ I18n.t('companies.form.bad_url_must_start_with', url_start: instagram_url_start) }';
+  const YouTubeURLError = '#{ I18n.t('companies.form.bad_url_must_start_with', url_start: youtube_url_start) }';
 
 
   // ensure that the url has the expected host and that the pathname is not empty
   function urlHasHostAndSomePath(urlString = "", expectedHost = FacebookHost) {
     let urlObj = new URL(urlString);
     let path = urlObj.pathname.replace("/", "").trim(); // replace the first '/' with ''
-    return (urlObj.hostname === expectedHost && path.length != 0);
+    return (urlObj.protocol === ProtocolHTTPS && urlObj.hostname === expectedHost && path.length != 0);
   }
 
   // Add a custom validator method that calls the urlHasHostAndSomePath function, with a name and error message
