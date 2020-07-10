@@ -409,6 +409,9 @@ sv:
     progress_bar:
       complete: *complete
 
+  about_info:
+    title: Om detta webbplats
+    version: version
 
   address_visibility:
     street_address: *street

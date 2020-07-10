@@ -464,6 +464,23 @@ body {
   margin: 0;
 }
 
+footer {
+  font-size: smaller;
+
+  a {
+    border-bottom: 0;
+  }
+
+  .social {
+    display: inline-flex;
+
+    i {
+      padding-right: .5rem;
+    }
+
+  }
+}
+
 h1 {
   color: $link-dark-brown;
   font-family: 'Crimson Text', serif;
