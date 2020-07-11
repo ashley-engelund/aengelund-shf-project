@@ -54,13 +54,25 @@ RSpec.shared_examples 'it_has_updated_in_date_range_scope' do | factory_method |
     expect(described_class.updated_in_date_range(start_date, end_date)).not_to include(updated_after_end_date)
   end
 
+  it ' end_date is nil: returns all where updated_at >= start_date' do
+    updated_before_start_date
+    updated_on_start_date
+    updated_after_start_date
+    updated_before_end_date
+    updated_on_end_date
+    updated_after_end_date
+
+    expect(described_class.updated_in_date_range(start_date, nil)).to match_array([updated_on_start_date,
+    updated_after_start_date,
+    updated_before_end_date,
+    updated_on_end_date,
+    updated_after_end_date])
+  end
+
+
   context 'invalid arguments' do
     it 'raises exception if start_date is nil: ArgumentError: bad value for range' do
       expect{described_class.updated_in_date_range(nil, end_date)}.to raise_exception ArgumentError, 'bad value for range'
-    end
-
-    it 'raises exception if end_date is nil: ArgumentError: bad value for range' do
-      expect{described_class.updated_in_date_range(start_date, nil)}.to raise_exception ArgumentError, 'bad value for range'
     end
 
     it 'raises exception if start_date is not a date: ArgumentError: bad value for range' do
