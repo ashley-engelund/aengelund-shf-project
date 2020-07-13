@@ -263,7 +263,7 @@ namespace :shf do
       end
 
       desc 'Check for required files'
-      task check_required_files: [:set_if_initial_rails_install] do
+      task :check_required_files do
         # If this is the very first installation, then we don't expect any files to already exist.
 
         # unless fetch(:is_initial_install) do
