@@ -247,14 +247,19 @@ namespace :shf do
       shared_path = deploy_path.join(fetch(:shared_directory, 'shared'))
       current_release_path = deploy_path.join(fetch(:release_path, '.'))
 
-      on release_roles :all do |host|
+      on release_roles :all do
         # If it doesn't already exist in the shared directory,
         #   move the file from the release directory to the shared directory
+
         required_linked_files.each do |reqd_file|
           source = current_release_path.join(reqd_file)
           destination = shared_path.join(reqd_file)
           puts "checking   source: #{source}"
           puts "  and destination: #{destination}"
+
+          # ensure the directory exists on the destination so that we can move the file there
+          execute :mkdir, "-p", destination.parent
+
           execute(:mv, source, destination) unless test "[ -f #{destination} ]"
         end
       end
