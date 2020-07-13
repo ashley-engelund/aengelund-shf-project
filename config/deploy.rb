@@ -86,7 +86,7 @@ def mapmarker_main_files
   fetch(:map_marker_filenames, [])
 end
 
-
+# FIXME are these paths correct?  on the production system, the directories were being linked to themselves
 def mapmarker_linked_paths
   # markerlinked_dirs = ['sv', 'en','hundforetag','sv/hundforetag', 'en/hundforetag']
   # map_marker_dir = 'map-markers'
@@ -102,7 +102,7 @@ def all_mapmarker_dirs
   ["#{mapmarker_main_path}"].concat(mapmarker_linked_paths.map(&:to_s))
 end
 
-
+# FIXME are these paths correct?  on the production system, the directories were being linked to themselves
 # @return Array[String] - list of all Map Marker files in all directories, including those that are symlinks
 def all_mapmarker_fpaths
   all_fpaths = []
@@ -226,6 +226,7 @@ namespace :shf do
     end
 
 
+    # FIXME are these paths correct?  on the production system, the directories were being linked to themselves
     desc 'Create sym links to public/map-markers files if needed'
     task create_mapmarker_symlinks: ["deploy:set_rails_env", "check:main_mapmarker_files"] do
 
@@ -243,6 +244,7 @@ namespace :shf do
           relative_target_path = target_markers_path.relative_path_from(markerlinked_dir)
 
           source_files.each do |source_fname|
+            # FIXME are these paths correct?  on the production system, the directories were being linked to themselves
             linked_file = markerlinked_dir.join(source_fname)
 
             unless test("[ -l #{linked_file} ]")
@@ -384,6 +386,8 @@ before "deploy:check:linked_files", "shf:deploy:create_mapmarker_symlinks"
 
 before "deploy:publishing", "shf:deploy:run_load_conditions"
 after "shf:deploy:run_load_conditions", "shf:deploy:run_one_time_tasks"
+
+before "deploy:restart", "shf:deploy:create_mapmarker_symlinks"
 
 # Have to wait until all files are copied and symlinked before trying to remove
 #   these files.  (They won't exist until then.)
