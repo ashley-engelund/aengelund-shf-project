@@ -240,24 +240,26 @@ namespace :shf do
         reqd_dirs = cap_dirs + rails_dirs
 
         begin
-          on release_roles :all do |host|
+          on release_roles :all do
             # check that these directories exist
             reqd_dirs.each do |reqd_dir|
-              raise DirNotFound unless test("[ -d #{reqd_dir}]")
+              raise DirNotFound.new unless test("[ -d #{reqd_dir}]")
             end
 
             # check that these files exist
             reqd_files.each do |reqd_file|
-              raise FileNotFound unless test("[ -f #{reqd_file}]")
+              raise FileNotFound.new unless test("[ -f #{reqd_file}]")
             end
           end
 
         rescue DirNotFound, FileNotFound
           not_initial_install = false
+
+        ensure
+          set :is_initial_install, !not_initial_install
+          puts "is_initial_install = #{fetch(:is_initial_instal)}"
         end
 
-        set :is_initial_install, !not_initial_install
-        puts "is_initial_install = #{fetch(:is_initial_instal)}"
       end
 
       desc 'Check for required files'
@@ -472,7 +474,7 @@ end
 # Task sequencing:
 # ----------------------------------------------------
 
-before "deploy:check", "shf:deploy:check:set_if_initial_rails_install"
+# before "deploy:check", "shf:deploy:check:set_if_initial_rails_install"
 
 after "git:create_release", "shf:deploy:check:check_required_files"
 
