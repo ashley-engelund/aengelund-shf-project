@@ -134,7 +134,7 @@ def required_linked_files
                    'public/svenska.xml.gz',
                    'public/english.xml.gz']
 
-   [] + rails_files + google_webmaster_files + sitemap_files
+  [] + rails_files + google_webmaster_files + sitemap_files
 end
 
 
@@ -239,8 +239,6 @@ namespace :shf do
     Rake::TaskManager.record_task_metadata = true
 
 
-
-
     desc 'Create symlinks for required files'
     task :append_reqd_linked_files do
       # Can't set the linked_files for capistrano because if this is the very first
@@ -249,18 +247,19 @@ namespace :shf do
       shared_path = deploy_path.join(fetch(:shared_directory, 'shared'))
       release_path = deploy_path.join(fetch(:current_directory, 'current'))
 
-      # If it doesn't already exist in the shared directory,
-      #   move the file from the release directory to the shared directory
-      required_linked_files.each do |reqd_file |
-        source = release_path.join(reqd_file)
-        destination = shared_path.join(reqd_file)
+      on release_roles :all do |host|
+        # If it doesn't already exist in the shared directory,
+        #   move the file from the release directory to the shared directory
+        required_linked_files.each do |reqd_file|
+          source = release_path.join(reqd_file)
+          destination = shared_path.join(reqd_file)
 
-        puts "checking   source: #{source}"
-        puts "  and destination: #{destination}"
+          puts "checking   source: #{source}"
+          puts "  and destination: #{destination}"
 
-        execute(:mv, source, destination) unless test("[ -f #{destination} ]")
+          execute(:mv, source, destination) unless test "[ -f #{destination} ]"
+        end
       end
-
 
       # Now add the files so that that they can now be linked by later tasks
       append :linked_files, *required_linked_files
