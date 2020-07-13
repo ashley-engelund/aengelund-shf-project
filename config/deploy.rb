@@ -258,7 +258,7 @@ namespace :shf do
         puts "checking   source: #{source}"
         puts "  and destination: #{destination}"
 
-        execute(:mv, source, destination) unless test "[ -f #{destination} ]"
+        execute(:mv, source, destination) unless test("[ -f #{destination} ]")
       end
 
 
