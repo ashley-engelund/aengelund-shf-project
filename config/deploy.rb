@@ -125,7 +125,7 @@ def required_linked_files
                  'public/robots.txt',
                  'public/favicon.ico',
                  'public/apple-touch-icon.png',
-                 'public/apple-touch-icon-precomposed.png'].map { |f| "app/#{f}" }
+                 'public/apple-touch-icon-precomposed.png']
 
   google_webmaster_files = ['public/google052aa706351efdce.html',
                             'public/google979ebbe196e9bd30.html']
