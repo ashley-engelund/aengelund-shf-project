@@ -276,7 +276,7 @@ namespace :shf do
                        'public/robots.txt',
                        'public/favicon.ico',
                        'public/apple-touch-icon.png',
-                       'public/apple-touch-icon-precomposed.png'].map { |f| shared_dir.join(f) }
+                       'public/apple-touch-icon-precomposed.png'].map { |f| shared_dir.join('app', f) }
 
         google_webmaster_files = ['public/google052aa706351efdce.html',
                                   'public/google979ebbe196e9bd30.html'].map { |f| shared_dir.join(f) }
