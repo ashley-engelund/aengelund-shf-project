@@ -212,7 +212,7 @@ append :linked_dirs, 'app/views/pages'
 append :linked_dirs, 'public/ckeditor_assets'
 
 # Map Marker directories:
-append :linked_dirs, *all_mapmarker_dirs
+# append :linked_dirs, *all_mapmarker_dirs
 
 # Tasks that should be run just once.
 #  Files are renamed once they are run, so we don't want to keep overwriting them each time we deploy.
@@ -240,7 +240,15 @@ namespace :shf do
     # this ensures that the description (a.k.a. comment) for each task will be recorded
     Rake::TaskManager.record_task_metadata = true
 
-    desc 'Create symlinks for  required files'
+
+    desc 'copy map marker files to shared'
+    task :copy_mapmarkers_to_shared do
+
+    end
+
+
+
+    desc 'Create symlinks for required files'
     task :append_reqd_linked_files do
       # Can't set the linked_files for capistrano because if this is the very first
       #   installation, the files won't exist.  And the capistrano task deploy:check:linked_files will fail.
