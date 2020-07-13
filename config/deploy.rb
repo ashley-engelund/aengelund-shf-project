@@ -245,18 +245,16 @@ namespace :shf do
       #   installation, the files won't exist.  And the capistrano task deploy:check:linked_files will fail.
 
       shared_path = deploy_path.join(fetch(:shared_directory, 'shared'))
-      release_path = deploy_path.join(fetch(:current_directory, 'current'))
+      current_release_path = deploy_path.join(fetch(:release_path, '.'))
 
       on release_roles :all do |host|
         # If it doesn't already exist in the shared directory,
         #   move the file from the release directory to the shared directory
         required_linked_files.each do |reqd_file|
-          source = release_path.join(reqd_file)
+          source = current_release_path.join(reqd_file)
           destination = shared_path.join(reqd_file)
-
           puts "checking   source: #{source}"
           puts "  and destination: #{destination}"
-
           execute(:mv, source, destination) unless test "[ -f #{destination} ]"
         end
       end
