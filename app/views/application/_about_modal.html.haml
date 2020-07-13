@@ -3,22 +3,23 @@
 -#
 .modal.fade#about-info-modal{ tabindex:'-1', role:'dialog', aria: { labelledby: 'about-info-modal-title', hidden: 'true' } }
 
-  .modal-dialog{ role:'document' }
+  .modal-dialog.modal-sm{ role:'document' }
     .modal-content
       .about-info
 
         .modal-header
           %h4.modal-title#about-info-modal-title= t('about_info.title')
 
-          %button.close{ data: { dismiss: 'modal'}, aria: { label: "#{ t('close') }" } }
-            %span{ aria: { hidden: 'true' } } &times;
-
         .modal-body
           .main-site
-            %p (something  about the main website?)
+            -# TODO %p (something  about the main website?)
           .shf-membership-section
-            %p <Something about the search for companies and membership section>
-            %p.version= "#{t('about_info.version')} #{Rails.application.config.version}"
+            -# TODO  %p Something about the search for companies and membership section?
+            %p
+              = succeed ':' do
+                %span.version=t('about_info.version')
+
+              %span.revision= Rails.application.config.version
 
         .modal-footer
           %button.btn-primary.btn-sm{ data: { dismiss:'modal' } }
