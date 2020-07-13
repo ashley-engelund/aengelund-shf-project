@@ -118,6 +118,28 @@ def all_mapmarker_fpaths
 end
 
 
+def required_linked_files
+  shared_dir = deploy_path.join(fetch(:shared_directory, 'shared'))
+
+  rails_files = ['config/database.yml',
+                 'config/secrets.yml',
+                 '.env',
+                 'public/robots.txt',
+                 'public/favicon.ico',
+                 'public/apple-touch-icon.png',
+                 'public/apple-touch-icon-precomposed.png'].map { |f| shared_dir.join('app', f) }
+
+  google_webmaster_files = ['public/google052aa706351efdce.html',
+                            'public/google979ebbe196e9bd30.html'].map { |f| shared_dir.join(f) }
+
+  sitemap_files = ['public/sitemap.xml.gz',
+                   'public/svenska.xml.gz',
+                   'public/english.xml.gz'].map { |f| shared_dir.join(f) }
+
+
+   [] + rails_files + google_webmaster_files + sitemap_files + all_mapmarker_fpaths
+end
+
 # -------------------
 # LINKED FILES
 #
@@ -218,6 +240,29 @@ namespace :shf do
     # this ensures that the description (a.k.a. comment) for each task will be recorded
     Rake::TaskManager.record_task_metadata = true
 
+    desc 'Create symlinks for  required files'
+    task :append_reqd_linked_files do
+      # Can't set the linked_files for capistrano because if this is the very first
+      #   installation, the files won't exist.  And the capistrano task deploy:check:linked_files will fail.
+      #
+      # So instead we have to do this later (e.g. right before deploy:symlink:linked_files)
+      append :linked_files, *required_linked_files
+
+
+      # on release_roles :all do |host|
+      #   required_linked_files.each do |reqd_file|
+      #     unless test "[ -l #{reqd_file} ]"
+      #       error "Required file does not exist:  #{reqd_file}  on host: #{host})"
+      #       exit 1
+      #     end
+      #   end
+      # end
+
+    end
+
+
+    # ----------------------------
+
     namespace :check do
 
       desc 'check to see if this is the initial Rails install or not. set the variable is_initial_install '
@@ -260,42 +305,6 @@ namespace :shf do
           puts "is_initial_install = #{fetch(:is_initial_instal)}"
         end
 
-      end
-
-      desc 'Check for required files'
-      task :check_required_files do
-        # If this is the very first installation, then we don't expect any files to already exist.
-
-        # unless fetch(:is_initial_install) do
-
-        shared_dir = deploy_path.join(fetch(:shared_directory, 'shared'))
-
-        rails_files = ['config/database.yml',
-                       'config/secrets.yml',
-                       '.env',
-                       'public/robots.txt',
-                       'public/favicon.ico',
-                       'public/apple-touch-icon.png',
-                       'public/apple-touch-icon-precomposed.png'].map { |f| shared_dir.join('app', f) }
-
-        google_webmaster_files = ['public/google052aa706351efdce.html',
-                                  'public/google979ebbe196e9bd30.html'].map { |f| shared_dir.join(f) }
-
-        sitemap_files = ['public/sitemap.xml.gz',
-                         'public/svenska.xml.gz',
-                         'public/english.xml.gz'].map { |f| shared_dir.join(f) }
-
-        required_linked_files = [] + rails_files + google_webmaster_files +
-            sitemap_files + all_mapmarker_fpaths
-
-        on release_roles :all do |host|
-          required_linked_files.each do |reqd_file|
-            unless test "[ -l #{reqd_file} ]"
-              error "Required file does not exist:  #{reqd_file}  on host: #{host})"
-              exit 1
-            end
-          end
-        end
       end
 
 
@@ -476,7 +485,7 @@ end
 
 # before "deploy:check", "shf:deploy:check:set_if_initial_rails_install"
 
-after "deploy:symlink:linked_dirs", "shf:deploy:check:check_required_files"
+before "deploy:symlink:linked_files", "shf:deploy:append_reqd_linked_files"
 
 # Run the task :create_mapmarker_symlinks before the (capistrano defined) deploy:check:linked_files task is run
 #   so that the Mapmarker files and symlinks definitely exist.
