@@ -119,26 +119,24 @@ end
 
 
 def required_linked_files
-  shared_dir = deploy_path.join(fetch(:shared_directory, 'shared'))
-
   rails_files = ['config/database.yml',
                  'config/secrets.yml',
                  '.env',
                  'public/robots.txt',
                  'public/favicon.ico',
                  'public/apple-touch-icon.png',
-                 'public/apple-touch-icon-precomposed.png'].map { |f| shared_dir.join('app', f) }
+                 'public/apple-touch-icon-precomposed.png'].map { |f| "app/#{f}" }
 
   google_webmaster_files = ['public/google052aa706351efdce.html',
-                            'public/google979ebbe196e9bd30.html'].map { |f| shared_dir.join(f) }
+                            'public/google979ebbe196e9bd30.html']
 
   sitemap_files = ['public/sitemap.xml.gz',
                    'public/svenska.xml.gz',
-                   'public/english.xml.gz'].map { |f| shared_dir.join(f) }
+                   'public/english.xml.gz']
 
-
-   [] + rails_files + google_webmaster_files + sitemap_files + all_mapmarker_fpaths
+   [] + rails_files + google_webmaster_files + sitemap_files
 end
+
 
 # -------------------
 # LINKED FILES
@@ -241,19 +239,30 @@ namespace :shf do
     Rake::TaskManager.record_task_metadata = true
 
 
-    desc 'copy map marker files to shared'
-    task :copy_mapmarkers_to_shared do
-
-    end
-
 
 
     desc 'Create symlinks for required files'
     task :append_reqd_linked_files do
       # Can't set the linked_files for capistrano because if this is the very first
       #   installation, the files won't exist.  And the capistrano task deploy:check:linked_files will fail.
-      #
-      # So instead we have to do this later (e.g. right before deploy:symlink:linked_files)
+
+      shared_path = deploy_path.join(fetch(:shared_directory, 'shared'))
+      release_path = deploy_path.join(fetch(:current_directory, 'current'))
+
+      # If it doesn't already exist in the shared directory,
+      #   move the file from the release directory to the shared directory
+      required_linked_files.each do |reqd_file |
+        source = release_path.join(reqd_file)
+        destination = shared_path.join(reqd_file)
+
+        puts "checking   source: #{source}"
+        puts "  and destination: #{destination}"
+
+        execute :mv,"--no-clobber", source, destination unless test "[ -f #{destination} ]"
+      end
+
+
+      # Now add the files so that that they can now be linked by later tasks
       append :linked_files, *required_linked_files
 
 
