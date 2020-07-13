@@ -23,8 +23,9 @@ set :rbenv_type, :user
 set :rbenv_ruby, '2.5.1'
 
 set :application, 'shf'
-set :repo_url, 'git@github.com:AgileVentures/shf-project.git'
-set :branch, ENV['BRANCH']
+# set :repo_url, 'git@github.com:AgileVentures/shf-project.git'
+set :repo_url, ENV['SHF_GIT_REPO']
+set :branch, ENV['SHF_GIT_BRANCH']
 
 set :deploy_to, ENV['APP_PATH']
 
@@ -149,7 +150,7 @@ append :linked_files,
        'public/google979ebbe196e9bd30.html'
 
 # Map marker files.
-append :linked_files, *all_mapmarker_fpaths
+# append :linked_files, *all_mapmarker_fpaths
 
 
 # -------------------
