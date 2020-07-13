@@ -56,6 +56,8 @@ sv:
   none_plur: &none_plur Inga
   none_n: &none_n Ingen
   name_missing: Namn Saknas
+  including: inklusive
+  administrator: administratör
 
   unknown: okänd
 
@@ -264,6 +266,7 @@ sv:
         name: &business_category_name  Namn
         description: &description  Beskrivning
         subcategory: &subcategory Underkategori
+        subcategories: Underkategorier
 
       shf_document:
         title: &title Titel
@@ -542,6 +545,15 @@ sv:
       files_delivery_method: Du har valt att leverera filer via
       method_chosen_when: (vald %{date})
 
+    business_category_display_row:
+      category_no_subcategories_html: Den här kategorin har inga
+              underkategorier ännu. Du kan be %{mailto_admin} att lägga till
+              en eller flera underkategorier.
+      subcategories_for: Underkategorier för %{category_name}
+
+    business_category_edit_row:
+      add_remove_subcategories: Lägg till / ta bort underkategorier
+
     index:
       title: Alla inkomna ansökningar
       name: Namn
@@ -785,6 +797,14 @@ sv:
       dinkurs_id_tooltip: Om du har ett Dinkurs.se konto och vill visa
                           företagshändelser här, ange Dinkurs.se företagsnyckel.
                           (Du kan lämna den tom om du inte har ett Dinkurs.se konto.)
+      social_url_ex: "Ex: %{example_url}"
+      facebook_url: URL till din Facebook-sida
+      facebook_url_ex_path: "YourFacebookName"
+      bad_url_must_start_with: 'Ogiltig url. Det måste börja med %{url_start}/ och ange din sida'
+      instagram_url: URL till din Instagram-sida
+      instagram_url_ex_path: "YourInstagramName"
+      youtube_url: URL till din YouTube-sida
+      youtube_url_ex_path: "YourChannel"
 
     company:
       submit_button_label: Uppdatera status

@@ -153,6 +153,10 @@ a.btn.disabled, {
   }
 }
 
+.company-members td {
+  white-space: normal;
+}
+
 .company-story img {
 max-width:100%;
 height:auto!important;
@@ -589,6 +593,18 @@ input.checklist-checkbox {
 input.checklist-checkbox-small {
   height: 14px;
   width: 14px;
+}
+
+form {
+  .error {
+    color: $warn-red;
+  }
+
+  label {
+    &.error {
+      font-weight: bold;
+    }
+  }
 }
 
 @media only screen and (max-width: 600px) {
