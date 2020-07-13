@@ -285,12 +285,12 @@ namespace :shf do
                          'public/svenska.xml.gz',
                          'public/english.xml.gz'].map { |f| shared_dir.join(f) }
 
-        required_files = [] + rails_files + google_webmaster_files +
+        required_linked_files = [] + rails_files + google_webmaster_files +
             sitemap_files + all_mapmarker_fpaths
 
         on release_roles :all do |host|
-          required_files.each do |reqd_file|
-            unless test "[ -f #{reqd_file} ]"
+          required_linked_files.each do |reqd_file|
+            unless test "[ -l #{reqd_file} ]"
               error "Required file does not exist:  #{reqd_file}  on host: #{host})"
               exit 1
             end
@@ -476,7 +476,7 @@ end
 
 # before "deploy:check", "shf:deploy:check:set_if_initial_rails_install"
 
-after "git:create_release", "shf:deploy:check:check_required_files"
+after "deploy:symlink:linked_dirs", "shf:deploy:check:check_required_files"
 
 # Run the task :create_mapmarker_symlinks before the (capistrano defined) deploy:check:linked_files task is run
 #   so that the Mapmarker files and symlinks definitely exist.
