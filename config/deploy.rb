@@ -229,7 +229,7 @@ namespace :shf do
 
     # FIXME are these paths correct?  on the production system, the directories were being linked to themselves
     desc 'Create sym links to public/map-markers files if needed'
-    task create_mapmarker_symlinks: ["deploy:set_rails_env", "check:main_mapmarker_files"] do
+    task create_mapmarker_symlinks: ["deploy:set_rails_env"] do
 
       on release_roles :all do |_host|
 
@@ -383,7 +383,7 @@ end
 
 # Run the task :create_mapmarker_symlinks before the (capistrano defined) deploy:check:linked_files task is run
 #   so that the Mapmarker files and symlinks definitely exist.
-before "deploy:check:linked_files", "shf:deploy:create_mapmarker_symlinks"
+# before "deploy:check:linked_files", "shf:deploy:create_mapmarker_symlinks"
 
 before "deploy:publishing", "shf:deploy:run_load_conditions"
 after "shf:deploy:run_load_conditions", "shf:deploy:run_one_time_tasks"
