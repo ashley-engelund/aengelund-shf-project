@@ -258,7 +258,7 @@ namespace :shf do
         puts "checking   source: #{source}"
         puts "  and destination: #{destination}"
 
-        execute :mv,"--no-clobber", source, destination unless test "[ -f #{destination} ]"
+        execute(:mv, source, destination) unless test "[ -f #{destination} ]"
       end
 
 
@@ -511,7 +511,7 @@ before "deploy:symlink:linked_files", "shf:deploy:append_reqd_linked_files"
 before "deploy:publishing", "shf:deploy:run_load_conditions"
 after "shf:deploy:run_load_conditions", "shf:deploy:run_one_time_tasks"
 
-before "deploy:restart", "shf:deploy:create_mapmarker_symlinks"
+# before "deploy:restart", "shf:deploy:create_mapmarker_symlinks"
 
 # Have to wait until all files are copied and symlinked before trying to remove
 #   these files.  (They won't exist until then.)
