@@ -257,10 +257,14 @@ namespace :shf do
           puts "checking   source: #{source}"
           puts "  and destination: #{destination}"
 
-          # ensure the directory exists on the destination so that we can move the file there
-          execute :mkdir, "-p", destination.parent
+          unless test "[ -f #{destination} ]"
+            if test "[ -f #{source} ]"
+              # ensure the directory exists on the destination so that we can move the file there
+              execute :mkdir, "-p", destination.parent
+              execute(:mv, source, destination)
+            end
+          end
 
-          execute(:mv, source, destination) unless test "[ -f #{destination} ]"
         end
       end
 
