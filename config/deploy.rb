@@ -411,8 +411,6 @@ namespace :shf do
     end
 
 
-    # Note: another way to accomplish this would be to put an entry in .gitattributes for every file to ignore.
-    # However, I don't like mixing deployment information into git files.  (That couples the two systems and mixes responsibilities.)
     desc 'Remove testing related files'
     task :remove_test_files do
 
@@ -424,17 +422,13 @@ namespace :shf do
         remove_files = ["#{current_path}/lib/tasks/ci.rake",
                         "#{current_path}/lib/tasks/cucumber.rake",
                         "#{current_path}/script/cucumber"].freeze
-
         remove_files.each { |remove_f| remove_file remove_f }
-
 
         # Remove testing directories since the gems for using them are not deployed.
         remove_dirs = ["#{current_path}/spec",
                        "#{current_path}/features"].freeze
         remove_dirs.each { |remove_d| remove_dir remove_d }
-
       end
-
     end
 
 
@@ -521,7 +515,12 @@ after "shf:deploy:run_load_conditions", "shf:deploy:run_one_time_tasks"
 
 # Have to wait until all files are copied and symlinked before trying to remove
 #   these files.  (They won't exist until then.)
-before "deploy:restart", "shf:deploy:remove_test_files"
+# They must be removed before deploy:assets:precompile is executed because
+#   that will cause all rake files to be loaded, including those like lib/tasks/ci.rake, which has
+#   the statement   require 'rspec/core/rake_task'   in it. That will cause a fail
+#   since 'rspec/core' can't be found, since that gem is only installed in the :test group.
+#   IOW, get rid of anything that might reference any testing gems, including rake files.
+before "deploy:assets:precompile", "shf:deploy:remove_test_files"
 
 after "deploy:publishing", "deploy:restart"
 
