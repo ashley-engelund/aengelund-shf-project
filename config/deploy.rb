@@ -268,18 +268,8 @@ namespace :shf do
         end
       end
 
-      # Now add the files so that that they can now be linked by later tasks
+      # Now add the files so that that they can be linked by later tasks
       append :linked_files, *required_linked_files
-
-
-      # on release_roles :all do |host|
-      #   required_linked_files.each do |reqd_file|
-      #     unless test "[ -l #{reqd_file} ]"
-      #       error "Required file does not exist:  #{reqd_file}  on host: #{host})"
-      #       exit 1
-      #     end
-      #   end
-      # end
 
     end
 
@@ -416,17 +406,20 @@ namespace :shf do
 
       on release_roles :all do
 
+        # 'current' directory might not exist yet (e.g. for an initial deploy). So must use :release_path
+        current_release_path = deploy_path.join(fetch(:release_path, '.'))
+
         # Because gems for these are not deployed,
         # Rake cannot load these files,
         # which then causes problems when trying to run any rake tasks on the deployment server.
-        remove_files = ["#{current_path}/lib/tasks/ci.rake",
-                        "#{current_path}/lib/tasks/cucumber.rake",
-                        "#{current_path}/script/cucumber"].freeze
+        remove_files = [current_release_path.join("lib/tasks/ci.rake"),
+                        current_release_path.join("lib/tasks/cucumber.rake"),
+                        current_release_path.join("script/cucumber")].freeze
         remove_files.each { |remove_f| remove_file remove_f }
 
         # Remove testing directories since the gems for using them are not deployed.
-        remove_dirs = ["#{current_path}/spec",
-                       "#{current_path}/features"].freeze
+        remove_dirs = [current_release_path.join("spec"),
+                       current_release_path.join("features")].freeze
         remove_dirs.each { |remove_d| remove_dir remove_d }
       end
     end
