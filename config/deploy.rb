@@ -327,17 +327,17 @@ namespace :shf do
           puts " markerlinked_path: #{markerlinked_path}"
           # Always recreate the dir so that we ensure it is up to date
 
-          if test("[ -d #{markerlinked_path}]")
+          if test " [ -d #{markerlinked_path} ] "
             puts "  the dir exists. will try to remove it..."
             execute(:rm, "-r", markerlinked_path)
           end
-          if test("[ -l #{markerlinked_path}]")
+          if test("[ -l #{markerlinked_path} ]")
             ptus "  the dir is a link. will try to remove it..."
             execute(:rm, markerlinked_path)
           end
           # FileUtils.rm markerlinked_path
 
-          execute :ln, "-sT", markerlinked_path, mapmarkers_main_path
+          execute :ln, "-sT",  mapmarkers_main_path, markerlinked_path
 
           # relative_target_path = target_markers_path.relative_path_from(markerlinked_path)
           #
