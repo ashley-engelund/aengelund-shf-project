@@ -35,6 +35,7 @@ set :keep_releases, 5
 
 set :migration_role, :app
 
+# FIXME - remove this cruft
 set :is_initial_install, false
 
 # -------------------------
@@ -65,7 +66,8 @@ set :map_marker_linked_dirs, ['sv', 'en', 'hundforetag', 'sv/hundforetag', 'en/h
 set :map_marker_filenames, ['m1.png', 'm2.png', 'm3.png', 'm4.png', 'm5.png']
 
 
-def mapmarker_root_path
+# @return Pathname - top-level path (within the Rails app) where the map-marker directory resides (the parent of the map-marker directory)
+def mapmarkers_root_path
   # map_marker_root_dir = 'public'
   # shared_path = Pathname.new('.')
   # mapmarker_root_path = shared_path.join(map_marker_root_dir)
@@ -73,48 +75,53 @@ def mapmarker_root_path
 end
 
 
-def mapmarker_main_path
+# @return Pathname - full path (within the Rails app) for the definitive map-markers directory
+def mapmarkers_main_path
   # map_marker_dir = 'map-markers'
-  # markers_path = Pathname.new(map_marker_dir)
-  markers_path = Pathname.new(fetch(:map_marker_dir))
-  mapmarker_root_path.join(markers_path)
+  mapmarkers_root_path.join(Pathname.new(fetch(:map_marker_dir)))
 end
 
 
 # @return Array[String] - list of all files in the main mapmarkers directory
-def mapmarker_main_files
+def mapmarkers_main_files
   # ['m1.png', 'm2.png', 'm3.png', 'm4.png', 'm5.png']
   fetch(:map_marker_filenames, [])
 end
 
 
 # FIXME are these paths correct?  on the production system, the directories were being linked to themselves
+# @return Array[Pathname] - list of all of the directories that need to be symbolic links to the definitive map-marker directory.
+#     Includes the path up the the top of this Rails application
 def mapmarker_linked_paths
   # markerlinked_dirs = ['sv', 'en','hundforetag','sv/hundforetag', 'en/hundforetag']
   # map_marker_dir = 'map-markers'
   markerlinked_dirs = fetch(:map_marker_linked_dirs, [])
-  map_marker_dir = fetch(:map_marker_dir)
-  markerlinked_dirs.map { |marker_linked_dir| mapmarker_root_path.join(marker_linked_dir).join(map_marker_dir) }
+  markerlinked_dirs.map { |marker_linked_dir| mapmarkers_root_path.join(marker_linked_dir) }
 end
 
 
 # @return Array[String] - list of all Map Marker directories, including those that are symlinks.
 #   Note these are not Pathnames
+# FIXME - DELETE?
 def all_mapmarker_dirs
-  ["#{mapmarker_main_path}"].concat(mapmarker_linked_paths.map(&:to_s))
+  ["#{mapmarkers_main_path}"].concat(mapmarker_linked_paths.map(&:to_s))
 end
 
 
 # FIXME are these paths correct?  on the production system, the directories were being linked to themselves
 # @return Array[String] - list of all Map Marker files in all directories, including those that are symlinks
 #     the files all have paths up to the shared/ directory. Ex:  shared/public/map-markers/m1.png
+# FIXME - DELETE?
 def all_mapmarker_fpaths
   all_fpaths = []
   all_mapmarker_dirs.each do |mapmarker_dir|
-    all_fpaths.concat(mapmarker_main_files.map { |source_fn| "#{mapmarker_dir}/#{source_fn}" })
+    all_fpaths.concat(mapmarkers_main_files.map { |source_fn| "#{mapmarker_dir}/#{source_fn}" })
   end
   all_fpaths
 end
+
+
+# --------------------------
 
 
 def required_linked_files
@@ -197,7 +204,7 @@ namespace :shf do
     Rake::TaskManager.record_task_metadata = true
 
 
-    desc 'Copy to shared as needed then update linked_files list'
+    desc 'If req.d files are not in shared, copy from current release then update linked_files list'
     task :append_reqd_linked_files do
 
       shared_path = deploy_path.join(fetch(:shared_directory, 'shared'))
@@ -236,6 +243,7 @@ namespace :shf do
 
     namespace :check do
 
+      # FIXME DELETE?
       desc 'check to see if this is the initial Rails install or not. set the variable is_initial_install '
       task :set_if_initial_rails_install do
         class FileNotFound < StandardError; end
@@ -280,11 +288,11 @@ namespace :shf do
 
 
       desc 'Ensure public/map-marker files exist. (Needed for Google maps)'
-      task :main_mapmarker_files do
+      task :main_mapmarker_files_exist do
 
         on release_roles :all do |host|
-          target_markers_path = mapmarker_main_path
-          source_files = mapmarker_main_files
+          target_markers_path = mapmarkers_main_path
+          source_files = mapmarkers_main_files
 
           source_files.each do |marker_file|
             full_fn = target_markers_path.join(marker_file)
@@ -301,35 +309,47 @@ namespace :shf do
 
 
     # FIXME are these paths correct?  on the production system, the directories were being linked to themselves
-    desc 'Create sym links to public/map-markers files if needed'
-    task create_mapmarker_symlinks: ["deploy:set_rails_env"] do
+    desc 'Create sym links to public/map-markers files. Always remove any existing links and recreate them'
+    task symlink_dirs_to_mapmarkers: ["deploy:set_rails_env", "shf:deploy:check:main_mapmarker_files_exist"] do
 
       on release_roles :all do |_host|
 
-        target_markers_path = mapmarker_main_path
-        source_files = mapmarker_main_files
+        target_markers_path = mapmarkers_main_path
+        puts "target_markers_path: #{target_markers_path}"
+        source_files = mapmarkers_main_files
+        puts "source_files: #{source_files.inspect}"
+
+        puts "mapmarker_linked_paths: #{mapmarker_linked_paths.inspect}"
 
         #  Note that the links are RELATIVE paths.  This makes testing on a local dev machine easier.
-        mapmarker_linked_paths.each do |markerlinked_dir|
-          # create the dir and any intermediate dirs only if it doesn't exist
-          execute :mkdir, "-p", markerlinked_dir
+
+        mapmarker_linked_paths.each do |markerlinked_path|
+
+          # Always recreate the dir so that we ensure it is up to date
+          execute :rm, "-r", markerlinked_path if test("[ -d #{markerlinked_path}]")
+          # FileUtils.rm markerlinked_path
+
+          execute :mkdir, "-p", markerlinked_path
           # FileUtils.mkdir_p(markerlinked_dir)
 
-          relative_target_path = target_markers_path.relative_path_from(markerlinked_dir)
+          execute :ln, "-sT", markerlinked_path, mapmarkers_main_path
 
-          source_files.each do |source_fname|
-            # FIXME are these paths correct?  on the production system, the directories were being linked to themselves
-            linked_file = markerlinked_dir.join(source_fname)
 
-            unless test("[ -l #{linked_file} ]")
-              # unless File.symlink?(linked_file)
-              execute :rm, linked_file if test "[ -f #{linked_file} ]"
-              # File.delete(linked_file) if File.exist?(linked_file)
-
-              execute :ln, "-s", "#{relative_target_path}/#{source_fname}", linked_file
-              # File.symlink "#{relative_target_path}/#{source_fname}", "#{linked_file}"
-            end
-          end
+          # relative_target_path = target_markers_path.relative_path_from(markerlinked_path)
+          #
+          # source_files.each do |source_fname|
+          #   # FIXME are these paths correct?  on the production system, the directories were being linked to themselves
+          #   linked_file = markerlinked_path.join(source_fname)
+          #
+          #   unless test("[ -l #{linked_file} ]")
+          #     # unless File.symlink?(linked_file)
+          #     execute :rm, linked_file if test "[ -f #{linked_file} ]"
+          #     # File.delete(linked_file) if File.exist?(linked_file)
+          #
+          #     execute :ln, "-s", "#{relative_target_path}/#{source_fname}", linked_file
+          #     # File.symlink "#{relative_target_path}/#{source_fname}", "#{linked_file}"
+          #   end
+          # end
         end
 
       end
@@ -447,7 +467,6 @@ namespace :shf do
 end
 
 
-
 # =========================================================
 # Rails tasks
 #
@@ -489,12 +508,14 @@ namespace :rails do
 end
 
 
-
 # ----------------------------------------------------
 # Task sequencing:
 # ----------------------------------------------------
 
+
 before "deploy:symlink:linked_files", "shf:deploy:append_reqd_linked_files"
+
+after "deploy:symlink:linked_dirs", "shf:deploy:symlink_dirs_to_mapmarkers"
 
 # Have to wait until all files are copied and symlinked before trying to remove
 #   these files.  (They won't exist until then.)
