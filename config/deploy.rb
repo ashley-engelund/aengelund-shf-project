@@ -265,7 +265,7 @@ namespace :shf do
       # If the given directory represents more than 1 path segment,
       #   then create all parent directories usking mkdir -p  (Which will _not_ clobber any already existing dirs)
       # @param [String | Pathname|] given_dir - the given directory
-      #
+      # FIXME delete?
       def create_parent_if_needed(given_dir = Pathname(''))
         given_dir_path = make_path(given_dir)
 
@@ -284,6 +284,7 @@ namespace :shf do
 
       # need to have a symlinked 'map-markers' dir under each locale dir (not the individual files)
       # make a linked directory for each locale
+      # FIXME delete?
       def create_symlinked_locale_dirs(linked_dirname = Pathname.new(''))
         linked_dir_path = make_path(linked_dirname.to_s)
 
@@ -296,7 +297,6 @@ namespace :shf do
 
 
       on release_roles :all do |_host|
-
 
         # create locale dirs based on the mapmarkers_main_path
         # add a link to the map-markers directory
@@ -319,14 +319,14 @@ namespace :shf do
           # First: create the dir without any locale and put the a link to map-markers in it
           linked_dir_path_no_locale = mapmarkers_parent_path.join(linked_dirname)
           puts " --> linked_dir_path_no_locale: #{linked_dir_path_no_locale}"
-          create_parent_if_needed(linked_dir_path_no_locale)
+          execute :mkdir, "-p", linked_dir_path_no_locale
           recreate_symlinked_dir(mapmarkers_main_path, append_mapmarkers_dir(linked_dir_path_no_locale))
 
           # Second: create dirs with the locale prefixes and put the link to map-markers in each
           fetch(:locale_prefixes).each do |locale|
             linked_dir_path_w_locale = mapmarkers_parent_path.join(locale).join(linked_dirname)
             puts " --> linked_dir_path_w_locale: #{linked_dir_path_w_locale}"
-            create_parent_if_needed(linked_dir_path_w_locale)
+            execute :mkdir, "-p", linked_dir_path_w_locale
             recreate_symlinked_dir(mapmarkers_main_path, append_mapmarkers_dir(linked_dir_path_w_locale))
           end
         end
