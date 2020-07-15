@@ -298,7 +298,7 @@ namespace :shf do
           execute :mkdir, "-p", full_path_with_locale
 
           # add a link to the map-markers directory in each of the locales
-          recreate_symlinked_dir(mapmarkers_main_path, full_path_with_locale)
+          recreate_symlinked_dir(mapmarkers_main_path, full_path_with_locale.join(fetch(:map_marker_dir)) )
         end
 
 
