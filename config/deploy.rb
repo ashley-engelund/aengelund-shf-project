@@ -297,12 +297,12 @@ namespace :shf do
 
       on release_roles :all do |_host|
 
-        parent_path_with_locale = mapmarkers_parent_path.join(locale)
 
         # create locale dirs based on the mapmarkers_main_path
         # add a link to the map-markers directory
         # don't delete the locale dirs if they already exist; we'll need to add to them
         fetch(:locale_prefixes).each do |locale|
+          parent_path_with_locale = mapmarkers_parent_path.join(locale)
           execute :mkdir, "-p", parent_path_with_locale
           recreate_symlinked_dir(mapmarkers_main_path, append_mapmarkers_dir(parent_path_with_locale))
         end
