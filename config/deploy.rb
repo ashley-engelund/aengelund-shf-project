@@ -264,7 +264,7 @@ namespace :shf do
         fetch(:locale_prefixes).each do |locale|
 
           # (There must be a better way to see if a Pathname is just one directory deep!)
-          unless linked_dir_path.parent.to_s == '.'
+          unless linked_dir_path.parent.to_s == '..'
             puts "  #{linked_dir_path.parent}.to_s != ., so will try to make it, prepending the locale"
             execute :mkdir, "-p", mapmarkers_parent_path.join(locale).join(linked_dir_path.parent)
           end
