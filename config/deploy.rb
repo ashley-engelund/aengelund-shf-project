@@ -41,12 +41,12 @@ set :migration_role, :app
 #  The map marker files are used to display markers on Google maps.
 #
 #  We require 6 (!) directories for the map markers:
-#   public/map-markers,
+#   public/map-markers,    ** this is the definitive directory
 #   public/sv/map-markers,
-#   public/en/map-markers,
-#   public/hundforetag/map-markers,
 #   public/sv/hundforetag/map-markers,
+#   public/en/map-markers,
 #   public/en/hundforetag/map-markers,
+#   public/hundforetag/map-markers,
 #
 #  The 'source' (main) files are in the public/map-markers directory.
 #
@@ -68,7 +68,8 @@ set :map_marker_parent_dir, 'public'
 set :map_marker_dir, 'map-markers'
 set :map_marker_filenames, ['m1.png', 'm2.png', 'm3.png', 'm4.png', 'm5.png']
 set :locale_prefixes, ['sv', 'en']
-set :map_marker_linked_dirs, ['hundforetag/map-markers']
+set :map_marker_linked_dirs, ['hundforetag']
+# set :map_marker_linked_dirs, ['hundforetag/map-markers']
 
 
 # @return Pathname - top-level path (within the Rails app) where the map-marker directory resides (the parent of the map-marker directory)
@@ -246,28 +247,37 @@ namespace :shf do
     desc 'Create sym links to public/map-markers files. Always remove any existing links and recreate them'
     task symlink_dirs_to_mapmarkers: ["deploy:set_rails_env", "shf:deploy:check:main_mapmarker_files_exist"] do
 
+
+      # ensure we're working with a Pathname vs. a String
+      # @return Pathname - constructed with the string representation of what was given
+      def make_path(str_or_path = '')
+        Pathname(str_or_path.to_s)
+      end
+
+
+      # @return Pathname with the map-markers directory appended
+      def append_mapmarkers_dir(given_dir)
+        make_path(given_dir).join(fetch(:map_marker_dir))
+      end
+
+
       # Create the parent directory(-ies) if needed for the given directory
       # If the given directory represents more than 1 path segment,
       #   then create all parent directories usking mkdir -p  (Which will _not_ clobber any already existing dirs)
       # @param [String | Pathname|] given_dir - the given directory
       #
       def create_parent_if_needed(given_dir = Pathname(''))
-        given_dir_path = Pathname(given_dir.to_s) # ensure we're working with a Pathname vs. a String
+        given_dir_path = make_path(given_dir)
 
         # (There must be a better way to see if a Pathname has more than 1 segment)
         unless given_dir_path.parent.to_s == '..'
-          puts "-->    #{given_dir_path.parent}.to_s != ., so will try to make it"
           execute :mkdir, "-p", given_dir_path.parent
         end
       end
 
 
-      # Always recreate the dir so that we ensure it is up to date
+      # Always recreate the link so that we ensure it is up to date (= '-f' option)
       def recreate_symlinked_dir(orig_dir, symlinked_dir)
-        # execute(:rm, "-r", symlinked_dir) if test " [ -d #{symlinked_dir} ] "
-        # execute(:rm, symlinked_dir) if test("[ -l #{symlinked_dir} ]")
-
-        puts "  ln -sTf #{orig_dir}, #{symlinked_dir}"
         execute :ln, "-sTf", orig_dir, symlinked_dir
       end
 
@@ -275,8 +285,7 @@ namespace :shf do
       # need to have a symlinked 'map-markers' dir under each locale dir (not the individual files)
       # make a linked directory for each locale
       def create_symlinked_locale_dirs(linked_dirname = Pathname.new(''))
-        linked_dir_path = Pathname.new(linked_dirname.to_s) # ensure we're working with a Pathname and not just a String
-        puts " linked_dir_path: #{linked_dir_path}"
+        linked_dir_path = make_path(linked_dirname.to_s)
 
         fetch(:locale_prefixes).each do |locale|
           full_path_with_locale = mapmarkers_parent_path.join(locale).join(linked_dir_path)
@@ -288,28 +297,39 @@ namespace :shf do
 
       on release_roles :all do |_host|
 
-        puts " ======================================================"
-        puts " ======================================================"
+        parent_path_with_locale = mapmarkers_parent_path.join(locale)
 
         # create locale dirs based on the mapmarkers_main_path
+        # add a link to the map-markers directory
         # don't delete the locale dirs if they already exist; we'll need to add to them
         fetch(:locale_prefixes).each do |locale|
-          full_path_with_locale = mapmarkers_parent_path.join(locale)
-          execute :mkdir, "-p", full_path_with_locale
-
-          # add a link to the map-markers directory in each of the locales
-          recreate_symlinked_dir(mapmarkers_main_path, full_path_with_locale.join(fetch(:map_marker_dir)) )
+          execute :mkdir, "-p", parent_path_with_locale
+          recreate_symlinked_dir(mapmarkers_main_path, append_mapmarkers_dir(parent_path_with_locale))
         end
 
-
-        # create locale dirs for each of the linked paths
+        # Dirs that need to have locales prepended and a link to map-markers in each
         fetch(:map_marker_linked_dirs, []).each do |linked_dirname|
-          full_path = mapmarkers_parent_path.join(linked_dirname)
-          create_parent_if_needed(full_path)
-          recreate_symlinked_dir(mapmarkers_main_path, full_path)
-          create_symlinked_locale_dirs(linked_dirname)
-        end
 
+          # Already has map-markers  as the last path segment:
+          # full_path = mapmarkers_parent_path.join(linked_dirname)
+          # create_parent_if_needed(full_path)
+          # recreate_symlinked_dir(mapmarkers_main_path, full_path)
+          # create_symlinked_locale_dirs(linked_dirname)
+
+          # First: create the dir without any locale and put the a link to map-markers in it
+          linked_dir_path_no_locale = mapmarkers_parent_path.join(linked_dirname)
+          puts " --> linked_dir_path_no_locale: #{linked_dir_path_no_locale}"
+          create_parent_if_needed(linked_dir_path_no_locale)
+          recreate_symlinked_dir(mapmarkers_main_path, append_mapmarkers_dir(linked_dir_path_no_locale))
+
+          # Second: create dirs with the locale prefixes and put the link to map-markers in each
+          fetch(:locale_prefixes).each do |locale|
+            linked_dir_path_w_locale = mapmarkers_parent_path.join(locale).join(linked_dirname)
+            puts " --> linked_dir_path_w_locale: #{linked_dir_path_w_locale}"
+            create_parent_if_needed(linked_dir_path_w_locale)
+            recreate_symlinked_dir(mapmarkers_main_path, append_mapmarkers_dir(linked_dir_path_w_locale))
+          end
+        end
 
       end
     end
@@ -411,7 +431,7 @@ namespace :shf do
 
 
     def task_is_defined?(task_name)
-      puts "( checking to see if #{task_name} is defined )"
+      puts "( Checking to see if task #{task_name} is defined. )"
       result = %x{bundle exec rake --tasks #{task_name} }
       result.include?(task_name) ? true : false
     end
