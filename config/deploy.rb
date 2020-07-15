@@ -36,12 +36,12 @@ set :keep_releases, 5
 set :migration_role, :app
 
 
-# -------------------------
+# -----------------------------------------------------------------
 # Map Markers
 #  The map marker files are used to display markers on Google maps.
 #
 #  We require 6 (!) directories for the map markers:
-#   public/map-markers,
+#   public/map-markers,    ** this is the definitive directory
 #   public/sv/map-markers,
 #   public/sv/hundforetag/map-markers,
 #   public/en/map-markers,
@@ -56,34 +56,30 @@ set :migration_role, :app
 #  The root route (for non-logged in visitors) will look for the map markers in /public[/sv|en]/map-markers.
 #  But often the path is specific to companies and so is /public[/sv|en]/hundforetag
 #
-#  /sv/[hundforetag/]map-markers and /en/[hundforetag/]map-markers just have symbolic markers to the public/map-markers directory.
 #   (This all seems a bit too complex, but it's what is needed to get this working.)
-set :map_marker_root_dir, 'public'
+#
+#  The definitive directory is public/map-markers and it must have all of the map-marker files.
+#  The other directories/files are just symbolic links too the definitive directory and files.
+#
+#  The definitive directory and files _must_ exist. A task checks to see if they do and fails if they don't.
+#  The symbolic links are all created in another task.
+#
+set :map_marker_parent_dir, 'public'
 set :map_marker_dir, 'map-markers'
-set :map_marker_linked_dirs, ['sv', 'en', 'hundforetag', 'sv/hundforetag', 'en/hundforetag']
 set :map_marker_filenames, ['m1.png', 'm2.png', 'm3.png', 'm4.png', 'm5.png']
+set :locale_prefixes, ['sv', 'en']
+set :map_marker_linked_dirs, ['hundforetag']
 
 
-def mapmarker_root_path
-  # map_marker_root_dir = 'public'
-  # shared_path = Pathname.new('.')
-  # mapmarker_root_path = shared_path.join(map_marker_root_dir)
-  shared_path.join(fetch(:map_marker_root_dir))
+# @return Pathname - top-level path (within the Rails app) where the map-marker directory resides (the parent of the map-marker directory)
+def mapmarkers_parent_path
+  release_path.join(fetch(:map_marker_parent_dir))
 end
 
 
-def mapmarker_main_path
-  # map_marker_dir = 'map-markers'
-  # markers_path = Pathname.new(map_marker_dir)
-  markers_path = Pathname.new(fetch(:map_marker_dir))
-  mapmarker_root_path.join(markers_path)
-end
-
-
-# @return Array[String] - list of all files in the main mapmarkers directory
-def mapmarker_main_files
-  # ['m1.png', 'm2.png', 'm3.png', 'm4.png', 'm5.png']
-  fetch(:map_marker_filenames, [])
+# @return Pathname - full path (within the Rails app) for the definitive map-markers directory
+def mapmarkers_main_path
+  mapmarkers_parent_path.join(Pathname.new(fetch(:map_marker_dir)))
 end
 
 
@@ -205,11 +201,11 @@ namespace :shf do
 
     namespace :check do
       desc 'Ensure public/map-marker files exist. (Needed for Google maps)'
-      task :main_mapmarker_files do
+      task :main_mapmarker_files_exist do
 
         on release_roles :all do |host|
-          target_markers_path = mapmarker_main_path
-          source_files = mapmarker_main_files
+          target_markers_path = mapmarkers_main_path
+          source_files = fetch(:map_marker_filenames, [])
 
           source_files.each do |marker_file|
             full_fn = target_markers_path.join(marker_file)
@@ -220,38 +216,58 @@ namespace :shf do
             end
           end
         end
-
       end
+
     end
 
 
-    desc 'Create sym links to public/map-markers files if needed'
-    task create_mapmarker_symlinks: ["deploy:set_rails_env", "check:main_mapmarker_files"] do
+    desc 'Create sym links to public/map-markers files. Always remove any existing links and recreate them'
+    task symlink_dirs_to_mapmarkers: ["deploy:set_rails_env", "shf:deploy:check:main_mapmarker_files_exist"] do
+
+
+      # ensure we're working with a Pathname vs. a String
+      # @return Pathname - constructed with the string representation of what was given
+      def make_path(str_or_path = '')
+        Pathname(str_or_path.to_s)
+      end
+
+
+      # @return Pathname with the map-markers directory appended
+      def append_mapmarkers_dir(given_dir)
+        make_path(given_dir).join(fetch(:map_marker_dir))
+    end
+
+
+      # Always recreate the link so that we ensure it is up to date (= '-f' option)
+      def recreate_symlinked_dir(orig_dir, symlinked_dir)
+        execute :ln, "-sTf", orig_dir, symlinked_dir
+      end
+
 
       on release_roles :all do |_host|
 
-        target_markers_path = mapmarker_main_path
-        source_files = mapmarker_main_files
+        # create locale dirs based on the mapmarkers_main_path
+        # add a link to the map-markers directory
+        # don't delete the locale dirs if they already exist; we'll need to add to them
+        fetch(:locale_prefixes).each do |locale|
+          parent_path_with_locale = mapmarkers_parent_path.join(locale)
+          execute :mkdir, "-p", parent_path_with_locale
+          recreate_symlinked_dir(mapmarkers_main_path, append_mapmarkers_dir(parent_path_with_locale))
+        end
 
-        #  Note that the links are RELATIVE paths.  This makes testing on a local dev machine easier.
-        mapmarker_linked_paths.each do |markerlinked_dir|
-          # create the dir and any intermediate dirs only if it doesn't exist
-          execute :mkdir, "-p", markerlinked_dir
-          # FileUtils.mkdir_p(markerlinked_dir)
+        # Dirs that need to have locales prepended and a link to map-markers in each
+        fetch(:map_marker_linked_dirs, []).each do |linked_dirname|
 
-          relative_target_path = target_markers_path.relative_path_from(markerlinked_dir)
+          # First: create the dir without any locale and put the a link to map-markers in it
+          linked_dir_path_no_locale = mapmarkers_parent_path.join(linked_dirname)
+          execute :mkdir, "-p", linked_dir_path_no_locale
+          recreate_symlinked_dir(mapmarkers_main_path, append_mapmarkers_dir(linked_dir_path_no_locale))
 
-          source_files.each do |source_fname|
-            linked_file = markerlinked_dir.join(source_fname)
-
-            unless test("[ -l #{linked_file} ]")
-              # unless File.symlink?(linked_file)
-              execute :rm, linked_file if test "[ -f #{linked_file} ]"
-              # File.delete(linked_file) if File.exist?(linked_file)
-
-              execute :ln, "-s", "#{relative_target_path}/#{source_fname}", linked_file
-              # File.symlink "#{relative_target_path}/#{source_fname}", "#{linked_file}"
-            end
+          # Second: create dirs with the locale prefixes and put the link to map-markers in each
+          fetch(:locale_prefixes).each do |locale|
+            linked_dir_path_w_locale = mapmarkers_parent_path.join(locale).join(linked_dirname)
+            execute :mkdir, "-p", linked_dir_path_w_locale
+            recreate_symlinked_dir(mapmarkers_main_path, append_mapmarkers_dir(linked_dir_path_w_locale))
           end
         end
 
@@ -419,3 +435,29 @@ namespace :rails do
     exec "ssh -l #{user} #{host} -p #{port} -t 'cd #{deploy_to}/current && #{command}'"
   end
 end
+
+
+# ----------------------------------------------------
+# Task sequencing:
+# ----------------------------------------------------
+
+before "deploy:symlink:linked_files", "shf:deploy:append_reqd_linked_files"
+
+after "deploy:symlink:linked_dirs", "shf:deploy:symlink_dirs_to_mapmarkers"
+
+# Have to wait until all files are copied and symlinked before trying to remove
+#   these files.  (They won't exist until then.)
+# They must be removed before deploy:assets:precompile is executed because
+#   that will cause all rake files to be loaded and if any testing .rake or .rb files are referenced,
+#   it will fail.
+before "deploy:assets:precompile", "shf:deploy:remove_test_files"
+
+before "deploy:publishing", "shf:deploy:run_load_conditions"
+after "shf:deploy:run_load_conditions", "shf:deploy:run_one_time_tasks"
+
+after "deploy:published", "shf:deploy:restart"
+
+# Refresh the sitemaps
+after "shf:deploy:restart", "shf:sitemap_refresh"
+
+after "deploy:finished", "shf:hooray"
