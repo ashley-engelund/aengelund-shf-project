@@ -389,7 +389,9 @@ namespace :shf do
 
   desc 'celebrate success!'
   task :hooray do
-    puts "\n\n\n     HOORAY!\n\n\n"
+    yay_words = ['HOORAY!','Excellent!', 'Whoopee!', 'YAY!', 'Jippie!', 'Eccellente!', 'Woo Hoo!', 'Fantasic!']
+    random_yay = yay_words.sample
+    puts "\n\n\n     #{random_yay}  The system deployed successfully. \n\n\n"
   end
 
 
