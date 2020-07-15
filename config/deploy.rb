@@ -69,39 +69,17 @@ set :map_marker_dir, 'map-markers'
 set :map_marker_filenames, ['m1.png', 'm2.png', 'm3.png', 'm4.png', 'm5.png']
 set :locale_prefixes, ['sv', 'en']
 set :map_marker_linked_dirs, ['hundforetag']
-# set :map_marker_linked_dirs, ['hundforetag/map-markers']
 
 
 # @return Pathname - top-level path (within the Rails app) where the map-marker directory resides (the parent of the map-marker directory)
 def mapmarkers_parent_path
-  # map_marker_parent_dir = 'public'
-  # release_path = Pathname.new('.')
-  # mapmarker_root_path = release_path.join(map_marker_parent_dir)
   release_path.join(fetch(:map_marker_parent_dir))
 end
 
 
 # @return Pathname - full path (within the Rails app) for the definitive map-markers directory
 def mapmarkers_main_path
-  # map_marker_dir = 'map-markers'
   mapmarkers_parent_path.join(Pathname.new(fetch(:map_marker_dir)))
-end
-
-
-# @return Array[String] - list of all files in the main mapmarkers directory
-def mapmarkers_main_files
-  # ['m1.png', 'm2.png', 'm3.png', 'm4.png', 'm5.png']
-  fetch(:map_marker_filenames, [])
-end
-
-
-# @return Array[Pathname] - list of all of the directories that need to be symbolic links to the definitive map-marker directory.
-#     Includes the path up the the top of this Rails application
-def mapmarker_linked_paths
-  # markerlinked_dirs = ['hundforetag']
-  # map_marker_dir = 'map-markers'
-  markerlinked_dirs = fetch(:map_marker_linked_dirs, [])
-  markerlinked_dirs.map { |marker_linked_dir| mapmarkers_parent_path.join(marker_linked_dir) }
 end
 
 
@@ -228,7 +206,7 @@ namespace :shf do
 
         on release_roles :all do |host|
           target_markers_path = mapmarkers_main_path
-          source_files = mapmarkers_main_files
+          source_files = fetch(:map_marker_filenames, [])
 
           source_files.each do |marker_file|
             full_fn = target_markers_path.join(marker_file)
@@ -261,38 +239,9 @@ namespace :shf do
       end
 
 
-      # Create the parent directory(-ies) if needed for the given directory
-      # If the given directory represents more than 1 path segment,
-      #   then create all parent directories usking mkdir -p  (Which will _not_ clobber any already existing dirs)
-      # @param [String | Pathname|] given_dir - the given directory
-      # FIXME delete?
-      def create_parent_if_needed(given_dir = Pathname(''))
-        given_dir_path = make_path(given_dir)
-
-        # (There must be a better way to see if a Pathname has more than 1 segment)
-        unless given_dir_path.parent.to_s == '..'
-          execute :mkdir, "-p", given_dir_path.parent
-        end
-      end
-
-
       # Always recreate the link so that we ensure it is up to date (= '-f' option)
       def recreate_symlinked_dir(orig_dir, symlinked_dir)
         execute :ln, "-sTf", orig_dir, symlinked_dir
-      end
-
-
-      # need to have a symlinked 'map-markers' dir under each locale dir (not the individual files)
-      # make a linked directory for each locale
-      # FIXME delete?
-      def create_symlinked_locale_dirs(linked_dirname = Pathname.new(''))
-        linked_dir_path = make_path(linked_dirname.to_s)
-
-        fetch(:locale_prefixes).each do |locale|
-          full_path_with_locale = mapmarkers_parent_path.join(locale).join(linked_dir_path)
-          create_parent_if_needed(full_path_with_locale)
-          recreate_symlinked_dir(mapmarkers_main_path, full_path_with_locale)
-        end
       end
 
 
@@ -310,22 +259,14 @@ namespace :shf do
         # Dirs that need to have locales prepended and a link to map-markers in each
         fetch(:map_marker_linked_dirs, []).each do |linked_dirname|
 
-          # Already has map-markers  as the last path segment:
-          # full_path = mapmarkers_parent_path.join(linked_dirname)
-          # create_parent_if_needed(full_path)
-          # recreate_symlinked_dir(mapmarkers_main_path, full_path)
-          # create_symlinked_locale_dirs(linked_dirname)
-
           # First: create the dir without any locale and put the a link to map-markers in it
           linked_dir_path_no_locale = mapmarkers_parent_path.join(linked_dirname)
-          puts " --> linked_dir_path_no_locale: #{linked_dir_path_no_locale}"
           execute :mkdir, "-p", linked_dir_path_no_locale
           recreate_symlinked_dir(mapmarkers_main_path, append_mapmarkers_dir(linked_dir_path_no_locale))
 
           # Second: create dirs with the locale prefixes and put the link to map-markers in each
           fetch(:locale_prefixes).each do |locale|
             linked_dir_path_w_locale = mapmarkers_parent_path.join(locale).join(linked_dirname)
-            puts " --> linked_dir_path_w_locale: #{linked_dir_path_w_locale}"
             execute :mkdir, "-p", linked_dir_path_w_locale
             recreate_symlinked_dir(mapmarkers_main_path, append_mapmarkers_dir(linked_dir_path_w_locale))
           end
@@ -351,11 +292,8 @@ namespace :shf do
 
     desc 'Restart application'
     task :restart do
-      puts "--> in task :restart.....  release_roles :all = #{release_roles :all}"
-      puts "   roles(:app) = #{roles(:app)}"
-      # on release_roles :all, wait: 5 do
       on roles(:app), in: :sequence, wait: 5 do
-        info 'Restarting Rails server by touching tmp/restart.txt...'
+        info 'Restarting Rails server...'
         execute :touch, release_path.join('tmp/restart.txt')
       end
     end
@@ -401,7 +339,7 @@ namespace :shf do
               #info task_invoking_info(calling_task.name, task_name_to_run)
               execute :rake, task_name_to_run
             else
-              puts "\n>> WARNING! No task named #{task_name_to_run}. #{info_if_missing}\n\n"
+              warn "\n>> WARNING! No task named #{task_name_to_run}. #{info_if_missing}\n\n"
             end
           end
         end
@@ -419,7 +357,7 @@ namespace :shf do
       if test("[ -f #{full_fn_path} ]") # if the file exists on the remote server
         execute %{rm -f #{full_fn_path} }
       else
-        warn "File doesn't exist, so it could not be removed: #{full_fn_path}" # log and puts
+        warn "File doesn't exist, so it could not be removed: #{full_fn_path}"
       end
     end
 
@@ -428,7 +366,7 @@ namespace :shf do
       if test("[ -d #{full_dir_path} ]") # if the directory exists on the remote server
         execute %{rm -r #{full_dir_path} }
       else
-        warn "Directory doesn't exist, so it could not be removed: #{full_dir_path}" # log and puts
+        warn "Directory doesn't exist, so it could not be removed: #{full_dir_path}"
       end
     end
 
@@ -450,7 +388,7 @@ namespace :shf do
 
   desc 'celebrate success!'
   task :hooray do
-    puts "\n\n\n     HOORAY!\n\n\n"
+    info "\n\n\n     HOORAY!\n\n\n"
   end
 
 
@@ -502,26 +440,23 @@ end
 # Task sequencing:
 # ----------------------------------------------------
 
-
 before "deploy:symlink:linked_files", "shf:deploy:append_reqd_linked_files"
 
-# after "deploy:symlink:linked_dirs", "shf:deploy:symlink_dirs_to_mapmarkers"
+after "deploy:symlink:linked_dirs", "shf:deploy:symlink_dirs_to_mapmarkers"
 
 # Have to wait until all files are copied and symlinked before trying to remove
 #   these files.  (They won't exist until then.)
 # They must be removed before deploy:assets:precompile is executed because
-#   that will cause all rake files to be loaded, including those like lib/tasks/ci.rake, which has
-#   the statement   require 'rspec/core/rake_task'   in it. That will cause a fail
-#   since 'rspec/core' can't be found, since that gem is only installed in the :test group.
-#   IOW, get rid of anything that might reference any testing gems, including rake files.
+#   that will cause all rake files to be loaded and if any testing .rake or .rb files are referenced,
+#   it will fail.
 before "deploy:assets:precompile", "shf:deploy:remove_test_files"
 
 before "deploy:publishing", "shf:deploy:run_load_conditions"
-# after "shf:deploy:run_load_conditions", "shf:deploy:run_one_time_tasks"
+after "shf:deploy:run_load_conditions", "shf:deploy:run_one_time_tasks"
 
 after "deploy:publishing", "shf:deploy:restart"
 
 # Refresh the sitemaps
-# after "shf:deploy:restart", "shf:sitemap_refresh"
+after "shf:deploy:restart", "shf:sitemap_refresh"
 
 after "deploy", "shf:hooray"
