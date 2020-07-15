@@ -88,18 +88,18 @@ end
 
 def required_linked_files
   rails_files = ['config/database.yml',
-       'config/secrets.yml',
-       '.env',
-       'public/robots.txt',
-       'public/favicon.ico',
-       'public/apple-touch-icon.png',
+                 'config/secrets.yml',
+                 '.env',
+                 'public/robots.txt',
+                 'public/favicon.ico',
+                 'public/apple-touch-icon.png',
                  'public/apple-touch-icon-precomposed.png']
 
   google_webmaster_files = ['public/google052aa706351efdce.html',
                             'public/google979ebbe196e9bd30.html']
 
   sitemap_files = ['public/sitemap.xml.gz',
-       'public/svenska.xml.gz',
+                   'public/svenska.xml.gz',
                    'public/english.xml.gz']
 
   [] + rails_files + google_webmaster_files + sitemap_files
@@ -235,7 +235,7 @@ namespace :shf do
       # @return Pathname with the map-markers directory appended
       def append_mapmarkers_dir(given_dir)
         make_path(given_dir).join(fetch(:map_marker_dir))
-    end
+      end
 
 
       # Always recreate the link so that we ensure it is up to date (= '-f' option)
@@ -341,7 +341,7 @@ namespace :shf do
               #info task_invoking_info(calling_task.name, task_name_to_run)
               execute :rake, task_name_to_run
             else
-              puts "\n>> WARNING! No task named #{task_name_to_run}. #{info_if_missing}\n\n"  # TODO can this be 'warn' instead of 'puts' ?
+              puts "\n>> WARNING! No task named #{task_name_to_run}. #{info_if_missing}\n\n" # TODO can this be 'warn' instead of 'puts' ?
             end
           end
         end
@@ -389,7 +389,7 @@ namespace :shf do
 
   desc 'celebrate success!'
   task :hooray do
-    yay_words = ['HOORAY!','Excellent!', 'Whoopee!', 'YAY!', 'Jippie!', 'Eccellente!', 'Woo Hoo!', 'Fantasic!']
+    yay_words = ['HOORAY!', 'Excellent!', 'Whoopee!', 'YAY!', 'Jippie!', 'Eccellente!', 'Woo Hoo!', 'Fantasic!']
     random_yay = yay_words.sample
     puts "\n\n\n     #{random_yay}  The system deployed successfully. \n\n\n"
   end
@@ -431,8 +431,8 @@ namespace :rails do
   # ssh to the server
   def execute_interactively(command)
     server = fetch(:bundle_servers).first
-    user   = server.user
-    port   = server.port || 22
+    user = server.user
+    port = server.port || 22
 
     exec "ssh -l #{user} #{host} -p #{port} -t 'cd #{deploy_to}/current && #{command}'"
   end
