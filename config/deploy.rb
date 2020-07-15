@@ -319,7 +319,8 @@ namespace :shf do
 
         execute(:mkdir, "-p", subdir)
         mapmarkers_main_files.each do | marker_fn |
-          execute :ln, "-s", subdir.join(marker_fn)
+          puts " creating ln -s #{mapmarkers_main_path.join(marker_fn)} #{subdir.join(marker_fn)}..."
+          execute :ln, "-s", mapmarkers_main_path.join(marker_fn), subdir.join(marker_fn)
         end
 
         puts " #{subdir} now contains: "
@@ -442,10 +443,18 @@ namespace :shf do
 
   end
 
+
   desc 'refresh sitemaps'
   task sitemap_refresh: ["deploy:set_rails_env"] do |this_task|
     run_task_from(this_task, 'sitemap:refresh', 'Unable to refresh the SITEMAPs (/public/sitemap.* ...)')
   end
+
+
+  desc 'celebrate success!'
+  task :hooray do
+    puts "\n\n\n     HOORAY!\n\n\n"
+  end
+
 
 end
 
@@ -516,3 +525,5 @@ after "deploy:publishing", "deploy:restart"
 
 # Refresh the sitemaps
 after "deploy:restart", "shf:sitemap_refresh"
+
+after "deploy", "shf:hooray"
