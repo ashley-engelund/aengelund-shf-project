@@ -352,8 +352,8 @@ namespace :shf do
     desc 'Restart application'
     task :restart do
       puts "--> in task :restart.....  release_roles :all = #{release_roles :all}"
-      on release_roles :all, wait: 5 do
-      # on roles: %w{web app db}, in: :sequence, wait: 5 do
+      # on release_roles :all, wait: 5 do
+      on roles: %w{web app db}, in: :sequence, wait: 5 do
         info 'Restarting Rails server by touching tmp/restart.txt...'
         execute :touch, release_path.join('tmp/restart.txt')
       end

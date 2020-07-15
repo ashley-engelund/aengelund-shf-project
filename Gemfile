@@ -87,6 +87,16 @@ gem 'whenever', require: false
 # Query ActiveRecord by time (ex:  Payment.by_year(2019), Payment.between_times(Time.zone.now - 3.hours, Time.zone.now)) # all posts in last 3 hours
 gem 'by_star'
 
+# always include the capistrano gems so that capistrano tasks can be run directly on the server
+gem 'capistrano', '~> 3.11'
+gem 'capistrano-bundler', '~> 1.6'
+gem 'capistrano-rails', '~> 1.4'
+gem 'capistrano-rbenv', '~> 2.0'
+gem 'capistrano-ssh-doctor', '~> 1.0'
+gem 'capistrano-env-config'
+
+
+
 group :development, :test do
   gem 'rspec-rails'
   gem 'shoulda-matchers'
@@ -118,12 +128,6 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'erb2haml'
-  gem 'capistrano', '~> 3.11'
-  gem 'capistrano-bundler', '~> 1.6'
-  gem 'capistrano-rails', '~> 1.4'
-  gem 'capistrano-rbenv', '~> 2.0'
-  gem 'capistrano-ssh-doctor', '~> 1.0'
-  gem 'capistrano-env-config'
   gem 'railroady'
   gem 'bullet'
   gem 'rb-readline'
