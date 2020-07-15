@@ -303,8 +303,8 @@ namespace :shf do
             end
           end
         end
-
       end
+
     end
 
 
@@ -328,9 +328,6 @@ namespace :shf do
           # Always recreate the dir so that we ensure it is up to date
           execute :rm, "-r", markerlinked_path if test("[ -d #{markerlinked_path}]")
           # FileUtils.rm markerlinked_path
-
-          execute :mkdir, "-p", markerlinked_path
-          # FileUtils.mkdir_p(markerlinked_dir)
 
           execute :ln, "-sT", markerlinked_path, mapmarkers_main_path
 
