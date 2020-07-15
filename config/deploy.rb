@@ -351,7 +351,7 @@ namespace :shf do
 
     desc 'Restart application'
     task :restart do
-      on roles(:app), in: :sequence, wait: 5 do
+      on roles: %w{web app db}, in: :sequence, wait: 5 do
         info 'Restarting...'
         execute :touch, release_path.join('tmp/restart.txt')
       end
