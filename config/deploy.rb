@@ -246,28 +246,33 @@ namespace :shf do
     desc 'Create sym links to public/map-markers files. Always remove any existing links and recreate them'
     task symlink_dirs_to_mapmarkers: ["deploy:set_rails_env", "shf:deploy:check:main_mapmarker_files_exist"] do
 
-      # Always recreate the dir so that we ensure it is up to date
-      def recreate_symlinked_dir(orig_dir, symlinked_dir)
-        execute(:rm, "-r", symlinked_dir) if test " [ -d #{symlinked_dir} ] "
-        execute(:rm, symlinked_dir) if test("[ -l #{symlinked_dir} ]")
+      # Create the parent directory(-ies) if needed for the given directory
+      # If the given directory represents more than 1 path segment,
+      #   then create all parent directories usking mkdir -p  (Which will _not_ clobber any already existing dirs)
+      # @param [String | Pathname|] given_dir - the given directory
+      #
+      def create_parent_if_needed(given_dir = Pathname(''))
+        given_dir_path = Pathname(given_dir.to_s) # ensure we're working with a Pathname vs. a String
 
-        puts "  ln -sT #{orig_dir}, #{symlinked_dir}"
-        execute :ln, "-sT", orig_dir, symlinked_dir
-      end
-
-
-      # Create the parent directory(-ies) if needed
-      def create_parent_if_needed(linked_dir = Pathname(''))
-        linked_dir_path = Pathname(linked_dir.to_s) # ensure we're working with a Pathname vs. a String
-
-        # (There must be a better way to see if a Pathname is just one directory deep!)
-        unless linked_dir_path.parent.to_s == '..'
-          puts "    #{linked_dir_path.parent}.to_s != ., so will try to make it, prepending the locale"
-          execute :mkdir, "-p", linked_dir_path.parent
+        # (There must be a better way to see if a Pathname has more than 1 segment)
+        unless given_dir_path.parent.to_s == '..'
+          puts "-->    #{given_dir_path.parent}.to_s != ., so will try to make it"
+          execute :mkdir, "-p", given_dir_path.parent
         end
       end
 
 
+      # Always recreate the dir so that we ensure it is up to date
+      def recreate_symlinked_dir(orig_dir, symlinked_dir)
+        # execute(:rm, "-r", symlinked_dir) if test " [ -d #{symlinked_dir} ] "
+        # execute(:rm, symlinked_dir) if test("[ -l #{symlinked_dir} ]")
+
+        puts "  ln -sTf #{orig_dir}, #{symlinked_dir}"
+        execute :ln, "-sTf", orig_dir, symlinked_dir
+      end
+
+
+      # need to have a symlinked 'map-markers' dir under each locale dir (not the individual files)
       # make a linked directory for each locale
       def create_symlinked_locale_dirs(linked_dirname = Pathname.new(''))
         linked_dir_path = Pathname.new(linked_dirname.to_s) # ensure we're working with a Pathname and not just a String
@@ -287,7 +292,15 @@ namespace :shf do
         puts " ======================================================"
 
         # create locale dirs based on the mapmarkers_main_path
-        create_symlinked_locale_dirs
+        # don't delete the locale dirs if they already exist; we'll need to add to them
+        fetch(:locale_prefixes).each do |locale|
+          full_path_with_locale = mapmarkers_parent_path.join(locale)
+          execute :mkdir, "-p", full_path_with_locale
+
+          # add a link to the map-markers directory in each of the locales
+          recreate_symlinked_dir(mapmarkers_main_path, full_path_with_locale)
+        end
+
 
         # create locale dirs for each of the linked paths
         fetch(:map_marker_linked_dirs, []).each do |linked_dirname|
@@ -296,6 +309,7 @@ namespace :shf do
           recreate_symlinked_dir(mapmarkers_main_path, full_path)
           create_symlinked_locale_dirs(linked_dirname)
         end
+
 
       end
     end
