@@ -239,8 +239,9 @@ namespace :shf do
 
 
       # Always recreate the link so that we ensure it is up to date (= '-f' option)
+      # If the link already exists, force an overwrite (-f)
+      # If a directory exists with the same name as the link, remove it (must use 'rm -r')
       def recreate_symlinked_dir(orig_dir, symlinked_dir)
-        # note that 'ln -f' will not overwrite a directory, so we must use rm -r if needed
         execute(:rm, "-r", symlinked_dir) if test " [ -d #{symlinked_dir} ] "
         execute :ln, "-sTf", orig_dir, symlinked_dir
       end
