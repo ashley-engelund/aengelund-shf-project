@@ -71,7 +71,7 @@ def mapmarkers_root_path
   # map_marker_root_dir = 'public'
   # shared_path = Pathname.new('.')
   # mapmarker_root_path = shared_path.join(map_marker_root_dir)
-  shared_path.join(fetch(:map_marker_root_dir))
+  release_path.join(fetch(:map_marker_root_dir))
 end
 
 
