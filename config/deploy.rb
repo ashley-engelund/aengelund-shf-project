@@ -23,10 +23,10 @@ set :rbenv_type, :user
 set :rbenv_ruby, '2.5.1'
 
 set :application, 'shf'
-set :repo_url, 'git@github.com:AgileVentures/shf-project.git'
-set :branch, ENV['BRANCH']
+set :repo_url, ENV['SHF_GIT_REPO']
+set :branch, ENV['SHF_GIT_BRANCH']
 
-set :deploy_to, ENV['APP_PATH']
+set :deploy_to, ENV['SHF_APP_PATH']
 
 # Ensure the binstubs (files in /bin) are generated on each deploy. (From capistrano-bundle gem: https://github.com/capistrano/bundler)
 set :bundle_binstubs, -> { shared_path.join('bin') }

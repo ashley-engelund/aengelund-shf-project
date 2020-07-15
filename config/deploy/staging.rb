@@ -1,4 +1,4 @@
-server ENV['SHF_STAGING_SERVER'], user: ENV['DEPLOY_USER'], roles: %w{web db app}
+server ENV['SHF_STAGING_SERVER'], user: ENV['SHF_DEPLOY_USER'], roles: %w{web db app}
 set :ssh_options, forward_agent: true
 
 # Set this to 'production' so that it mirrors the production installation
