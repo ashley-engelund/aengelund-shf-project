@@ -339,7 +339,7 @@ namespace :shf do
               #info task_invoking_info(calling_task.name, task_name_to_run)
               execute :rake, task_name_to_run
             else
-              warn "\n>> WARNING! No task named #{task_name_to_run}. #{info_if_missing}\n\n"
+              puts "\n>> WARNING! No task named #{task_name_to_run}. #{info_if_missing}\n\n"  # TODO can this be 'warn' instead of 'puts' ?
             end
           end
         end
@@ -388,7 +388,7 @@ namespace :shf do
 
   desc 'celebrate success!'
   task :hooray do
-    info "\n\n\n     HOORAY!\n\n\n"
+    puts "\n\n\n     HOORAY!\n\n\n"
   end
 
 
