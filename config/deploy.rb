@@ -496,9 +496,6 @@ end
 
 before "deploy:symlink:linked_files", "shf:deploy:append_reqd_linked_files"
 
-before "deploy:publishing", "shf:deploy:run_load_conditions"
-after "shf:deploy:run_load_conditions", "shf:deploy:run_one_time_tasks"
-
 # Have to wait until all files are copied and symlinked before trying to remove
 #   these files.  (They won't exist until then.)
 # They must be removed before deploy:assets:precompile is executed because
@@ -507,6 +504,9 @@ after "shf:deploy:run_load_conditions", "shf:deploy:run_one_time_tasks"
 #   since 'rspec/core' can't be found, since that gem is only installed in the :test group.
 #   IOW, get rid of anything that might reference any testing gems, including rake files.
 before "deploy:assets:precompile", "shf:deploy:remove_test_files"
+
+before "deploy:publishing", "shf:deploy:run_load_conditions"
+after "shf:deploy:run_load_conditions", "shf:deploy:run_one_time_tasks"
 
 after "deploy:publishing", "deploy:restart"
 
