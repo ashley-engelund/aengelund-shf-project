@@ -251,22 +251,25 @@ namespace :shf do
         execute(:rm, "-r", symlinked_dir) if test " [ -d #{symlinked_dir} ] "
         execute(:rm, symlinked_dir) if test("[ -l #{symlinked_dir} ]")
 
-        # puts "  ln -sT #{orig_dir}, #{symlinked_dir}"
+        puts "  ln -sT #{orig_dir}, #{symlinked_dir}"
         execute :ln, "-sT", orig_dir, symlinked_dir
       end
 
 
       # make a linked directory for each locale
       def create_symlinked_locale_dirs(linked_dirname = Pathname.new(''))
-        linked_dir_path = Pathname.new(linked_dirname.to_s)  # ensure we're working with a Pathname and not just a String
-
-        # if the linked_dir_path is more than 1 directory deep, create the parent directory if needed
-        unless linked_dir_path.parent.to_s == '.'
-          execute :mkdir, "-p", mapmarkers_parent_path.join(linked_dir_path.parent)
-        end
+        linked_dir_path = Pathname.new(linked_dirname.to_s) # ensure we're working with a Pathname and not just a String
+        puts "linked_dir_path: #{linked_dir_path}"
 
         fetch(:locale_prefixes).each do |locale|
-          recreate_symlinked_dir(mapmarkers_main_path, mapmarkers_parent_path.join(locale).join(linked_dirname))
+
+          # (There must be a better way to see if a Pathname is just one directory deep!)
+          unless linked_dir_path.parent.to_s == '.'
+            puts "  #{linked_dir_path.parent}.to_s != ., so will try to make it, prepending the locale"
+            execute :mkdir, "-p", mapmarkers_parent_path.join(locale).join(linked_dir_path.parent)
+          end
+
+          recreate_symlinked_dir(mapmarkers_main_path, mapmarkers_parent_path.join(locale).join(linked_dir_path))
         end
       end
 
@@ -275,6 +278,7 @@ namespace :shf do
 
         # create locale dirs based on the mapmarkers_main_path
         create_symlinked_locale_dirs
+
 
         # create locale dirs for each of the linked paths
         fetch(:map_marker_linked_dirs, []).each do |linked_dirname|
