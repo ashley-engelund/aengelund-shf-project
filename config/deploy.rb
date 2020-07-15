@@ -62,8 +62,9 @@ set :is_initial_install, false
 #   (This all seems a bit too complex, but it's what is needed to get this working.)
 set :map_marker_root_dir, 'public'
 set :map_marker_dir, 'map-markers'
-set :map_marker_linked_dirs, ['sv', 'en', 'hundforetag', 'sv/hundforetag', 'en/hundforetag']
+set :map_marker_subdir, 'hundforetag'
 set :map_marker_filenames, ['m1.png', 'm2.png', 'm3.png', 'm4.png', 'm5.png']
+set :map_marker_linked_dirs, ['sv', 'en', 'hundforetag']
 
 
 # @return Pathname - top-level path (within the Rails app) where the map-marker directory resides (the parent of the map-marker directory)
@@ -89,7 +90,6 @@ def mapmarkers_main_files
 end
 
 
-# FIXME are these paths correct?  on the production system, the directories were being linked to themselves
 # @return Array[Pathname] - list of all of the directories that need to be symbolic links to the definitive map-marker directory.
 #     Includes the path up the the top of this Rails application
 def mapmarker_linked_paths
@@ -308,54 +308,33 @@ namespace :shf do
     end
 
 
-    # FIXME are these paths correct?  on the production system, the directories were being linked to themselves
     desc 'Create sym links to public/map-markers files. Always remove any existing links and recreate them'
     task symlink_dirs_to_mapmarkers: ["deploy:set_rails_env", "shf:deploy:check:main_mapmarker_files_exist"] do
 
       on release_roles :all do |_host|
 
-        target_markers_path = mapmarkers_main_path
-        puts "target_markers_path: #{target_markers_path}"
-        source_files = mapmarkers_main_files
-        puts "source_files: #{source_files.inspect}"
+        # make the subdirectory in map-markers and create a link to all of the main files
+        subdir = mapmarkers_main_path.join(fetch(:map_marker_subdir, 'subdir'))
+        execute(:rm, "-r", subdir) if test " [ -d #{subdir} ] "
 
-        puts "mapmarker_linked_paths: #{mapmarker_linked_paths.inspect}"
-
-        #  Note that the links are RELATIVE paths.  This makes testing on a local dev machine easier.
-
-        mapmarker_linked_paths.each do |markerlinked_path|
-          puts " markerlinked_path: #{markerlinked_path}"
-          # Always recreate the dir so that we ensure it is up to date
-
-          if test " [ -d #{markerlinked_path} ] "
-            puts "  the dir exists. will try to remove it..."
-            execute(:rm, "-r", markerlinked_path)
-          end
-          if test("[ -l #{markerlinked_path} ]")
-            ptus "  the dir is a link. will try to remove it..."
-            execute(:rm, markerlinked_path)
-          end
-          # FileUtils.rm markerlinked_path
-
-          execute :ln, "-sT",  mapmarkers_main_path, markerlinked_path
-
-          # relative_target_path = target_markers_path.relative_path_from(markerlinked_path)
-          #
-          # source_files.each do |source_fname|
-          #   # FIXME are these paths correct?  on the production system, the directories were being linked to themselves
-          #   linked_file = markerlinked_path.join(source_fname)
-          #
-          #   unless test("[ -l #{linked_file} ]")
-          #     # unless File.symlink?(linked_file)
-          #     execute :rm, linked_file if test "[ -f #{linked_file} ]"
-          #     # File.delete(linked_file) if File.exist?(linked_file)
-          #
-          #     execute :ln, "-s", "#{relative_target_path}/#{source_fname}", linked_file
-          #     # File.symlink "#{relative_target_path}/#{source_fname}", "#{linked_file}"
-          #   end
-          # end
+        execute(:mkdir, "-p", subdir)
+        mapmarkers_main_files.each do | marker_fn |
+          execute :ln, "-s", subdir.join(marker_fn)
         end
 
+        puts " #{subdir} now contains: "
+        execute :ls, "-la", "#{subdir}"
+
+
+        mapmarker_linked_paths.each do |markerlinked_path|
+          puts " linking markerlinked_path: #{markerlinked_path}"
+
+          # Always recreate the dir so that we ensure it is up to date
+          execute(:rm, "-r", markerlinked_path) if test " [ -d #{markerlinked_path} ] "
+          execute(:rm, markerlinked_path) if test("[ -l #{markerlinked_path} ]")
+
+          execute :ln, "-sT", mapmarkers_main_path, markerlinked_path
+        end
       end
     end
 
