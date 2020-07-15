@@ -240,6 +240,8 @@ namespace :shf do
 
       # Always recreate the link so that we ensure it is up to date (= '-f' option)
       def recreate_symlinked_dir(orig_dir, symlinked_dir)
+        # note that 'ln -f' will not overwrite a directory, so we must use rm -r if needed
+        execute(:rm, "-r", symlinked_dir) if test " [ -d #{symlinked_dir} ] "
         execute :ln, "-sTf", orig_dir, symlinked_dir
       end
 
