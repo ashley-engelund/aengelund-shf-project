@@ -273,7 +273,11 @@ namespace :shf do
         fetch(:map_marker_linked_dirs, []).each do |linked_dirname|
 
           # if the linked_dirname is more than 1 directory deep, create the parent directory if needed
-          execute :mkdir, "-p", mapmarkers_parent_path.join(linked_dirname.dirname) if linked_dirname.to_s.split(File::SEPARATOR).count > 1
+          dir_parts = linked_dirname.split(File::SEPARATOR)
+          if dir_parts.count > 1
+            parent_dirname = dir_parts.take(dir_parts.size - 1).join(File::SEPARATOR)
+            execute :mkdir, "-p", mapmarkers_parent_path.join(parent_dirname)
+          end
 
           recreate_symlinked_dir(mapmarkers_main_path, mapmarkers_parent_path.join(linked_dirname))
           create_symlinked_locale_dirs(linked_dirname)
