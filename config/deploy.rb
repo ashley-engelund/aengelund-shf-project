@@ -258,6 +258,13 @@ namespace :shf do
 
       # make a linked directory for each locale
       def create_symlinked_locale_dirs(linked_dirname = Pathname.new(''))
+        linked_dir_path = Pathname.new(linked_dirname.to_s)  # ensure we're working with a Pathname and not just a String
+
+        # if the linked_dir_path is more than 1 directory deep, create the parent directory if needed
+        unless linked_dir_path.parent.to_s == '.'
+          execute :mkdir, "-p", mapmarkers_parent_path.join(linked_dir_path.parent)
+        end
+
         fetch(:locale_prefixes).each do |locale|
           recreate_symlinked_dir(mapmarkers_main_path, mapmarkers_parent_path.join(locale).join(linked_dirname))
         end
@@ -271,14 +278,6 @@ namespace :shf do
 
         # create locale dirs for each of the linked paths
         fetch(:map_marker_linked_dirs, []).each do |linked_dirname|
-
-          # if the linked_dirname is more than 1 directory deep, create the parent directory if needed
-          dir_parts = linked_dirname.split(File::SEPARATOR)
-          if dir_parts.count > 1
-            parent_dirname = dir_parts.take(dir_parts.size - 1).join(File::SEPARATOR)
-            execute :mkdir, "-p", mapmarkers_parent_path.join(parent_dirname)
-          end
-
           recreate_symlinked_dir(mapmarkers_main_path, mapmarkers_parent_path.join(linked_dirname))
           create_symlinked_locale_dirs(linked_dirname)
         end
