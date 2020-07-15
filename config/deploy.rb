@@ -454,9 +454,9 @@ before "deploy:assets:precompile", "shf:deploy:remove_test_files"
 before "deploy:publishing", "shf:deploy:run_load_conditions"
 after "shf:deploy:run_load_conditions", "shf:deploy:run_one_time_tasks"
 
-after "deploy:publishing", "shf:deploy:restart"
+after "deploy:published", "shf:deploy:restart"
 
 # Refresh the sitemaps
 after "shf:deploy:restart", "shf:sitemap_refresh"
 
-after "deploy", "shf:hooray"
+after "deploy:finished", "shf:hooray"
