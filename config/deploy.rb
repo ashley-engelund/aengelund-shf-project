@@ -262,8 +262,8 @@ namespace :shf do
 
         # (There must be a better way to see if a Pathname is just one directory deep!)
         unless linked_dir_path.parent.to_s == '..'
-          puts "  #{linked_dir_path.parent}.to_s != ., so will try to make it, prepending the locale"
-          execute :mkdir, "-p", mapmarkers_parent_path.join(locale).join(linked_dir_path.parent)
+          puts "    #{linked_dir_path.parent}.to_s != ., so will try to make it, prepending the locale"
+          execute :mkdir, "-p", linked_dir_path.parent
         end
       end
 
@@ -271,24 +271,29 @@ namespace :shf do
       # make a linked directory for each locale
       def create_symlinked_locale_dirs(linked_dirname = Pathname.new(''))
         linked_dir_path = Pathname.new(linked_dirname.to_s) # ensure we're working with a Pathname and not just a String
-        puts "linked_dir_path: #{linked_dir_path}"
+        puts " linked_dir_path: #{linked_dir_path}"
 
         fetch(:locale_prefixes).each do |locale|
-          create_parent_if_needed(linked_dir_path)
-          recreate_symlinked_dir(mapmarkers_main_path, mapmarkers_parent_path.join(locale).join(linked_dir_path))
+          full_path_with_locale = mapmarkers_parent_path.join(locale).join(linked_dir_path)
+          create_parent_if_needed(full_path_with_locale)
+          recreate_symlinked_dir(mapmarkers_main_path, full_path_with_locale)
         end
       end
 
 
       on release_roles :all do |_host|
 
+        puts " ======================================================"
+        puts " ======================================================"
+
         # create locale dirs based on the mapmarkers_main_path
         create_symlinked_locale_dirs
 
         # create locale dirs for each of the linked paths
         fetch(:map_marker_linked_dirs, []).each do |linked_dirname|
-          create_parent_if_needed(linked_dirname)
-          recreate_symlinked_dir(mapmarkers_main_path, mapmarkers_parent_path.join(linked_dirname))
+          full_path = mapmarkers_parent_path.join(linked_dirname)
+          create_parent_if_needed(full_path)
+          recreate_symlinked_dir(mapmarkers_main_path, full_path)
           create_symlinked_locale_dirs(linked_dirname)
         end
 
