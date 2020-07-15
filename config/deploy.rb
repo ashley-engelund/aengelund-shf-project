@@ -353,7 +353,6 @@ namespace :shf do
     task :restart do
       puts "--> in task :restart.....  release_roles :all = #{release_roles :all}"
       puts "   roles(:app) = #{roles(:app)}"
-      puts "   on roles(:app), in: :sequence = #{on roles(:app), in: :sequence}"
       # on release_roles :all, wait: 5 do
       on roles(:app), in: :sequence, wait: 5 do
         info 'Restarting Rails server by touching tmp/restart.txt...'
