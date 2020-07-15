@@ -351,8 +351,10 @@ namespace :shf do
 
     desc 'Restart application'
     task :restart do
-      on roles: %w{web app db}, in: :sequence, wait: 5 do
-        info 'Restarting...'
+      puts "--> in task :restart.....  release_roles :all = #{release_roles :all}"
+      on release_roles :all, wait: 5 do
+      # on roles: %w{web app db}, in: :sequence, wait: 5 do
+        info 'Restarting Rails server by touching tmp/restart.txt...'
         execute :touch, release_path.join('tmp/restart.txt')
       end
     end
@@ -431,7 +433,7 @@ namespace :shf do
 
 
     def task_is_defined?(task_name)
-      puts "( Checking to see if task #{task_name} is defined. )"
+      puts "( Checking to see if task #{task_name} is defined. This will call the parser.)"
       result = %x{bundle exec rake --tasks #{task_name} }
       result.include?(task_name) ? true : false
     end
@@ -502,7 +504,7 @@ end
 
 before "deploy:symlink:linked_files", "shf:deploy:append_reqd_linked_files"
 
-after "deploy:symlink:linked_dirs", "shf:deploy:symlink_dirs_to_mapmarkers"
+# after "deploy:symlink:linked_dirs", "shf:deploy:symlink_dirs_to_mapmarkers"
 
 # Have to wait until all files are copied and symlinked before trying to remove
 #   these files.  (They won't exist until then.)
@@ -514,11 +516,11 @@ after "deploy:symlink:linked_dirs", "shf:deploy:symlink_dirs_to_mapmarkers"
 before "deploy:assets:precompile", "shf:deploy:remove_test_files"
 
 before "deploy:publishing", "shf:deploy:run_load_conditions"
-after "shf:deploy:run_load_conditions", "shf:deploy:run_one_time_tasks"
+# after "shf:deploy:run_load_conditions", "shf:deploy:run_one_time_tasks"
 
 after "deploy:publishing", "deploy:restart"
 
 # Refresh the sitemaps
-after "deploy:restart", "shf:sitemap_refresh"
+# after "deploy:restart", "shf:sitemap_refresh"
 
 after "deploy", "shf:hooray"
