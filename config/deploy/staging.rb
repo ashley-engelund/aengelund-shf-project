@@ -2,7 +2,7 @@ server ENV['SHF_AE_STAGING_SERVER'], user: ENV['DEPLOY_USER'], roles: %w{web db 
 set :ssh_options, forward_agent: true
 
 # Set this to 'production' so that it mirrors the production installation
-set :rails_env, 'production'
+set :rails_env, :production
 
 
 # Simple Role Syntax
