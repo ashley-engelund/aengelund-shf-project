@@ -18,11 +18,11 @@ class AppVersion
 
     rev_file_path = File.join(revision_path, REVISION_FN)
     version = if File.exist?(rev_file_path)
-      # File mode rb:bom|utf-8 means 'read-only (r) binary (b) with ( binary mode encoded (bom) OR utf-8 encoded)'
-      "revision #{File.open(rev_file_path, 'rb:bom|utf-8', &:read)}"
-    else
-      DEFAULT_VERSION
-    end
+                # File mode rb:bom|utf-8 means 'read-only (r) binary (b) with ( binary mode encoded (bom) OR utf-8 encoded)'
+                "revision #{File.open(rev_file_path, 'rb:bom|utf-8', &:read)}"
+              else
+                DEFAULT_VERSION
+              end
 
     version.strip
   end
