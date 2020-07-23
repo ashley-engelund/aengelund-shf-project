@@ -413,7 +413,7 @@ sv:
       complete: *complete
 
   about_info:
-    title: Om detta webbplats
+    title: Om denna webbplats
     version: version
 
   address_visibility:
