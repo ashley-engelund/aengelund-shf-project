@@ -251,25 +251,25 @@ RSpec.describe OneTimeTasker::TasksRunner do
 
   describe 'Acceptance testing' do
 
-      include_context 'many task files'
+    include_context 'many task files'
 
     let(:mock_log) { instance_double("ActivityLogger") }
 
-      before(:each) do
+    before(:each) do
       allow(ActivityLogger).to receive(:new).and_return(mock_log)
       allow(mock_log).to receive(:info)
       allow(mock_log).to receive(:record)
       allow(mock_log).to receive(:close)
+
       # There are duplicate tasks and tasks that have already been run.
       #  So errors will be logged.  We're not testing them here.
       allow(mock_log).to receive(:error)
 
+      @all_tests_base_dir = Dir.mktmpdir('test-onetime_rake_files')
+      described_class.tasks_directory = @all_tests_base_dir
 
-        @all_tests_base_dir = Dir.mktmpdir('test-onetime_rake_files')
-        described_class.tasks_directory = @all_tests_base_dir
-
-        make_many_task_files(described_class.tasks_directory)
-        create_5_successful_task_attempts(@all_tests_base_dir)
+      make_many_task_files(described_class.tasks_directory)
+      create_5_successful_task_attempts(@all_tests_base_dir)
     end
 
     describe 'many rake files' do
