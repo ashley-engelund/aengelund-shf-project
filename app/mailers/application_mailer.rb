@@ -30,7 +30,6 @@ class ApplicationMailer < ActionMailer::Base
 
   attr_accessor :recipient_email, :greeting_name, :action_name
 
-
   include MailgunConfig
 
   include CommonMailUtils
@@ -65,7 +64,7 @@ class ApplicationMailer < ActionMailer::Base
 
   rescue  => mailgun_error
 
-    ActivityLogger.open(LogfileNamer.name_for(self.class.name), LOG_FACILITY, 'Mailgun::CommunicationError', false) do |log|
+    ActivityLogger.open(logfile_name, LOG_FACILITY, 'Mailgun::CommunicationError', false) do |log|
 
       log.error( "Could not send email via mailgun at #{Time.zone.now}  Error received from Mailgun: #{mailgun_error}")
 
@@ -75,6 +74,9 @@ class ApplicationMailer < ActionMailer::Base
 
   end
 
+  def self.logfile_name
+    LogfileNamer.name_for(self.class.name)
+  end
 
   def test_email(user)
     @action_name = __method__.to_s
