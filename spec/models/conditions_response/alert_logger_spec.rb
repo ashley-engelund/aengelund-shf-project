@@ -17,13 +17,22 @@ RSpec.describe AlertLogger do
 
   describe '.log_success' do
 
-    it 'logged message starts with the alert class name, then " email sent " then the string returned by the success method' do
+    it 'log msg is: <Alert class name> email sent <result of the success_method> <error message>' do
       expect(alert).to receive(:success_str).with('some-argument').and_return('success!')
       expect(subject).to receive(:msg_start).and_call_original
 
       expect(mock_log).to receive(:info).with(/MembershipExpireAlert email sent success!/)
       subject.log_success('some-argument')
     end
+
+    it 'calls the success method to get the information to show in the returned string' do
+      allow(subject).to receive(:msg_start).and_call_original
+
+      expect(alert).to receive(:success_str).with('some-arg').and_return('success method result')
+      expect(mock_log).to receive(:info).with("MembershipExpireAlert email sent success method result.")
+      subject.log_success('some-arg')
+    end
+
 
     it 'can specify a custom success method to call' do
 
@@ -98,8 +107,7 @@ RSpec.describe AlertLogger do
 
   describe '.log_failure' do
 
-    it 'log msg starts:  <Alert class name> "email ATTEMPT FAILED" <result of the failure_method> <error message>' do
-
+    it 'log msg is: <Alert class name> email ATTEMPT FAILED <result of the failure_method> <error message>' do
       expect(alert).to receive(:failure_str).with('some-arg').and_return('failure method result')
       expect(subject).to receive(:msg_start).and_call_original
 
@@ -107,8 +115,16 @@ RSpec.describe AlertLogger do
       subject.log_failure('some-arg', error: Net::ProtocolError)
     end
 
-    it 'includes error info if any error is given' do
+    it 'calls the failure method to get the information to show in the returned string' do
+      allow(subject).to receive(:msg_start).and_call_original
+
       expect(alert).to receive(:failure_str).with('some-arg').and_return('failure method result')
+      expect(mock_log).to receive(:error).with("MembershipExpireAlert email ATTEMPT FAILED failure method result.  Also see for possible info /Users/ashleyengelund/github/AV--shf-project/log/test_Class.log ")
+      subject.log_failure('some-arg')
+    end
+
+    it 'includes error info if any error is given' do
+      allow(alert).to receive(:failure_str).with('some-arg').and_return('failure method result')
       expect(subject).to receive(:msg_start).and_call_original
 
       expect(mock_log).to receive(:error).with(/(.*) Net::ProtocolError/)
@@ -120,7 +136,7 @@ RSpec.describe AlertLogger do
       expect(alert).to receive(:failure_str).with('some-arg').and_return('failure method result')
       expect(subject).to receive(:msg_start).and_call_original
 
-      expect(mock_log).to receive(:error).with(/Also see for possible info #{ApplicationMailer::LOG_FILE}/)
+      expect(mock_log).to receive(:error).with(/Also see for possible info #{ApplicationMailer.logfile_name}/)
       subject.log_failure('some-arg', error: Net::ProtocolError)
     end
 
