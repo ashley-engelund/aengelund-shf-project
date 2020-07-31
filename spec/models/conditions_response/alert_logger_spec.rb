@@ -119,7 +119,7 @@ RSpec.describe AlertLogger do
       allow(subject).to receive(:msg_start).and_call_original
 
       expect(alert).to receive(:failure_str).with('some-arg').and_return('failure method result')
-      expect(mock_log).to receive(:error).with("MembershipExpireAlert email ATTEMPT FAILED failure method result.  Also see for possible info /Users/ashleyengelund/github/AV--shf-project/log/test_Class.log ")
+      expect(mock_log).to receive(:error).with(/MembershipExpireAlert email ATTEMPT FAILED failure method result\.  Also see for possible info (.*)log\/test_Class.log/)
       subject.log_failure('some-arg')
     end
 
