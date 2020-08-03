@@ -119,11 +119,6 @@ class ShfApplication < ApplicationRecord
 
   end
 
-  # return all SHF applications where updated_at: >= start date AND updated_at: <= end_date
-  def self.updated_in_date_range(start_date, end_date)
-    where( updated_at: start_date..end_date )
-  end
-
 
   def business_subcategories(business_category)
     return nil unless business_category.is_root?
