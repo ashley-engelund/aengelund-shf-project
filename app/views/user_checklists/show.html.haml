@@ -45,9 +45,9 @@
                 onchange:"toggleCompletedCheckbox( #{ @user_checklist.id })" }.merge(disabled_setting))
 
       .col
-        %p.date-completed{id: date_completed_id, style: 'display: none' }
+        %p.date-completed{ id: date_completed_id, style: 'display: none' }
           = i18n_date_completed + ':'
-          %span{id: date_completed_value_id}
+          %span{ id: date_completed_value_id }
             = @user_checklist.date_completed if @user_checklist.date_completed
 
 

@@ -63,7 +63,7 @@
               .row
                 .col
                   %p.contact-if-questions
-                    %div{ id: contact_us_footer_id}
+                    %div{ id: contact_us_footer_id }
                       = t('.contact_if_questions')
                       = mail_to(t('.email_display_name'), ENV['SHF_MEMBERSHIP_EMAIL'])
 
@@ -90,7 +90,7 @@
   const whiteoutClass = "#{ whiteout_class }";
   const showClass = "#{ show_class }";
 
-  const completeTxt = "#{complete_txt}"
+  const completeTxt = "#{ complete_txt }"
 
 
   window.onload = function(){
