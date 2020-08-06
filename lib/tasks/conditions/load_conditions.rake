@@ -36,8 +36,8 @@ namespace :shf do
     conditions_to_create = [
 
         # Send this alert once a week on Tuesday ( = weekday #2 as defined in the Date class)
-        { alert_class_name: 'MembersNeedPackets',
-            timing:     :before,
+        { alert_class_name: 'MembersNeedPacketsAlert',
+            timing:     :day_of_week,
             config:     { days_of_week: [2]} },
 
 
