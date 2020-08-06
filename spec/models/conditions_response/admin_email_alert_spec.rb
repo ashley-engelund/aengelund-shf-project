@@ -36,45 +36,58 @@ RSpec.describe AdminEmailAlert, type: :model do
   end
 
 
-  it '.mailer_args is an admin returns the admin _and_ entites_to_check ' do
+  it '.mailer_args is an admin returns the admin _and_ items_to_check ' do
 
-    allow(subject).to receive(:entities_list).and_return(all_users)
+    allow(subject).to receive(:items_list).and_return(all_users)
 
     expect(subject.mailer_args(admin1)).to match_array [admin1, all_users]
   end
 
 
-  describe 'process_entities' do
+  describe 'process_items' do
 
-    it 'loops thru entities_to_check and calls take_action for each one' do
-
-      # don't call send_mail
+    it 'gathers all items to put into the content of the alert' do
+      lots_of_items = ['one', 'two', 'three', 4, 5]
       allow(subject).to receive(:send_alert_this_day?).and_return(true)
+      allow(subject).to receive(:recipients).and_return(['admin1'])
 
-      # stub this method
-      allow(subject).to receive(:add_entity_to_list?).with(anything).and_return(true)
+      expect(subject).to receive(:gather_content_items).with(lots_of_items)
+                             .and_return(['one', 'three', 5])
+      expect(subject).to receive(:send_email).with('admin1', mock_log, [['one', 'three', 5]])
 
-      # expectation
-      expect(subject).to receive(:take_action).exactly(all_users.size).times
-
-      subject.process_entities( all_users, mock_log)
+      subject.process_items( lots_of_items, mock_log)
     end
 
-    it 'does not send email if the entities list is empty' do
+
+    # it 'loops thru items_to_check and calls take_action for each one' do
+    #
+    #   # don't call send_mail
+    #   allow(subject).to receive(:send_alert_this_day?).and_return(true)
+    #
+    #   # stub this method
+    #   allow(subject).to receive(:add_item_to_list?).with(anything).and_return(true)
+    #
+    #   # expectation
+    #   expect(subject).to receive(:take_action).exactly(all_users.size).times
+    #
+    #   subject.process_items( all_users, mock_log)
+    # end
+
+    it 'does not send email if the items list is empty' do
       # don't call send_mail
       allow(subject).to receive(:send_alert_this_day?).and_return(false)
 
       # expectation
       expect(subject).not_to receive(:take_action)
 
-      subject.process_entities([], mock_log)
+      subject.process_items([], mock_log)
     end
 
-    describe 'sends email with the entities_list iff entities list is not empty AND send_alert_this_day? is true' do
+    describe 'sends email with the items_list iff items list is not empty AND send_alert_this_day? is true' do
 
       it 'send_alert_this_day? is true' do
         # stub this method
-        allow(subject).to receive(:add_entity_to_list?).and_return(true)
+        allow(subject).to receive(:add_item_to_list?).and_return(true)
 
         # setup
         allow(subject).to receive(:send_alert_this_day?).and_return(true)
@@ -82,12 +95,12 @@ RSpec.describe AdminEmailAlert, type: :model do
         # expectation
         expect(subject).to receive(:send_email).exactly(all_admins.size).times
 
-        subject.process_entities(all_users, mock_log)
+        subject.process_items(all_users, mock_log)
       end
 
       it 'send_alert_this_day? is false' do
         # stub this method
-        allow(subject).to receive(:add_entity_to_list?).and_return(true)
+        allow(subject).to receive(:add_item_to_list?).and_return(true)
 
         # setup
         allow(subject).to receive(:send_alert_this_day?).and_return(false)
@@ -95,7 +108,7 @@ RSpec.describe AdminEmailAlert, type: :model do
         # expectation
         expect(subject).not_to receive(:send_email)
 
-        subject.process_entities(all_users, mock_log)
+        subject.process_items(all_users, mock_log)
 
       end
 
@@ -104,46 +117,34 @@ RSpec.describe AdminEmailAlert, type: :model do
   end
 
 
-  describe 'entities_to_check is all users except admins' do
+  describe 'gather_content_items' do
+
+    it 'default implementation is to add items that satisfy add_item_to_list?' do
+      list_of_3 = [1,2,3]
+      allow(subject).to receive(:add_item_to_list?).and_return(true)
+      expect(subject).to receive(:add_item_to_list?).exactly(3).times
+
+      subject.gather_content_items(list_of_3)
+    end
+  end
+
+  describe 'items_to_check is all users except admins' do
 
     it 'includes all users that are not admins' do
-      expect(subject.entities_to_check).to match_array(all_users)
+      expect(subject.items_to_check).to match_array(all_users)
     end
 
     it 'does not include admins' do
-      expect(subject.entities_to_check).not_to include(admin1)
-      expect(subject.entities_to_check).not_to include(admin2)
-      expect(subject.entities_to_check).not_to include(admin3)
+      expect(subject.items_to_check).not_to include(admin1)
+      expect(subject.items_to_check).not_to include(admin2)
+      expect(subject.items_to_check).not_to include(admin3)
     end
 
   end
 
 
-  describe 'take_action adds a user to entities_list if add_entity_to_list? is true' do
-
-    it 'add_entity_to_list? is true' do
-
-      allow(subject).to receive(:add_entity_to_list?).and_return(true)
-
-      expect(subject).to receive(:entities_list).and_call_original
-
-      subject.take_action(u1, mock_log)
-
-    end
-
-
-    it 'add_entity_to_list? is false' do
-      allow(subject).to receive(:add_entity_to_list?).and_return(false)
-
-      expect(subject).not_to receive(:entities_list)
-
-      subject.take_action(u1, mock_log)
-    end
-  end
-
-
-  it 'add_entity_to_list? raises NoMethodError (subclass must define)' do
-    expect { subject.add_entity_to_list?(u1) }.to raise_exception NoMethodError
+  it 'add_item_to_list? raises NoMethodError (subclass must define)' do
+    expect { subject.add_item_to_list?(u1) }.to raise_exception NoMethodError
   end
 
 
