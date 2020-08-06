@@ -1,0 +1,44 @@
+- provide :signoff do
+  = render 'application_mailer/signoff'
+
+- i18nscope = 'mailers.admin_mailer.members_need_packets.message_text'
+
+-#  Email should contain at least:
+  -#- Person name, email, social media IDs (e.g. Facebook, Instagram, etc.)
+  -#- Company name, address, website, social media IDs (e.g. Facebook, Instagram, etc.)
+
+= render layout: 'layouts/mail_to_admin' do
+
+  .members-need-packets
+    %p= t('message_intro', scope: i18nscope)
+
+
+    %ul.members-needing-packets
+      - @members_needing_packets.each do | member |
+        .member-needing-packet
+          %li
+            %span.full-name= member.full_name + ': '
+            %span.email= member.email
+            %span.membership-start-date= '  (' + t('membership start date', scope: i18nscope) +' ' +  member.membership_start_date.to_s + ')'
+          %ul.member-details
+            %li.categories= label_and_value(t('categories', scope: i18nscope),  member.shf_application.business_categories.map(&:full_ancestry_name).join(', '))
+
+            .member-company-details
+            %li
+              Companies:
+              %ul.companies
+                - member.companies.each do | co |
+                  .company
+                    %li
+                      %span.company-name= co.name
+                      %span.company-website= co.website
+                    %ul.company-details
+                      - unless co.facebook_url.blank?
+                        %li.company-facebook-url= co.facebook_url
+                      - unless co.instagram_url.blank?
+                        %li.company-instagram-url= co.instagram_url
+                      - unless co.youtube_url.blank?
+                        %li.company-youtube-url= co.youtube_url
+
+                      %li.company-postal-address= co.main_address.entire_address
+

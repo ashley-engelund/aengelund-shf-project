@@ -422,6 +422,19 @@
 
   // end .mailchimp
 
+  .members-need-packets {
+
+    .member-needing-packet {
+      .email,
+      .full-name {
+        font-weight: bold;
+      }
+      .membership-start-date {
+        font-size: smaller
+      }
+    }
+  }
+
   .member_application_received {
 
     .from-info {
