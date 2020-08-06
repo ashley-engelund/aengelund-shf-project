@@ -44,7 +44,7 @@ RSpec.describe AdminEmailAlert, type: :model do
   end
 
 
-  describe 'process_items' do
+  describe 'process_entities' do
 
     it 'gathers all items to put into the content of the alert' do
       lots_of_items = ['one', 'two', 'three', 4, 5]
@@ -55,7 +55,7 @@ RSpec.describe AdminEmailAlert, type: :model do
                              .and_return(['one', 'three', 5])
       expect(subject).to receive(:send_email).with('admin1', mock_log, [['one', 'three', 5]])
 
-      subject.process_items( lots_of_items, mock_log)
+      subject.process_entities( lots_of_items, mock_log)
     end
 
 
@@ -70,7 +70,7 @@ RSpec.describe AdminEmailAlert, type: :model do
     #   # expectation
     #   expect(subject).to receive(:take_action).exactly(all_users.size).times
     #
-    #   subject.process_items( all_users, mock_log)
+    #   subject.process_entities( all_users, mock_log)
     # end
 
     it 'does not send email if the items list is empty' do
@@ -80,7 +80,7 @@ RSpec.describe AdminEmailAlert, type: :model do
       # expectation
       expect(subject).not_to receive(:take_action)
 
-      subject.process_items([], mock_log)
+      subject.process_entities([], mock_log)
     end
 
     describe 'sends email with the items_list iff items list is not empty AND send_alert_this_day? is true' do
@@ -95,7 +95,7 @@ RSpec.describe AdminEmailAlert, type: :model do
         # expectation
         expect(subject).to receive(:send_email).exactly(all_admins.size).times
 
-        subject.process_items(all_users, mock_log)
+        subject.process_entities(all_users, mock_log)
       end
 
       it 'send_alert_this_day? is false' do
@@ -108,7 +108,7 @@ RSpec.describe AdminEmailAlert, type: :model do
         # expectation
         expect(subject).not_to receive(:send_email)
 
-        subject.process_items(all_users, mock_log)
+        subject.process_entities(all_users, mock_log)
 
       end
 
@@ -170,13 +170,13 @@ RSpec.describe AdminEmailAlert, type: :model do
     it 'timing_matches_today? is true' do
       config = {}
       timing = ConditionResponder::TIMING_EVERY_DAY
-      expect(subject.send_alert_this_day?(timing, config)).to be_truthy
+      expect(subject.send_alert_this_day?(timing, config, nil)).to be_truthy
     end
 
     it 'timing_matches_today? is false' do
       config = {}
       timing = 'blorf' # doesn't matter what this is
-      expect(subject.send_alert_this_day?(timing, config)).to be_falsey
+      expect(subject.send_alert_this_day?(timing, config, nil)).to be_falsey
     end
 
   end

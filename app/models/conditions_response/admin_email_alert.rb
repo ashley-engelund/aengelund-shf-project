@@ -21,14 +21,14 @@ class AdminEmailAlert < EmailAlert
   #
   # This is a different use of 'items_to_check': these are used as the _content_
   # of the alert sent, instead of possible recipients.
-  def process_items(items_to_check, log)
+  def process_entities(items_to_check, log)
     @items_list = []
 
     # Get all of the items that will be put into the contents of the alert sent.
     @items_list = gather_content_items(items_to_check)
 
     # send email to admins with the items of interest
-    if !items_list.empty? && send_alert_this_day?(@timing, @config)
+    if !items_list.empty? && send_alert_this_day?(@timing, @config, nil)
       recipients.each do |admin|
         send_email(admin, log, [items_list])
       end
@@ -40,6 +40,8 @@ class AdminEmailAlert < EmailAlert
   def items_to_check
     User.not_admins
   end
+
+  alias_method :entities_to_check, :items_to_check
 
 
   # @return [Array] - list of all items that will be included in the body of the
@@ -81,7 +83,7 @@ class AdminEmailAlert < EmailAlert
 
 
   # send an alert only if we send one every day OR if it is the right day of the month
-  def send_alert_this_day?(timing, config)
+  def send_alert_this_day?(timing, config, _entity)
     self.class.timing_matches_today?(timing, config)
   end
 
