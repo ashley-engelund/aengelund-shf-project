@@ -13,7 +13,7 @@ class HBrandingFeeDueAlert < CompanyEmailAlert
   # of dates.
   def send_alert_this_day?(timing, config, company)
 
-    if RequirementsForHBrandingFeeDue.requirements_met?({company: company})
+    if RequirementsForHBrandingFeeDue.requirements_met?(company: company)
 
       due = if (latest_payment_expiry = company.branding_expire_date)
               latest_payment_expiry
