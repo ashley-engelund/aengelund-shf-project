@@ -146,6 +146,7 @@ RSpec.describe HBrandingFeeDueAlert do
             it 'sends email to members in all companies that are past due by 2 days' do
 
               testing_today = DateTime.new(2020, 12, 20)
+              earliest_member_fee_paid = testing_today - 2 # '- 2' will match the '2' in the configuration
 
               mock_member1 = instance_double("User", member: true)
               mock_member2 = instance_double("User", member: true)
@@ -155,13 +156,13 @@ RSpec.describe HBrandingFeeDueAlert do
                                                                        mock_member2])
               allow(mock_co1).to receive(:branding_expire_date).and_return(nil)
               allow(mock_co1).to receive(:earliest_current_member_fee_paid)
-                                     .and_return(testing_today - 2) # '- 2' will match the '2' in the configuration
+                                     .and_return(earliest_member_fee_paid)
 
               mock_co2 = instance_double("Company")
               allow(mock_co2).to receive(:current_members).and_return([mock_member2])
               allow(mock_co2).to receive(:branding_expire_date).and_return(nil)
               allow(mock_co2).to receive(:earliest_current_member_fee_paid)
-                                     .and_return(testing_today - 2) # '- 2' will match the '2' in the configuration
+                                     .and_return(earliest_member_fee_paid)
 
 
               allow(subject).to receive(:entities_to_check).and_return([mock_co1,
@@ -245,7 +246,6 @@ RSpec.describe HBrandingFeeDueAlert do
       end
 
     end
-
   end
 
 end
