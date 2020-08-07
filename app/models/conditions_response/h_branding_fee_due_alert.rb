@@ -2,6 +2,8 @@
 #
 # The alert is sent _after_ the HBranding license has expired.
 #
+# TODO: DRY this up with common code in HBrandingFeeWillExpireAlert
+#
 class HBrandingFeeDueAlert < CompanyEmailAlert
 
 
