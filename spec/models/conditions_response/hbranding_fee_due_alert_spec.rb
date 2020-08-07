@@ -1,7 +1,4 @@
 require 'rails_helper'
-require 'email_spec/rspec'
-
-require 'shared_context/stub_email_rendering'
 
 
 RSpec.describe HBrandingFeeDueAlert do
@@ -137,37 +134,6 @@ RSpec.describe HBrandingFeeDueAlert do
 
     describe 'delivers emails to all current company members' do
 
-      include_context 'stub email rendering'
-
-
-      let(:paid_member1) {
-        member = create(:member_with_membership_app)
-        create(:membership_fee_payment,
-               :successful,
-               user: member,
-               start_date: jan_1,
-               expire_date: User.expire_date_for_start_date(jan_1))
-        member
-      }
-
-      let(:paid_member_co) { paid_member1.companies.first }
-
-      let(:paid_member2) {
-        member = create(:member_with_membership_app, company_number: paid_member_co.company_number)
-        create(:membership_fee_payment,
-               :successful,
-               user: member,
-               start_date: jan_1,
-               expire_date: User.expire_date_for_start_date(jan_1))
-        member
-      }
-
-
-      before(:each) do
-        subject.create_alert_logger(mock_log)
-      end
-
-
       context 'timing is after (after the fee is due) ' do
         let(:timing_after) { described_class::TIMING_AFTER }
 
@@ -189,13 +155,13 @@ RSpec.describe HBrandingFeeDueAlert do
                                                                        mock_member2])
               allow(mock_co1).to receive(:branding_expire_date).and_return(nil)
               allow(mock_co1).to receive(:earliest_current_member_fee_paid)
-                                     .and_return(testing_today - 2)  # '- 2' will match the '2' in the configuration
+                                     .and_return(testing_today - 2) # '- 2' will match the '2' in the configuration
 
               mock_co2 = instance_double("Company")
               allow(mock_co2).to receive(:current_members).and_return([mock_member2])
               allow(mock_co2).to receive(:branding_expire_date).and_return(nil)
               allow(mock_co2).to receive(:earliest_current_member_fee_paid)
-                                     .and_return(testing_today - 2)  # '- 2' will match the '2' in the configuration
+                                     .and_return(testing_today - 2) # '- 2' will match the '2' in the configuration
 
 
               allow(subject).to receive(:entities_to_check).and_return([mock_co1,
@@ -226,7 +192,7 @@ RSpec.describe HBrandingFeeDueAlert do
 
           context 'today is 3 days after the company licensing fee was due' do
 
-            let(:testing_today) {DateTime.new(2020, 12, 20) }
+            let(:testing_today) { DateTime.new(2020, 12, 20) }
 
             it 'no email is sent' do
 
@@ -240,13 +206,13 @@ RSpec.describe HBrandingFeeDueAlert do
                                                                        mock_member2])
               allow(mock_co1).to receive(:branding_expire_date).and_return(nil)
               allow(mock_co1).to receive(:earliest_current_member_fee_paid)
-                                     .and_return(testing_today - 3)  # '- 3' will not match the '2' (days) in the configuration
+                                     .and_return(testing_today - 3) # '- 3' will not match the '2' (days) in the configuration
 
               mock_co2 = instance_double("Company")
               allow(mock_co2).to receive(:current_members).and_return([mock_member2])
               allow(mock_co2).to receive(:branding_expire_date).and_return(nil)
               allow(mock_co2).to receive(:earliest_current_member_fee_paid)
-                                     .and_return(testing_today - 3)  # '- 3' will not match the '2' (days) in the configuration
+                                     .and_return(testing_today - 3) # '- 3' will not match the '2' (days) in the configuration
 
 
               allow(subject).to receive(:entities_to_check).and_return([mock_co1,
@@ -261,13 +227,13 @@ RSpec.describe HBrandingFeeDueAlert do
                                                             .and_return(true)
 
               expect(subject).not_to receive(:send_email)
-                                     .with(mock_co1, mock_member1, anything)
+                                         .with(mock_co1, mock_member1, anything)
               expect(subject).not_to receive(:send_email)
-                                     .with(mock_co1, mock_member2, anything)
+                                         .with(mock_co1, mock_member2, anything)
 
 
               expect(subject).not_to receive(:send_email)
-                                     .with(mock_co2, mock_member2, anything)
+                                         .with(mock_co2, mock_member2, anything)
 
               travel_to testing_today do
                 subject.condition_response(condition, mock_log)
