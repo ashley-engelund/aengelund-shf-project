@@ -33,7 +33,7 @@ class AdminEmailAlert < EmailAlert
 
     if !entities_list.empty? && send_alert_this_day?(@timing, @config)
       recipients.each do |admin|
-        send_email(admin, log, [entities_list])
+        send_email(admin, log, entities_list)
       end
     end
 

@@ -20,7 +20,7 @@ class MemberUnpaidOver6MonthsAlert < AdminEmailAlert
 
   # add the entity iff it is a member unpaid for 6 months
   def add_entity_to_list?(user)
-    RequirementsForMemberUnpaidMoreThanXMonths.requirements_met?({ user: user, num_months: NUM_MONTHS })
+    RequirementsForMemberUnpaidMoreThanXMonths.requirements_met?(user: user, num_months: NUM_MONTHS)
   end
 
 
