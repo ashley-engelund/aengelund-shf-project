@@ -131,47 +131,51 @@ RSpec.describe HBrandingFeeDueAlert do
 
 
   describe 'Integration tests' do
+    let(:mock_member1) { instance_double("User", member: true) }
+    let(:mock_member2) { instance_double("User", member: true) }
+
+    let(:mock_co1) { instance_double("Company") }
+    let(:mock_co2) { instance_double("Company") }
+
+    let(:earliest_member_fee_paid) { DateTime.new(2020, 12, 18) }
+
+
+    before(:each) do
+      allow(mock_co1).to receive(:current_members).and_return([mock_member1,
+                                                               mock_member2])
+      allow(mock_co1).to receive(:branding_expire_date).and_return(nil)
+
+      allow(mock_co2).to receive(:current_members).and_return([mock_member2])
+      allow(mock_co2).to receive(:branding_expire_date).and_return(nil)
+
+      allow(subject).to receive(:entities_to_check).and_return([mock_co1,
+                                                                mock_co2])
+    end
 
     describe 'delivers emails to all current company members' do
 
       context 'timing is after (after the fee is due) ' do
-        let(:timing_after) { described_class::TIMING_AFTER }
+        let(:timing_after) { described_class.timing_after }
 
         context 'config days: [2, 10]' do
           let(:config_10_2) { { days: [10, 2] } }
           let(:condition) { build(:condition, :after, config: config_10_2) }
 
           context 'today is 2 days after the company licensing fee was due' do
+            let(:testing_today) { earliest_member_fee_paid + 2 }  # '+ 2' will match the '2' in config[:days]
 
             it 'sends email to members in all companies that are past due by 2 days' do
 
-              testing_today = DateTime.new(2020, 12, 20)
-              earliest_member_fee_paid = testing_today - 2 # '- 2' will match the '2' in the configuration
-
-              mock_member1 = instance_double("User", member: true)
-              mock_member2 = instance_double("User", member: true)
-
-              mock_co1 = instance_double("Company")
-              allow(mock_co1).to receive(:current_members).and_return([mock_member1,
-                                                                       mock_member2])
-              allow(mock_co1).to receive(:branding_expire_date).and_return(nil)
               allow(mock_co1).to receive(:earliest_current_member_fee_paid)
                                      .and_return(earliest_member_fee_paid)
 
-              mock_co2 = instance_double("Company")
-              allow(mock_co2).to receive(:current_members).and_return([mock_member2])
-              allow(mock_co2).to receive(:branding_expire_date).and_return(nil)
               allow(mock_co2).to receive(:earliest_current_member_fee_paid)
                                      .and_return(earliest_member_fee_paid)
 
 
-              allow(subject).to receive(:entities_to_check).and_return([mock_co1,
-                                                                        mock_co2])
-
               expect(RequirementsForHBrandingFeeDue).to receive(:requirements_met?)
                                                             .with(company: mock_co1)
                                                             .and_return(true)
-
               expect(RequirementsForHBrandingFeeDue).to receive(:requirements_met?)
                                                             .with(company: mock_co2)
                                                             .and_return(true)
@@ -192,29 +196,13 @@ RSpec.describe HBrandingFeeDueAlert do
           end
 
           context 'today is 3 days after the company licensing fee was due' do
-
-            let(:testing_today) { DateTime.new(2020, 12, 20) }
+            let(:testing_today) { earliest_member_fee_paid + 3 }  # '+ 3' will not match anything in config[:days]
 
             it 'no email is sent' do
-
-              testing_today = DateTime.new(2020, 12, 20)
-
-              mock_member1 = instance_double("User", member: true)
-              mock_member2 = instance_double("User", member: true)
-
-              mock_co1 = instance_double("Company")
-              allow(mock_co1).to receive(:current_members).and_return([mock_member1,
-                                                                       mock_member2])
-              allow(mock_co1).to receive(:branding_expire_date).and_return(nil)
               allow(mock_co1).to receive(:earliest_current_member_fee_paid)
-                                     .and_return(testing_today - 3) # '- 3' will not match the '2' (days) in the configuration
-
-              mock_co2 = instance_double("Company")
-              allow(mock_co2).to receive(:current_members).and_return([mock_member2])
-              allow(mock_co2).to receive(:branding_expire_date).and_return(nil)
+                                     .and_return(earliest_member_fee_paid)
               allow(mock_co2).to receive(:earliest_current_member_fee_paid)
-                                     .and_return(testing_today - 3) # '- 3' will not match the '2' (days) in the configuration
-
+                                     .and_return(earliest_member_fee_paid)
 
               allow(subject).to receive(:entities_to_check).and_return([mock_co1,
                                                                         mock_co2])
