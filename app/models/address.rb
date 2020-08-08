@@ -94,6 +94,10 @@ class Address < ApplicationRecord
   end
 
 
+  def self.visibility_items
+    VISIBILITY_ITEMS
+  end
+
   # ----------------------------------------------------------------------------
 
 
@@ -108,10 +112,10 @@ class Address < ApplicationRecord
   def address_array(visibility_limit = visibility)
     return [] if visibility_limit == self.class.no_visibility
 
-    start_index = VISIBILITY_ITEMS.index { |viz_item| viz_item == visibility_limit }
+    start_index = self.class.visibility_items.index { |viz_item| viz_item == visibility_limit }
     return [] unless start_index
 
-    viz_items_length = VISIBILITY_ITEMS.length
+    viz_items_length = self.class.visibility_items.length
 
     # Create the array with the actual values of the address.
     #  Add in the kommun name if there is one for the address.
