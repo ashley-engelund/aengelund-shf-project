@@ -25,16 +25,17 @@
               %ul.companies
                 - member.companies.each do | co |
                   .company
-                    %li
+                    %li.company-name-website
                       %span.company-name= co.name
-                      %span.company-website= co.website
+                      %span.company-website= link_to(co.website, co.website)
                     %ul.company-details
                       - unless co.facebook_url.blank?
-                        %li.company-facebook-url= co.facebook_url
+                        %li.company-facebook-url= link_to(co.facebook_url, co.facebook_url)
                       - unless co.instagram_url.blank?
-                        %li.company-instagram-url= co.instagram_url
+                        %li.company-instagram-url= link_to(co.instagram_url, co.instagram_url)
                       - unless co.youtube_url.blank?
-                        %li.company-youtube-url= co.youtube_url
+                        %li.company-youtube-url= link_to(co.youtube_url, co.youtube_url)
 
-                      %li.company-postal-address= co.main_address.entire_address
+                    = tag.div do
+                      = html_postal_format_entire_address(co, person_name: member.full_name)
 

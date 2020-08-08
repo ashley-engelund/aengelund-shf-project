@@ -48,6 +48,8 @@ class AdminMailer < ApplicationMailer
   end
 
 
+  helper CompaniesHelper
+
   def members_need_packets(admin, members_needing_packets)
 
     set_mail_info __method__, admin

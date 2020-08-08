@@ -214,6 +214,13 @@
               }
             }
 
+            .postal-address {
+              p {
+                margin-bottom: 0;
+                margin-top: 0;
+              }
+            }
+
             p {
               color: $mailer-dark-gray;
               font-family: 'Open Sans', 'HelveticaNeue', Helvetica, Arial, sans-serif;
@@ -432,6 +439,17 @@
 
       .membership-start-date {
         font-size: smaller;
+      }
+
+      .company-name-website {
+        .company-name {
+          font-weight: bold;
+        }
+
+      }
+
+      .postal-address {
+        margin-bottom: 1rem;
       }
     }
   }
