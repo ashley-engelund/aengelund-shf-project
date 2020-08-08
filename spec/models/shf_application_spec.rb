@@ -4,29 +4,6 @@ require 'aasm/rspec'
 require 'support/ae_aasm_matchers/ae_aasm_matchers'
 
 
-#================================================================================
-# Shared examples:
-
-RSpec.shared_examples 'allow transition to' do |start_state, to_state, transition_event|
-
-  it "#{to_state}" do
-    expect(application).to transition_from(start_state).to(to_state).on_event(transition_event), "expected to transition from #{start_state} to #{to_state} on event #{transition_event}"
-  end
-end
-
-
-RSpec.shared_examples 'not allow transition to' do |start_state, to_state|
-  it "#{to_state}" do
-
-    application.aasm(:default).current_state = start_state.to_sym
-
-    expect(application).not_to allow_transition_to(to_state), "expected to not to be able to transition from #{start_state} to #{to_state}"
-  end
-end
-
-#================================================================================
-
-
 RSpec.describe ShfApplication, type: :model do
 
   let(:mock_log) { instance_double("ActivityLogger") }
@@ -40,6 +17,23 @@ RSpec.describe ShfApplication, type: :model do
     # stub this so we don't have to create the MasterChecklist for the Member Guidelines checklist
     # if a ShfApplication is accepted.
     allow(AdminOnly::UserChecklistFactory).to receive(:create_member_guidelines_checklist_for).and_return(true)
+  end
+
+
+  shared_examples 'allow transition to' do |start_state, to_state, transition_event|
+
+    it "#{to_state}" do
+      expect(application).to transition_from(start_state).to(to_state).on_event(transition_event), "expected to transition from #{start_state} to #{to_state} on event #{transition_event}"
+    end
+  end
+
+  shared_examples 'not allow transition to' do |start_state, to_state|
+    it "#{to_state}" do
+
+      application.aasm(:default).current_state = start_state.to_sym
+
+      expect(application).not_to allow_transition_to(to_state), "expected to not to be able to transition from #{start_state} to #{to_state}"
+    end
   end
 
 
@@ -108,15 +102,15 @@ RSpec.describe ShfApplication, type: :model do
 
   context 'scopes' do
 
-    context 'open and accepted' do
+    context 'not_decided and accepted' do
       let!(:accepted_app1) { create(:shf_application, :accepted) }
       let!(:accepted_app2) { create(:shf_application, :accepted) }
       let!(:rejected_app1) { create(:shf_application, :rejected) }
       let!(:new_app1) { create(:shf_application) }
 
-      describe 'open' do
+      describe 'not_decided' do
         it 'returns all apps not accepted or rejected' do
-          expect(described_class.open.all).to contain_exactly(new_app1)
+          expect(described_class.not_decided.all).to contain_exactly(new_app1)
         end
       end
 
@@ -129,18 +123,18 @@ RSpec.describe ShfApplication, type: :model do
 
     end
 
-    describe 'no uploaded files: all open applications that have no uploaded files' do
+    describe 'no uploaded files: all not_decided applications that have no uploaded files' do
 
       let!(:application_owner1) { create(:user, email: 'user_1@random.com') }
       let!(:application_owner2) { create(:user, email: 'user_2@random.com') }
       let!(:application_owner3) { create(:user, email: 'user_3@random.com') }
 
-      let!(:shf_open_app_no_uploads_1) do
+      let!(:shf_not_decided_app_no_uploads_1) do
         create(:shf_application, user: application_owner2,
                                  contact_email: application_owner2.email)
       end
 
-      let!(:shf_open_app_no_uploads_2) do
+      let!(:shf_not_decided_app_no_uploads_2) do
         create(:shf_application, user: application_owner3,
                                  contact_email: application_owner3.email)
       end
@@ -168,16 +162,16 @@ RSpec.describe ShfApplication, type: :model do
 
       context 'no uploaded files in the system [caused a problem with the original scope]' do
 
-        it 'returns 2 apps when there are 2 open apps without uploads, 4 rejected apps without uploads' do
+        it 'returns 2 apps when there are 2 not_decided apps without uploads, 4 rejected apps without uploads' do
 
-          expect(described_class.no_uploaded_files).to contain_exactly(shf_open_app_no_uploads_1,
-                                                                       shf_open_app_no_uploads_2)
+          expect(described_class.no_uploaded_files).to contain_exactly(shf_not_decided_app_no_uploads_1,
+                                                                       shf_not_decided_app_no_uploads_2)
         end
       end
 
       context 'there are uploaded files in the system' do
 
-        let!(:shf_open_app_uploads_1) do
+        let!(:shf_not_decided_app_uploads_1) do
           shf_app = create(:shf_application, user: application_owner1,
                            contact_email: application_owner1.email)
           shf_app.uploaded_files << create(:uploaded_file, :jpg, shf_application: shf_app)
@@ -205,15 +199,15 @@ RSpec.describe ShfApplication, type: :model do
         end
 
 
-        describe '1 open apps with uploads, 2 open apps without, 3 approved apps with uploads, 4 rejected apps without uploads ' do
+        describe '1 not_decided apps with uploads, 2 not_decided apps without, 3 approved apps with uploads, 4 rejected apps without uploads ' do
 
-          it 'open count = 3' do
-            expect(described_class.open.count).to eq 3
+          it 'not_decided count = 3' do
+            expect(described_class.not_decided.count).to eq 3
           end
 
           it 'no_uploaded_files count = 2' do
             expect(described_class.no_uploaded_files.count).to eq 2
-            expect(described_class.no_uploaded_files).to contain_exactly(shf_open_app_no_uploads_1, shf_open_app_no_uploads_2)
+            expect(described_class.no_uploaded_files).to contain_exactly(shf_not_decided_app_no_uploads_1, shf_not_decided_app_no_uploads_2)
           end
 
         end
