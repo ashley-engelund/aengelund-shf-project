@@ -3,7 +3,6 @@ require 'rails_helper'
 require_relative 'address_shared_examples'
 
 
-
 RSpec.describe Address, type: :model do
 
   let(:new_region) { create(:region, name: 'New Region') }
@@ -51,7 +50,7 @@ RSpec.describe Address, type: :model do
     it { is_expected.to validate_presence_of :country }
     it { is_expected.to validate_presence_of :addressable }
     it { is_expected.to validate_inclusion_of(:visibility)
-                            .in_array(Address::ADDRESS_VISIBILITY) }
+                            .in_array(described_class.address_visibility) }
 
     it 'validates only one mailing address' do
       visible_addr.mail = true
@@ -381,13 +380,13 @@ RSpec.describe Address, type: :model do
     describe 'has_region' do
 
       it 'only returns addresses that have a region' do
-        has_region_scope = Address.has_region
+        has_region_scope = described_class.has_region
 
         expect(has_region_scope).to match_array(has_regions), "expected #{has_regions.pretty_inspect} },\n\n but got #{has_region_scope.pretty_inspect} }"
       end
 
       it 'does not return any addresses that do not have a region' do
-        has_region_scope = Address.has_region
+        has_region_scope = described_class.has_region
         expect(has_region_scope & lacking_regions).to match_array([])
       end
 
@@ -397,12 +396,12 @@ RSpec.describe Address, type: :model do
     describe 'lacking_region' do
 
       it 'only returns addresses that do not have a region' do
-        lacking_region_scope = Address.lacking_region
+        lacking_region_scope = described_class.lacking_region
         expect(lacking_region_scope).to match_array(lacking_regions)
       end
 
       it 'does not return any addresses that do have a region' do
-        lacking_region_scope = Address.lacking_region
+        lacking_region_scope = described_class.lacking_region
         expect(lacking_region_scope & has_regions).to match_array([])
       end
 
@@ -422,7 +421,7 @@ RSpec.describe Address, type: :model do
     describe '.company_address' do
 
       it 'addresses that belong to a company' do
-        expect(Address.company_address.count).to eq 2
+        expect(described_class.company_address.count).to eq 2
       end
 
     end
@@ -704,12 +703,12 @@ RSpec.describe Address, type: :model do
           valid_address2.save
 
 
-        need_geocoding   = Address.not_geocoded
+        need_geocoding   = described_class.not_geocoded
         needed_geocoding = need_geocoding.count
 
-        Address.geocode_all_needed
+        described_class.geocode_all_needed
 
-        after_run_need_geocoding = Address.not_geocoded.count
+        after_run_need_geocoding = described_class.not_geocoded.count
 
         expect(needed_geocoding).to eq 0
         expect(after_run_need_geocoding).to eq 0
