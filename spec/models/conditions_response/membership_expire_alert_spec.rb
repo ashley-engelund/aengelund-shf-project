@@ -40,7 +40,6 @@ RSpec.describe MembershipExpireAlert do
           end
         end
 
-
       end
 
 
@@ -76,49 +75,55 @@ RSpec.describe MembershipExpireAlert do
 
       # set the configuration (days that the emails will be sent)
       context 'configuration timing = before (send alerts X days _before_ membership expiration date)' do
-        let(:timing_before) { MembershipExpireAlert::TIMING_BEFORE }
+        let(:timing) { described_class.timing_before }
 
         context 'config days: [10, 2]' do
           let(:config_10_2) { { days: [10, 2] } }
+          let(:condition) { build(:condition, timing: timing, config: config_10_2) }
+
+
+          let(:membership_expiry) { DateTime.new(2020, 12, 1, 6) }
+
+          let(:mock_not_member) { instance_double("User") }
+          let(:mock_member1) { instance_double("User", membership_expire_date: membership_expiry) }
+          let(:mock_member2) { instance_double("User", membership_expire_date: membership_expiry) }
+
+          before(:each) do
+            allow(subject).to receive(:entities_to_check).and_return([mock_not_member,
+                                                                      mock_member1,
+                                                                      mock_member2])
+            allow(mock_not_member).to receive(:membership_current?).and_return(false)
+            allow(mock_member1).to receive(:membership_current?).and_return(true)
+            allow(mock_member2).to receive(:membership_current?).and_return(true)
+          end
 
           context '10 days before expiration date' do
-            let(:condition) { build(:condition, :before, config: config_10_2) }
+            let(:testing_today) { membership_expiry - 10.days }
 
-            let(:membership_expiration_date) { DateTime.new(2020, 12, 30, 6) }
-
-            it 'sends out alerts only to  users meeting the criteria for the alert' do
-
-              testing_today = DateTime.new(2020, 12, 20)
-
-              mock_not_member = instance_double("User")
-              allow(mock_not_member).to receive(:membership_current?).and_return(false)
-
-              mock_member_exp_in_10_days = instance_double("User")
-              allow(mock_member_exp_in_10_days).to receive(:membership_current?).and_return(true)
-              exp_10d_later = testing_today + 10
-              allow(mock_member_exp_in_10_days).to receive(:membership_expire_date).and_return(exp_10d_later)
-
-              mock_member_exp_in_2_days = instance_double("User")
-              allow(mock_member_exp_in_2_days).to receive(:membership_current?).and_return(true)
-              exp_2d_later = testing_today + 2
-              allow(mock_member_exp_in_2_days).to receive(:membership_expire_date).and_return(exp_2d_later)
-
-              mock_member_exp_in_3_days = instance_double("User")
-              allow(mock_member_exp_in_3_days).to receive(:membership_current?).and_return(true)
-              exp_3d_later = testing_today + 3
-              allow(mock_member_exp_in_3_days).to receive(:membership_expire_date).and_return(exp_3d_later)
+            it 'sends out alerts to members whose membership expiry is in 10 days' do
 
               allow(subject).to receive(:entities_to_check).and_return([mock_not_member,
-                                                                        mock_member_exp_in_2_days,
-                                                                        mock_member_exp_in_3_days,
-                                                                        mock_member_exp_in_10_days])
+                                                                        mock_member1,
+                                                                        mock_member2])
 
               expect(subject).to receive(:send_email)
-                                     .with(mock_member_exp_in_2_days, mock_log)
+                                     .with(mock_member1, mock_log)
               expect(subject).to receive(:send_email)
-                                     .with(mock_member_exp_in_10_days, mock_log)
+                                     .with(mock_member2, mock_log)
               travel_to testing_today do
                 subject.condition_response(condition, mock_log)
+              end
+            end
+
+
+            context '11 days before expiration date' do
+              let(:testing_today) { membership_expiry - 11.days }
+
+              it 'no emails are sent' do
+                expect(subject).not_to receive(:send_email)
+                travel_to testing_today do
+                  subject.condition_response(condition, mock_log)
+                end
               end
 
             end
