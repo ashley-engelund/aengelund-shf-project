@@ -54,7 +54,7 @@ module CompaniesHelper
   # Creates an array which contains an array of [text, value]
   #  for each company address_visibility level (for selection in form)
   def address_visibility_array
-    Address::ADDRESS_VISIBILITY.map do |visibility_level|
+    Address.address_visibility_levels.map do |visibility_level|
       [ I18n.t("address_visibility.#{visibility_level}"), visibility_level ]
     end
   end
