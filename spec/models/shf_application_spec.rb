@@ -597,6 +597,75 @@ RSpec.describe ShfApplication, type: :model do
     end
   end
 
+
+  describe 'possibly_waiting_for_upload?' do
+    # Only these states can be waiting for file uploads
+    STATES_CAN_BE_WAITING = %w(new under_review waiting_for_applicant)
+
+    context 'states that can be waiting for uploads' do
+
+      STATES_CAN_BE_WAITING.each do | s |
+        it "true for state: #{s}" do
+          allow(subject).to receive(:state).and_return(s)
+          expect(subject.possibly_waiting_for_upload?).to be_truthy
+        end
+      end
+    end
+
+    context 'states that cannot be waiting for uploads' do
+      ALL_OTHER_STATES = described_class.all_states - STATES_CAN_BE_WAITING
+      ALL_OTHER_STATES.each do | s |
+        it "false for state: #{s}" do
+          allow(subject).to receive(:state).and_return(s)
+          expect(subject.possibly_waiting_for_upload?).to be_falsey
+        end
+      end
+    end
+
+  end
+
+
+  describe 'upload_files_will_be_delivered_later?' do
+
+    it 'true if file_delivery_method.email? is true' do
+      mock_file_delivery_email = instance_double('AdminOnly::FileDeliveryMethod', name:'email' )
+      allow(mock_file_delivery_email).to receive(:email?)
+                                             .and_return(true)
+      allow(mock_file_delivery_email).to receive(:mail?)
+                                             .and_return(false)
+
+      allow(subject).to receive(:file_delivery_method)
+                            .and_return(mock_file_delivery_email)
+      expect(subject.upload_files_will_be_delivered_later?).to be_truthy
+    end
+
+    it 'true if file_delivery_method.mail? is true' do
+      mock_file_delivery_mail = instance_double('AdminOnly::FileDeliveryMethod', name:'email' )
+      allow(mock_file_delivery_mail).to receive(:email?)
+                                             .and_return(true)
+      allow(mock_file_delivery_mail).to receive(:mail?)
+                                             .and_return(false)
+
+      allow(subject).to receive(:file_delivery_method)
+                            .and_return(mock_file_delivery_mail)
+      expect(subject.upload_files_will_be_delivered_later?).to be_truthy
+    end
+
+    it 'false if file_delivery_method.email? is false and file_delivery_method.email? is false' do
+      mock_file_delivery_other = instance_double('AdminOnly::FileDeliveryMethod', name:'email' )
+      allow(mock_file_delivery_other).to receive(:email?)
+                                            .and_return(false)
+      allow(mock_file_delivery_other).to receive(:mail?)
+                                            .and_return(false)
+
+      allow(subject).to receive(:file_delivery_method)
+                            .and_return(mock_file_delivery_other)
+
+      expect(subject.upload_files_will_be_delivered_later?).to be_falsey
+    end
+  end
+
+
   context 'Business Subcategories' do
 
     let(:parent) { create(:business_category, name: 'parent') }
