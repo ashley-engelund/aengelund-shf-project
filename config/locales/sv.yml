@@ -1684,11 +1684,11 @@ sv:
           must_be_logged_in: *must_be_logged_in_as_admin
 
       members_need_packets:
-        subject: Members need packets sent
+        subject: Medlemmar som behöver välkomnas
         message_text:
-          message_intro: "These members need membership packets sent to them:"
-          membership start date: membership start
-        error_sending: "ERROR! There was a problem sending the 'Members need packets' alert email"
+          message_intro: "Dessa medlemmar behöver välkomnas samt få medlemspaket:"
+          membership start date: medlem sedan
+        error_sending: "FEL! Det blev ett fel när 'Members need packets' mailet skulle skickas"
 
 
     shf_application_mailer:
