@@ -35,6 +35,8 @@ RSpec.configure do |config|
 
   config.include_context 'stub Paperclip methods'
 
+  config.include ActiveSupport::Testing::TimeHelpers
+
   #
   # Rspec.configuration settings
   #
