@@ -89,6 +89,11 @@ gem 'whenever', require: false
 gem 'by_star'
 
 group :development, :test do
+  gem 'rubocop',             '=0.75.0', require: false
+  gem 'rubocop-rails',       '=2.5.2',  require: false
+  gem 'rubocop-rspec',       '=1.35.0', require: false
+  gem 'rubocop-performance', '=1.6.1', require: false
+
   gem 'rspec-rails'
   gem 'shoulda-matchers'
   gem 'pundit-matchers'
@@ -133,12 +138,10 @@ group :development do
   # FIXME: rubycritic requires simplecov >= 0.17.0 but coveralls requires ~> 0.16.1 (which is any version < 0.17.0)
   #    The coveralls gem is not being maintained.
 
-  gem 'rubocop', require: false
   gem 'rack-mini-profiler', require: false
 end
 
 group :test do
-  gem 'poltergeist'
   gem 'codeclimate-test-reporter', '~> 1.0.0'
   # ^^ https://docs.codeclimate.com/docs/test-coverage-ruby
   gem 'simplecov', '>= 0.13.0'
@@ -151,7 +154,6 @@ group :test do
   gem 'vcr'      # to record and 'playback' (mock) http requests
 
   gem 'timecop'
-  gem 'rubocop-rspec'
 
   gem "show_me_the_cookies"
 end
