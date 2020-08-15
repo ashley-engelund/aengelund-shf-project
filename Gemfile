@@ -114,7 +114,7 @@ group :development, :test do
   gem 'better_errors'
   gem 'binding_of_caller'  # needed to make better_errors work well
 
-  gem 'i18n-tasks', '~> 0.9.21'
+  gem 'i18n-tasks'
 
   gem 'spring-commands-rspec'
 end
