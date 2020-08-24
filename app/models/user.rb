@@ -38,17 +38,6 @@ class User < ApplicationRecord
   validates :first_name, :last_name, presence: true, unless: :updating_without_name_changes
 
 
-  def updating_without_name_changes
-    # Not a new record and not saving changes to either first or last name
-
-    # https://github.com/rails/rails/pull/25337#issuecomment-225166796
-    # ^^ Useful background
-
-    !new_record? && !(will_save_change_to_attribute?('first_name') ||
-        will_save_change_to_attribute?('last_name'))
-  end
-
-
   validates :membership_number, uniqueness: true, allow_blank: true
 
   scope :admins, -> { where(admin: true) }
@@ -78,6 +67,18 @@ class User < ApplicationRecord
   # FIXME - this does not address UserChecklists (e.g. if the ethical guidelines have been agreed to)
   #   should change the name of the scope
   scope :current_members, -> { User.joins(:payments).where("payments.status = '#{Payment::SUCCESSFUL}' AND payments.payment_type = ? AND  payments.expire_date > ?", Payment::PAYMENT_TYPE_MEMBER, Date.current).joins(:shf_application).where(shf_applications: {state: 'accepted'}) }
+
+
+  def updating_without_name_changes
+    # Not a new record and not saving changes to either first or last name
+
+    # https://github.com/rails/rails/pull/25337#issuecomment-225166796
+    # ^^ Useful background
+
+    !new_record? && !(will_save_change_to_attribute?('first_name') ||
+      will_save_change_to_attribute?('last_name'))
+  end
+
 
 
   THIS_PAYMENT_TYPE = Payment::PAYMENT_TYPE_MEMBER
