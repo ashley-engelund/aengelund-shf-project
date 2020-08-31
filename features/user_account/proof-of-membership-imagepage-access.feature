@@ -1,4 +1,9 @@
-Feature: Who can see a member's Proof of Membership image, download it, access it
+Feature: Who can see a member's Proof of Membership image html page, or download the jpg
+
+  Anyone should be able to see a member's proof of membership html page
+  and
+  anyone should be able to download a member's proof of membership jpg image
+
 
   Background:
     Given the Membership Ethical Guidelines Master Checklist exists
@@ -48,7 +53,7 @@ Feature: Who can see a member's Proof of Membership image, download it, access i
     And I should see "Emma Member"
     And I should see "1001"
 
-  Scenario: A member can see another member's proof of membership  html page
+  Scenario: A member can see another member's proof of membership html page
     Given I am logged in as "member-emma@mutts.se"
     When I am on the "proof of membership html image" page for "member-lars@mutts.se"
     Then I should not see a message telling me I am not allowed to see that page
@@ -56,11 +61,20 @@ Feature: Who can see a member's Proof of Membership image, download it, access i
     And I should see "Lars Member"
     And I should see "1002"
 
+  Scenario: A member can download another member's proof of membership jpg
+    Given I am logged in as "member-emma@mutts.se"
+    When I am on the "proof of membership jpg download" page for "member-lars@mutts.se"
+    Then I should get a downloaded image with the filename "proof_of_membership.jpeg"
 
-  Scenario: A visitor can see a member's proof of membership  html page
+  Scenario: A visitor can see a member's proof of membership html page
     Given I am logged out
     When I am on the "proof of membership html image" page for "member-lars@mutts.se"
     Then I should not see a message telling me I am not allowed to see that page
     And I should see t("users.proof_of_membership.proof_title")
     And I should see "Lars Member"
     And I should see "1002"
+
+  Scenario: A visitor can download a member's proof of membership jpg
+    Given I am logged out
+    When I am on the "proof of membership jpg download" page for "member-lars@mutts.se"
+    Then I should get a downloaded image with the filename "proof_of_membership.jpeg"
