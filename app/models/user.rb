@@ -64,9 +64,15 @@ class User < ApplicationRecord
                                                               .references(:payments) }
 
 
-  # FIXME - this does not address UserChecklists (e.g. if the ethical guidelines have been agreed to)
-  #   should change the name of the scope
-  scope :current_members, -> { User.joins(:payments).where("payments.status = '#{Payment::SUCCESSFUL}' AND payments.payment_type = ? AND  payments.expire_date > ?", Payment::PAYMENT_TYPE_MEMBER, Date.current).joins(:shf_application).where(shf_applications: {state: 'accepted'}) }
+  scope :application_accepted, -> { joins(:shf_application).where(shf_applications: {state: 'accepted'}) }
+
+  scope :membership_payment_current, -> { joins(:payments).where("payments.status = '#{Payment::SUCCESSFUL}' AND payments.payment_type = ? AND  payments.expire_date > ?", Payment::PAYMENT_TYPE_MEMBER, Date.current) }
+
+  scope :paid_on_or_after_guidelines_reqd, -> { joins(:payments).where("payments.status = '#{Payment::SUCCESSFUL}' AND payments.payment_type = ? AND  payments.created_at >= ?", Payment::PAYMENT_TYPE_MEMBER, UserChecklistManager.membership_guidelines_reqd_start_date) }
+
+  scope :agreed_to_membership_guidelines, -> { where(id: UserChecklist.top_level_for_current_membership_guidelines.completed.pluck(:user_id)) }
+
+  scope :current_members, -> { membership_payment_current.paid_on_or_after_guidelines_reqd.agreed_to_membership_guidelines.application_accepted }
 
 
   def updating_without_name_changes
