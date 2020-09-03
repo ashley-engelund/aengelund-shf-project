@@ -296,6 +296,7 @@ RSpec.describe Company, type: :model, focus: true do
         company_3_addrs.dinkurs_company_id = 'xyz'
         err                        = I18n.t('activerecord.errors.models.company.attributes.dinkurs_company_id.invalid')
 
+        allow_any_instance_of(Dinkurs::EventsCreator).to receive(:call).and_raise(Dinkurs::Errors::InvalidKey)
         result = company_3_addrs.validate_key_and_fetch_dinkurs_events
 
         expect(result).to eq false
