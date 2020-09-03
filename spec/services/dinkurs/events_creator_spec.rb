@@ -14,9 +14,9 @@ describe Dinkurs::EventsCreator,
   subject(:event_creator) { described_class.new(company) }
 
   around(:each) do |example|
-    Timecop.freeze(Time.zone.local(2018, 6, 1))
-    example.run
-    Timecop.return
+    travel_to(Time.zone.local(2018, 6, 1)) do
+     example.run
+    end
   end
 
   it 'creating events' do
