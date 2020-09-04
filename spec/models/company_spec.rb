@@ -282,14 +282,14 @@ RSpec.describe Company, type: :model, focus: true do
       end
     end
 
-    context '#validate_key_and_fetch_dinkurs_events', :vcr do
+    context '#valid_key_and_fetch_dinkurs_events?', :vcr do
       it 'returns true if dinkurs key is unchanged' do
-        expect(company_3_addrs.validate_key_and_fetch_dinkurs_events).to eq true
+        expect(company_3_addrs.valid_key_and_fetch_dinkurs_events?).to eq true
       end
 
       it 'returns true if events are fetched' do
         company_3_addrs.dinkurs_company_id = ENV['DINKURS_COMPANY_TEST_ID']
-        expect(company_3_addrs.validate_key_and_fetch_dinkurs_events).to eq true
+        expect(company_3_addrs.valid_key_and_fetch_dinkurs_events?).to eq true
       end
 
       it 'adds model error and returns false if invalid dinkurs key' do
@@ -297,7 +297,7 @@ RSpec.describe Company, type: :model, focus: true do
         err                        = I18n.t('activerecord.errors.models.company.attributes.dinkurs_company_id.invalid')
 
         allow_any_instance_of(Dinkurs::EventsCreator).to receive(:call).and_raise(Dinkurs::Errors::InvalidKey)
-        result = company_3_addrs.validate_key_and_fetch_dinkurs_events
+        result = company_3_addrs.valid_key_and_fetch_dinkurs_events?
 
         expect(result).to eq false
         expect(company_3_addrs.errors.full_messages.first).to match(/#{err}/)
