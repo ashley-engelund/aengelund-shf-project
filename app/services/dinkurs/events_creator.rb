@@ -42,8 +42,8 @@ module Dinkurs
       Dinkurs::EventsParser
         .new(events_data, company.id)
         .call
-    rescue Dinkurs::Errors::InvalidFormat => invalid_format_error
-      raise invalid_format_error
+    rescue Dinkurs::Errors::InvalidKey, Dinkurs::Errors::InvalidFormat => dinkurs_err
+      raise dinkurs_err
     rescue
       raise Dinkurs::Errors::InvalidFormat, "Could not get event info from: #{events_data.inspect}"
     end
