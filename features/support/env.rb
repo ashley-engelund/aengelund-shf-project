@@ -54,6 +54,7 @@ WebMock.disable_net_connect!(allow_localhost: true, allow: webdriver_download_si
 
 
 VCR.configure do |c|
+  c.default_cassette_options = { record: :none, record_on_error: false}
   c.hook_into :webmock
   c.filter_sensitive_data('<company_key>') { ENV['DINKURS_COMPANY_TEST_ID'] }
   c.cassette_library_dir = 'features/vcr_cassettes'
