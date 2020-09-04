@@ -283,24 +283,37 @@ RSpec.describe Company, type: :model, focus: true do
     end
 
     context '#valid_key_and_fetch_dinkurs_events?', :vcr do
-      it 'returns true if dinkurs key is unchanged' do
+      it 'returns true if dinkurs key is unchanged and never fetches events' do
+        expect(Dinkurs::EventsCreator).not_to receive(:new)
         expect(company_3_addrs.valid_key_and_fetch_dinkurs_events?).to eq true
       end
 
       it 'returns true if events are fetched' do
         company_3_addrs.dinkurs_company_id = ENV['DINKURS_COMPANY_TEST_ID']
+        allow_any_instance_of(Dinkurs::EventsCreator).to receive(:call).and_return({})
         expect(company_3_addrs.valid_key_and_fetch_dinkurs_events?).to eq true
       end
 
       it 'adds model error and returns false if invalid dinkurs key' do
         company_3_addrs.dinkurs_company_id = 'xyz'
-        err                        = I18n.t('activerecord.errors.models.company.attributes.dinkurs_company_id.invalid')
+        err = I18n.t('activerecord.errors.models.company.attributes.dinkurs_company_id.invalid_key')
 
         allow_any_instance_of(Dinkurs::EventsCreator).to receive(:call).and_raise(Dinkurs::Errors::InvalidKey)
         result = company_3_addrs.valid_key_and_fetch_dinkurs_events?
 
         expect(result).to eq false
         expect(company_3_addrs.errors.full_messages.first).to match(/#{err}/)
+      end
+
+      it 'adds model error and returns false if invalid dinkurs format' do
+        company_3_addrs.dinkurs_company_id = 'xyz'
+        err = I18n.t('activerecord.errors.models.company.attributes.dinkurs_company_id.invalid_format')
+
+        allow_any_instance_of(Dinkurs::EventsCreator).to receive(:call).and_raise(Dinkurs::Errors::InvalidFormat)
+        result = company_3_addrs.valid_key_and_fetch_dinkurs_events?
+
+        expect(result).to eq false
+        expect(company_3_addrs.errors.full_messages.first).to include(err)
       end
     end
   end
