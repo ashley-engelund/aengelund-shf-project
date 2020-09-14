@@ -87,17 +87,21 @@ class Company < ApplicationRecord
     joins(:addresses).where.not('addresses.visibility = ?', 'none').distinct
   end
 
+  # FIXME:  this should not use the db.  It should query the User class or objects
+  # so that any other checks can be done.
+  #
   def self.with_members
     joins(:shf_applications)
         .where('shf_applications.state = ?', :accepted)
         .joins(:users).where('users.member = ?', true).distinct
   end
 
-
+  # Criteria limiting visibility of companies to non-admin users
   def self.searchable
-    # Criteria limiting visibility of companies to non-admin users
     complete.with_members.branding_licensed
   end
+
+  singleton_class.alias_method :displayed_to_non_admins, :searchable
 
 
   # all companies at these addresses (array of Address)
