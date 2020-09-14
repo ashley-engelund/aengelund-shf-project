@@ -29,7 +29,7 @@ class User < ApplicationRecord
   has_many :checklists, dependent: :destroy, class_name: 'UserChecklist'
 
   has_attached_file :member_photo, default_url: 'photo_unavailable.png',
-                    styles:                     { standard: ['130x130#'] }, default_style: :standard
+                    styles: { standard: ['130x130#'] }, default_style: :standard
 
   validates_attachment_content_type :member_photo,
                                     content_type: /\Aimage\/.*(jpg|jpeg|png)\z/
@@ -40,31 +40,36 @@ class User < ApplicationRecord
 
   validates :membership_number, uniqueness: true, allow_blank: true
 
+
+  THIS_PAYMENT_TYPE = Payment::PAYMENT_TYPE_MEMBER
+
+
   scope :admins, -> { where(admin: true) }
   scope :not_admins, -> { where(admin: nil).or(User.where(admin: false)) }
 
+  # FIXME: this is not accurate; DO NOT USE. (Need to carefully remove any use.)  Other checks may need to be done.
   scope :members, -> { where(member: true) }
 
 
   successful_payment_with_type_and_expire_date = "payments.status = '#{Payment::SUCCESSFUL}' AND" +
-      " payments.payment_type = ? AND payments.expire_date = ?"
+    " payments.payment_type = ? AND payments.expire_date = ?"
 
-  scope :membership_expires_in_x_days, -> (num_days){ includes(:payments)
-                                                          .where(successful_payment_with_type_and_expire_date,
-                                                                 Payment::PAYMENT_TYPE_MEMBER,
-                                                                 (Date.current + num_days) )
-                                                          .order('payments.expire_date')
-                                                          .references(:payments) }
+  scope :membership_expires_in_x_days, -> (num_days) { includes(:payments)
+    .where(successful_payment_with_type_and_expire_date,
+           Payment::PAYMENT_TYPE_MEMBER,
+           (Date.current + num_days))
+    .order('payments.expire_date')
+    .references(:payments) }
 
-  scope :company_hbrand_expires_in_x_days, -> (num_days){ includes(:payments)
-                                                              .where(successful_payment_with_type_and_expire_date,
-                                                                     Payment::PAYMENT_TYPE_BRANDING,
-                                                                     (Date.current + num_days) )
-                                                              .order('payments.expire_date')
-                                                              .references(:payments) }
+  scope :company_hbrand_expires_in_x_days, -> (num_days) { includes(:payments)
+    .where(successful_payment_with_type_and_expire_date,
+           Payment::PAYMENT_TYPE_BRANDING,
+           (Date.current + num_days))
+    .order('payments.expire_date')
+    .references(:payments) }
 
 
-  scope :application_accepted, -> { joins(:shf_application).where(shf_applications: {state: 'accepted'}) }
+  scope :application_accepted, -> { joins(:shf_application).where(shf_applications: { state: 'accepted' }) }
 
   scope :membership_payment_current, -> { joins(:payments).where("payments.status = '#{Payment::SUCCESSFUL}' AND payments.payment_type = ? AND  payments.expire_date > ?", Payment::PAYMENT_TYPE_MEMBER, Date.current) }
 
@@ -73,6 +78,24 @@ class User < ApplicationRecord
   scope :agreed_to_membership_guidelines, -> { where(id: UserChecklist.top_level_for_current_membership_guidelines.completed.pluck(:user_id)) }
 
   scope :current_members, -> { membership_payment_current.paid_on_or_after_guidelines_reqd.agreed_to_membership_guidelines.application_accepted }
+
+
+  # -----------------------------------
+
+  # TODO this should not be the responsibility of the User class.
+  # The next membership payment date
+  def self.next_membership_payment_date(user_id)
+    next_membership_payment_dates(user_id).first
+  end
+
+
+  # TODO this should not be the responsibility of the User class.
+  def self.next_membership_payment_dates(user_id)
+    next_payment_dates(user_id, THIS_PAYMENT_TYPE)
+  end
+
+
+  # ----------------------------------
 
 
   def updating_without_name_changes
@@ -85,9 +108,6 @@ class User < ApplicationRecord
       will_save_change_to_attribute?('last_name'))
   end
 
-
-
-  THIS_PAYMENT_TYPE = Payment::PAYMENT_TYPE_MEMBER
 
   def most_recent_membership_payment
     most_recent_payment(THIS_PAYMENT_TYPE)
@@ -117,7 +137,7 @@ class User < ApplicationRecord
   #   so the name should be changed.  ex: membership_payments_current?  or membership_payment_term....
   def membership_current?
     # TODO can use term_expired?(THIS_PAYMENT_TYPE)
-    !!membership_expire_date&.future?  # using '!!' will turn a nil into false
+    !!membership_expire_date&.future? # using '!!' will turn a nil into false
   end
 
 
@@ -146,19 +166,6 @@ class User < ApplicationRecord
   end
 
 
-  # TODO this should not be the responsibility of the User class.
-  # The next membership payment date
-  def self.next_membership_payment_date(user_id)
-    next_membership_payment_dates(user_id).first
-  end
-
-
-  # TODO this should not be the responsibility of the User class.
-  def self.next_membership_payment_dates(user_id)
-    next_payment_dates(user_id, THIS_PAYMENT_TYPE)
-  end
-
-
   # Business rule: user can pay membership fee if:
   # 1. the user is not the admin (an admin cannot make a payment for a member or user)
   #      AND
@@ -173,7 +180,7 @@ class User < ApplicationRecord
   # TODO this should not be the responsibility of the User class.
   def allowed_to_pay_member_fee?
     # TODO use membership_current? instead of member?
-    !admin? && (member? || (shf_application&.accepted? && UserChecklistManager.completed_membership_guidelines_if_reqd?(self) ) )
+    !admin? && (member? || (shf_application&.accepted? && UserChecklistManager.completed_membership_guidelines_if_reqd?(self)))
   end
 
 
@@ -257,7 +264,7 @@ class User < ApplicationRecord
   end
 
 
-  SORT_BY_MOST_RECENT_APPROVED_DATE = lambda { | app1, app2 | app2.when_approved <=> app1.when_approved }
+  SORT_BY_MOST_RECENT_APPROVED_DATE = lambda { |app1, app2| app2.when_approved <=> app1.when_approved }
 
   # @return [Lambda] - the block (lambda) to use to sort shf_applications by the when_approved date
   def sort_apps_by_when_approved
