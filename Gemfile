@@ -142,13 +142,13 @@ group :development do
 end
 
 group :test do
-  gem 'codeclimate-test-reporter', '~> 1.0.0'
+  gem 'codeclimate-test-reporter' #, '~> 1.0.0'
   # ^^ https://docs.codeclimate.com/docs/test-coverage-ruby
-  gem 'simplecov', '>= 0.13.0'
+  gem 'simplecov' #, '>= 0.13.0'
   gem 'email_spec'
   gem 'selenium-webdriver'
 
-  gem 'webdrivers', '~> 3.0'
+  gem 'webdrivers' #, '~> 3.0'
 
   gem 'webmock'  # to mock web (HTTP) interactions.  Required by the vcr gem
   gem 'vcr'      # to record and 'playback' (mock) http requests
