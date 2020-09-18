@@ -1,7 +1,8 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    aasm (4.11.1)
+    aasm (5.1.1)
+      concurrent-ruby (~> 1.0)
     actioncable (5.2.4.4)
       actionpack (= 5.2.4.4)
       nio4r (~> 2.0)
@@ -567,10 +568,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  aasm (~> 4.11.1)
+  aasm
   ancestry
   aws-sdk-s3
-  bcrypt (~> 3.1.7)
+  bcrypt (~> 3.1)
   better_errors
   binding_of_caller
   bootsnap
@@ -624,7 +625,7 @@ DEPENDENCIES
   mini_racer
   nokogiri
   orgnummer
-  paperclip (~> 6.0.0)
+  paperclip
   pg (~> 0.18)
   popper_js (~> 1.14.3)
   premailer-rails

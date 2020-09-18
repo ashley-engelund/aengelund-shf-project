@@ -4,14 +4,18 @@ ruby '2.6.6'
 gem 'dotenv-rails'
 gem 'rails', '~> 5.2'
 gem 'bootsnap', require: false
+
 gem 'pg', '~> 0.18'
 gem 'puma', '~> 3.0'
 gem 'sass-rails', '~> 5.0'
+
 gem 'uglifier', '>= 1.3.0'
 gem 'jquery-rails'
 gem 'turbolinks', '~> 5'
 gem 'jbuilder', '~> 2.5'
-gem 'bcrypt', '~> 3.1.7'
+
+gem 'bcrypt', '~> 3.1' # , '~> 3.1.7'
+
 gem 'haml-rails'
 gem 'high_voltage', '~> 3.0.0'
 gem 'orgnummer'
@@ -22,7 +26,7 @@ gem 'bootstrap-toggle-rails'
 
 gem 'devise'
 gem 'pundit'
-gem "paperclip", "~> 6.0.0"
+gem "paperclip" #, "~> 6.0.0"
 
 gem 'routing-filter'   # for handling locale filters around routes
 
@@ -37,7 +41,7 @@ gem 'bootstrap-will_paginate'
 gem 'ckeditor', '~> 4.2', '>= 4.2.4'
 # ^^ https://github.com/galetahub/ckeditor/issues/718
 
-gem 'aasm', '~> 4.11.1'  # state machine ()acts as state machine)
+gem 'aasm'    # state machine
 
 gem 'ffaker'  # Fake data for DB seeding
 
