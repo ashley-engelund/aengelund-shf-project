@@ -635,7 +635,7 @@ DEPENDENCIES
   pundit-matchers
   rack-mini-profiler
   railroady
-  rails (= 5.2.4.4)
+  rails (~> 5.2)
   rake
   ransack
   rb-readline
