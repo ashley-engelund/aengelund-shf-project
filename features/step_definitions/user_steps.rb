@@ -3,10 +3,10 @@
 def user_agrees_to_membership_guidelines(user)
   begin
     user_guidelines = if (found_guidelines = UserChecklistManager.membership_guidelines_list_for(user))
-      found_guidelines
-    else
-      AdminOnly::UserChecklistFactory.create_member_guidelines_checklist_for(user) unless UserChecklistManager.membership_guidelines_list_for(user)
-    end
+                        found_guidelines
+                      else
+                        AdminOnly::UserChecklistFactory.create_member_guidelines_checklist_for(user) unless UserChecklistManager.membership_guidelines_list_for(user)
+                      end
     user_guidelines.set_complete_including_children
 
   rescue => e
@@ -56,12 +56,11 @@ And("the following users have agreed to the Membership Ethical Guidelines:") do 
 end
 
 
-
-
 Given(/^I am logged in as "([^"]*)"$/) do |email|
   @user = User.find_by(email: email)
   login_as @user, scope: :user
 end
+
 
 Given(/^I am [L|l]ogged out$/) do
   logout
