@@ -113,6 +113,7 @@ class Company < ApplicationRecord
   end
 
   singleton_class.alias_method :current_with_current_members, :searchable
+  singleton_class.alias_method :in_good_standing, :searchable
 
 
   # all companies at these addresses (array of Address)
@@ -130,11 +131,13 @@ class Company < ApplicationRecord
   def searchable?
     branding_license? && !current_members.empty?
   end
+  alias_method :current_with_current_members, :searchable?
+
 
   def complete?
     RequirementsForCoInfoComplete.requirements_met? company: self
   end
-
+  alias_method :complete_information?, :complete?
 
   def missing_region?
     addresses.map(&:region).include?(nil)
@@ -239,6 +242,7 @@ class Company < ApplicationRecord
     # TODO can use term_expired?(THIS_PAYMENT_TYPE)
     branding_expire_date&.future? == true # == true prevents this from ever returning nil
   end
+  alias_method :branding_license_current?, :branding_license?
 
 
   # This is used to calculate when an H-Branding fee is due if there has not been any H-Branding fee paid yet
