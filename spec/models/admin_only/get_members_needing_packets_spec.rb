@@ -26,11 +26,11 @@ RSpec.describe AdminOnly::GetMembersNeedingPackets do
       appl
     end
 
-    let(:member_no_pkt_1) { create_member_with_payments(payment_start_date, first_name = 'No Pkt 1') }
-    let(:member_no_pkt_2) { create_member_with_payments(payment_start_date + 1, first_name = 'No Pkt 2') }
-    let(:member_expired) { create_member_with_payments(payment_start_date - 400, first_name = 'Expired') }
+    let(:member_no_pkt_1) { create_member_with_payments(payment_start_date, 'No Pkt 1') }
+    let(:member_no_pkt_2) { create_member_with_payments(payment_start_date + 1, 'No Pkt 2') }
+    let(:member_expired) { create_member_with_payments(payment_start_date - 400, 'Expired') }
     let(:member_pkt_sent) do
-      mem_pkt_sent =  create_member_with_payments(payment_start_date, first_name = 'Pkt Sent')
+      mem_pkt_sent =  create_member_with_payments(payment_start_date, 'Pkt Sent')
       mem_pkt_sent.update(date_membership_packet_sent: payment_start_date)
       mem_pkt_sent
     end
