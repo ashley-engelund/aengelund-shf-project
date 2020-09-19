@@ -70,7 +70,8 @@ gem 'wkhtmltoimage-binary'
 gem 'chartkick'
 gem 'groupdate'
 
-gem 'mini_racer', platforms: :ruby
+gem 'mini_racer','~> 0.2.1', platforms: :ruby
+gem 'libv8', '< 8.0'
 
 gem 'hashie'  # powerful methods for searching nested Hashes (ex: params) and more
 
