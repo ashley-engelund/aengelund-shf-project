@@ -7,7 +7,7 @@ gem 'bootsnap', require: false
 
 gem 'pg', '~> 0.18'
 gem 'puma', '~> 3.0'
-gem 'sass-rails', '~> 5.0'
+gem 'sass-rails'
 
 gem 'uglifier', '>= 1.3.0'
 gem 'jquery-rails'
@@ -17,7 +17,7 @@ gem 'jbuilder', '~> 2.5'
 gem 'bcrypt', '~> 3.1' # , '~> 3.1.7'
 
 gem 'haml-rails'
-gem 'high_voltage', '~> 3.0.0'
+gem 'high_voltage', '~> 3.0'
 gem 'orgnummer'
 gem 'popper_js', '~> 1.14.3'
 gem 'bootstrap', '~> 4.1.3'
@@ -91,6 +91,11 @@ gem 'whenever', require: false
 
 # Query ActiveRecord by time (ex:  Payment.by_year(2019), Payment.between_times(Time.zone.now - 3.hours, Time.zone.now)) # all posts in last 3 hours
 gem 'by_star'
+
+# Updating to sprockets 4 needs to be done carefully to ensure that
+#   assets are served correctly in PRODUCTION
+gem 'sprockets', '< 4.0'
+
 
 group :development, :test do
   gem 'rubocop',             '=0.75.0', require: false
