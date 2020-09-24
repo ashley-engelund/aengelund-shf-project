@@ -341,7 +341,7 @@ GEM
     parallel (1.19.2)
     parser (2.7.1.4)
       ast (~> 2.4.1)
-    pg (0.21.0)
+    pg (1.2.3)
     polyamorous (2.3.2)
       activerecord (>= 5.2.1)
     popper_js (1.14.7)
@@ -627,7 +627,7 @@ DEPENDENCIES
   nokogiri
   orgnummer
   paperclip
-  pg (~> 0.18)
+  pg (~> 1.2)
   popper_js (~> 1.14.3)
   premailer-rails
   pry
