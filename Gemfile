@@ -5,7 +5,7 @@ gem 'dotenv-rails'
 gem 'rails', '~> 5.2'
 gem 'bootsnap', require: false
 
-gem 'pg', '~> 0.18'
+gem 'pg', '~> 1.2'
 gem 'puma', '~> 3.0'
 gem 'sass-rails'
 
