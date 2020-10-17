@@ -135,24 +135,6 @@ And(/^the following user checklists exist:$/) do |table|
 end
 
 
-And("the following users have agreed to the Membership Ethical Guidelines:") do |table|
-  table.hashes.each do |item|
-    user_email = item.delete('email') || ''
-    user = User.find_by(email: user_email)
-    begin
-      user_guidelines = if (found_guidelines = UserChecklistManager.membership_guidelines_list_for(user))
-                          found_guidelines
-                        else
-                          AdminOnly::UserChecklistFactory.create_member_guidelines_checklist_for(user) unless UserChecklistManager.membership_guidelines_list_for(user)
-                        end
-      user_guidelines.set_complete_including_children
-
-    rescue => e
-      raise e, "Could not create the Member Guidelines UserChecklist or set it to completed for user #{user}\n #{e.inspect} "
-    end
-  end
-end
-
 
 And("the start date for the Membership Ethical Guidelines is {date}") do | req_start_date |
   allow(UserChecklistManager).to receive(:membership_guidelines_reqd_start_date).and_return(req_start_date)
@@ -174,7 +156,7 @@ And("I should{negate} see the checklist {capture_string} in the list of user che
 end
 
 
-And("I {action} the checkbox for the user checklist {capture_string}") do |check_or_uncheck, item_name|
+When("I {action} the checkbox for the user checklist {capture_string}") do |check_or_uncheck, item_name|
   checkbox_element = get_checkbox_element_for_list(item_name)
   case check_or_uncheck
     when 'check'
@@ -255,4 +237,10 @@ end
 And("I should{negate} see {capture_string} as the guideline name to agree to") do | negate, guideline_name |
   guideline =  page.find_by_id("guideline-name")
   expect(guideline).send (negate ? :not_to : :to), have_content(/#{guideline_name}/i)
+end
+
+And("I am on the page for checklist item {capture_string}") do | checklist_name |
+  checklist = UserChecklist.find_by(user: @user, name: checklist_name)
+  path = user_user_checklist_path(@user, checklist.id)
+  visit path_with_locale(path)
 end

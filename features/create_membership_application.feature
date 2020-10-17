@@ -1,5 +1,10 @@
 Feature: Create a new membership application
 
+  2020-09-10:  Note that 2 scenarios have been removed from this feature file
+    and put into 'problem-scenarios-create_membership_application.feature'.
+    They have been causing intermittent failures during CI Semaphore tests.
+    See the note in that file for more info.
+
   As a user
   In order to get a membership with SHF (which makes my business more valuable )
   I need to be able to submit a Membership Application
@@ -25,16 +30,12 @@ Feature: Create a new membership application
       | applicant_2@random.com |       |        |            |           |
       | member@random.com      |       | true   | Lars       | IsaMember |
       | admin@shf.se           | yes   |        |            |           |
-
+      | mandalorian@random.com | false |        | Din        | Djarin    |
     And the following business categories exist
       | name         |
       | Groomer      |
       | Psychologist |
       | Trainer      |
-
-    And the following sub category exist
-      | subcategory_name    | subcategory_description         |
-      | overall grooming    | full service grooming           |
 
     And the application file upload options exist
     And the Membership Ethical Guidelines Master Checklist exists
@@ -180,7 +181,7 @@ Feature: Create a new membership application
     When I am on the "show my application" page for "applicant_1@random.com"
     And I should see "5560360793, 2120000142"
 
-  @selenium @skip_ci_test
+  @selenium
   Scenario: User creates App with two companies, creates one company, corrects error in company number
     Given I am on the "user instructions" page
     And I click on first t("menus.nav.users.apply_for_membership") link
@@ -195,10 +196,8 @@ Feature: Create a new membership application
     And I fill in "company-number-in-modal" with "2286411992"
     And I fill in t("companies.show.email") with "info@craft.se"
 
+    Then I want to create a new company
     And I click on t("companies.create.create_submit")
-    # FIXME do we still need to wait this long? does waiting for AJAX to complete work reliably here instead?
-    And I wait 4 seconds
-    And I wait for all ajax requests to complete
 
     And I select files delivery radio button "upload_later"
 
@@ -232,24 +231,6 @@ Feature: Create a new membership application
 
 
   @selenium
-  Scenario: A user can submit a new Membership Application without sub categories
-    Given I am on the "user instructions" page
-    And I click on first t("menus.nav.users.apply_for_membership") link
-    And I fill in the translated form with data:
-      | shf_applications.show.company_number | shf_applications.new.phone_number | shf_applications.new.contact_email |
-      | 5560360793                           | 031-1234567                       | info@craft.se
-
-    And I should not see "overall grooming" Category
-    And I select "Groomer" Category
-
-    And I select files delivery radio button "files_uploaded"
-
-    And I click on t("shf_applications.new.submit_button_label")
-    Then I should be on the "user account" page for "applicant_1@random.com"
-
-    And I should see t("shf_applications.create.success_with_app_files_missing")
-
-  @selenium @skip_ci_test
   Scenario: A user cannot submit a new Membership Application with no category [SAD PATH]
     Given I am on the "user instructions" page
     And I click on first t("menus.nav.users.apply_for_membership") link
@@ -263,10 +244,8 @@ Feature: Create a new membership application
     And I fill in "company-number-in-modal" with "2286411992"
     And I fill in t("companies.show.email") with "info@craft.se"
 
+    Then I want to create a new company
     And I click on t("companies.create.create_submit")
-    # FIXME do we still need to wait this long? does waiting for AJAX to complete work reliably here instead?
-    And I wait 4 seconds
-    And I wait for all ajax requests to complete
 
     And I should see t("shf_applications.new.file_delivery_selection")
 
@@ -296,7 +275,7 @@ Feature: Create a new membership application
     And the field t("shf_applications.new.phone_number") should not have a required field indicator
     And I should see t("is_required_field")
 
-  @selenium @skip_ci_test
+  @selenium
   Scenario: Two users can submit a new Membership Application (with empty membershipnumbers)
     Given I am on the "user instructions" page
     And I click on first t("menus.nav.users.apply_for_membership") link
@@ -311,10 +290,8 @@ Feature: Create a new membership application
     And I fill in "company-number-in-modal" with "5562252998"
     And I fill in t("companies.show.email") with "info@craft.se"
 
+    Then I want to create a new company
     And I click on t("companies.create.create_submit")
-    # FIXME do we still need to wait this long? does waiting for AJAX to complete work reliably here instead?
-    And I wait 4 seconds
-    And I wait for all ajax requests to complete
 
     And I should see t("shf_applications.new.file_delivery_selection")
 
@@ -338,10 +315,8 @@ Feature: Create a new membership application
     And I fill in "company-number-in-modal" with "6112107039"
     And I fill in t("companies.show.email") with "info@craft.se"
 
+    Then I want to create a new company
     And I click on t("companies.create.create_submit")
-    # FIXME do we still need to wait this long? does waiting for AJAX to complete work reliably here instead?
-    And I wait 4 seconds
-    And I wait for all ajax requests to complete
 
     And I select files delivery radio button "upload_later"
 
@@ -395,7 +370,7 @@ Feature: Create a new membership application
 
 
 
-  @selenium @skip_ci_test
+  @selenium
   Scenario Outline: Apply for membership - when things go wrong with company create [SAD PATH]
     Given I am on the "new application" page
     And I fill in the translated form with data:
@@ -405,10 +380,11 @@ Feature: Create a new membership application
     And I select files delivery radio button "files_uploaded"
 
     # Create new company in modal
+    Then I want to create a new company
     And I click on t("companies.new.title")
     And I fill in the translated form with data:
-      | companies.show.company_number | companies.show.email |
-      | <c_number>                    | <c_email>            |
+      | companies.company_create_modal.company_number | companies.show.email |
+      | <c_number>                                    | <c_email>            |
 
     And I click on t("companies.create.create_submit")
 
@@ -467,3 +443,22 @@ Feature: Create a new membership application
     Given I am logged in as "admin@shf.se"
     And I am on the "new application" page
     Then I should see a message telling me I am not allowed to see that page
+
+  @selenium
+  Scenario: Cannot see subcategories
+    Given I am logged in as "admin@shf.se"
+    And I am on the "business categories" page
+    And I click the icon with CSS class "add-entity-button" for the row with "Groomer"
+    And I should see t("business_categories.index.add_subcategory")
+    When I fill in the translated form with data:
+      | activerecord.attributes.business_category.name | activerecord.attributes.business_category.description |
+      | overall grooming                               | full service grooming                                    |
+
+    When I click on t("save")
+    Then I should see "overall grooming"
+    Then I am Logged out
+    Given I am logged in as "mandalorian@random.com"
+    Given I am on the "user instructions" page
+    And I click on t("menus.nav.users.apply_for_membership") link
+    Then I should be on the "new application" page
+    And I should not see "overall grooming"

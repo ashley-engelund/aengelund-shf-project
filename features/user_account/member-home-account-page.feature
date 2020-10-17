@@ -98,6 +98,7 @@ Feature:  Member home (account) page
     And the user is paid through "2018-12-31"
 
 
+  # FIXME no "subcategories-for-categor-1" is found
   @selenium @time_adjust
   Scenario: Member can add subcategories to a category
     Given I am logged in as "emma-member@example.com"

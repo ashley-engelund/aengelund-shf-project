@@ -149,13 +149,14 @@ Feature: Edit SHF Application
     And I should see t("shf_applications.uploads.no_files")
 
 
-  @selenium @skip_ci_test
+  @selenium
   Scenario: Create 2nd company, file delivery via email, user sees success and deliver-files reminder
     Given I am logged in as "emma@random.com"
     Given I am on the "edit application" page
     Then I should be on "Edit My Application" page
 
     # Create new company in modal
+    Then I want to create a new company
     And I click on t("companies.new.title")
     And I fill in "company-number-in-modal" with "2286411992"
     And I fill in t("companies.show.email") with "info@craft.se"
@@ -254,3 +255,22 @@ Feature: Edit SHF Application
     And I should not see t("show_in_swedish") image
     And I should not see t("show_in_english") image
     And I should see t("cannot_change_language") image
+
+  @selenium
+  Scenario: Cannot see subcategories
+    Given I am logged in as "admin@shf.se"
+    And I am on the "business categories" page
+    And I click the icon with CSS class "add-entity-button" for the row with "Groomer"
+    And I should see t("business_categories.index.add_subcategory")
+    When I fill in the translated form with data:
+      | activerecord.attributes.business_category.name | activerecord.attributes.business_category.description |
+      | overall grooming                               | full service grooming                                    |
+
+    When I click on t("save")
+    Then I should see "overall grooming"
+    Then I am Logged out
+    Given I am logged in as "emma@random.com"
+    Given I am on the "user instructions" page
+    And I click on t("menus.nav.users.my_application") link
+    Then I should be on "Edit My Application" page
+    And I should not see "overall grooming"

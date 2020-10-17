@@ -47,8 +47,11 @@ module PathHelpers
         path = user_path(user)
       when 'edit user account'
         path = admin_only_edit_user_account_path(user)
-      when 'proof of membership image'
+
+      when 'proof of membership html image'
         path = proof_of_membership_path(user)
+      when 'proof of membership jpg download'
+        path = proof_of_membership_path(user, render_to: 'jpg')
 
       # SHF application pages
       when 'new application', 'submit new membership application'
@@ -82,7 +85,7 @@ module PathHelpers
 
       # User-ChecklistItems pages
       when 'my checklists', 'checklists'
-        path = user_user_checklists_path(user)
+        path = user_checklists_path(user)
 
       when 'first unchecked membership guideline'
         path = user_user_checklist_progress_path(user, UserChecklistManager.first_incomplete_membership_guideline_section_for(user))
