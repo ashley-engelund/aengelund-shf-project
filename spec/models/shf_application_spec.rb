@@ -39,7 +39,7 @@ RSpec.describe ShfApplication, type: :model do
 
   describe 'Factory' do
     it 'has a valid factory' do
-      expect(create(:shf_application)).to be_valid
+      expect(build(:shf_application)).to be_valid
     end
   end
 

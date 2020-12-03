@@ -10,11 +10,11 @@ RSpec.describe UploadedFile, type: :model do
 
   describe 'Factory' do
     it 'has valid factories' do
-      expect(create(:uploaded_file)).to be_valid
-      expect(create(:uploaded_file, user:(build(:user)))).to be_valid
-      expect(create(:uploaded_file, user:(build(:user)), shf_application:(build(:shf_application)))).to be_valid
-      expect(create(:uploaded_file_for_application)).to be_valid
-      expect(create(:uploaded_file_for_application, shf_application: (build(:shf_application)))).to be_valid
+      expect(build(:uploaded_file)).to be_valid
+      expect(build(:uploaded_file, user:(build(:user)))).to be_valid
+      expect(build(:uploaded_file, user:(build(:user)), shf_application:(build(:shf_application)))).to be_valid
+      expect(build(:uploaded_file_for_application)).to be_valid
+      expect(build(:uploaded_file_for_application, shf_application: (build(:shf_application)))).to be_valid
     end
   end
 

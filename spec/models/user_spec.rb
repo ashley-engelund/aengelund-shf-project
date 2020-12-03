@@ -102,11 +102,11 @@ RSpec.describe User, type: :model do
 
   describe 'Factory' do
     it 'has valid factories' do
-      expect(create(:user)).to be_valid
-      expect(create(:user_without_first_and_lastname)).to be_valid
-      expect(create(:user_with_membership_app)).to be_valid
-      expect(create(:user_with_membership_app)).to be_valid
-      expect(create(:member_with_membership_app)).to be_valid
+      expect(build(:user)).to be_valid
+      expect(build(:user_without_first_and_lastname)).to be_valid
+      expect(build(:user_with_membership_app)).to be_valid
+      expect(build(:user_with_membership_app)).to be_valid
+      expect(build(:member_with_membership_app)).to be_valid
     end
   end
 
@@ -183,7 +183,7 @@ RSpec.describe User, type: :model do
 
 
   describe 'User' do
-    subject { create(:user, admin: false) }
+    subject { build(:user, admin: false) }
 
     it { is_expected.not_to be_admin }
     it { is_expected.not_to be_member }
