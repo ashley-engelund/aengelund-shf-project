@@ -1,7 +1,9 @@
 Feature: Applicant uploads a file for their application
+
   As an applicant
-  In order to show my credentials
+  In order to show my credentials when I apply for membership
   I need to be able to upload files
+
   PT: https://www.pivotaltracker.com/story/show/133109591
 
   Background:
@@ -77,6 +79,25 @@ Feature: Applicant uploads a file for their application
     And I should see "picture.jpg" uploaded for this membership application
     And I should see 2 uploaded files listed
 
+
+  @selenium
+  Scenario: Admin can upload a file for a user's application; user can then see those uploaded files too
+    Given I am logged in as "admin@shf.com"
+    And I am on the "edit my application" page for "applicant_1@random.com"
+    When I choose a file named "picture.jpg" to upload
+    And I select files delivery radio button "upload_now"
+    And I click on t("shf_applications.edit.submit_button_label")
+    Then I should see t("shf_applications.uploads.files_uploaded")
+    And I should see "picture.jpg" uploaded for this membership application
+    And I should see 1 uploaded files listed
+
+    Given I am logged out
+    Given I am logged in as "applicant_1@random.com"
+    When I am on the "application" page for "applicant_1@random.com"
+    Then I should see "picture.jpg" uploaded for this membership application
+    And I should see 1 uploaded files listed
+
+
   @selenium
   Scenario: Upload multiple files at one time (multiple select)
     Given I am logged in as "applicant_1@random.com"
@@ -115,6 +136,7 @@ Feature: Applicant uploads a file for their application
     Then I should see t("shf_applications.uploads.invalid_upload_type")
     And I should not see "not-accepted.exe" uploaded for this membership application
 
+
   @selenium
   Scenario: User deletes a file that was uploaded
     Given I am logged in as "applicant_1@random.com"
@@ -133,6 +155,31 @@ Feature: Applicant uploads a file for their application
 
     Then I should not see "diploma.pdf" uploaded for this membership application
     And I should see t("shf_applications.uploads.no_files")
+
+
+  @selenium
+  Scenario: Admin can delete an uploaded file on a user's application
+    Given I am logged in as "applicant_1@random.com"
+    And I am on the "edit my application" page
+    When I choose a file named "diploma.pdf" to upload
+    And I click on t("shf_applications.edit.submit_button_label")
+    And I am Logged out
+
+    Given I am logged in as "admin@shf.com"
+    And I am on the "edit my application" page for "applicant_1@random.com"
+
+    And I click on trash icon for "diploma.pdf"
+    And I confirm popup
+
+    Then I should not see "diploma.pdf" uploaded for this membership application
+    And I should see t("shf_applications.uploads.no_files")
+
+    Given I am logged out
+    Given I am logged in as "applicant_1@random.com"
+    And I am on the "show my application" page
+    Then I should not see "diploma.pdf" uploaded for this membership application
+    And I should see t("shf_applications.uploads.no_files")
+
 
   @selenium
   Scenario: User uploads a file to an existing membership application
