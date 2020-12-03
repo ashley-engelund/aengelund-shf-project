@@ -9,9 +9,23 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
 SET default_tablespace = '';
 
-SET default_table_access_method = heap;
+SET default_with_oids = false;
 
 --
 -- Name: addresses; Type: TABLE; Schema: public; Owner: -
@@ -88,7 +102,7 @@ CREATE TABLE public.app_configurations (
     site_meta_image_height integer DEFAULT 0 NOT NULL,
     og_type character varying DEFAULT 'website'::character varying NOT NULL,
     twitter_card_type character varying DEFAULT 'summary'::character varying NOT NULL,
-    facebook_app_id bigint DEFAULT 0 NOT NULL,
+    facebook_app_id bigint DEFAULT '12345678909876'::bigint NOT NULL,
     site_meta_image_file_name character varying,
     site_meta_image_content_type character varying,
     site_meta_image_file_size integer,
@@ -700,6 +714,76 @@ CREATE SEQUENCE public.membership_number_seq
 
 
 --
+-- Name: membership_rates; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.membership_rates (
+    id bigint NOT NULL,
+    amount numeric,
+    name character varying,
+    description character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: membership_rates_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.membership_rates_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: membership_rates_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.membership_rates_id_seq OWNED BY public.membership_rates.id;
+
+
+--
+-- Name: memberships; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.memberships (
+    id bigint NOT NULL,
+    member_type character varying,
+    member_id bigint,
+    first_day date,
+    last_day date,
+    status character varying,
+    membership_rate_id bigint,
+    notes text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: memberships_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.memberships_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: memberships_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.memberships_id_seq OWNED BY public.memberships.id;
+
+
+--
 -- Name: one_time_tasker_task_attempts; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -902,7 +986,9 @@ CREATE TABLE public.uploaded_files (
     actual_file_content_type character varying,
     actual_file_file_size integer,
     actual_file_updated_at timestamp without time zone,
-    shf_application_id bigint
+    shf_application_id bigint,
+    user_id bigint,
+    description character varying
 );
 
 
@@ -997,7 +1083,11 @@ CREATE TABLE public.users (
     member_photo_file_size integer,
     member_photo_updated_at timestamp without time zone,
     short_proof_of_membership_url character varying,
-    date_membership_packet_sent timestamp without time zone
+    date_membership_packet_sent timestamp without time zone,
+    proof_of_membership_file_name character varying,
+    proof_of_membership_content_type character varying,
+    proof_of_membership_file_size bigint,
+    proof_of_membership_updated_at timestamp without time zone
 );
 
 
@@ -1130,6 +1220,20 @@ ALTER TABLE ONLY public.member_app_waiting_reasons ALTER COLUMN id SET DEFAULT n
 --
 
 ALTER TABLE ONLY public.member_pages ALTER COLUMN id SET DEFAULT nextval('public.member_pages_id_seq'::regclass);
+
+
+--
+-- Name: membership_rates id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.membership_rates ALTER COLUMN id SET DEFAULT nextval('public.membership_rates_id_seq'::regclass);
+
+
+--
+-- Name: memberships id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.memberships ALTER COLUMN id SET DEFAULT nextval('public.memberships_id_seq'::regclass);
 
 
 --
@@ -1314,6 +1418,22 @@ ALTER TABLE ONLY public.member_app_waiting_reasons
 
 ALTER TABLE ONLY public.member_pages
     ADD CONSTRAINT member_pages_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: membership_rates membership_rates_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.membership_rates
+    ADD CONSTRAINT membership_rates_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: memberships memberships_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.memberships
+    ADD CONSTRAINT memberships_pkey PRIMARY KEY (id);
 
 
 --
@@ -1522,6 +1642,41 @@ CREATE INDEX index_master_checklists_on_name ON public.master_checklists USING b
 
 
 --
+-- Name: index_memberships_on_first_day; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_memberships_on_first_day ON public.memberships USING btree (first_day);
+
+
+--
+-- Name: index_memberships_on_last_day; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_memberships_on_last_day ON public.memberships USING btree (last_day);
+
+
+--
+-- Name: index_memberships_on_member_type_and_member_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_memberships_on_member_type_and_member_id ON public.memberships USING btree (member_type, member_id);
+
+
+--
+-- Name: index_memberships_on_membership_rate_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_memberships_on_membership_rate_id ON public.memberships USING btree (membership_rate_id);
+
+
+--
+-- Name: index_memberships_on_status; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_memberships_on_status ON public.memberships USING btree (status);
+
+
+--
 -- Name: index_on_applications; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -1582,6 +1737,13 @@ CREATE INDEX index_shf_documents_on_uploader_id ON public.shf_documents USING bt
 --
 
 CREATE INDEX index_uploaded_files_on_shf_application_id ON public.uploaded_files USING btree (shf_application_id);
+
+
+--
+-- Name: index_uploaded_files_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_uploaded_files_on_user_id ON public.uploaded_files USING btree (user_id);
 
 
 --
@@ -1651,14 +1813,6 @@ ALTER TABLE ONLY public.ckeditor_assets
 
 
 --
--- Name: uploaded_files fk_rails_2224289299; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.uploaded_files
-    ADD CONSTRAINT fk_rails_2224289299 FOREIGN KEY (shf_application_id) REFERENCES public.shf_applications(id);
-
-
---
 -- Name: shf_applications fk_rails_3ee395b045; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1680,6 +1834,14 @@ ALTER TABLE ONLY public.app_configurations
 
 ALTER TABLE ONLY public.user_checklists
     ADD CONSTRAINT fk_rails_4ff2e06edf FOREIGN KEY (user_id) REFERENCES public.users(id);
+
+
+--
+-- Name: uploaded_files fk_rails_635c011887; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.uploaded_files
+    ADD CONSTRAINT fk_rails_635c011887 FOREIGN KEY (shf_application_id) REFERENCES public.shf_applications(id);
 
 
 --
@@ -1744,6 +1906,14 @@ ALTER TABLE ONLY public.company_applications
 
 ALTER TABLE ONLY public.user_checklists
     ADD CONSTRAINT fk_rails_e1e5ab0568 FOREIGN KEY (master_checklist_id) REFERENCES public.master_checklists(id);
+
+
+--
+-- Name: uploaded_files fk_rails_ece9dfb06e; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.uploaded_files
+    ADD CONSTRAINT fk_rails_ece9dfb06e FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -1853,6 +2023,11 @@ INSERT INTO "schema_migrations" (version) VALUES
 ('20200119054308'),
 ('20200122200839'),
 ('20200122215813'),
-('20200205213528');
+('20200205213528'),
+('20200926223149'),
+('20201029025036'),
+('20201029031856'),
+('20201203180001'),
+('20201203181536');
 
 

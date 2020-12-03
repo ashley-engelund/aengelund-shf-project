@@ -1,6 +1,7 @@
 FactoryBot.define do
   factory :uploaded_file do
 
+    user
     shf_application
 
     FIXTURE_DIR = File.join("#{Rails.root}",'spec','fixtures','uploaded_files') unless defined?(FIXTURE_DIR)
@@ -38,6 +39,11 @@ FactoryBot.define do
     end
     trait :bin do
       actual_file { File.new(File.join(FIXTURE_DIR, 'tred.bin')) }
+    end
+
+
+    factory(:uploaded_file_for_application) do
+
     end
 
   end

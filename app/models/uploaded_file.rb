@@ -12,8 +12,9 @@ class UploadedFile < ApplicationRecord
     %w(.docm) => 'application/vnd.ms-word.document.macroEnabled.12'
   }
 
-  belongs_to :shf_application
-  counter_culture :shf_application
+  belongs_to :user
+  belongs_to :shf_application, optional: true
+  counter_culture [:user, :shf_application]
 
   has_attached_file :actual_file
   validates_attachment :actual_file, content_type: {content_type: ALLOWED_FILE_TYPES.values,

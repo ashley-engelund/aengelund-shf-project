@@ -163,6 +163,7 @@ RSpec.describe User, type: :model do
   end
 
   describe 'Associations' do
+    it { is_expected.to have_many :uploaded_files }
     it { is_expected.to have_one(:shf_application).dependent(:destroy) }
     it { is_expected.to have_many(:payments).dependent(:nullify) }
     it { is_expected.to accept_nested_attributes_for(:payments) }

@@ -9,8 +9,12 @@ RSpec.describe UploadedFile, type: :model do
 
 
   describe 'Factory' do
-    it 'has a valid factory' do
+    it 'has valid factories' do
       expect(create(:uploaded_file)).to be_valid
+      expect(create(:uploaded_file, user:(build(:user)))).to be_valid
+      expect(create(:uploaded_file, user:(build(:user)), shf_application:(build(:shf_application)))).to be_valid
+      expect(create(:uploaded_file_for_application)).to be_valid
+      expect(create(:uploaded_file_for_application, shf_application: (build(:shf_application)))).to be_valid
     end
   end
 
@@ -20,6 +24,7 @@ RSpec.describe UploadedFile, type: :model do
     it { is_expected.to have_db_column :actual_file_content_type }
     it { is_expected.to have_db_column :actual_file_file_size }
     it { is_expected.to have_db_column :actual_file_updated_at }
+    it { is_expected.to have_db_column :description }
   end
 
   describe 'Validations' do
@@ -30,7 +35,8 @@ RSpec.describe UploadedFile, type: :model do
   end
 
   describe 'Associations' do
-    it { is_expected.to belong_to :shf_application }
+    it { is_expected.to belong_to :user }
+    it { is_expected.to belong_to(:shf_application).optional }
     it { should have_attached_file :actual_file }
   end
 
@@ -73,7 +79,6 @@ RSpec.describe UploadedFile, type: :model do
     it ".exe" do
       expect(build(:uploaded_file, :exe)).not_to be_valid
     end
-
 
   end
 
