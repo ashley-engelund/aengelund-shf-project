@@ -91,6 +91,11 @@ module PathHelpers
         path = user_user_checklist_progress_path(user, UserChecklistManager.first_incomplete_membership_guideline_section_for(user))
 
 
+      # Uploaded Files pages
+      when 'list of uploaded files', 'my uploaded files'
+        u = user.nil? ? Visitor.new : user
+        path = user_uploaded_files_path(u)
+
       # ==================================================
       # Other Admin pages - pages only administrators can access
 
