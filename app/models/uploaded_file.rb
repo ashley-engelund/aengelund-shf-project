@@ -17,13 +17,12 @@ class UploadedFile < ApplicationRecord
   counter_culture [:user, :shf_application]
 
   has_attached_file :actual_file
-  validates_attachment :actual_file, content_type: {content_type: ALLOWED_FILE_TYPES.values,
-                                                    message: I18n.t('shf_applications.uploads.invalid_upload_type')},
-                                                    size: { in: 0..5.megabytes,
-                                                            message: :file_too_large
-                                                           }
+  validates_attachment :actual_file, content_type: { content_type: ALLOWED_FILE_TYPES.values,
+                                                     message: I18n.t('shf_applications.uploads.invalid_upload_type') },
+                       size: { in: 0..5.megabytes,
+                               message: :file_too_large
+                       }
 =begin
-
   If the size validation fails, then the error message is looked up in the
   locale file(s) starting based on I18n conventions, then adding 'actual_file_file'
   as the attribute, and finally adding 'file_too_large' which is what is specified by the
@@ -55,9 +54,40 @@ class UploadedFile < ApplicationRecord
     max = the upper bound of the file size
     count = the upper bound, converted to 'human_size' by ActiveSupport::NumberHelper.number_to_human_size(size)
     value = the actual size of the file
-
-
-
 =end
 
+  # The .sort_by_user_full_name...   methods (=scopes) are used by the Ransack gem to
+  #   do sorting. These methods are a way to do sorting on a joined table
+  #   (e.g. the 'belongs_to :user' association).
+  #   @see https://github.com/activerecord-hackery/ransack#ransacks-sort_link-helper-creates-table-headers-that-are-sortable-links
+
+  def self.sort_by_user_full_name(sort_direction = :asc)
+    joins(:user).order(User.arel_table[:first_name].send(sort_direction),
+                       User.arel_table[:last_name].send(sort_direction))
+  end
+
+  def self.sort_by_user_full_name_asc
+    sort_by_user_full_name(:asc)
+  end
+
+  def self.sort_by_user_full_name_desc
+    sort_by_user_full_name(:desc)
+  end
+
+  def self.allowed_file_types
+    ALLOWED_FILE_TYPES
+  end
+
+
+  def allowed_file_types
+    self.class.allowed_file_types
+  end
+
+  def can_edit?
+    !shf_application&.accepted? && !shf_application&.rejected?
+  end
+
+  def can_delete?
+    !shf_application&.accepted? && !shf_application&.rejected?
+  end
 end
