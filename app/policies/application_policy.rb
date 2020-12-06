@@ -47,4 +47,21 @@ class ApplicationPolicy
 
   alias_method :not_a_visitor?, :not_a_visitor
 
+  class Scope
+    attr_reader :user, :scope
+
+    def initialize(user, scope)
+      @user = user
+      @scope = scope
+    end
+
+    def resolve
+      if user.admin?
+        scope.all
+      else
+        scope.instance_methods.include?(:user) ? scope.where(user: user) : scope.none
+      end
+    end
+  end
+
 end
