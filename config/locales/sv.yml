@@ -508,6 +508,9 @@ sv:
       admin_title: All uploaded files
       cannot_edit_or_delete_reason: You cannot edit or delete a file if it is part of an approved or rejected application.
 
+    destroy:
+      success: "Uploaded file %{file_name} was successfully destroyed."
+
     uploaded_files_list:
       owner: Ägare
       file_name: *filename

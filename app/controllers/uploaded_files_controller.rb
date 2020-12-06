@@ -31,8 +31,9 @@ class UploadedFilesController < ApplicationController
 
     respond_to do |format|
       if @uploaded_file.save
-        format.html { redirect_to @uploaded_file, notice: 'Uploaded file was successfully created.' }
-        format.json { render :show, status: :created, location: @uploaded_file }
+        format.html { redirect_to user_uploaded_file_path(current_user, @uploaded_file),
+                                  notice: t('.success', file_name: @uploaded_file.actual_file_file_name)}
+        format.json { render :show, status: :created, location: user_uploaded_file_path(current_user, @uploaded_file) }
       else
         format.html { render :new }
         format.json { render json: @uploaded_file.errors, status: :unprocessable_entity }
@@ -43,8 +44,9 @@ class UploadedFilesController < ApplicationController
   def update
     respond_to do |format|
       if @uploaded_file.update(uploaded_file_params)
-        format.html { redirect_to @uploaded_file, notice: 'Uploaded file was successfully updated.' }
-        format.json { render :show, status: :ok, location: @uploaded_file }
+        format.html { redirect_to user_uploaded_file_path(current_user, @uploaded_file),
+                                  notice: t('.success', file_name: @uploaded_file.actual_file_file_name) }
+        format.json { render :show, status: :ok, location: user_uploaded_file_path(current_user, @uploaded_file) }
       else
         format.html { render :edit }
         format.json { render json: @uploaded_file.errors, status: :unprocessable_entity }
@@ -55,7 +57,7 @@ class UploadedFilesController < ApplicationController
   def destroy
     @uploaded_file.destroy
     respond_to do |format|
-      format.html { redirect_to uploaded_files_url, notice: 'Uploaded file was successfully destroyed.' }
+      format.html { redirect_to user_uploaded_files_url(current_user), notice: t('.success', file_name: @uploaded_file.actual_file_file_name) }
       format.json { head :no_content }
     end
   end
@@ -95,6 +97,6 @@ class UploadedFilesController < ApplicationController
   end
 
   def allowed_file_types
-    UploadedFile.allowed_types
+    UploadedFile.allowed_file_types
   end
 end

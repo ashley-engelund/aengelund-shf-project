@@ -498,6 +498,9 @@ en:
     show:
       title: "Uploaded File: %{file_name}"
 
+    destroy:
+      success: "Uploaded file %{file_name} was successfully destroyed."
+
     index:
       title: All of your uploaded files
       admin_title: All uploaded files
