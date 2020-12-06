@@ -4,6 +4,14 @@ module ShfApplicationsHelper
     policy(@shf_application).permitted_attributes_for_edit.include? :state
   end
 
+  # @return [String] approved status with the date approved
+  def app_state_and_date(shf_app)
+    return '' unless shf_app
+
+    displayed_date = shf_app.accepted? ? shf_app.when_approved : shf_app.updated_at
+    "#{shf_app_state_translated(shf_app)} - #{displayed_date.strftime('%F')}"
+  end
+
 
   def shf_app_state_translated(shf_app)
     # Cannot use '.human_state' because it calls '.display_name',
