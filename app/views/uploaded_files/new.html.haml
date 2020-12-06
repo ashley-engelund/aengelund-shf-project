@@ -1,0 +1,25 @@
+%header.entry-header
+  = content_title(t('.title'), user: current_user)
+
+.entry-content
+
+  = form_for [:user, @uploaded_file], html: { multipart: true }  do |f|
+    != model_errors_helper(@uploaded_file)
+
+    .form-group
+      .field
+        %span{ class: 'btn btn-primary mt-3 btn-file' }
+          = t('.upload_button_title')
+          = f.file_field :actual_file,
+                multiple: false,
+                name: 'actual_file',
+                class: 'upload-field',
+                id: 'upload-button',
+                accept: @allowed_file_types_list
+
+    .form-group
+      = f.label :description, t('activerecord.attributes.uploaded_file.description')
+      = f.text_field :description, class: 'form-control'
+
+    .form-group
+      = f.submit t('save'), class: 'btn btn-primary mb-2 form-control'

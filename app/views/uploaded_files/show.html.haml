@@ -1,0 +1,11 @@
+
+= image_tag(@uploaded_file.actual_file.url)
+.clearfix.m-3
+%p.file-name= @uploaded_file.actual_file_file_name
+
+%p.description= @uploaded_file.description
+
+
+= link_to 'Edit', edit_user_uploaded_file_path(@uploaded_file)
+\|
+= link_to 'Back', user_uploaded_files_path
