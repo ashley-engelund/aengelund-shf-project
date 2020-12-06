@@ -170,6 +170,10 @@ sv:
         one: Task Attempt
         other: Task Attempts
 
+      uploaded_file:
+        one: &uploaded_file_one Uppladdad fil
+        other: &uploaded_file_other Uppladdade filer
+
       master_checklist:
         one: Master Checklist Item
         other: Master Checklist Items
@@ -180,6 +184,11 @@ sv:
 
 
     attributes:
+
+      uploaded_file:
+        filename: &filename Filnamn
+        file_size: &file_size Filstorlek
+        description: &description  Beskrivning
 
       user:
         first_name: &first_name Förnamn
@@ -216,8 +225,8 @@ sv:
         state: &state Status
         phone_number: Telefonnummer
         uploaded_files:
-          one: Uppladdad fil
-          other: Uppladdade filer
+          one: *uploaded_file_one
+          other: *uploaded_file_other
         state/new: &status_new Ny
         state/under_review: &status_under_review Behandlas
         state/waiting_for_applicant: &status_waiting_for_applicant Avvaktar sökande
@@ -264,7 +273,7 @@ sv:
 
       business_category:
         name: &business_category_name  Namn
-        description: &description  Beskrivning
+        description: *description
         subcategory: &subcategory Underkategori
         subcategories: Underkategorier
 
@@ -273,7 +282,7 @@ sv:
         description: *description
         uploader: &uploader Uppladdad av
         actual_file_content_type: Uppladdad filtyp
-        actual_file: Uppladdad fil
+        actual_file: *uploaded_file_one
 
 
       member_app_waiting_reason:
@@ -331,9 +340,9 @@ sv:
         uploaded_file:
           attributes:
             actual_file_file_size:
-              file_too_large: &file_too_large 'Filen är för stor för att laddas upp.'
+              file_too_large: &file_size_too_large 'Filen är för stor för att laddas upp.'
             actual_file:
-              file_too_large: 'Filen måste vara mindre än %{max}. (Filen är %{value} byte.)'
+              file_too_large: &file_too_large 'Filen måste vara mindre än %{max}. (Filen är %{value} byte.)'
 
         company:
           attributes:
@@ -366,9 +375,9 @@ sv:
         shf_document:
           attributes:
             actual_file_file_size:
-              file_too_large: *file_too_large
+              file_too_large: *file_size_too_large
             actual_file:
-              file_too_large: 'Filen måste vara mindre än %{max}. (Filen är %{value} byte.)'
+              file_too_large: *file_too_large
 
         shf_application:
           attributes:
@@ -468,7 +477,46 @@ sv:
       longitude_blank: "Longitude cannot be blank."
 
 
+  # ----------------------------------------
   # Automatisk och manuell sökning för views:
+
+  uploaded_files:
+    new:
+      title: Upload a file
+      submit: *submit
+      upload_allowed_file_types: &upload_allowed_types 'Tillåtna filtyper:'
+      upload_button_title: "Välj en fil ..."
+
+    create:
+      success: "%{file_name} was uploaded successfully."
+      error: The was a problem saving the file.
+      invalid_upload_type: &invalid_upload_type Tyvärr kan du inte ladda upp denna filtypen.
+
+    edit:
+      title: "Edit the uploaded file: %{file_name}"
+      submit: *submit
+
+    update:
+      success: "%{file_name} was updated."
+      error: One or more problems prevented the uploaded file from being updated.
+
+    show:
+      title: "Uploaded File: %{file_name}"
+
+    index:
+      title: All of your uploaded files
+      admin_title: All uploaded files
+      cannot_edit_or_delete_reason: You cannot edit or delete a file if it is part of an approved or rejected application.
+
+    uploaded_files_list:
+      owner: Ägare
+      file_name: *filename
+      description: *description
+      file_size: *file_size
+      updated_at: *last_updated
+      associated_with_application: *application
+
+
   shf_applications:
     new:
       title: Ansök om medlemskap
@@ -489,12 +537,12 @@ sv:
       application_dog_category: &application_dog_category "Ansöker som:"
       clue_selected_categories: &clue_selected_categories "Blå fält = valda. Relevant medlemskategori behöver fyllas i för att vi ska kunna hantera din ansökan."
 
-      upload_files_section: &app_upload_files_section Underlag för att styrka min ansökan
+      upload_files_section:  Underlag för att styrka min ansökan
       upload_files_instructions: 'Dokumenten är mycket viktiga för att vi ska kunna bedöma din ansökan. Vi använder dem för att verifiera dina kunskaper och utbildningar. Detta säkerställer att vår medlemsstandard är fortsatt hög, vilket i förlängningen innebär att allmänheten vet att Sveriges hundföretagare är professionella och att lita på.'
       upload_files: 'Ladda upp filer från datorn (VIKTIGT)'
-      upload_allowed_file_types: 'Tillåtna filtyper:'
+      upload_allowed_file_types: *upload_allowed_types
       upload_more_files: Du kan ladda upp fler filer genom att redigera din ansökan efter att du skickat in den.
-      upload_button: Välj dina filer...
+      upload_button: "Välj dina filer..."
       will_be_uploaded: 'Dessa filer kommer att laddas upp när du skickar in din ansökan:'
       upload_multiple_files: ctrl-tangenten (Windows) eller command/cmd på (Mac) för att välja flera.
       submit_button_label: *submit
@@ -693,10 +741,10 @@ sv:
     uploads:
       no_files: Inga filer är uppladdade för denna ansökan.
       files_uploaded: 'Uppladdade filer för denna ansökan:'
-      filename: &filename Filnamn
+      filename: *filename
       file_was_uploaded: &file_was_uploaded 'Filen laddades upp: %{filename}'
       confirm_delete: &upload_confirm_delete 'Är du säker på att du vill radera %{filename}?'
-      invalid_upload_type: &invalid_upload_type Tyvärr kan du inte ladda upp denna filtypen.
+      invalid_upload_type: *invalid_upload_type
       file_too_large: &file_too_large_5MB Filen måste vara mindre än 5 MB
       please_upload_again: Var god ladda upp dina filer igen.
       will_review_after_received: &review_after_recevied_files "Vi kommer att handlägga din ansökan när vi har fått alla filer."

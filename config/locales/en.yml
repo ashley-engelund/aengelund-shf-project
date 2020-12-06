@@ -171,6 +171,9 @@ en:
         one: Task Attempt
         other: Task Attempts
 
+      uploaded_file:
+        one: &uploaded_file_one Uploaded File
+        other: &uploaded_file_other Uploaded Files
 
       master_checklist:
         one: Master Checklist Item
@@ -182,6 +185,11 @@ en:
 
 
     attributes:
+
+      uploaded_file:
+        filename: &filename File name
+        file_size: &file_size File size
+        description: &description  Description
 
       user:
         first_name: &first_name First name
@@ -218,8 +226,8 @@ en:
         state: &state Status
         phone_number: Phone number
         uploaded_files:
-          one: Uploaded file
-          other: Uploaded files
+          one: *uploaded_file_one
+          other: *uploaded_file_other
         state/new: &status_new New
         state/under_review: &status_under_review Under review
         state/waiting_for_applicant: &status_waiting_for_applicant  Waiting for Applicant
@@ -266,7 +274,7 @@ en:
 
       business_category:
         name: &business_category_name  Name
-        description: &description  Description
+        description: *description
         subcategory: &subcategory Subcategory
         subcategories: Subcategories
 
@@ -275,7 +283,7 @@ en:
         description: *description
         uploader: &uploader Uploader
         actual_file_content_type: Uploaded file type
-        actual_file: Uploaded file
+        actual_file: *uploaded_file_one
 
       member_app_waiting_reason:
         name_sv: "Name (Swedish)"
@@ -332,9 +340,9 @@ en:
         uploaded_file:
           attributes:
             actual_file_file_size:
-              file_too_large: 'The uploaded file is too big.'
+              file_too_large: &file_size_too_large 'The uploaded file is too big.'
             actual_file:
-              file_too_large: 'The uploaded file size must be smaller than %{max}. (Your file is %{value} bytes.)'
+              file_too_large: &file_too_large 'The uploaded file size must be smaller than %{max}. (Your file is %{value} bytes.)'
 
         company:
           attributes:
@@ -367,9 +375,9 @@ en:
         shf_document:
           attributes:
             actual_file_file_size:
-              file_too_large: 'The uploaded file is too big.'
+              file_too_large: *file_size_too_large
             actual_file:
-              file_too_large: 'The uploaded file size must be smaller than %{max}. (Your file is %{value} bytes.)'
+              file_too_large: *file_too_large
 
         shf_application:
           attributes:
@@ -464,7 +472,46 @@ en:
     no_payment_due_now: *no_payment_due_now
 
 
+  # =====================================
   # Automatic and manual lookup for views:
+
+  uploaded_files:
+    new:
+      title: Upload a file
+      submit: *submit
+      upload_allowed_file_types: &upload_allowed_types 'Allowed file types:'
+      upload_button_title: "Choose a file to upload..."
+
+    create:
+      success: "%{file_name} was uploaded successfully."
+      error: The was a problem saving the file.
+      invalid_upload_type: &invalid_upload_type Sorry, this is not a file type you can upload.
+
+    edit:
+      title: "Edit the uploaded file: %{file_name}"
+      submit: *submit
+
+    update:
+      success: "%{file_name} was updated."
+      error: One or more problems prevented the uploaded file from being updated.
+
+    show:
+      title: "Uploaded File: %{file_name}"
+
+    index:
+      title: All of your uploaded files
+      admin_title: All uploaded files
+      cannot_edit_or_delete_reason: You cannot edit or delete a file if it is part of an approved or rejected application.
+
+    uploaded_files_list:
+      owner: Owner
+      file_name: *filename
+      description: *description
+      file_size: *file_size
+      updated_at: *last_updated
+      associated_with_application: *application
+
+
   shf_applications:
     new:
       title: Apply for a Membership
@@ -485,12 +532,12 @@ en:
       application_dog_category: &application_dog_category "Services You Provide"
       clue_selected_categories: &clue_selected_categories "Blue box = selected categories"
 
-      upload_files_section: &app_upload_files_section Documents to support your application (certifications, etc.)
+      upload_files_section: Documents to support your application (certifications, etc.)
       upload_files_instructions: 'The documents are very important for us to assess your application. We use them to authenticate your skills and education. This ensures that our membership standards remain high, which in turn means that the public know that the Swedish dog business is professional and reliable.'
       upload_files: 'Upload files from your computer:'
-      upload_allowed_file_types: 'Allowed file types:'
+      upload_allowed_file_types: *upload_allowed_types
       upload_more_files: 'You can upload more files. After you submit your application, you may still edit the application and upload more files.'
-      upload_button: Choose files to upload...
+      upload_button: "Choose files to upload..."
       will_be_uploaded: 'These files will be uploaded when you submit your application:'
       upload_multiple_files: To upload multiple files at once hold down the
                              control key (Windows) or command key (Mac).
@@ -690,10 +737,10 @@ en:
     uploads:
       no_files: You have not uploaded any files for this application.
       files_uploaded: 'Files uploaded for this application:'
-      filename: &filename Filename
+      filename: *filename
       file_was_uploaded: &file_was_uploaded 'This file was uploaded: %{filename}'
       confirm_delete: &upload_confirm_delete 'Are you sure you want to delete %{filename}?'
-      invalid_upload_type: &invalid_upload_type Sorry, this is not a file type you can upload.
+      invalid_upload_type: *invalid_upload_type
       file_too_large: &file_too_large_5MB The file must be smaller than 5 MB
       please_upload_again: Please upload your files again.
       will_review_after_received: &review_after_recevied_files "Once we have received your files, we will review your application."
@@ -899,7 +946,7 @@ en:
 
     form_collection_checkboxes:
       title: *application_dog_category
-      clue_selected_categories: &clue_selected_categories Blue box = selected categories
+      clue_selected_categories: *clue_selected_categories
 
     new_business_category: New business category
     new_business_subcategory: New subcategory
