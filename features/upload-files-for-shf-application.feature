@@ -39,7 +39,7 @@ Feature: Applicant uploads a file for their application
     And I select "Groomer" Category
     And I select files delivery radio button "upload_now"
 
-    And I choose a file named "diploma.pdf" to upload
+    And I choose a file named "diploma.pdf" to upload for the application
     When I click on t("shf_applications.new.submit_button_label")
     Then I should see t("shf_applications.create.success", email_address: applicant_2@random.com)
     And I should see t("shf_applications.uploads.file_was_uploaded", filename: 'diploma.pdf')
@@ -52,7 +52,7 @@ Feature: Applicant uploads a file for their application
   Scenario: Upload a file for an existing application
     Given I am logged in as "applicant_1@random.com"
     And I am on the "edit my application" page
-    When I choose a file named "diploma.pdf" to upload
+    When I choose a file named "diploma.pdf" to upload for the application
     And I click on t("shf_applications.edit.submit_button_label")
     Then I should see t("shf_applications.uploads.files_uploaded")
     And I should see "diploma.pdf" uploaded for this membership application
@@ -64,7 +64,7 @@ Feature: Applicant uploads a file for their application
   Scenario: Upload a second file
     Given I am logged in as "applicant_1@random.com"
     And I am on the "edit my application" page
-    When I choose a file named "diploma.pdf" to upload
+    When I choose a file named "diploma.pdf" to upload for the application
     And I click on t("shf_applications.edit.submit_button_label")
     And I am Logged out
     And I am logged in as "admin@shf.com"
@@ -72,7 +72,7 @@ Feature: Applicant uploads a file for their application
     Then I click on t("shf_applications.ask_applicant_for_info_btn")
     And  I am logged in as "applicant_1@random.com"
     And I am on the "edit my application" page
-    When I choose a file named "picture.jpg" to upload
+    When I choose a file named "picture.jpg" to upload for the application
     And I click on t("shf_applications.edit.submit_button_label")
     Then I should see t("shf_applications.uploads.files_uploaded")
     And I should see "diploma.pdf" uploaded for this membership application
@@ -84,7 +84,7 @@ Feature: Applicant uploads a file for their application
   Scenario: Admin can upload a file for a user's application; user can then see those uploaded files too
     Given I am logged in as "admin@shf.com"
     And I am on the "edit my application" page for "applicant_1@random.com"
-    When I choose a file named "picture.jpg" to upload
+    When I choose a file named "picture.jpg" to upload for the application
     And I select files delivery radio button "upload_now"
     And I click on t("shf_applications.edit.submit_button_label")
     Then I should see t("shf_applications.uploads.files_uploaded")
@@ -102,7 +102,7 @@ Feature: Applicant uploads a file for their application
   Scenario: Upload multiple files at one time (multiple select)
     Given I am logged in as "applicant_1@random.com"
     And I am on the "edit my application" page
-    When I choose files named "picture.jpg, picture.png, diploma.pdf" to upload
+    When I choose files named "picture.jpg, picture.png, diploma.pdf" to upload for the application
     And I click on t("shf_applications.edit.submit_button_label")
     Then I should see t("shf_applications.uploads.files_uploaded")
     And I should see "diploma.pdf" uploaded for this membership application
@@ -119,9 +119,9 @@ Feature: Applicant uploads a file for their application
   Scenario: Use the upload button multiple times
     Given I am logged in as "applicant_1@random.com"
     And I am on the "edit my application" page
-    When I choose a file named "picture.jpg" to upload
-    And I choose a file named "picture.png" to upload
-    And I choose a file named "diploma.pdf" to upload
+    When I choose a file named "picture.jpg" to upload for the application
+    And I choose a file named "picture.png" to upload for the application
+    And I choose a file named "diploma.pdf" to upload for the application
     Then I should see "diploma.pdf"
     # FIXME - the following 2 lines sometimes fail:
     And I should not see "picture.jpg"
@@ -131,7 +131,7 @@ Feature: Applicant uploads a file for their application
   Scenario: Try to upload a file with unacceptable content type
     Given I am logged in as "applicant_1@random.com"
     And I am on the "edit my application" page
-    When I choose a file named "tred.exe" to upload
+    When I choose a file named "tred.exe" to upload for the application
     And I click on t("shf_applications.edit.submit_button_label")
     Then I should see t("shf_applications.uploads.invalid_upload_type")
     And I should not see "not-accepted.exe" uploaded for this membership application
@@ -141,7 +141,7 @@ Feature: Applicant uploads a file for their application
   Scenario: User deletes a file that was uploaded
     Given I am logged in as "applicant_1@random.com"
     And I am on the "edit my application" page
-    When I choose a file named "diploma.pdf" to upload
+    When I choose a file named "diploma.pdf" to upload for the application
     And I click on t("shf_applications.edit.submit_button_label")
     And I am Logged out
     And I am logged in as "admin@shf.com"
@@ -161,7 +161,7 @@ Feature: Applicant uploads a file for their application
   Scenario: Admin can delete an uploaded file on a user's application
     Given I am logged in as "applicant_1@random.com"
     And I am on the "edit my application" page
-    When I choose a file named "diploma.pdf" to upload
+    When I choose a file named "diploma.pdf" to upload for the application
     And I click on t("shf_applications.edit.submit_button_label")
     And I am Logged out
 
@@ -185,7 +185,7 @@ Feature: Applicant uploads a file for their application
   Scenario: User uploads a file to an existing membership application
     Given I am logged in as "applicant_1@random.com"
     And I am on the "edit my application" page
-    When I choose a file named "diploma.pdf" to upload
+    When I choose a file named "diploma.pdf" to upload for the application
     And I click on t("shf_applications.edit.submit_button_label")
     Then I should see t("shf_applications.uploads.files_uploaded")
     And I should see "diploma.pdf" uploaded for this membership application
@@ -194,7 +194,7 @@ Feature: Applicant uploads a file for their application
   Scenario: User can click on a file name to see the file
     Given I am logged in as "applicant_1@random.com"
     And I am on the "edit my application" page
-    And I choose a file named "diploma.pdf" to upload
+    And I choose a file named "diploma.pdf" to upload for the application
     And I click on t("shf_applications.edit.submit_button_label")
     And I click on "diploma.pdf"
 
@@ -202,7 +202,7 @@ Feature: Applicant uploads a file for their application
   Scenario: Link to file uses _blank to open a new window
     Given I am logged in as "applicant_1@random.com"
     And I am on the "edit my application" page
-    And I choose a file named "diploma.pdf" to upload
+    And I choose a file named "diploma.pdf" to upload for the application
     And I click on t("shf_applications.edit.submit_button_label")
     Then I should see link "uploaded-file-link-1" with target = "_blank"
 
@@ -211,7 +211,7 @@ Feature: Applicant uploads a file for their application
   Scenario: Admin can click on a file name to see the file
     Given I am logged in as "applicant_1@random.com"
     And I am on the "edit my application" page
-    And I choose a file named "diploma.pdf" to upload
+    And I choose a file named "diploma.pdf" to upload for the application
     And I click on t("shf_applications.edit.submit_button_label")
     And I am Logged out
     And I am logged in as "admin@shf.com"
@@ -223,7 +223,7 @@ Feature: Applicant uploads a file for their application
   Scenario: Applicant doesn't see delete action when just viewing application with 1 file uploaded
     Given I am logged in as "applicant_1@random.com"
     And I am on the "edit my application" page
-    And I choose a file named "diploma.pdf" to upload
+    And I choose a file named "diploma.pdf" to upload for the application
     And I click on t("shf_applications.edit.submit_button_label")
     When I am on the "application" page for "applicant_1@random.com"
     Then I should not see the file delete action
@@ -232,7 +232,7 @@ Feature: Applicant uploads a file for their application
   Scenario: Admin doesn't see delete action when just viewing application with 1 file uploaded
     Given I am logged in as "applicant_1@random.com"
     And I am on the "edit my application" page
-    And I choose a file named "diploma.pdf" to upload
+    And I choose a file named "diploma.pdf" to upload for the application
     And I click on t("shf_applications.edit.submit_button_label")
     And I am Logged out
     And I am logged in as "admin@shf.com"

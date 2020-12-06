@@ -167,7 +167,7 @@ Feature: SHF Application status is changed
   Scenario: Admin rejects an application that had uploaded files (under_review to rejected)
     Given  I am logged in as "anna_waiting_for_info@nosnarkybarky.se"
     And I am on the "edit my application" page
-    And I choose a file named "diploma.pdf" to upload
+    And I choose a file named "diploma.pdf" to upload for the application
     And I select files delivery radio button "upload_now"
     And I click on t("shf_applications.edit.submit_button_label")
     And I am Logged out
@@ -177,7 +177,7 @@ Feature: SHF Application status is changed
     Then I click on t("shf_applications.ask_applicant_for_info_btn")
     And  I am logged in as "anna_waiting_for_info@nosnarkybarky.se"
     And I am on the "edit my application" page
-    And I choose a file named "image.png" to upload
+    And I choose a file named "image.png" to upload for the application
     And I select files delivery radio button "upload_now"
     And I click on t("shf_applications.edit.submit_button_label")
     And I am Logged out

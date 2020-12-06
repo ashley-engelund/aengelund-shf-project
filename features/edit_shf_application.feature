@@ -54,7 +54,7 @@ Feature: Edit SHF Application
     And I am on the "user instructions" page
     And I click on first t("menus.nav.users.my_application") link
     Then I should be on "Edit My Application" page
-    And I choose a file named "diploma.pdf" to upload
+    And I choose a file named "diploma.pdf" to upload for the application
     And I fill in t("shf_applications.show.contact_email") with ""
     And I unselect "Groomer" Category
     And I click on t("shf_applications.edit.submit_button_label")
@@ -87,7 +87,7 @@ Feature: Edit SHF Application
     Then I should be on "Edit My Application" page
 
     And I select files delivery radio button "upload_now"
-    And I choose a file named "diploma.pdf" to upload
+    And I choose a file named "diploma.pdf" to upload for the application
 
     And I click on t("shf_applications.edit.submit_button_label")
     Then I should be on the "show my application" page for "emma@random.com"
@@ -103,7 +103,7 @@ Feature: Edit SHF Application
     Then I should be on "Edit My Application" page
 
     And I select files delivery radio button "upload_now"
-    And I choose files named "diploma.pdf, image.jpg" to upload
+    And I choose files named "diploma.pdf, image.jpg" to upload for the application
 
     And I click on t("shf_applications.edit.submit_button_label")
     Then I should be on the "show my application" page for "emma@random.com"
