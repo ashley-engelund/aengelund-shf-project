@@ -96,6 +96,11 @@ module PathHelpers
         u = user.nil? ? Visitor.new : user
         path = user_uploaded_files_path(u)
 
+      when 'upload a new file'
+        u = user.nil? ? Visitor.new : user
+        path = new_user_uploaded_file_path(u)
+
+
       # ==================================================
       # Other Admin pages - pages only administrators can access
 

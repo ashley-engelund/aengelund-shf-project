@@ -1,10 +1,17 @@
-When(/^I choose (?:a file|files) named "([^"]*)" to upload$/) do | filename |
+When(/^I choose (?:a file|files) named "([^"]*)" to upload for the application$/) do | filename |
   filenames = filename.split(/\s*,\s*/)
   filepaths = []
   filenames.each do |file|
     filepaths << File.join(Rails.root, 'spec', 'fixtures','uploaded_files', file)
   end
   page.attach_file "uploaded_file[actual_files][]", filepaths, visible: false
+  # ^^ selenium won't find the upload button without visible: false
+end
+
+When(/^I choose a file named "([^"]*)" to upload$/) do | filename |
+  filepath = File.join(Rails.root, 'spec', 'fixtures','uploaded_files', filename)
+
+  page.attach_file "upload-button", filepath, visible: false
   # ^^ selenium won't find the upload button without visible: false
 end
 
@@ -16,12 +23,12 @@ And(/^I should see (\d+) uploaded files listed$/) do |number|
   expect(page).to have_selector('.uploaded-file', count: number)
 end
 
-When(/^I choose the files named \["([^"]*)", "([^"]*)", "([^"]*)"\] to upload$/) do |file1, file2, file3|
-  files = [File.join(Rails.root, 'spec', 'fixtures','uploaded_files', file1),
-           File.join(Rails.root, 'spec', 'fixtures','uploaded_files', file2),
-           File.join(Rails.root, 'spec', 'fixtures','uploaded_files', file3)]
-  page.attach_file "uploaded_file[actual_files][]", files, visible: false  #selenium won't find the upload button without visible: false
-end
+# When(/^I choose the files named \["([^"]*)", "([^"]*)", "([^"]*)"\] to upload$/) do |file1, file2, file3|
+#   files = [File.join(Rails.root, 'spec', 'fixtures','uploaded_files', file1),
+#            File.join(Rails.root, 'spec', 'fixtures','uploaded_files', file2),
+#            File.join(Rails.root, 'spec', 'fixtures','uploaded_files', file3)]
+#   page.attach_file "uploaded_file[actual_files][]", files, visible: false  #selenium won't find the upload button without visible: false
+# end
 
 And(/^I click on trash icon for "([^"]*)"$/) do |filename|
   find(:xpath, "//tr[contains(.,'#{filename}')]/td/a[@class='action-delete']").click
