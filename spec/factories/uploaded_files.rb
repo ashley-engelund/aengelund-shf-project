@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :uploaded_file do
 
     user
-    shf_application
+    shf_application { nil }
 
     FIXTURE_DIR = File.join("#{Rails.root}",'spec','fixtures','uploaded_files') unless defined?(FIXTURE_DIR)
     trait :png do
@@ -43,7 +43,7 @@ FactoryBot.define do
 
 
     factory(:uploaded_file_for_application) do
-
+      shf_application { association :shf_application, user: user }
     end
 
   end
