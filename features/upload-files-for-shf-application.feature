@@ -70,7 +70,9 @@ Feature: Applicant uploads a file for their application
     And I am logged in as "admin@shf.com"
     And I am on the "application" page for "applicant_1@random.com"
     Then I click on t("shf_applications.ask_applicant_for_info_btn")
-    And  I am logged in as "applicant_1@random.com"
+    And I am logged out
+
+    When  I am logged in as "applicant_1@random.com"
     And I am on the "edit my application" page
     When I choose a file named "picture.jpg" to upload for the application
     And I click on t("shf_applications.edit.submit_button_label")
@@ -169,7 +171,6 @@ Feature: Applicant uploads a file for their application
     And I am on the "edit my application" page for "applicant_1@random.com"
 
     And I click on trash icon for "diploma.pdf"
-    And I confirm popup
 
     Then I should not see "diploma.pdf" uploaded for this membership application
     And I should see t("shf_applications.uploads.no_files")

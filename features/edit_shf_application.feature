@@ -98,9 +98,7 @@ Feature: Edit SHF Application
   @selenium
   Scenario: User deletes uploaded files
     Given I am logged in as "emma@random.com"
-    And I am on the "user instructions" page
-    And I click on first t("menus.nav.users.my_application") link
-    Then I should be on "Edit My Application" page
+    And I am on the "Edit My Application" page
 
     And I select files delivery radio button "upload_now"
     And I choose files named "diploma.pdf, image.jpg" to upload for the application
@@ -114,13 +112,11 @@ Feature: Edit SHF Application
     And I click on first t("menus.nav.users.my_application") link
     Then I should be on "Edit My Application" page
 
-    And I delete the second uploaded file
+    And I click on the delete icon for "image.jpg"
     And I should not see "image.jpg"
-
-    And I should be on "Edit My Application" page
-
     And I should see "diploma.pdf"
 
+    And I should be on "Edit My Application" page
     And I delete the first uploaded file
     And I should not see "diploma.pdf"
 

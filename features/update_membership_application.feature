@@ -175,6 +175,8 @@ Feature: SHF Application status is changed
     And I am on the "application" page for "anna_waiting_for_info@nosnarkybarky.se"
     And I should see "rehab"
     Then I click on t("shf_applications.ask_applicant_for_info_btn")
+    And I am logged out
+
     And  I am logged in as "anna_waiting_for_info@nosnarkybarky.se"
     And I am on the "edit my application" page
     And I choose a file named "image.png" to upload for the application

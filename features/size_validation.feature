@@ -20,7 +20,7 @@ Feature: Applicant uploads too large a file for their application
 
     And the following applications exist:
       | user_email         | company_number | state        |
-      | emma@happymutts.se | 5562252998     | under_review |
+      | emma@happymutts.se | 5562252998     | new |
 
     And the following companies exist:
       | name                 | company_number | email                  | region     |
