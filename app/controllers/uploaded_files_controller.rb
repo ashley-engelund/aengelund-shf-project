@@ -17,8 +17,9 @@ class UploadedFilesController < ApplicationController
   end
 
   def new
-    @uploaded_file = UploadedFile.new
     @allowed_file_types_list = allowed_file_types.values.join(',')
+    @uploaded_file = UploadedFile.new
+    @uploaded_file.user = current_user
   end
 
   def edit
@@ -32,7 +33,7 @@ class UploadedFilesController < ApplicationController
     respond_to do |format|
       if @uploaded_file.save
         format.html { redirect_to user_uploaded_file_path(current_user, @uploaded_file),
-                                  notice: t('.success', file_name: @uploaded_file.actual_file_file_name)}
+                                  notice: t('.success', file_name: @uploaded_file.actual_file_file_name) }
         format.json { render :show, status: :created, location: user_uploaded_file_path(current_user, @uploaded_file) }
       else
         format.html { render :new }
@@ -55,16 +56,28 @@ class UploadedFilesController < ApplicationController
   end
 
   def destroy
-    @uploaded_file.destroy
-    respond_to do |format|
-      format.html { redirect_to user_uploaded_files_url(current_user), notice: t('.success', file_name: @uploaded_file.actual_file_file_name) }
-      format.json { head :no_content }
+    file_name = @uploaded_file.actual_file_file_name.dup
+
+    if @uploaded_file.destroy
+      respond_to do |format|
+        format.html { redirect_to user_uploaded_files_url(current_user), notice: t('.success', file_name: file_name) }
+        format.json { head :no_content }
+      end
+    else
+      respond_to do |format|
+        format.html do
+          translated_errors = helpers.translate_and_join(@uploaded_file.errors.full_messages)
+          helpers.flash_message(:alert, "#{t('.error')}: #{translated_errors}")
+          redirect_to user_uploaded_file_url(current_user, @uploaded_file)
+        end
+        format.json { render json: @uploaded_file.errors, status: :unprocessable_entity }
+      end
+
     end
   end
 
   # ===============================================================================================
   private
-
 
   def set_uploaded_file
     @uploaded_file = policy_scope(UploadedFile).find(params[:id])
@@ -73,13 +86,13 @@ class UploadedFilesController < ApplicationController
   # Only allow a list of trusted parameters through.
   def uploaded_file_params
     params.require(:uploaded_file).permit(:id,
-                                           :actual_file,
-                                           :actual_file_file_name,
-                                           :actual_file_file_size,
-                                           :actual_file_content_type,
-                                           :actual_file_updated_at,
-                                           :description,
-                                           :_destroy)
+                                          :actual_file,
+                                          :actual_file_file_name,
+                                          :actual_file_file_size,
+                                          :actual_file_content_type,
+                                          :actual_file_updated_at,
+                                          :description,
+                                          :_destroy)
   end
 
   def authorize_uploaded_file
