@@ -1,6 +1,7 @@
 #uploaded-files-list {
-  .file_size, .updated_at {
-    font-size: smaller
+  .file_size,
+  .updated_at {
+    font-size: smaller;
   }
 
   tbody {
@@ -10,14 +11,13 @@
   }
 }
 
-
 .uploaded-file {
   margin-left: 2em;
   text-align: center;
 
   img {
+    border-color: $info;
     border-style: dotted;
     border-width: thin;
-    border-color: $info;
   }
 }
