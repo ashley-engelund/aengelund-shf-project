@@ -56,10 +56,12 @@ module PathHelpers
       # SHF application pages
       when 'new application', 'submit new membership application'
         path = new_shf_application_path
+
       when 'edit application', 'edit my application'
         user.reload
         path = edit_shf_application_path(user.shf_application)
-      when 'application', 'show my application'
+
+      when 'application', 'show my application', 'my application'
         path = shf_application_path(user.shf_application)
 
       # Business category pages
