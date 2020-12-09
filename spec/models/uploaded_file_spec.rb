@@ -146,9 +146,9 @@ RSpec.describe UploadedFile, type: :model do
         expect(uploaded_file.can_edit?).to be_falsey
       end
 
-      context 'true if shf_application is not under_review, accepted, rejected' do
+      context 'true if shf_application is not under_review, being destroyed, accepted, rejected' do
 
-        other_states = ShfApplication.all_states - [:under_review, :accepted, :rejected]
+        other_states = ShfApplication.all_states - [:under_review, :accepted, :rejected, :being_destroyed]
         other_states.each do | other_state |
           it "#{other_state}" do
             uploaded_file = build(:uploaded_file_for_application, shf_application: build(:shf_application, state: other_state))
@@ -183,9 +183,9 @@ RSpec.describe UploadedFile, type: :model do
         expect(uploaded_file.can_delete?).to be_falsey
       end
 
-      context 'true if shf_application is not accepted or rejected' do
+      context 'true if shf_application is not being destroyed, under review, accepted, rejected' do
 
-        other_states = ShfApplication.all_states - [:under_review, :accepted, :rejected]
+        other_states = ShfApplication.all_states - [:under_review, :accepted, :rejected, :being_destroyed]
         other_states.each do | other_state |
           it "#{other_state}" do
             uploaded_file = build(:uploaded_file_for_application, shf_application: build(:shf_application, state: other_state))
