@@ -2,9 +2,22 @@
   .file_size, .updated_at {
     font-size: smaller
   }
+
   tbody {
-    .description,  {
+    .description {
       font-size: smaller
     }
+  }
+}
+
+
+.uploaded-file {
+  margin-left: 2em;
+  text-align: center;
+
+  img {
+    border-style: dotted;
+    border-width: thin;
+    border-color: $info;
   }
 }
