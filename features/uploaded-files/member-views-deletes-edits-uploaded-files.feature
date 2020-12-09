@@ -25,10 +25,11 @@ Feature: Member can view all of their uploaded files, delete, and edit descripti
       | lars-member@example.com |
 
     And these files have been uploaded
-      | user_email              | file name   | description                                       |
-      | emma-member@example.com | image.jpg   | this belongs to Emma and goes with an application |
-      | emma-member@example.com | picture.jpg | some random picture                               |
-      | lars-member@example.com | image.jpg   | this belongs to Lars                              |
+      | user_email              | file name          | description                                       |
+      | emma-member@example.com | image.jpg          | this belongs to Emma and goes with an application |
+      | emma-member@example.com | picture.jpg        | some random picture                               |
+      | lars-member@example.com | image.jpg          | this belongs to Lars                              |
+      | lars-member@example.com | microsoft-word.doc | some document that Lars uploaded                  |
 
 
     And the following regions exist:
@@ -92,9 +93,23 @@ Feature: Member can view all of their uploaded files, delete, and edit descripti
     When I click on first "Godkänd - 2018-01-03" link
     Then I should be on the "application" page for "emma-member@example.com"
 
+  @selenium
+  Example: Member deletes an uploaded file that is not associated with an application
+    Given I am logged out
+    And I am logged in as "lars-member@example.com"
+    When I am on the "list of uploaded files" page
+    Then I should see "microsoft-word.doc"
+    And I should see "image.jpg"
+    And I should see "image.png"
+    And I should see the icon with CSS class "fa-edit" for the row with "microsoft-word.doc"
+    And I should see the icon with CSS class "fa-trash-alt" for the row with "microsoft-word.doc"
+    When I click and accept the icon with CSS class "fa-trash-alt" for the row with "microsoft-word.doc"
+    Then I should see t("uploaded_files.destroy.success", file_name: "microsoft-word.doc")
+    Then I should not see "microsoft-word.doc" in the list of uploaded files
 
-  Rule: Once an application has been approved by SHF, it cannot be changed. (Else it would have to be
-  reviewed again.)
+
+  Rule: Once an application has been approved by SHF, it cannot be changed, else it would have to be
+  reviewed again.
 
     Example: Only files that can be changed have edit and delete icons
       When I am on the "list of uploaded files" page
