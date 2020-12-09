@@ -84,10 +84,10 @@ class UploadedFile < ApplicationRecord
   end
 
   def can_edit?
-    !shf_application&.accepted? && !shf_application&.rejected?
+    shf_application.present? ?  shf_application.can_edit_delete_uploads? : true
   end
 
   def can_delete?
-    !shf_application&.accepted? && !shf_application&.rejected?
+    can_edit?
   end
 end
