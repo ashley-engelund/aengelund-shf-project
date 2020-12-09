@@ -1986,6 +1986,7 @@ en:
         my_application: *my_application
         apply_for_membership: Apply for Membership
         your_account: Your account
+        uploaded_files: Your uploaded files
 
       members:
         shf_companies: SHF Companies
@@ -2009,6 +2010,7 @@ en:
         design_guide: Design Guide
         master_checklists: Master Checklists
         dashboard: Dashboard
+        all_uploaded_files: All Uploaded Files
 
         categories:
           submenu_title: Categories
