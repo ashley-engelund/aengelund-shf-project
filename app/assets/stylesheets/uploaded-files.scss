@@ -1,12 +1,12 @@
 #uploaded-files-list {
-  .file_size,
-  .updated_at {
+  .file-size,
+  .updated-at {
     font-size: smaller;
   }
 
   tbody {
     .description {
-      font-size: smaller
+      font-size: smaller;
     }
   }
 }

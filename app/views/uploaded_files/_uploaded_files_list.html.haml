@@ -11,9 +11,9 @@
           %th.description= sort_link(@search_params, :description,
                 t('.description'), {}, { class: 'applications_pagination', remote: true })
           %th.application= t('.associated_with_application')
-          %th.file_size= sort_link(@search_params, :actual_file_file_size,
+          %th.file-size= sort_link(@search_params, :actual_file_file_size,
                 "#{t('.file_size')} kb", {}, { class: 'applications_pagination', remote: true })
-          %th.updated_at= sort_link(@search_params, :actual_file_updated_at,
+          %th.updated-at= sort_link(@search_params, :actual_file_updated_at,
                 "#{t('.updated_at')} (UTC)", {}, { class: 'applications_pagination', remote: true })
           %th.view= t('view')
           %th.edit= t('edit')
@@ -27,8 +27,8 @@
             %td.file_name= link_to uploaded_file.actual_file_file_name, user_uploaded_file_path(current_user, uploaded_file)
             %td.description= uploaded_file.description
             %td.application= link_to(app_state_and_date(uploaded_file.shf_application), uploaded_file.shf_application) if uploaded_file.shf_application
-            %td.file_size= (uploaded_file.actual_file_file_size / 1024.0).round(1)
-            %td.updated_at= uploaded_file.updated_at.strftime("%Y-%m-%d %H:%M:%S")
+            %td.file-size= (uploaded_file.actual_file_file_size / 1024.0).round(1)
+            %td.updated-at= uploaded_file.updated_at.strftime("%Y-%m-%d %H:%M:%S")
             %td.view= link_to view_icon, uploaded_file.actual_file.url, target: "_blank", id: "uploaded-file-link-#{uploaded_file.id}", class: "uploaded-file-link"
             %td.edit= link_to edit_icon, edit_user_uploaded_file_path(current_user, uploaded_file) if policy(uploaded_file).edit?
 
