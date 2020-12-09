@@ -27,3 +27,11 @@ And(/^these files have been uploaded:?/) do |table|
   end
 
 end
+
+
+# Find a string or not in the uploaded_files table
+# (= the list of uploaded files on the #index page
+And "I should{negate} see {capture_string} in the list of uploaded files" do |negated, expected_string|
+  step %{I should#{negated ? ' not' : ''} see "#{expected_string}" in the div with id "uploaded_files_list"}
+end
+

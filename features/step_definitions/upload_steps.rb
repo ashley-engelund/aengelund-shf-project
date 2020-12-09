@@ -30,8 +30,15 @@ end
 #   page.attach_file "uploaded_file[actual_files][]", files, visible: false  #selenium won't find the upload button without visible: false
 # end
 
-And(/^I click on trash icon for "([^"]*)"$/) do |filename|
-  find(:xpath, "//tr[contains(.,'#{filename}')]/td/a[@class='action-delete']").click
+And(/^I click on trash icon for "([^"]*)"$/) do |text|
+  delete_link = find(:xpath, "//tr[contains(.,'#{text}')]/td/a[@class='action-delete']")
+  page.driver.accept_modal(:confirm, wait: 4) do
+    delete_link.click
+  end
+end
+
+And("I click on the delete icon for {capture_string}") do |text|
+  step "I click on trash icon for \"#{text}\""
 end
 
 Then(/^I should( not)? see the file delete action$/) do | negate |
@@ -45,3 +52,4 @@ When "I delete the{optional_string} uploaded file" do |ordinal|
     all("a[class='action-delete']")[index].click
   end
 end
+
