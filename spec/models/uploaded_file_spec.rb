@@ -130,6 +130,12 @@ RSpec.describe UploadedFile, type: :model do
   describe 'can_edit?' do
 
     context 'has a shf_application' do
+
+      it 'false if shf_application is under review' do
+        uploaded_file = build(:uploaded_file_for_application, shf_application: build(:shf_application, :under_review))
+        expect(uploaded_file.can_edit?).to be_falsey
+      end
+
       it 'false if shf_application is accepted' do
         uploaded_file = build(:uploaded_file_for_application, shf_application: build(:shf_application, :accepted))
         expect(uploaded_file.can_edit?).to be_falsey
@@ -140,10 +146,9 @@ RSpec.describe UploadedFile, type: :model do
         expect(uploaded_file.can_edit?).to be_falsey
       end
 
-      context 'true if shf_application is not accepted or rejected' do
+      context 'true if shf_application is not under_review, accepted, rejected' do
 
-        other_states = ShfApplication.all_states.reject{ |state| state.to_sym == :accepted || state.to_sym == :rejected }
-
+        other_states = ShfApplication.all_states - [:under_review, :accepted, :rejected]
         other_states.each do | other_state |
           it "#{other_state}" do
             uploaded_file = build(:uploaded_file_for_application, shf_application: build(:shf_application, state: other_state))
@@ -163,6 +168,11 @@ RSpec.describe UploadedFile, type: :model do
   describe 'can_delete?' do
 
     context 'has a shf_application' do
+
+      it 'false if shf_application is under review' do
+        uploaded_file = build(:uploaded_file_for_application, shf_application: build(:shf_application, :under_review))
+        expect(uploaded_file.can_delete?).to be_falsey
+      end
       it 'false if shf_application is accepted' do
         uploaded_file = build(:uploaded_file_for_application, shf_application: build(:shf_application, :accepted))
         expect(uploaded_file.can_delete?).to be_falsey
@@ -175,8 +185,7 @@ RSpec.describe UploadedFile, type: :model do
 
       context 'true if shf_application is not accepted or rejected' do
 
-        other_states = ShfApplication.all_states.reject{ |state| state.to_sym == :accepted || state.to_sym == :rejected }
-
+        other_states = ShfApplication.all_states - [:under_review, :accepted, :rejected]
         other_states.each do | other_state |
           it "#{other_state}" do
             uploaded_file = build(:uploaded_file_for_application, shf_application: build(:shf_application, state: other_state))
