@@ -12,7 +12,6 @@ class UploadedFilePolicy < ApplicationPolicy
     new?
   end
 
-
   # admin or owner can update if:
   #   - the uploaded file is associated with an ShfApplication AND the uploaded files can be editted or deleted
   #     OR
@@ -23,8 +22,7 @@ class UploadedFilePolicy < ApplicationPolicy
 
   def destroy?
     update?
- end
-
+  end
 
   private
 

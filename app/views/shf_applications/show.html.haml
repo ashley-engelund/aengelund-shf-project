@@ -46,7 +46,7 @@
 
     - if current_user.admin?
       %hr
-      = render partial: 'application_status_form'
+      = render partial: 'application_status_form', locals: { shf_application: @shf_application }
       %hr
       .text-center
         = link_to "#{t('.delete')}", @shf_application, method: :delete, class:'btn btn-danger btn-sm', data: { confirm: "#{t('.confirm_are_you_sure')}" }

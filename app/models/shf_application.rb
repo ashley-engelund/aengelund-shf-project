@@ -10,7 +10,7 @@ class ShfApplication < ApplicationRecord
   include UpdatedAtRange
 
   after_initialize :add_observers
-  after_update  :clear_image_caches
+  after_update :clear_image_caches
   before_destroy :before_destroy_checks
 
   belongs_to :user
@@ -235,8 +235,7 @@ class ShfApplication < ApplicationRecord
     user.update(membership_number: nil)
 
     update(when_approved: nil)
-    destroy_uploaded_files
-
+    destroy_uploaded_files # FIXME why destroy these?  Don't they need to be kept in case the applicant wants to talk about them?
   end
 
 

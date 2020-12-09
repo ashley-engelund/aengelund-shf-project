@@ -10,9 +10,6 @@
     .row.uploaded-file
       .col
         = render partial: 'uploaded_file_and_name', locals: {uploaded_file: @uploaded_file}
-        -#.image= image_tag(@uploaded_file.actual_file.url)
-        -#.clearfix
-        -#.file-name= @uploaded_file.actual_file_file_name
 
     .form-group
       = f.label :description, t('.description')
@@ -20,7 +17,6 @@
 
     .form-group
       = f.submit t('save'), class: 'btn btn-primary mb-2 form-control'
-
 
   %hr
   .text-center

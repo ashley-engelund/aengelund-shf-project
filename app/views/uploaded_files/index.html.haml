@@ -5,8 +5,9 @@
 
 .entry-content
   %p.note= t('.cannot_edit_or_delete_reason')
-  #uploaded_files_list
-    = render partial: 'uploaded_files_list'
+  #uploaded-files-list
+    = render partial: 'uploaded_files_list', locals: {uploaded_files: @uploaded_files,
+     search_params: @search_params}
 
   %p.note= t('.cannot_edit_or_delete_reason')
 

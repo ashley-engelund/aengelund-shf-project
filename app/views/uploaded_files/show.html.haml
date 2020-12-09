@@ -9,7 +9,7 @@
 
     .row
       .col.description
-        =field_or_none(t('.description'), @uploaded_file.description)
+        = field_or_none(t('.description'), @uploaded_file.description)
 
   = render 'show_action_buttons', uploaded_file: @uploaded_file,
      can_edit: policy(@uploaded_file).edit?,

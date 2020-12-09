@@ -139,11 +139,11 @@ And "I should see {capture_string} files for the {capture_string} listed applica
   #  I should see "3" files for the "second" listed application
 
   index = [0, 1, 2, 3, 4].send(ordinal.lstrip)
-
   ele = all('#shf_applications_list table tr > td.number_of_files')[index]
-
   expect(ele.text).to eq count
 end
+
+
 
 # Find a string or not in the #shf_applications table
 # (= the list of shf membership applications on the #index page
