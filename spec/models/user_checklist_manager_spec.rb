@@ -9,15 +9,18 @@ RSpec.describe UserChecklistManager do
 
   include_context 'create users'
 
-
   let(:june_6) { Time.zone.local(2020, 6, 6) }
   let(:june_5) { Time.zone.local(2020, 6, 5) }
+
+  # TODO get this from AppConfiguration later / stub (the membership guidelines list type, etc.)
+  let(:membership_guidelines_type_name) { AdminOnly::MasterChecklistType::MEMBER_GUIDELINES_LIST_TYPE }
+  let(:guideline_list_type) { create(:master_checklist_type, name: membership_guidelines_type_name) }
+  let(:guideline_master) { create(:master_checklist, master_checklist_type: guideline_list_type) }
 
 
   context 'ENV variables' do
     it_behaves_like 'expected ENV variables exist', %w( SHF_MEMBERSHIP_GUIDELINES_CHECKLIST_REQD_START )
   end
-
 
   describe '.missing_membership_guidelines_reqd_start_date' do
     it '= yesterday' do
@@ -26,7 +29,6 @@ RSpec.describe UserChecklistManager do
       end
     end
   end
-
 
   describe '.membership_guidelines_reqd_start_date' do
 
@@ -45,7 +47,6 @@ RSpec.describe UserChecklistManager do
       expect(described_class.membership_guidelines_reqd_start_date).to eq june_5
     end
   end
-
 
   describe '.membership_guidelines_agreement_required_now?' do
 
@@ -69,10 +70,62 @@ RSpec.describe UserChecklistManager do
   end
 
 
+  describe '.first_incomplete_membership_guideline_section_for' do
+
+    context 'membership membership guidelines are not required' do
+      it 'always nil ' do
+        user = create(:user)
+        allow(described_class).to receive(:must_complete_membership_guidelines_checklist?)
+                                    .with(user)
+                                    .and_return(false)
+        expect(described_class.first_incomplete_membership_guideline_section_for(user)).to be_nil
+      end
+    end
+
+    context 'membership membership guidelines are required' do
+
+      it 'nil if all are completed' do
+        user_all_completed =  build(:user, first_name: 'AllCompleted')
+        user_checklist = create(:user_checklist,  user: user_all_completed,
+                                master_checklist: guideline_master,
+                                num_completed_children: 2)
+        allow(AdminOnly::UserChecklistFactory).to receive(:create_member_guidelines_checklist_for)
+                                                    .with(user_all_completed)
+                                                    .and_return(user_checklist)
+        expect(described_class.first_incomplete_membership_guideline_section_for(user_all_completed)).to be_nil
+      end
+
+      it 'first completed guideline (based on the list position) of the membership guidelines' do
+        user_some_completed =  build(:user, first_name: 'SomeCompleted')
+        user_checklist = create(:user_checklist,  user: user_some_completed,
+                                master_checklist: guideline_master,
+                                num_children: 3,
+                                num_completed_children: 2)
+        allow(AdminOnly::UserChecklistFactory).to receive(:create_member_guidelines_checklist_for)
+                                                    .with(user_some_completed)
+                                                    .and_return(user_checklist)
+        allow(described_class).to receive(:membership_guidelines_list_for)
+                                    .with(user_some_completed)
+                                    .and_return(user_checklist)
+        result = described_class.first_incomplete_membership_guideline_section_for(user_some_completed)
+        expect(result.completed?).to be_falsey
+      end
+    end
+  end
+
+
   describe '.completed_membership_guidelines_if_reqd?' do
 
-    context 'user does not have to complete the membership guidelines' do
+    let(:user) { create(:user) }
 
+    it 'calls must_complete_membership_guidelines_checklist? to see if the user needs to complete the guidelines' do
+      expect(described_class).to receive(:must_complete_membership_guidelines_checklist?)
+                                   .with(user)
+                                   .and_return(false)
+      described_class.completed_membership_guidelines_if_reqd?(user)
+    end
+
+    context 'user does not have to complete the membership guidelines (calls must_complete_membership_guidelines_checklist? to check)' do
       it 'always true' do
         allow(described_class).to receive(:must_complete_membership_guidelines_checklist?).and_return(false)
 
@@ -81,23 +134,31 @@ RSpec.describe UserChecklistManager do
       end
     end
 
-    context 'user does have to complete the membership guidelines' do
+    context 'user must complete the membership guidelines' do
 
       it 'true if the user has completed the guidelines' do
-        allow(described_class).to receive(:must_complete_membership_guidelines_checklist?).and_return(true)
-
-        expect(described_class.completed_membership_guidelines_if_reqd?(applicant_approved_ethical_agreed_no_payments)).to be_truthy
+        allow(described_class).to receive(:must_complete_membership_guidelines_checklist?)
+                                  .with(user)
+                                  .and_return(true)
+        allow(described_class).to receive(:completed_membership_guidelines_checklist?)
+                                    .with(user)
+                                    .and_return(true)
+        expect(described_class.completed_membership_guidelines_if_reqd?(user)).to be_truthy
       end
 
       it 'false if the user has not completed the guidelines' do
         allow(described_class).to receive(:must_complete_membership_guidelines_checklist?).and_return(true)
+        allow(described_class).to receive(:must_complete_membership_guidelines_checklist?)
+                                    .with(user)
+                                    .and_return(true)
+        allow(described_class).to receive(:completed_membership_guidelines_checklist?)
+                                    .with(user)
+                                    .and_return(false)
 
-        expect(described_class.completed_membership_guidelines_if_reqd?(applicant_approved_no_payments)).to be_falsey
-        expect(described_class.completed_membership_guidelines_if_reqd?(member_paid_up)).to be_falsey
+        expect(described_class.completed_membership_guidelines_if_reqd?(user)).to be_falsey
       end
     end
   end
-
 
   describe '.completed_membership_guidelines_checklist?' do
 
@@ -115,7 +176,6 @@ RSpec.describe UserChecklistManager do
       described_class.completed_membership_guidelines_checklist?(user_for_checklist)
     end
   end
-
 
   describe '.membership_guidelines_list_for' do
 
@@ -140,186 +200,154 @@ RSpec.describe UserChecklistManager do
 
   end
 
-
   describe '.must_complete_membership_guidelines_checklist?' do
+
+    it 'user is nil raises an error' do
+      expect { described_class.must_complete_membership_guidelines_checklist?(nil) }.to raise_error ArgumentError
+    end
+
+    let(:user_or_member) { build(:user, first_name: 'Either', last_name: 'UserOrMember') }
 
     it 'false if today < the date we start requiring the membership guidelines checklist' do
       Timecop.freeze(described_class.membership_guidelines_reqd_start_date - 1.minute) do
-        expect(described_class.must_complete_membership_guidelines_checklist?(create(:user))).to be_falsey
+        expect(described_class.must_complete_membership_guidelines_checklist?(user_or_member)).to be_falsey
       end
     end
 
-    context 'today >= the date we start requiring the membership guidelines checklist' do
-
-      let(:one_minute_after_req_start) { described_class.membership_guidelines_reqd_start_date + 1.minute }
-
-      let(:two_days_before_req_duration_end) { User.expire_date_for_start_date(described_class.membership_guidelines_reqd_start_date) - 2.days }
-
-
-      it 'user is nil raises an error' do
-        expect { described_class.must_complete_membership_guidelines_checklist?(nil) }.to raise_error ArgumentError
+    it 'true if today > the date we start requiring the membership guidelines checklist' do
+      Timecop.freeze(described_class.membership_guidelines_reqd_start_date + 1.minute) do
+        expect(described_class.must_complete_membership_guidelines_checklist?(user_or_member)).to be_truthy
       end
-
-      it 'true if user is not a current member' do
-
-        travel_to(one_minute_after_req_start) do
-          users_not_members = [create(:user), user_no_payments, member_expired, user_all_paid_membership_not_granted]
-          users_not_members.each do |not_a_member|
-            expect(described_class.must_complete_membership_guidelines_checklist?(not_a_member)).to be_truthy
-          end
-        end
-
-      end
-
-
-      context 'current member' do
-
-        context 'expires BEFORE the (Requirement start + 1 term) [ < (requirement start date + Membership Term Duration)]' do
-
-          before(:each) { travel_to two_days_before_req_duration_end }
-          after(:each) { travel_back }
-
-
-          it 'true if members expiration < two_days_before_req_duration_end (would not be a current member!)' do
-            user = build(:member_with_membership_app)
-            user.payments << create(:expired_membership_fee_payment) # expired yesterday
-            user.save!
-            expect(user.membership_current?).not_to be_truthy
-
-            expect(described_class.must_complete_membership_guidelines_checklist?(user)).to be_truthy
-          end
-
-          it 'true if member expiration date = two_days_before_req_duration_end (would not be a current member!)' do
-            user = build(:member_with_membership_app)
-            user.payments << create(:expired_membership_fee_payment, expire_date: Time.zone.now) # expired yesterday
-            user.save!
-            expect(user.membership_current?).not_to be_truthy
-
-            expect(described_class.must_complete_membership_guidelines_checklist?(user)).to be_truthy
-          end
-
-          it 'false if member expiration date > two_days_before_req_duration_end' do
-            user = build(:member_with_membership_app)
-            user.payments << create(:expired_membership_fee_payment, expire_date: (Time.zone.now + 1.day))
-            user.save!
-            expect(user.membership_current?).to be_truthy
-
-            expect(described_class.must_complete_membership_guidelines_checklist?(user)).to be_falsey
-          end
-
-        end
-
-
-        context 'expires AFTER the (Requirement start + 1 term) [member expiration > (Req. start date + Membership Term Duration)]' do
-
-          let(:start_date_plus_term_duration) { User.expire_date_for_start_date(described_class.membership_guidelines_reqd_start_date) }
-
-          let(:membership_term_expire_date) { start_date_plus_term_duration + 1.month }
-
-          it 'false if they last paid BEFORE the requirement start date' do
-
-            user = build(:member_with_membership_app)
-
-            # make the payments _before_ the requirement went into effect/started:
-            #  note that they payment 'expires' (= membership term) AFTER (requirement start date + Membership Term Duration) (perhaps they paid for 2 terms when they paid)
-            travel_to described_class.membership_guidelines_reqd_start_date - 1.day do
-              user.payments << create(:expired_membership_fee_payment, expire_date: (membership_term_expire_date))
-            end
-            user.save!
-            expect(user.membership_current?).to be_truthy
-
-            travel_to start_date_plus_term_duration + 1.day do
-              expect(described_class.must_complete_membership_guidelines_checklist?(user)).to be_falsey
-            end
-          end
-
-          it 'true if they last paid ON the requirement start date' do
-            user = build(:member_with_membership_app)
-
-            # make the payments _after_ the requirement went into effect/started:
-            #  note that they payment 'expires' (= membership term) AFTER (requirement start date + Membership Term Duration) (perhaps they paid for 2 terms when they paid)
-            travel_to described_class.membership_guidelines_reqd_start_date do
-              user.payments << create(:expired_membership_fee_payment, expire_date: (membership_term_expire_date))
-            end
-            user.save!
-            expect(user.membership_current?).to be_truthy
-
-            travel_to start_date_plus_term_duration + 1.day do
-              expect(described_class.must_complete_membership_guidelines_checklist?(user)).to be_truthy
-            end
-          end
-
-          it 'true if they last paid AFTER the requirement start date' do
-            user = build(:member_with_membership_app)
-
-            # make the payments _after_ the requirement went into effect/started:
-            #  note that they payment 'expires' (= membership term) AFTER (requirement start date + Membership Term Duration) (perhaps they paid for 2 terms when they paid)
-            travel_to described_class.membership_guidelines_reqd_start_date + 1.day do
-              user.payments << create(:expired_membership_fee_payment, expire_date: membership_term_expire_date)
-            end
-            user.save!
-            expect(user.membership_current?).to be_truthy
-
-            travel_to start_date_plus_term_duration + 1.day do
-              expect(described_class.must_complete_membership_guidelines_checklist?(user)).to be_truthy
-            end
-          end
-
-        end
-
-
-        context 'expires ON the (Requirement start + 1 term) [member expiration == (Req. start date + Membership Term Duration)]' do
-
-          let(:start_date_plus_term_duration) { User.expire_date_for_start_date(described_class.membership_guidelines_reqd_start_date) }
-
-
-          it 'false if they last paid BEFORE the requirement start date' do
-            user = build(:member_with_membership_app)
-
-            travel_to described_class.membership_guidelines_reqd_start_date - 1.day do
-              user.payments << create(:expired_membership_fee_payment, expire_date: (start_date_plus_term_duration))
-            end
-            user.save!
-            expect(user.membership_current?).to be_truthy
-
-            travel_to start_date_plus_term_duration - 2.days do
-              expect(described_class.must_complete_membership_guidelines_checklist?(user)).to be_falsey
-            end
-          end
-
-          it 'true if they last paid ON the requirement start date' do
-            user = build(:member_with_membership_app)
-
-            travel_to described_class.membership_guidelines_reqd_start_date do
-              user.payments << create(:expired_membership_fee_payment, expire_date: (start_date_plus_term_duration))
-            end
-            user.save!
-            expect(user.membership_current?).to be_truthy
-
-            travel_to start_date_plus_term_duration + 1.day do
-              expect(described_class.must_complete_membership_guidelines_checklist?(user)).to be_truthy
-            end
-          end
-
-          it 'true if they last paid AFTER the requirement start date' do
-            user = build(:member_with_membership_app)
-
-            travel_to described_class.membership_guidelines_reqd_start_date + 1.day do
-              user.payments << create(:expired_membership_fee_payment, expire_date: (start_date_plus_term_duration))
-            end
-            user.save!
-            expect(user.membership_current?).to be_truthy
-
-            travel_to start_date_plus_term_duration + 1.day do
-              expect(described_class.must_complete_membership_guidelines_checklist?(user)).to be_truthy
-            end
-          end
-        end
-
-      end
-
     end
 
+    it 'true if today = the date we start requiring the membership guidelines checklist' do
+      Timecop.freeze(described_class.membership_guidelines_reqd_start_date) do
+        expect(described_class.must_complete_membership_guidelines_checklist?(user_or_member)).to be_truthy
+      end
+    end
+  end
+
+  describe '.completed_guidelines_for' do
+
+    it 'empty list if  there is no list for the user' do
+      user_no_checklist = build(:user)
+      expect(described_class.completed_guidelines_for(user_no_checklist)).to be_empty
+    end
+
+    context 'no guidelines completed' do
+      it 'empty list' do
+        num_completed = 0
+        user_none_completed = build(:user)
+        user_checklist = create(:user_checklist,  user: user_none_completed,
+                                master_checklist: guideline_master,
+                                num_children: 2,
+                                num_completed_children: num_completed)
+        allow(AdminOnly::UserChecklistFactory).to receive(:create_member_guidelines_checklist_for)
+                                                     .with(user_none_completed)
+                                                     .and_return(user_checklist)
+
+        expect(described_class.completed_guidelines_for(user_none_completed)).to be_empty
+      end
+    end
+
+    context 'some guidelines completed' do
+      it 'list with only the completed guidelines' do
+        num_completed = 1
+        user_some_completed = build(:user, first_name: 'SomeCompleted')
+        user_checklist = create(:user_checklist, user: user_some_completed,
+               master_checklist: guideline_master,
+               num_children: 3,
+               num_completed_children: num_completed)
+        allow(AdminOnly::UserChecklistFactory).to receive(:create_member_guidelines_checklist_for)
+                                                    .with(user_some_completed)
+                                                    .and_return(user_checklist)
+        expect(described_class.completed_guidelines_for(user_some_completed).count).to eq num_completed
+      end
+    end
+
+    context 'all guidelines completed' do
+      it 'list all the guidelines' do
+        num_completed = 2
+        user_all_completed =  build(:user, first_name: 'AllCompleted')
+        user_checklist = create(:user_checklist, :completed,
+                                user: user_all_completed,
+                                master_checklist: guideline_master,
+                                num_completed_children: num_completed)
+        expect(user_checklist.all_completed?).to be_truthy
+
+        allow(AdminOnly::UserChecklistFactory).to receive(:create_member_guidelines_checklist_for)
+                                                    .with(user_all_completed)
+                                                    .and_return(user_checklist)
+        expect(described_class.completed_guidelines_for(user_all_completed).count).to eq num_completed
+      end
+    end
+  end
+
+
+  describe '.not_completed_guidelines_for' do
+
+    it 'empty list if  there is no list for the user' do
+      user_no_checklist = build(:user)
+      expect(described_class.not_completed_guidelines_for(user_no_checklist)).to be_empty
+    end
+
+    context 'no guidelines completed' do
+      it 'all of the guidelines' do
+        num_children = 2
+        num_completed = 0
+        user_none_completed = build(:user)
+        user_checklist = create(:user_checklist, user: user_none_completed,
+                                master_checklist: guideline_master,
+                                num_children: num_children,
+                                num_completed_children: num_completed)
+        allow(AdminOnly::UserChecklistFactory).to receive(:create_member_guidelines_checklist_for)
+                                                    .with(user_none_completed)
+                                                    .and_return(user_checklist)
+        expect(described_class.not_completed_guidelines_for(user_none_completed).count).to eq num_children
+      end
+    end
+
+    context 'some guidelines completed' do
+      it 'list with only the uncompleted guidelines' do
+        num_completed = 1
+        num_children = 3
+        expected_uncompleted = num_children - num_completed
+        user_some_completed = build(:user, first_name: 'SomeCompleted')
+        user_checklist = create(:user_checklist, user: user_some_completed,
+                                master_checklist: guideline_master,
+                                num_children: num_children,
+                                num_completed_children: num_completed)
+
+        allow(AdminOnly::UserChecklistFactory).to receive(:create_member_guidelines_checklist_for)
+                                                    .with(user_some_completed)
+                                                    .and_return(user_checklist)
+        allow(described_class).to receive(:membership_guidelines_list_for)
+                                    .with(user_some_completed)
+                                    .and_return(user_checklist)
+
+        expect(user_checklist.all_that_are_completed.count).to eq 1
+        expect(user_checklist.all_that_are_uncompleted.count).to eq 4 # this includes the root of the list
+
+        expect(described_class.not_completed_guidelines_for(user_some_completed).count).to eq(expected_uncompleted + 1)
+      end
+    end
+
+    context 'all guidelines are completed' do
+      it 'is empty' do
+        num_completed = 2
+        user_all_completed =  build(:user, first_name: 'AllCompleted')
+        user_checklist = create(:user_checklist, :completed,
+                                user: user_all_completed,
+                                master_checklist: guideline_master,
+                                num_completed_children: num_completed)
+        expect(user_checklist.all_completed?).to be_truthy
+
+        allow(AdminOnly::UserChecklistFactory).to receive(:create_member_guidelines_checklist_for)
+                                                    .with(user_all_completed)
+                                                    .and_return(user_checklist)
+        expect(described_class.not_completed_guidelines_for(user_all_completed).count).to eq 0
+      end
+    end
   end
 
 end

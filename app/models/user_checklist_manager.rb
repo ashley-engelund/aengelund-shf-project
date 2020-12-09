@@ -4,20 +4,16 @@
 #
 # @desc Responsibility: Handle all behavior and queries for a UserChecklist associated with a User
 #
-# Current members:  They do not need to agree to the Membership Guidelines checklist until they renew.
-# Anyone that is not a member on the 'start requiring membership guidelines date'
-# must complete the checklist as a membership requirement.
-# Anyone that is already a member on the "start requiring membership guidelines date"
-#  does NOT need to complete the checklist -- until they renew.
+# 2020-12-07  Business Rule: Everyone must always agree to the membership guidelines,
+#   no matter when their term starts/ends, etc.
+#   The only limiting factor is when the Membership Guidelines requirement started.
 #
 # @author Ashley Engelund (ashley.engelund@gmail.com  weedySeaDragon @ github)
 # @date   1/23/20
 #
 #--------------------------
 
-
 class UserChecklistManager
-
 
   # @return
   #   true if
@@ -35,70 +31,60 @@ class UserChecklistManager
     false
   end
 
-
   def self.completed_membership_guidelines_checklist?(user)
     membership_guidelines_list_for(user)&.all_completed?
   end
-
 
   # @return [ nil | UserChecklist] - return nil if there aren't any, else return the most recent one
   def self.membership_guidelines_list_for(user)
     UserChecklist.membership_guidelines_for_user(user)&.last
   end
 
-
   def self.membership_guidelines_agreement_required_now?
     Time.zone.now >= membership_guidelines_reqd_start_date
   end
 
-
+  # Gets the first incomplete guideline (checklist) for the user.
+  # If the user does not have to complete the membership guidelines, return nil.
+  # If there are no guidelines, return nil.
+  # If there are no incomplete guidelines, return nil.
+  #
+  # Else return the first uncompleted checklist (since they are given to us here as sorted)
+  # @return [Nil | UserChecklist]
   def self.first_incomplete_membership_guideline_section_for(user)
     if must_complete_membership_guidelines_checklist?(user)
-      guideline_list = membership_guidelines_list_for(user) ? membership_guidelines_list_for(user) : AdminOnly::UserChecklistFactory.create_member_guidelines_checklist_for(user)
-
-      guideline_list.children.select { |kid| !kid.completed? }&.sort_by { |kid| kid.list_position }&.first
+      not_completed_guidelines_for(user)&.first
     else
       nil
     end
   end
 
-
   # Is this user required to complete a Membership Guideline checklist?
-  # As of 2020-01-23,
-  # If someone is a current member as of < when the requirement starts >,
-  #   then they do _not_ have to complete the membership guidelines checklist until they renew.
-  #   else they DO have to complete the membership guidelines checklist.
+  # true if the membership guidelines checklist is required now
+  # false if the membership guidelines checklist is not required right now
   #
-  # We only have payment dates and membership expiration dates to work with.
-  #
-  # Note that it is possible someone has paid ahead so that their membership term doesn't expire until
-  #   AFTER   1 membership term (= 1 year) after the requirement starts
-  #
-  #
+  # Although this is simplistic and essentially just calls _membership_guidelines_agreement_required_now?_
+  # this is the method that should be used so that if there are any additional checks/requirements
+  # that depend on the user, those additional check/requirements can be added here without
+  # disrupting or changing anything that needs to check if a user must complete the guidelines (SOLID).
   def self.must_complete_membership_guidelines_checklist?(user)
     raise ArgumentError, "User should not be nil. #{__method__}" if user.nil?
 
-    return false unless membership_guidelines_agreement_required_now?
-    return true unless user.membership_current?
+    membership_guidelines_agreement_required_now?
+  end
 
-    # They are are current member AND the guidelines are required today
+  # Has the user completed 1 or more of the membership guidelines checklist?
+  # @return [Boolean]
+  def self.completed_some_membership_guidelines_checklist?(user)
+    raise ArgumentError, "User should not be nil. #{__method__}" if user.nil?
 
-    one_term_after_req_start_date = User.expire_date_for_start_date(membership_guidelines_reqd_start_date)
-
-    if user.membership_expire_date < one_term_after_req_start_date
-      false # today is before the membership expire date else they would no longer be a member.
-    else
-      # false if last payment made was _before_ the requirements start date
-      if user.most_recent_payment.created_at < membership_guidelines_reqd_start_date
-        false
-      else
-        true
-      end
-    end
 
   end
 
 
+  # 2020-12-07  Business Rule: Everyone must always agree to the membership guidelines,
+  #   no matter when their term starts/ends, etc.
+  #   It is only dependent on when the Membership Guidelines requirement was started.
   def self.membership_guidelines_reqd_start_date
     # Could use a class variable here to store/cache ('memoize') this, but reading ENV and parsing the Time.zone is pretty fast.  Plus, this won't happen often.
     if ENV.has_key?('SHF_MEMBERSHIP_GUIDELINES_CHECKLIST_REQD_START')
@@ -113,4 +99,23 @@ class UserChecklistManager
     Time.zone.now.localtime.yesterday
   end
 
+
+  def self.completed_guidelines_for(user)
+    guidelines_for(user, :completed)
+  end
+
+
+  def self.not_completed_guidelines_for(user)
+    # guideline_list.descendants.uncompleted.to_a
+    guidelines_for(user, :uncompleted)
+  end
+
+  # Make one if it doesn't exist?  NO.  Just return empty list.
+  # The selection_block is being used explictly so it's very clear.  (Could have also use yield.)
+  def self.guidelines_for(user, completed_method = :completed)
+    guideline_list = membership_guidelines_list_for(user) ? membership_guidelines_list_for(user) : {}
+    return [] unless guideline_list.present?
+
+    guideline_list.descendants&.send(completed_method).to_a&.sort_by { |kid| "#{kid.ancestry}-#{kid.list_position}" }
+  end
 end
