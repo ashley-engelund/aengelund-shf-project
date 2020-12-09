@@ -35,10 +35,15 @@ class ApplicationPolicy
     user.admin?
   end
 
+
+  def owner?
+    (record.respond_to?(:user) && record.user == user)
+  end
+
   private
 
   def admin_or_owner?
-    user.admin? || ( record.respond_to?(:user) &&  record.user == user )
+    user.admin? || owner?
   end
 
   def not_a_visitor

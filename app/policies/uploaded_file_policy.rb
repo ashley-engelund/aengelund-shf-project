@@ -8,21 +8,22 @@ class UploadedFilePolicy < ApplicationPolicy
     can_see_page_for_the_user?
   end
 
-  def edit?
-    can_see_page_for_the_user? && admin_or_owner?
-  end
-
-  def show?
-    admin_or_owner?
-  end
-
   def create?
-    not_a_visitor?
+    new?
+  end
+
+
+  # admin or owner can update if:
+  #   - the uploaded file is associated with an ShfApplication AND the uploaded files can be editted or deleted
+  #     OR
+  #   - the uploaded file is not associated with an ShfApplication
+  def update?
+    admin_or_owner? && (record.shf_application.present? ? record.shf_application.can_edit_delete_uploads? : true)
   end
 
   def destroy?
-    admin_or_owner?
-  end
+    update?
+ end
 
 
   private
