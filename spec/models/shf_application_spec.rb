@@ -609,30 +609,6 @@ RSpec.describe ShfApplication, type: :model do
   end
 
 
-  describe 'applicant_can_edit?' do
-
-    it 'true if state is "new"' do
-      expect(create(:shf_application).applicant_can_edit?).to be_truthy
-    end
-
-    it 'true if state is "waiting for applicant"' do
-      expect(create(:shf_application, state: :waiting_for_applicant).applicant_can_edit?).to be_truthy
-    end
-
-
-    describe 'false otherwise:' do
-      other_states = described_class.all_states.reject{ |state| state.to_sym == :new || state.to_sym == :waiting_for_applicant }
-
-      other_states.each do | other_state |
-        it "#{other_state}" do
-          expect(create(:shf_application, state: other_state).applicant_can_edit?).to be_falsey
-        end
-      end
-
-    end
-  end
-
-
   describe 'possibly_waiting_for_upload?' do
     # Only these states can be waiting for file uploads
     STATES_CAN_BE_WAITING = %w(new under_review waiting_for_applicant)
