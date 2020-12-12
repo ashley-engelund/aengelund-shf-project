@@ -343,6 +343,9 @@ en:
               file_too_large: &file_size_too_large 'The uploaded file is too big.'
             actual_file:
               file_too_large: &file_too_large 'The uploaded file size must be smaller than %{max}. (Your file is %{value} bytes.)'
+            actual_file_file_content_type:
+              invalid_type: &file_content_type_forbidden Sorry, this is not a file type you can upload.
+
 
         company:
           attributes:
@@ -501,7 +504,7 @@ en:
     create:
       success: "%{file_name} was uploaded successfully."
       error: The was a problem saving the file.
-      invalid_upload_type: &invalid_upload_type Sorry, this is not a file type you can upload.
+      invalid_upload_type: *file_content_type_forbidden
 
     edit:
       title: "Edit the uploaded file: %{file_name}"
@@ -761,7 +764,7 @@ en:
       filename: *filename
       file_was_uploaded: &file_was_uploaded 'This file was uploaded: %{filename}'
       confirm_delete: &upload_confirm_delete 'Are you sure you want to delete %{filename}?'
-      invalid_upload_type: *invalid_upload_type
+      invalid_upload_type: *file_content_type_forbidden
       file_too_large: &file_too_large_5MB The file must be smaller than 5 MB
       please_upload_again: Please upload your files again.
       will_review_after_received: &review_after_recevied_files "Once we have received your files, we will review your application."
@@ -777,7 +780,7 @@ en:
     filename: *filename
     file_was_uploaded: *file_was_uploaded
     confirm_delete: *upload_confirm_delete
-    invalid_upload_type: *invalid_upload_type
+    invalid_upload_type: *file_content_type_forbidden
     file_too_large: *file_too_large_5MB
 
 
@@ -1264,7 +1267,7 @@ en:
     all_shf_documents: All Documents
     all_shf_minutes: All Documents
 
-    invalid_upload_type: *invalid_upload_type
+    invalid_upload_type: *file_content_type_forbidden
     file_too_large: *file_too_large_5MB
 
     contents_access_error: 'There was an error accessing the file: %{message}'

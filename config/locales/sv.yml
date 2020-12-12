@@ -343,6 +343,8 @@ sv:
               file_too_large: &file_size_too_large 'Filen är för stor för att laddas upp.'
             actual_file:
               file_too_large: &file_too_large 'Filen måste vara mindre än %{max}. (Filen är %{value} byte.)'
+            actual_file_file_content_type:
+              invalid_type: &file_content_type_forbidden Tyvärr kan du inte ladda upp denna filtypen.
 
         company:
           attributes:
@@ -508,7 +510,7 @@ sv:
     create:
       success: "%{file_name} was uploaded successfully."
       error: There was a problem saving the file.
-      invalid_upload_type: &invalid_upload_type Tyvärr kan du inte ladda upp denna filtypen.
+      invalid_upload_type: *file_content_type_forbidden
 
     edit:
       title: "Edit the uploaded file: %{file_name}"
@@ -767,7 +769,7 @@ sv:
       filename: *filename
       file_was_uploaded: &file_was_uploaded 'Filen laddades upp: %{filename}'
       confirm_delete: &upload_confirm_delete 'Är du säker på att du vill radera %{filename}?'
-      invalid_upload_type: *invalid_upload_type
+      invalid_upload_type: *file_content_type_forbidden
       file_too_large: &file_too_large_5MB Filen måste vara mindre än 5 MB
       please_upload_again: Var god ladda upp dina filer igen.
       will_review_after_received: &review_after_recevied_files "Vi kommer att handlägga din ansökan när vi har fått alla filer."
@@ -783,7 +785,7 @@ sv:
     filename: *filename
     file_was_uploaded: *file_was_uploaded
     confirm_delete: *upload_confirm_delete
-    invalid_upload_type: *invalid_upload_type
+    invalid_upload_type: *file_content_type_forbidden
     file_too_large: *file_too_large_5MB
 
 
@@ -1270,7 +1272,7 @@ sv:
     all_shf_documents: Alla uppladdade dokument
     all_shf_minutes: Alla uppladdade dokument
 
-    invalid_upload_type: *invalid_upload_type
+    invalid_upload_type: *file_content_type_forbidden
     file_too_large: *file_too_large_5MB
 
     contents_access_error: 'Det uppstod ett fel att komma åt filen: %{message}'
