@@ -28,7 +28,7 @@ class UploadedFilesController < ApplicationController
   def create
     @uploaded_file = UploadedFile.new(description: uploaded_file_params['description'])
     @uploaded_file.user = current_user
-    @uploaded_file.actual_file = params['actual_file']
+    @uploaded_file.actual_file = uploaded_file_params['actual_file']
 
     respond_to do |format|
       if @uploaded_file.save
