@@ -12,13 +12,27 @@ class UploadedFile < ApplicationRecord
     %w(.docm) => 'application/vnd.ms-word.document.macroEnabled.12'
   }
 
+  IMAGE_FILE_TYPES = %w[image/jpeg image/gif image/png]
+
+  DEFAULT_FILE_ICON = 'far fa-file-alt'
+  UNKNOWN_FILE_ICON = 'far fa-question-circle'
+  FILE_TYPE_ICONS = {
+    'text/plain': 'far fa-file-alt',
+    'text/rtf': DEFAULT_FILE_ICON,
+    'application/pdf': 'far fa-file-pdf',
+    'application/msword': 'far fa-file-word',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'far fa-file-word',
+    'application/vnd.ms-word.document.macroEnabled.12': 'far fa-file-word'
+  }
+
+
   belongs_to :user
   belongs_to :shf_application, optional: true
   counter_culture [:user, :shf_application]
 
   has_attached_file :actual_file
   validates_attachment :actual_file, content_type: { content_type: ALLOWED_FILE_TYPES.values,
-                                                     message: I18n.t('shf_applications.uploads.invalid_upload_type') },
+                                                     message: I18n.t('activerecord.errors.models.uploaded_file.attributes.actual_file_file_content_type.invalid_type') },
                        size: { in: 0..5.megabytes,
                                message: :file_too_large
                        }
@@ -89,5 +103,13 @@ class UploadedFile < ApplicationRecord
 
   def can_delete?
     can_edit?
+  end
+
+  def image?
+    IMAGE_FILE_TYPES.include? actual_file&.content_type
+  end
+
+  def icon
+    actual_file ? FILE_TYPE_ICONS[actual_file.content_type.to_sym]  : UNKNOWN_FILE_ICON
   end
 end
