@@ -494,7 +494,7 @@ sv:
       cannot_edit_or_delete_reason: You cannot edit or delete a file if it is part of an application being reviewed, approved, or rejected.
 
     show:
-      title: &uploaded_file_show_title "Uploaded File: %{file_name}"
+      title: &uploaded_file_show_title "Uppladdad fil: %{file_name}"
       description: *description
 
     new:
