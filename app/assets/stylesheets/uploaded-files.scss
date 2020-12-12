@@ -15,6 +15,18 @@
   margin-left: 2em;
   text-align: center;
 
+  i {
+    &.external-link {
+      font-size: x-small;
+      vertical-align: text-top;
+    }
+
+    &.file-icon {
+      font-size: 3rem;
+    }
+  }
+
+
   img {
     border-color: $info;
     border-style: dotted;

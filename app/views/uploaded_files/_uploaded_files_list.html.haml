@@ -29,7 +29,7 @@
             %td.application= link_to(app_state_and_date(uploaded_file.shf_application), uploaded_file.shf_application) if uploaded_file.shf_application
             %td.file-size= (uploaded_file.actual_file_file_size / 1024.0).round(1)
             %td.updated-at= uploaded_file.updated_at.strftime("%Y-%m-%d %H:%M:%S")
-            %td.view= link_to view_icon, uploaded_file.actual_file.url, target: "_blank", id: "uploaded-file-link-#{uploaded_file.id}", class: "uploaded-file-link"
+            %td.view= link_to external_link_icon, uploaded_file.actual_file.url, target: "_blank", id: "uploaded-file-link-#{uploaded_file.id}", class: "uploaded-file-link"
             %td.edit= link_to edit_icon, edit_user_uploaded_file_path(current_user, uploaded_file) if policy(uploaded_file).edit?
 
             %td.delete{ class: "delete-uploaded-file-#{uploaded_file.id}" }
