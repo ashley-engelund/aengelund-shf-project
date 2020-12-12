@@ -7,7 +7,10 @@
 
     .form-group
       .custom-file
-        = f.file_field :actual_file, class: 'form-control-file custom-file-input', accept: @allowed_file_types_list
+        = f.file_field :actual_file,
+         id: 'upload-button',
+         class: 'form-control-file custom-file-input',
+         accept: @allowed_file_types_list
         = f.label :actual_file, t('.upload_button_title'), class: 'custom-file-label d-inline text-truncate'
 
     .form-group
