@@ -26,7 +26,7 @@ class UploadedFilesController < ApplicationController
   end
 
   def create
-    @uploaded_file = UploadedFile.create(description: uploaded_file_params['description'])
+    @uploaded_file = UploadedFile.new(description: uploaded_file_params['description'])
     @uploaded_file.user = current_user
     @uploaded_file.actual_file = params['actual_file']
 
