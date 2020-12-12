@@ -2,19 +2,16 @@
   = content_title(t('.title'), user: current_user)
 
 .entry-content
-  = form_for [:user, @uploaded_file], html: { multipart: true }  do |f|
+  = form_for [:user, @uploaded_file] do |f|
     != model_errors_helper(@uploaded_file)
 
     .form-group
       .field
-        %span{ class: 'btn btn-primary mt-3 btn-file' }
-          = t('.upload_button_title')
-          = f.file_field :actual_file,
-                multiple: false,
-                name: 'actual_file',
-                class: 'upload-field',
-                id: 'upload-button',
-                accept: @allowed_file_types_list
+        = f.file_field :actual_file,
+              name: 'actual_file',
+              id: 'upload-button',
+              class: 'btn btn-light',
+              accept: @allowed_file_types_list
 
     .form-group
       = f.label :description, t('.description')

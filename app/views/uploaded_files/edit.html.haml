@@ -10,7 +10,6 @@
     .row.uploaded-file
       .col
         = render partial: 'uploaded_file_and_name', locals: {uploaded_file: @uploaded_file}
-
     .form-group
       = f.label :description, t('.description')
       = f.text_field :description, class: 'form-control'
