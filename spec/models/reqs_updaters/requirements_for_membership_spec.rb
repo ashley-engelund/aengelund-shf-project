@@ -368,35 +368,4 @@ RSpec.describe RequirementsForMembership, type: :model do
 
     end
   end
-
-
-  describe '.satisfied?' do
-
-    it '.has_expected_arguments? is true and requirements_met? is true' do
-      member_current_payment
-      build_stubbed(:user_checklist, :completed, user: member, name: 'Membership Guidelines list')
-      allow(UserChecklist).to receive(:membership_guidelines_for_user).and_return(member.checklists)
-      allow(UserChecklistManager).to receive(:completed_membership_guidelines_checklist?).and_return(true)
-
-      expect(subject.satisfied?( user: member)).to be_truthy
-    end
-
-    it '.has_expected_arguments? is true and requirements_met? is false' do
-      expect(subject.satisfied?({ user: user })).to be_falsey
-    end
-
-    it '.has_expected_arguments? is false and requirements_met? is true' do
-      member_current_payment
-      create(:user_checklist, :completed, user: member, name: 'Membership Guidelines list')
-      allow(UserChecklist).to receive(:membership_guidelines_for_user).and_return(member.checklists)
-
-      expect(subject.satisfied?({ not_user: member })).to be_falsey
-    end
-
-    it '.has_expected_arguments? is false and requirements_met? is false' do
-      expect(subject.satisfied?({ not_user: user })).to be_falsey
-    end
-
-  end
-
 end
