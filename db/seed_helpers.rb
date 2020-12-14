@@ -29,8 +29,10 @@ module SeedHelper
   class SeedAdminENVError < StandardError
   end
 
-  attr_reader :regions, :kommuns, :business_categories, :address_factory
+  attr_reader :regions, :kommuns, :business_categories
+  attr_writer :address_factory
 
+  # =============================================================================================
 
   # Initialize the instance vars
   #
