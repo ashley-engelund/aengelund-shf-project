@@ -1,6 +1,5 @@
 require 'rails_helper'
 
-require 'shared_examples/check_env_vars'
 require 'shared_context/users'
 
 RSpec.describe UserChecklistManager do
@@ -18,147 +17,37 @@ RSpec.describe UserChecklistManager do
   let(:guideline_master) { create(:master_checklist, master_checklist_type: guideline_list_type) }
 
 
-  context 'ENV variables' do
-    it_behaves_like 'expected ENV variables exist', %w( SHF_MEMBERSHIP_GUIDELINES_CHECKLIST_REQD_START )
-  end
-
-  describe '.missing_membership_guidelines_reqd_start_date' do
-    it '= yesterday' do
-      travel_to(june_6) do
-        expect(described_class.missing_membership_guidelines_reqd_start_date).to eq june_5
-      end
-    end
-  end
-
-  describe '.membership_guidelines_reqd_start_date' do
-
-    it "uses ENV['SHF_MEMBERSHIP_GUIDELINES_CHECKLIST_REQD_START']" do
-      expect(ENV.fetch('SHF_MEMBERSHIP_GUIDELINES_CHECKLIST_REQD_START', nil)).not_to be_nil, "You must define SHF_MEMBERSHIP_GUIDELINES_CHECKLIST_REQD_START in your .env or .env.test file"
-
-      expect(described_class.membership_guidelines_reqd_start_date).to eq ENV['SHF_MEMBERSHIP_GUIDELINES_CHECKLIST_REQD_START']
-    end
-
-    it 'calls missing_membership_guidelines_reqd_start_date if key is not found in ENV' do
-      allow(ENV).to receive(:has_key?).with('SHF_MEMBERSHIP_GUIDELINES_CHECKLIST_REQD_START').and_return(false)
-      allow(described_class).to receive(:missing_membership_guidelines_reqd_start_date).and_return(june_5)
-
-      expect(described_class).to receive(:missing_membership_guidelines_reqd_start_date)
-
-      expect(described_class.membership_guidelines_reqd_start_date).to eq june_5
-    end
-  end
-
-  describe '.membership_guidelines_agreement_required_now?' do
-
-    it 'true if right now is after the date guidelines start date' do
-      Timecop.freeze(described_class.membership_guidelines_reqd_start_date + 1.hour) do
-        expect(described_class.membership_guidelines_agreement_required_now?).to be_truthy
-      end
-    end
-
-    it 'true if right now is == the date guidelines start date' do
-      Timecop.freeze(described_class.membership_guidelines_reqd_start_date) do
-        expect(described_class.membership_guidelines_agreement_required_now?).to be_truthy
-      end
-    end
-
-    it 'false if right now is before the date guidelines start date' do
-      Timecop.freeze(described_class.membership_guidelines_reqd_start_date - 1.hour) do
-        expect(described_class.membership_guidelines_agreement_required_now?).to be_falsey
-      end
-    end
-  end
-
 
   describe '.first_incomplete_membership_guideline_section_for' do
 
-    context 'membership membership guidelines are not required' do
-      it 'always nil ' do
-        user = create(:user)
-        allow(described_class).to receive(:must_complete_membership_guidelines_checklist?)
-                                    .with(user)
-                                    .and_return(false)
-        expect(described_class.first_incomplete_membership_guideline_section_for(user)).to be_nil
-      end
+    it 'nil if all are completed' do
+      user_all_completed =  build(:user, first_name: 'AllCompleted')
+      user_checklist = create(:user_checklist,  user: user_all_completed,
+                              master_checklist: guideline_master,
+                              num_completed_children: 2)
+      allow(AdminOnly::UserChecklistFactory).to receive(:create_member_guidelines_checklist_for)
+                                                  .with(user_all_completed)
+                                                  .and_return(user_checklist)
+      expect(described_class.first_incomplete_membership_guideline_section_for(user_all_completed)).to be_nil
     end
 
-    context 'membership membership guidelines are required' do
-
-      it 'nil if all are completed' do
-        user_all_completed =  build(:user, first_name: 'AllCompleted')
-        user_checklist = create(:user_checklist,  user: user_all_completed,
-                                master_checklist: guideline_master,
-                                num_completed_children: 2)
-        allow(AdminOnly::UserChecklistFactory).to receive(:create_member_guidelines_checklist_for)
-                                                    .with(user_all_completed)
-                                                    .and_return(user_checklist)
-        expect(described_class.first_incomplete_membership_guideline_section_for(user_all_completed)).to be_nil
-      end
-
-      it 'first completed guideline (based on the list position) of the membership guidelines' do
-        user_some_completed =  build(:user, first_name: 'SomeCompleted')
-        user_checklist = create(:user_checklist,  user: user_some_completed,
-                                master_checklist: guideline_master,
-                                num_children: 3,
-                                num_completed_children: 2)
-        allow(AdminOnly::UserChecklistFactory).to receive(:create_member_guidelines_checklist_for)
-                                                    .with(user_some_completed)
-                                                    .and_return(user_checklist)
-        allow(described_class).to receive(:membership_guidelines_list_for)
-                                    .with(user_some_completed)
-                                    .and_return(user_checklist)
-        result = described_class.first_incomplete_membership_guideline_section_for(user_some_completed)
-        expect(result.completed?).to be_falsey
-      end
+    it 'first completed guideline (based on the list position) of the membership guidelines' do
+      user_some_completed =  build(:user, first_name: 'SomeCompleted')
+      user_checklist = create(:user_checklist,  user: user_some_completed,
+                              master_checklist: guideline_master,
+                              num_children: 3,
+                              num_completed_children: 2)
+      allow(AdminOnly::UserChecklistFactory).to receive(:create_member_guidelines_checklist_for)
+                                                  .with(user_some_completed)
+                                                  .and_return(user_checklist)
+      allow(described_class).to receive(:membership_guidelines_list_for)
+                                  .with(user_some_completed)
+                                  .and_return(user_checklist)
+      result = described_class.first_incomplete_membership_guideline_section_for(user_some_completed)
+      expect(result.completed?).to be_falsey
     end
   end
 
-
-  describe '.completed_membership_guidelines_if_reqd?' do
-
-    let(:user) { create(:user) }
-
-    it 'calls must_complete_membership_guidelines_checklist? to see if the user needs to complete the guidelines' do
-      expect(described_class).to receive(:must_complete_membership_guidelines_checklist?)
-                                   .with(user)
-                                   .and_return(false)
-      described_class.completed_membership_guidelines_if_reqd?(user)
-    end
-
-    context 'user does not have to complete the membership guidelines (calls must_complete_membership_guidelines_checklist? to check)' do
-      it 'always true' do
-        allow(described_class).to receive(:must_complete_membership_guidelines_checklist?).and_return(false)
-
-        expect(described_class.completed_membership_guidelines_if_reqd?(applicant_approved_no_payments)).to be_truthy
-        expect(described_class.completed_membership_guidelines_if_reqd?(member_paid_up)).to be_truthy
-      end
-    end
-
-    context 'user must complete the membership guidelines' do
-
-      it 'true if the user has completed the guidelines' do
-        allow(described_class).to receive(:must_complete_membership_guidelines_checklist?)
-                                  .with(user)
-                                  .and_return(true)
-        allow(described_class).to receive(:completed_membership_guidelines_checklist?)
-                                    .with(user)
-                                    .and_return(true)
-        expect(described_class.completed_membership_guidelines_if_reqd?(user)).to be_truthy
-      end
-
-      it 'false if the user has not completed the guidelines' do
-        allow(described_class).to receive(:must_complete_membership_guidelines_checklist?).and_return(true)
-        allow(described_class).to receive(:must_complete_membership_guidelines_checklist?)
-                                    .with(user)
-                                    .and_return(true)
-        allow(described_class).to receive(:completed_membership_guidelines_checklist?)
-                                    .with(user)
-                                    .and_return(false)
-
-        expect(described_class.completed_membership_guidelines_if_reqd?(user)).to be_falsey
-      end
-    end
-  end
 
   describe '.completed_membership_guidelines_checklist?' do
 
@@ -176,6 +65,7 @@ RSpec.describe UserChecklistManager do
       described_class.completed_membership_guidelines_checklist?(user_for_checklist)
     end
   end
+
 
   describe '.membership_guidelines_list_for' do
 
@@ -200,32 +90,6 @@ RSpec.describe UserChecklistManager do
 
   end
 
-  describe '.must_complete_membership_guidelines_checklist?' do
-
-    it 'user is nil raises an error' do
-      expect { described_class.must_complete_membership_guidelines_checklist?(nil) }.to raise_error ArgumentError
-    end
-
-    let(:user_or_member) { build(:user, first_name: 'Either', last_name: 'UserOrMember') }
-
-    it 'false if today < the date we start requiring the membership guidelines checklist' do
-      Timecop.freeze(described_class.membership_guidelines_reqd_start_date - 1.minute) do
-        expect(described_class.must_complete_membership_guidelines_checklist?(user_or_member)).to be_falsey
-      end
-    end
-
-    it 'true if today > the date we start requiring the membership guidelines checklist' do
-      Timecop.freeze(described_class.membership_guidelines_reqd_start_date + 1.minute) do
-        expect(described_class.must_complete_membership_guidelines_checklist?(user_or_member)).to be_truthy
-      end
-    end
-
-    it 'true if today = the date we start requiring the membership guidelines checklist' do
-      Timecop.freeze(described_class.membership_guidelines_reqd_start_date) do
-        expect(described_class.must_complete_membership_guidelines_checklist?(user_or_member)).to be_truthy
-      end
-    end
-  end
 
   describe '.completed_guidelines_for' do
 
@@ -326,9 +190,9 @@ RSpec.describe UserChecklistManager do
                                     .and_return(user_checklist)
 
         expect(user_checklist.all_that_are_completed.count).to eq 1
-        expect(user_checklist.all_that_are_uncompleted.count).to eq 4 # this includes the root of the list
+        expect(user_checklist.all_that_are_uncompleted.count).to eq 3
 
-        expect(described_class.not_completed_guidelines_for(user_some_completed).count).to eq(expected_uncompleted + 1)
+        expect(described_class.not_completed_guidelines_for(user_some_completed).count).to eq(expected_uncompleted)
       end
     end
 
