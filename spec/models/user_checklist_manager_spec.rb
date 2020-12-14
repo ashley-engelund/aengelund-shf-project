@@ -51,8 +51,10 @@ RSpec.describe UserChecklistManager do
 
   describe '.completed_membership_guidelines_checklist?' do
 
-    it 'returns nil if there are no lists for the user' do
-      expect(described_class.completed_membership_guidelines_checklist?(create(:user))).to be_nil
+    it 'returns false if there are no lists for the user' do
+      allow(AdminOnly::MasterChecklist).to receive(:latest_membership_guideline_master)
+                                             .and_return(create(:membership_guidelines_master_checklist))
+      expect(described_class.completed_membership_guidelines_checklist?(create(:user))).to be_falsey
     end
 
     it 'calls UserChecklist .all_completed? to determine if it is complete or not' do
