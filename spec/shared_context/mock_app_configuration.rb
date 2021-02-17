@@ -127,6 +127,10 @@ class MockAppConfig
     90
   end
 
+  def self.membership_term_length
+    120
+  end
+
   # ----------------------------------------------------
   #  Default results to use to stub methods
 

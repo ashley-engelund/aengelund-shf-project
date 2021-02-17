@@ -60,6 +60,7 @@ RSpec.describe AdminOnly::AppConfiguration, type: :model do
     it { is_expected.to have_db_column :site_meta_image_width }
     it { is_expected.to have_db_column :singleton_guard }
     it { is_expected.to have_db_column :payment_too_soon_days }
+    it { is_expected.to have_db_column :membership_term_length }
   end
 
 
@@ -104,14 +105,12 @@ RSpec.describe AdminOnly::AppConfiguration, type: :model do
             expect(app_configuration).not_to be_valid
           end
         end
-
       end
 
       it 'site meta image must be present' do
         is_expected.to validate_attachment_presence('site_meta_image')
       end
     end
-
   end
 
 
