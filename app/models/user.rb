@@ -10,6 +10,7 @@
 class User < ApplicationRecord
   include PaymentUtility
   include ImagesUtility
+  include AASM
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -25,6 +26,8 @@ class User < ApplicationRecord
   accepts_nested_attributes_for :uploaded_files, allow_destroy: true
 
   has_many :companies, through: :shf_application
+
+  has_many :memberships
 
   has_many :payments, dependent: :nullify
   # ^^ need to retain h-branding payment(s) for any associated company that
@@ -116,7 +119,36 @@ class User < ApplicationRecord
     AdminOnly::AppConfiguration.config_to_use.payment_too_soon_days.to_i.days
   end
 
-  # ----------------------------------
+
+  # ----------------------------------------------------------------------------------------------
+  # Act As State Machine (AASM)
+
+  aasm column: 'membership_status' do
+    state :not_a_member, initial: true
+    state :current
+    state :in_grace_period
+    state :former_member
+
+    # You can pass the (keyword) argument date: <Date> to provide a date that the membership should start on
+    event :start_membership do
+      transitions from: [:not_a_member], to: :current, after:  Proc.new {|*args| start_membership_on(*args) }
+    end
+
+    # You can pass the (keyword) argument date: <Date> to provide a date that the membership should start on
+    event :renew do
+      transitions from: [:current, :in_grace_period], to: :current, after: Proc.new {|*args| renew_membership_on(*args) }
+    end
+
+    event :start_grace_period do
+      transitions from: :current, to: :in_grace_period, after: :enter_grace_period
+    end
+
+    event :end_grace_period do
+      transitions from: :in_grace_period, to: :former_member, after: :become_former_member
+    end
+  end
+
+  # ----------------------------------------------------------------------------------
 
   def cache_key(type)
     "user_#{id}_cache_#{type}"
@@ -148,6 +180,33 @@ class User < ApplicationRecord
     most_recent_payment(THIS_PAYMENT_TYPE)
   end
 
+
+  def start_membership_on(date: Date.current)
+    # TODO membership number?
+    new_membership = new_membership_starting(date)
+    # TODO send email for starting membership
+  end
+
+
+  def renew_membership_on(date: Date.current)
+    new_membership = new_membership_starting(date)
+    # TODO send email for renewed membership
+  end
+
+  def new_membership_starting(first_day)
+    Membership.new(user: self).set_first_day_and_last(first: first_day)
+  end
+
+  def enter_grace_period
+    # TODO send email for enter_grace_period (renewal overdue!)
+  end
+
+
+  def become_former_member
+    # TODO send email?
+  end
+
+
   # TODO this should not be the responsibility of the User class. Need a MembershipManager class for this.
   def membership_start_date
     payment_start_date(THIS_PAYMENT_TYPE)
@@ -163,6 +222,7 @@ class User < ApplicationRecord
   def membership_payment_notes
     payment_notes(THIS_PAYMENT_TYPE)
   end
+
 
   # TODO this should not be the responsibility of the User class. Need a MembershipManager class for this.
   # FIXME - this is ONLY about the payments, not the membership status as a whole.
@@ -185,7 +245,7 @@ class User < ApplicationRecord
     !membership_payment_expire_date.nil? && (membership_payment_expire_date > this_date)
   end
 
-  # The membership term has expired, but are they  still within a 'grace period'?
+  # The membership term has expired, but are they still within a 'grace period'?
   def membership_expired_in_grace_period?(this_date = Date.current)
     return false if this_date.nil?
 

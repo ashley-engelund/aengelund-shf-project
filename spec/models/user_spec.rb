@@ -168,6 +168,7 @@ RSpec.describe User, type: :model do
     it { is_expected.to have_many(:companies).through(:shf_application) }
     it { is_expected.to accept_nested_attributes_for(:shf_application)
                           .allow_destroy(false).update_only(true) }
+    it { is_expected.to have_many :memberships }
   end
 
   describe 'Admin' do
