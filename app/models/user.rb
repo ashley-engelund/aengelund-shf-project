@@ -194,7 +194,7 @@ class User < ApplicationRecord
   end
 
   def new_membership_starting(first_day)
-    Membership.new(user: self).set_first_day_and_last(first: first_day)
+    Membership.new(user: self).set_first_day_and_last(first_day: first_day)
   end
 
   def enter_grace_period
@@ -287,12 +287,14 @@ class User < ApplicationRecord
 
   # User has an approved membership application and
   # is up to date (current) on membership payments
+  # FIXME: does not seem to be used
   def membership_app_and_payments_current?
     has_approved_shf_application? && membership_current?
   end
 
   # User has an approved membership application and
   # is up to date (current) on membership payments
+  # FIXME: does not seem to be used
   def membership_app_and_payments_current_as_of?(this_date)
     has_approved_shf_application? && membership_current_as_of?(this_date)
   end

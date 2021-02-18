@@ -1099,6 +1099,48 @@ RSpec.describe User, type: :model do
     end
   end
 
+
+  describe 'start_membership_on' do
+    it it 'calls new_membership_staring to create a new membership with first day on the given starting date' do
+      pending
+    end
+    it 'send out email?' do
+      pending
+    end
+  end
+
+
+  describe 'renew_membership_on' do
+    it 'calls new_membership_staring to create a new membership with first day on the given starting date' do
+      pending
+    end
+    it 'send out email?' do
+      pending
+    end
+  end
+
+
+  describe 'new_membership_starting' do
+    it 'creates a new membership' do
+      pending
+    end
+
+    it 'sets the first and last day' do
+      pending
+    end
+  end
+
+
+  describe 'enter_grace_period' do
+    pending
+  end
+
+
+  describe 'become_former_member' do
+    pending
+  end
+
+
   describe 'payment and membership period' do
 
     describe '#membership_start_date' do
