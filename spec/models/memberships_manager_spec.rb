@@ -125,8 +125,8 @@ RSpec.describe MembershipsManager, type: :model do
     end
 
     it 'default given date is Date.current' do
-      allow(subject).to receive(:grace_period).and_return(0.days)
-      allow(mock_membership).to receive(:last_day).and_return(Date.current)
+      allow(subject).to receive(:grace_period).and_return(2.days)
+      allow(mock_membership).to receive(:last_day).and_return(Date.current - 1)
 
       expect(subject).to receive(:most_recent_membership).and_return(mock_membership)
       expect(subject.membership_in_grace_period?(user)).to be_truthy
@@ -134,7 +134,7 @@ RSpec.describe MembershipsManager, type: :model do
 
     it 'default is to use the most recent membership' do
       allow(subject).to receive(:grace_period).and_return(2.days)
-      allow(mock_membership).to receive(:last_day).and_return(Date.current)
+      allow(mock_membership).to receive(:last_day).and_return(Date.current  - 1)
 
       expect(subject).to receive(:most_recent_membership).and_return(mock_membership)
       expect(subject.membership_in_grace_period?(user)).to be_truthy
