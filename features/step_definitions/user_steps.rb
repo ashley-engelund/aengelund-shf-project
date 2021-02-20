@@ -34,6 +34,7 @@ Given(/^the following users exist(?:[:])?$/) do |table|
     user.delete('last_name') if user['last_name'].blank?
     user.delete('first_name') if user['first_name'].blank?
     user['sign_in_count'] = 0 if user['sign_in_count'].blank?
+    user['membership_status'] = 'not_a_member' if user['membership_status'].blank?
 
     user_agreed_to_membership_guidelines = user['agreed_to_membership_guidelines'].blank? ? false : user['agreed_to_membership_guidelines']
     user.delete('agreed_to_membership_guidelines') # this is not an attribute of User so we need to remove it
