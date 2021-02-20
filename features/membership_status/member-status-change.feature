@@ -35,6 +35,11 @@ Feature: Membership status updated due to payments or expiration
       | lars@newapp.com     | 5562252998     | rehab         | new      |
 
 
+    Given the following memberships exist:
+      | email          | first_day  | last_day   |
+      | emma@mutts.com | 2017-12-31 | 2018-12-31 |
+
+
     Given the date is set to "2017-12-31"
 
     Given the following payments exist

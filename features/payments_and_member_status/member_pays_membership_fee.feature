@@ -11,9 +11,9 @@ Feature: Member pays membership fee
     Given the date is set to "2018-01-01"
 
     Given the following users exist:
-      | email          | admin | member | membership_number |agreed_to_membership_guidelines |
-      | emma@mutts.com |       | true   | 1001              | true                           |
-      | admin@shf.se   | true  | false  |                   |                                |
+      | email          | admin | member | membership_status | membership_number | agreed_to_membership_guidelines |
+      | emma@mutts.com |       | true   |  current          | 1001              | true                            |
+      | admin@shf.se   | true  | false  |                   |                   |                                 |
 
 
     Given the following companies exist:
@@ -31,6 +31,10 @@ Feature: Member pays membership fee
     Given these files have been uploaded:
       | user_email     | file name | description                               |
       | emma@mutts.com | image.png | Image of a class completion certification |
+
+    Given the following memberships exist:
+      | email          | first_day | last_day   |
+      | emma@mutts.com | 2018-01-1 | 2018-12-31 |
 
 
   @time_adjust
