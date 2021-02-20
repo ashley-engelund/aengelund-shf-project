@@ -16,6 +16,7 @@ FactoryBot.define do
     last_sign_in_at { nil }
     created_at { DateTime.now.utc }
     updated_at { DateTime.now.utc }
+    membership_status { 'not_a_member' }
 
     factory :user_with_ethical_guidelines_checklist do
       after(:create) do |user, _evaluator|
@@ -61,7 +62,6 @@ FactoryBot.define do
     end
 
     factory :member_with_membership_app do
-
       # FIXME this attribute no long means anything.
       member { true }
 
@@ -76,6 +76,7 @@ FactoryBot.define do
       end
 
       after(:create) do | member, _evaluator|
+        member.start_membership
         create(:membership_guidelines_master_checklist ) unless AdminOnly::MasterChecklist.latest_membership_guideline_master
         AdminOnly::UserChecklistFactory.create_member_guidelines_checklist_for(member)
       end
@@ -89,7 +90,6 @@ FactoryBot.define do
     #   can be done separately.
     #
     factory :member_with_expiration_date do
-
       member { true }
 
       transient do
@@ -103,6 +103,10 @@ FactoryBot.define do
                start_date: evaluator.expiration_date - 364,
                expire_date: evaluator.expiration_date)
 
+        Membership.new(user: member).set_first_day_and_last(first_day: evaluator.expiration_date - 364,
+                                                            last_day: evaluator.expiration_date)
+        member.membership_status = 'current' if MembershipsManager.new.has_membership_on?(member, Date.current)
+
         create(:membership_guidelines_master_checklist) unless AdminOnly::MasterChecklist.latest_membership_guideline_master
         AdminOnly::UserChecklistFactory.create_member_guidelines_checklist_for(member)
         UserChecklistManager.membership_guidelines_list_for(member).set_complete_including_children
@@ -110,5 +114,4 @@ FactoryBot.define do
     end
 
   end
-
 end

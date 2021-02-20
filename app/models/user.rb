@@ -6,6 +6,9 @@
 # FIXME only the class RequirementsForMembership should respond to questions
 #   about whether a user is current member. (Ex: RequirementsForMembership.requirements_met?({ user: approved_and_paid }) )
 #
+# 2021-02-19: First step towards refactoring: have existing methods call MembershipsManager methods
+#   (a kind of manual delegation).
+#   Next steps will be to call MembershipManager methods directly where needed.
 #
 class User < ApplicationRecord
   include PaymentUtility
@@ -18,6 +21,13 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable
 
   before_destroy :adjust_related_info_for_destroy
+
+  after_update :clear_proof_of_membership_jpg_cache,
+               if: Proc.new { saved_change_to_member_photo_file_name? ||
+                 saved_change_to_first_name? ||
+                 saved_change_to_last_name? ||
+                 saved_change_to_membership_number? }
+
 
   has_one :shf_application, dependent: :destroy
   accepts_nested_attributes_for :shf_application, update_only: true
@@ -45,6 +55,7 @@ class User < ApplicationRecord
 
   validates :first_name, :last_name, presence: true, unless: :updating_without_name_changes
   validates :membership_number, uniqueness: true, allow_blank: true
+  # validates :membership_status, inclusion: %w(not_a_member, current, in_grace_period, former_member)
 
   THIS_PAYMENT_TYPE = Payment::PAYMENT_TYPE_MEMBER
   MOST_RECENT_UPLOAD_METHOD = :created_at
@@ -80,7 +91,8 @@ class User < ApplicationRecord
 
   scope :current_members, -> { application_accepted.membership_payment_current }
 
-  # -----------------------------------
+
+  # ===============================================================================================
 
   # TODO this should not be the responsibility of the User class. Need a MembershipManager class for this.
   # The next membership payment date
@@ -99,24 +111,9 @@ class User < ApplicationRecord
     end
   end
 
-  after_update :clear_proof_of_membership_jpg_cache,
-               if: Proc.new { saved_change_to_member_photo_file_name? ||
-                 saved_change_to_first_name? ||
-                 saved_change_to_last_name? ||
-                 saved_change_to_membership_number? }
-
-  # @return [ActiveSupport::Duration]
-  def self.membership_expired_grace_period
-    AdminOnly::AppConfiguration.config_to_use.membership_expired_grace_period.to_i.days
-  end
 
   def self.most_recent_upload_method
     MOST_RECENT_UPLOAD_METHOD
-  end
-
-  # @return [ActiveSupport::Duration]
-  def self.days_can_renew_early
-    AdminOnly::AppConfiguration.config_to_use.payment_too_soon_days.to_i.days
   end
 
 
@@ -149,6 +146,10 @@ class User < ApplicationRecord
   end
 
   # ----------------------------------------------------------------------------------
+
+  def memberships_manager
+    @memberships_manager ||= MembershipsManager.new
+  end
 
   def cache_key(type)
     "user_#{id}_cache_#{type}"
@@ -184,13 +185,13 @@ class User < ApplicationRecord
   def start_membership_on(date: Date.current)
     # TODO membership number?
     new_membership = new_membership_starting(date)
-    # TODO send email for starting membership
+    # TODO send email for starting membership?
   end
 
 
   def renew_membership_on(date: Date.current)
     new_membership = new_membership_starting(date)
-    # TODO send email for renewed membership
+    # TODO send email for renewed membership?
   end
 
   def new_membership_starting(first_day)
@@ -198,7 +199,7 @@ class User < ApplicationRecord
   end
 
   def enter_grace_period
-    # TODO send email for enter_grace_period (renewal overdue!)
+    # TODO send email for enter_grace_period (renewal overdue!)?
   end
 
 
@@ -247,42 +248,35 @@ class User < ApplicationRecord
 
   # The membership term has expired, but are they still within a 'grace period'?
   def membership_expired_in_grace_period?(this_date = Date.current)
-    return false if this_date.nil?
-
-    term_expired? && date_within_grace_period?(this_date,
-                                               membership_expire_date,
-                                               membership_expired_grace_period)
+    memberships_manager.membership_in_grace_period?(self, this_date)
   end
 
+  # FIXME: MembershipManager membership_expired_in_grace_period? means this is no longer used
   def date_within_grace_period?(this_date = Date.current,
                                 start_date = membership_expire_date,
                                 grace_period = membership_expired_grace_period)
-    this_date.to_date <= (start_date + grace_period).to_date
+    memberships_manager.date_in_grace_period?(this_date,
+                                              last_day: start_date,
+                                              grace_days: grace_period )
   end
 
   def membership_expired_grace_period
-    self.class.membership_expired_grace_period
+    memberships_manager.grace_period
   end
 
   # @return [ActiveSupport::Duration]
   def days_can_renew_early
-    self.class.days_can_renew_early
+    memberships_manager.days_can_renew_early
   end
 
 
   def can_renew_today?
-    can_renew_on?(Date.current)
+    memberships_manager.can_renew_today?(self)
   end
 
   # This just checks the dates about renewal, not any requirements for renewing a membership.
   def can_renew_on?(this_date = Date.current)
-    return false if membership_expire_date.nil?
-
-    if this_date <= membership_expire_date
-      this_date >= (membership_expire_date - days_can_renew_early)
-    else
-      membership_expired_in_grace_period?(this_date)
-    end
+    memberships_manager.can_renew_on?(self, this_date)
   end
 
   # User has an approved membership application and

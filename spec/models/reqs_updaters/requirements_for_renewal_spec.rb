@@ -108,13 +108,12 @@ RSpec.describe RequirementsForRenewal, type: :model do
     let(:member) { build(:member_with_membership_app) }
 
     describe '.requirements_met?' do
-      before(:each) { allow(User).to receive(:days_can_renew_early).and_return(5) }
+      before(:each) { allow(member.memberships_manager).to receive(:days_can_renew_early).and_return(5) }
 
       it 'always false if has never made a payment' do
         approved_app = create(:shf_application, :accepted)
         expect(subject.requirements_met?({ user: approved_app.user })).to be_falsey
       end
-
 
       context 'has approved application' do
 
@@ -141,6 +140,8 @@ RSpec.describe RequirementsForRenewal, type: :model do
                        user: approved_and_paid,
                        start_date: start_date,
                        expire_date: expire_date)
+                create(:membership, user: approved_and_paid,
+                       first_day: start_date, last_day: expire_date)
 
                 travel_to(expire_date - 3) do
                   expect(approved_and_paid.can_renew_today?).to be_truthy
@@ -210,6 +211,8 @@ RSpec.describe RequirementsForRenewal, type: :model do
                      user: approved_and_paid,
                      start_date: start_date,
                      expire_date: expire_date)
+              create(:membership, user: approved_and_paid,
+                     first_day: start_date, last_day: expire_date)
 
               travel_to(expire_date - 3) do
                 expect(approved_and_paid.can_renew_today?).to be_truthy
