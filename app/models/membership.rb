@@ -4,21 +4,23 @@
 class Membership < ApplicationRecord
 
   belongs_to :user
-
-  def self.exists_on(date = Date.current)
-    where('first_day <= ?', date)
-      .where('last_day >= ?', date)
-  end
-
-
-  def self.exists_for_user_on(user, date = Date.current)
-    where(user: user).exists_on(date)
-  end
-
   # TODO: membership has_many :payments
 
-  # FIXME get from AppConfiguration
-  #     AdminOnly::AppConfiguration.config_to_use.membership_length
+  # =============================================================================================
+
+
+  def self.covering_date(date = Date.current)
+    where('first_day <= ?', date)
+      .where('last_day >= ?', date)
+      .order(:last_day)
+  end
+
+
+  def self.for_user_covering_date(user, date = Date.current)
+    where(user: user).covering_date(date)
+  end
+
+
   # @return [ActiveSupport::Duration]
   def self.term_length
     AdminOnly::AppConfiguration.config_to_use.membership_term_length.to_i.days

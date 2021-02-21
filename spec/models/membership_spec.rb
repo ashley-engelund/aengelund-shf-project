@@ -15,15 +15,8 @@ RSpec.describe Membership, type: :model do
   let(:sept2_2022) { Date.new(2022, 9, 1) }
   let(:aug30_2023) { Date.new(2023, 8, 30) }
   let(:sept1_2023) { Date.new(2023, 9, 1) }
+  let(:aug30_2024) { Date.new(2024, 8, 30) }
 
-  let(:u2membership_202009) { create(:membership, user: user2,
-                                     member_number: 'u2membership_202009',
-                                     first_day: sept1_2020,
-                                     last_day: aug30_2021) }
-  let(:u2membership_202109) { create(:membership, user: user2,
-                                     member_number: 'u2membership_202109',
-                                     first_day: sept1_2021,
-                                     last_day: aug30_2022) }
   let(:u1membership_202109) { create(:membership, user: user1,
                                      member_number: 'u1membership_202109',
                                      first_day: sept1_2021,
@@ -32,6 +25,14 @@ RSpec.describe Membership, type: :model do
                                      member_number: 'u1membership_202209',
                                      first_day: sept1_2022,
                                      last_day: aug30_2023) }
+  let(:u2membership_202009) { create(:membership, user: user2,
+                                     member_number: 'u2membership_202009',
+                                     first_day: sept1_2020,
+                                     last_day: aug30_2021) }
+  let(:u2membership_202109) { create(:membership, user: user2,
+                                     member_number: 'u2membership_202109',
+                                     first_day: sept1_2021,
+                                     last_day: aug30_2022) }
 
 
   def make_all_memberships
@@ -40,32 +41,49 @@ RSpec.describe Membership, type: :model do
   end
 
 
-  describe '.exists_on' do
+  describe '.covering_date' do
     it 'where first_day <= the given date and last_day >= the given date' do
       make_all_memberships
-      expect(described_class.exists_on(sept1_2021).to_a).to match_array([u1membership_202109,
-                                                                         u2membership_202109])
+      expect(described_class.covering_date(sept1_2021).to_a).to match_array([u1membership_202109,
+                                                                             u2membership_202109])
     end
 
     it 'default date is Date.current' do
       make_all_memberships
       travel_to(sept2_2021) do
-        expect(described_class.exists_on.to_a).to match_array([u1membership_202109,
-                                                               u2membership_202109])
+        expect(described_class.covering_date.to_a).to match_array([u1membership_202109,
+                                                                   u2membership_202109])
+      end
+    end
+
+    it 'sorted by :last_day, oldest is first' do
+      make_all_memberships
+      u1membership_202109_2yrs_long = create(:membership, user: user1,
+                                         member_number: 'u1membership_202109_2yrs_long',
+                                         first_day: sept1_2021,
+                                         last_day: aug30_2023)
+      u1membership_202209_2yrs_long = create(:membership, user: user1,
+                                         member_number: 'u1membership_202209_2yrs_long',
+                                         first_day: sept1_2022,
+                                         last_day: aug30_2024)
+      travel_to(sept2_2022) do
+        expect(described_class.covering_date.to_a).to eq([u1membership_202209,
+                                                          u1membership_202109_2yrs_long,
+                                                          u1membership_202209_2yrs_long])
       end
     end
   end
 
 
-  describe '.exists_for_user_on' do
+  describe '.for_user_covering_date' do
     it 'where user is the given user' do
       make_all_memberships
-      expect(described_class.exists_for_user_on(user2, sept1_2021).to_a).to match_array([u2membership_202109])
+      expect(described_class.for_user_covering_date(user2, sept1_2021).to_a).to match_array([u2membership_202109])
     end
 
-    it 'calls .exists_on with the given date' do
-      expect(described_class).to receive(:exists_on).with(sept2_2021)
-      described_class.exists_for_user_on(user1, sept2_2021)
+    it 'calls .covering_date with the given date' do
+      expect(described_class).to receive(:covering_date).with(sept2_2021)
+      described_class.for_user_covering_date(user1, sept2_2021)
     end
   end
 
