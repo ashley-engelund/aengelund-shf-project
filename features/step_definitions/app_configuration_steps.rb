@@ -61,5 +61,8 @@ end
 And("I should see the number of days that it is too early to pay is {digits}") do |num_days_too_soon|
   too_soon_info = "#{I18n.t('admin_only.app_configuration.show.payment_too_soon_days')}: #{num_days_too_soon}"
   step "I should see \"#{too_soon_info}\""
+end
 
+And("the grace period is {digits} days") do |grace_period_days|
+  AdminOnly::AppConfiguration.config_to_use.update_attribute(:membership_expired_grace_period, grace_period_days)
 end
