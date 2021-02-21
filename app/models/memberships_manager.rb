@@ -4,6 +4,7 @@
 #
 # @desc Responsibility: manage memberships for a User; respond to queries about Memberships
 #
+# TODO should the methods checking about a date be in the Membership class?
 #
 # @author Ashley Engelund (ashley.engelund@gmail.com  weedySeaDragon @ github)
 # @date   2/16/21
@@ -13,7 +14,7 @@
 class MembershipsManager
 
   MOST_RECENT_MEMBERSHIP_METHOD = :last_day
-
+  IS_EXPIRING_SOON_AMOUNT = 1.month
 
   def self.most_recent_membership_method
     MOST_RECENT_MEMBERSHIP_METHOD
@@ -29,6 +30,12 @@ class MembershipsManager
   # @return [Duration] - the number of days after the end of a membership that a user can renew
   def self.grace_period
     AdminOnly::AppConfiguration.config_to_use.membership_expired_grace_period.to_i.days
+  end
+
+
+  def self.is_expiring_soon_amount
+    # TODO get this from AdminOnly::AppConfiguration
+    IS_EXPIRING_SOON_AMOUNT
   end
 
 
@@ -53,17 +60,22 @@ class MembershipsManager
   end
 
 
-  def most_recent_membership_last_day(user)
-    most_recent_membership(user)&.last_day
-  end
-
-
   # Does a user have a membership that has not expired as of the given date
   # Note this does not determine if payments were made, requirements were met, etc.
   def has_membership_on?(user, this_date)
     return false if this_date.nil?
 
-    Membership.exists_for_user_on(user, this_date).exists?
+    Membership.for_user_covering_date(user, this_date).exists?
+  end
+
+
+  # @return [nil | Membership] - oldest Membership for the user where
+  #   first_day <= this_date <= last_day
+  #   return nil if no membership for the user exists with that condition
+  def membership_on(user, this_date = Date.current)
+    return nil if this_date.nil? || user.nil?
+
+    Membership.for_user_covering_date(user, this_date)&.first
   end
 
 
@@ -91,14 +103,17 @@ class MembershipsManager
   end
 
 
-  def can_renew_today?(user)
-    can_renew_on?(user, Date.current)
+  def today_is_valid_renewal_date?(user)
+    valid_date_for_renewal?(user, Date.current)
   end
 
 
-  # This just checks the dates about renewal, not any requirements for renewing a membership.
-  def can_renew_on?(user, this_date = Date.current)
-    return false unless has_membership_on?(user, this_date)
+  # Is this a valid date for renewing?
+  # This just checks the membership status and dates about renewal,
+  #   not any requirements for renewing a membership.
+  #
+  def valid_date_for_renewal?(user, this_date = Date.current)
+    return false unless user.in_grace_period? || has_membership_on?(user, this_date)
 
     last_day = most_recent_membership_last_day(user)
     if this_date <= last_day
@@ -109,8 +124,32 @@ class MembershipsManager
   end
 
 
+  def most_recent_membership_last_day(user)
+    most_recent_membership(user)&.last_day
+  end
+
+
   # @return [Integer]
   def days_can_renew_early
     self.class.days_can_renew_early
   end
+
+  # Is the Membership expiring soon?
+  #  true if the user is a member
+  #     AND today is on or after the (last day - the expiring soon amount)
+  def expires_soon?(user, membership = most_recent_membership(user))
+    user.current_member? && ((membership.last_day - self.class.is_expiring_soon_amount) <= Date.current)
+  end
+
+
+  # Create an ArchivedMembership for every Membership for the user
+  #
+  # @return [True|False] - return false if any failed, else true if all succeeded
+  def self.create_archived_memberships_for(user)
+    user.memberships.each do | membership |
+      ArchivedMembership.create_from(membership)
+    end
+    true # no errors were raised
+  end
+
 end

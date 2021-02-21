@@ -99,19 +99,55 @@ RSpec.describe MembershipsManager, type: :model do
       expect(subject.has_membership_on?(user, nil)).to be_falsey
     end
 
-    context 'given date is not nil' do
+    it 'false if the given user is nil' do
+      expect(subject.has_membership_on?(nil, Date.current)).to be_falsey
+    end
 
-      it 'calls Membership.exists_for_user_on to get any memberships that covered that date' do
+
+    context 'given user is not nil and given date is not nil' do
+
+      it 'calls Membership.for_user_covering_date to get any memberships that covered that date' do
         allow(mock_memberships).to receive(:exists?)
-        expect(Membership).to receive(:exists_for_user_on).and_return(mock_memberships)
+        expect(Membership).to receive(:for_user_covering_date).and_return(mock_memberships)
         subject.has_membership_on?(user, Date.current)
       end
 
-      it 'returns the value of .exists? for the records that Membership.exists_for_user_on returns' do
-        allow(Membership).to receive(:exists_for_user_on).and_return(mock_memberships)
-
+      it 'returns the value of .exists? for the records that Membership.for_user_covering_date returns' do
+        allow(Membership).to receive(:for_user_covering_date).and_return(mock_memberships)
         expect(mock_memberships).to receive(:exists?).and_return(true)
         subject.has_membership_on?(user, Date.current)
+      end
+    end
+  end
+
+
+  describe 'membership_on' do
+
+    it 'nil if the given date is nil' do
+      expect(subject.membership_on(build(:user), nil)).to be_nil
+    end
+
+    it 'nil if the given user is nil' do
+      expect(subject.membership_on(nil, Date.current)).to be_nil
+    end
+
+    context 'given user is not nil and given date is not nil' do
+      context 'a membership exists for the given date' do
+        it 'calls Membership.for_user_covering_date to get the oldest membership that includes that date' do
+          expect(Membership).to receive(:for_user_covering_date)
+                                  .with(user, Date.current)
+                                  .and_return(mock_memberships)
+          allow(mock_memberships).to receive(:first).and_return(mock_membership)
+          expect(subject.membership_on(user, Date.current)).to eq(mock_membership)
+        end
+      end
+
+      it 'nil if no membership exists for the given date' do
+        expect(Membership).to receive(:for_user_covering_date)
+                                .with(user, Date.current)
+                                .and_return(nil)
+
+        expect(subject.membership_on(user, Date.current)).to be_nil
       end
     end
   end
@@ -241,19 +277,19 @@ RSpec.describe MembershipsManager, type: :model do
   end
 
 
-  describe 'can_renew_today?' do
-    it 'calls can_renew_on? for Date.current' do
-      expect(subject).to receive(:can_renew_on?).with(user, Date.current)
-      subject.can_renew_today?(user)
+  describe 'today_is_valid_renewal_date?' do
+    it 'calls valid_date_for_renewal? for Date.current' do
+      expect(subject).to receive(:valid_date_for_renewal?).with(user, Date.current)
+      subject.today_is_valid_renewal_date?(user)
     end
   end
 
-  describe 'can_renew_on?' do
+  describe 'valid_date_for_renewal?' do
 
     it 'false if the user has no memberships' do
       allow(subject).to receive(:has_membership_on?).with(user, anything)
                                                     .and_return(false)
-      expect(subject.can_renew_on?(user, Date.current)).to be_falsey
+      expect(subject.valid_date_for_renewal?(user, Date.current)).to be_falsey
     end
 
     context 'user has memberships' do
@@ -261,43 +297,122 @@ RSpec.describe MembershipsManager, type: :model do
       let(:num_days_can_renew_early) { 3 }
 
       before(:each) do
-        allow(subject).to receive(:has_membership_on?).and_return(true)
         allow(subject).to receive(:days_can_renew_early).and_return(num_days_can_renew_early)
         allow(subject).to receive(:most_recent_membership_last_day).and_return(membership_last_day)
       end
 
       it 'default date is Date.current' do
-        expect(subject.can_renew_on?(user)).to be_truthy
+        allow(subject).to receive(:has_membership_on?).and_return(true)
+        expect(subject.valid_date_for_renewal?(user)).to be_truthy
       end
 
       context 'given date is on or before the last day of the current membership' do
+        before(:each) { allow(subject).to receive(:has_membership_on?).and_return(true) }
 
         it 'true if given date is the last day' do
-          expect(subject.can_renew_on?(user, membership_last_day)).to be_truthy
+          expect(subject.valid_date_for_renewal?(user, membership_last_day)).to be_truthy
         end
 
         it 'true if given date == (last day - days it is too early to renew)' do
-          expect(subject.can_renew_on?(user, membership_last_day - num_days_can_renew_early)).to be_truthy
+          expect(subject.valid_date_for_renewal?(user, membership_last_day - num_days_can_renew_early)).to be_truthy
         end
 
         it 'true if given date after (last day - days it is too early to renew)' do
-          expect(subject.can_renew_on?(user, membership_last_day - num_days_can_renew_early + 1)).to be_truthy
+          expect(subject.valid_date_for_renewal?(user, membership_last_day - num_days_can_renew_early + 1)).to be_truthy
         end
 
         it 'false if the date is before (expiry - days it is too early to renew)' do
-          expect(subject.can_renew_on?(user, membership_last_day - num_days_can_renew_early - 1)).to be_falsey
+          expect(subject.valid_date_for_renewal?(user, membership_last_day - num_days_can_renew_early - 1)).to be_falsey
         end
       end
 
       context 'given date is after the last day of the current membership' do
 
-        it 'is result of whether the membership is in the grace period' do
-          given_date = Date.current + 1
-          expect(subject).to receive(:membership_in_grace_period?)
-                               .with(user, given_date)
-          subject.can_renew_on?(user, given_date)
+        context 'is in the grace period for renewal' do
+          it 'is result of whether the membership is in the grace period' do
+            allow(user).to receive(:in_grace_period?).and_return(true)
+
+            given_date = Date.current + 1
+            expect(subject).to receive(:membership_in_grace_period?)
+                                 .with(user, given_date)
+                                 .and_return(true)
+            expect(subject.valid_date_for_renewal?(user, given_date)).to be_truthy
+          end
+        end
+
+        it 'false if is a former member (no longer in the grace period for renewal)' do
+          allow(user).to receive(:in_grace_period?).and_return(false)
+          allow(user).to receive(:former_member?).and_return(true)
+
+          expect(subject).not_to receive(:most_recent_membership_last_day)
+                                   .with(user)
+          expect(subject).not_to receive(:membership_in_grace_period?)
+                               .with(user, anything)
+          expect(subject.valid_date_for_renewal?(user, Date.current + 1)).to be_falsey
         end
       end
     end
   end
+
+
+  describe 'expires_soon?' do
+    let(:u) { build(:member_with_expiration_date, expiration_date: Date.current + 5.days) }
+
+    context 'user is a current_member' do
+      before(:each) do
+        allow(u).to receive(:current_member?).and_return(true)
+        allow(subject).to receive(:most_recent_membership).with(u)
+                             .and_return(mock_membership)
+        allow(mock_membership).to receive(:last_day).and_return(Date.current + 1.month)
+      end
+
+      it 'gets the amount of time that defines "expiring soon"' do
+        expect(described_class).to receive(:is_expiring_soon_amount).and_return(1.day)
+        subject.expires_soon?(u)
+      end
+
+      it 'false if the last day is more than (is_expiring_soon_amount) after Date.current' do
+        expect(described_class).to receive(:is_expiring_soon_amount).and_return(1.week)
+        expect(subject.expires_soon?(u)).to be_falsey
+      end
+
+      it 'true if the last day is exactly (is_expiring_soon_amount) before Date.current' do
+        allow(mock_membership).to receive(:last_day).and_return(Date.current + 1.week)
+        expect(described_class).to receive(:is_expiring_soon_amount).and_return(1.week)
+        expect(subject.expires_soon?(u)).to be_truthy
+      end
+
+      it 'true if the last day is less than (is_expiring_soon_amount) before Date.current' do
+        allow(mock_membership).to receive(:last_day).and_return(Date.current + 1.week - 1.day)
+        expect(described_class).to receive(:is_expiring_soon_amount).and_return(1.week)
+        expect(subject.expires_soon?(u)).to be_truthy
+      end
+    end
+
+    it 'false if user is not a current_member' do
+      allow(u).to receive(:current_member?).and_return(false)
+      expect(subject.expires_soon?(u)).to be_falsey
+    end
+
+    it 'default membership is the most recent one' do
+      allow(u).to receive(:current_member?).and_return(true)
+
+      expect(subject).to receive(:most_recent_membership)
+                          .with(u)
+                          .and_return(mock_membership)
+      expect(mock_membership).to receive(:last_day)
+                                  .and_return(Date.current + 5.days)
+      subject.expires_soon?(u)
+    end
+
+    it 'can provide a specific membership to check' do
+      allow(u).to receive(:current_member?).and_return(true)
+      allow(described_class).to receive(:is_expiring_soon_amount).and_return(6.days)
+
+      expect(mock_membership).to receive(:last_day)
+                                   .and_return(Date.current + 5.days)
+      expect(subject.expires_soon?(u, mock_membership)).to be_truthy
+    end
+  end
+
 end
