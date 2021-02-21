@@ -153,10 +153,13 @@ class Company < ApplicationRecord
 
 
   def searchable?
-    branding_license? && !current_members.empty?
+    branding_license_current? && current_members.any?
   end
   alias_method :current_with_current_members, :searchable?
 
+  def in_good_standing?
+    complete_information? && branding_license_current?
+  end
 
   def complete?
     RequirementsForCoInfoComplete.requirements_met? company: self
@@ -303,7 +306,7 @@ class Company < ApplicationRecord
 
   # @return all members in the company whose membership are current (paid, not expired)
   def current_members
-    users.select(&:membership_current?)
+    users.select(&:payments_current?)
   end
 
 
