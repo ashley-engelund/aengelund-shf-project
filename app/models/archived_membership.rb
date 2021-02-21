@@ -26,7 +26,7 @@ class ArchivedMembership < ApplicationRecord
     attribs[:belonged_to_last_name] = membership.user.last_name
     attribs[:belonged_to_email] = membership.user.email
 
-    create(attribs)
+    create!(attribs)
   end
 
   # @return [True|False] - true if an ArchivedMembership exists where these match the membership:
