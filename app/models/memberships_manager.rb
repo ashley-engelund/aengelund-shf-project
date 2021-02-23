@@ -104,7 +104,7 @@ class MembershipsManager
 
 
   def today_is_valid_renewal_date?(user)
-    valid_date_for_renewal?(user, Date.current)
+    valid_renewal_date?(user, Date.current)
   end
 
 
@@ -112,7 +112,7 @@ class MembershipsManager
   # This just checks the membership status and dates about renewal,
   #   not any requirements for renewing a membership.
   #
-  def valid_date_for_renewal?(user, this_date = Date.current)
+  def valid_renewal_date?(user, this_date = Date.current)
     return false unless user.in_grace_period? || has_membership_on?(user, this_date)
 
     last_day = most_recent_membership_last_day(user)

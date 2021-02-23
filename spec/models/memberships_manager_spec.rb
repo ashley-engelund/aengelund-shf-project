@@ -278,18 +278,18 @@ RSpec.describe MembershipsManager, type: :model do
 
 
   describe 'today_is_valid_renewal_date?' do
-    it 'calls valid_date_for_renewal? for Date.current' do
-      expect(subject).to receive(:valid_date_for_renewal?).with(user, Date.current)
+    it 'calls valid_renewal_date? for Date.current' do
+      expect(subject).to receive(:valid_renewal_date?).with(user, Date.current)
       subject.today_is_valid_renewal_date?(user)
     end
   end
 
-  describe 'valid_date_for_renewal?' do
+  describe 'valid_renewal_date?' do
 
     it 'false if the user has no memberships' do
       allow(subject).to receive(:has_membership_on?).with(user, anything)
                                                     .and_return(false)
-      expect(subject.valid_date_for_renewal?(user, Date.current)).to be_falsey
+      expect(subject.valid_renewal_date?(user, Date.current)).to be_falsey
     end
 
     context 'user has memberships' do
@@ -303,26 +303,26 @@ RSpec.describe MembershipsManager, type: :model do
 
       it 'default date is Date.current' do
         allow(subject).to receive(:has_membership_on?).and_return(true)
-        expect(subject.valid_date_for_renewal?(user)).to be_truthy
+        expect(subject.valid_renewal_date?(user)).to be_truthy
       end
 
       context 'given date is on or before the last day of the current membership' do
         before(:each) { allow(subject).to receive(:has_membership_on?).and_return(true) }
 
         it 'true if given date is the last day' do
-          expect(subject.valid_date_for_renewal?(user, membership_last_day)).to be_truthy
+          expect(subject.valid_renewal_date?(user, membership_last_day)).to be_truthy
         end
 
         it 'true if given date == (last day - days it is too early to renew)' do
-          expect(subject.valid_date_for_renewal?(user, membership_last_day - num_days_can_renew_early)).to be_truthy
+          expect(subject.valid_renewal_date?(user, membership_last_day - num_days_can_renew_early)).to be_truthy
         end
 
         it 'true if given date after (last day - days it is too early to renew)' do
-          expect(subject.valid_date_for_renewal?(user, membership_last_day - num_days_can_renew_early + 1)).to be_truthy
+          expect(subject.valid_renewal_date?(user, membership_last_day - num_days_can_renew_early + 1)).to be_truthy
         end
 
         it 'false if the date is before (expiry - days it is too early to renew)' do
-          expect(subject.valid_date_for_renewal?(user, membership_last_day - num_days_can_renew_early - 1)).to be_falsey
+          expect(subject.valid_renewal_date?(user, membership_last_day - num_days_can_renew_early - 1)).to be_falsey
         end
       end
 
@@ -336,7 +336,7 @@ RSpec.describe MembershipsManager, type: :model do
             expect(subject).to receive(:membership_in_grace_period?)
                                  .with(user, given_date)
                                  .and_return(true)
-            expect(subject.valid_date_for_renewal?(user, given_date)).to be_truthy
+            expect(subject.valid_renewal_date?(user, given_date)).to be_truthy
           end
         end
 
@@ -348,7 +348,7 @@ RSpec.describe MembershipsManager, type: :model do
                                    .with(user)
           expect(subject).not_to receive(:membership_in_grace_period?)
                                .with(user, anything)
-          expect(subject.valid_date_for_renewal?(user, Date.current + 1)).to be_falsey
+          expect(subject.valid_renewal_date?(user, Date.current + 1)).to be_falsey
         end
       end
     end
