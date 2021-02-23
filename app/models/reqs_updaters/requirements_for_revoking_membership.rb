@@ -31,4 +31,4 @@ class RequirementsForRevokingMembership < AbstractRequirements
     args[:user].member? && !args[:user].membership_current?
   end
 
-end # RequirementsForRevokingMembership
+end

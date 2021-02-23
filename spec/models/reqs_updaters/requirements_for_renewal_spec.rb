@@ -23,7 +23,7 @@ RSpec.describe RequirementsForRenewal, type: :model do
       context 'user can renew on the given date' do
         before(:each) do
           allow(user).to receive(:current_member?).and_return(true)
-          allow(user).to receive(:valid_date_for_renewal?).and_return(true)
+          allow(user).to receive(:valid_renewal_date?).and_return(true)
         end
 
         context 'user has an approved SHF application' do
@@ -63,7 +63,7 @@ RSpec.describe RequirementsForRenewal, type: :model do
       end
 
       it 'false if user cannot renew on the given date' do
-        allow(user).to receive(:valid_date_for_renewal?).and_return(false)
+        allow(user).to receive(:valid_renewal_date?).and_return(false)
 
         expect(user).not_to receive(:has_approved_shf_application?)
         expect(subject).not_to receive(:membership_guidelines_checklist_done?)

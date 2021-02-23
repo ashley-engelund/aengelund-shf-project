@@ -22,7 +22,7 @@ class RequirementsForRenewal < AbstractReqsForMembership
 
   def self.requirements_excluding_payments_met?(user, date = Date.current)
     (user.current_member? || user.in_grace_period?) &&
-      user.valid_date_for_renewal?(date) &&
+      user.valid_renewal_date?(date) &&
       user.has_approved_shf_application? &&
       membership_guidelines_checklist_done?(user) &&
       doc_uploaded_during_this_membership_term?(user)
