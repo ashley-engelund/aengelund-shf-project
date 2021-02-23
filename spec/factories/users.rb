@@ -61,6 +61,7 @@ FactoryBot.define do
       end
     end
 
+
     factory :member_with_membership_app do
       # FIXME this attribute no long means anything.
       member { true }
@@ -83,12 +84,8 @@ FactoryBot.define do
     end
 
 
-
     # create a payment for the member with the given expiration date
     # ex:  create(:member_with_expiration_date, expiration_date: Date.new(2018, 6, 24))
-    #  Note: this does not create any UserChecklists for the member. That
-    #   can be done separately.
-    #
     factory :member_with_expiration_date do
       member { true }
 
@@ -105,7 +102,7 @@ FactoryBot.define do
 
         Membership.new(user: member).set_first_day_and_last(first_day: evaluator.expiration_date - 364,
                                                             last_day: evaluator.expiration_date)
-        member.membership_status = 'current' if MembershipsManager.new.has_membership_on?(member, Date.current)
+        member.membership_status = 'current_member' if MembershipsManager.new.has_membership_on?(member, Date.current)
 
         create(:membership_guidelines_master_checklist) unless AdminOnly::MasterChecklist.latest_membership_guideline_master
         AdminOnly::UserChecklistFactory.create_member_guidelines_checklist_for(member)
