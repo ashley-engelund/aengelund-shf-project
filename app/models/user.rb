@@ -55,7 +55,7 @@ class User < ApplicationRecord
 
   validates :first_name, :last_name, presence: true, unless: :updating_without_name_changes
   validates :membership_number, uniqueness: true, allow_blank: true
-  # validates :membership_status, inclusion: %w(not_a_member, current, in_grace_period, former_member)
+  # validates :membership_status, inclusion: %w(not_a_member, current_member, in_grace_period, former_member)
 
   THIS_PAYMENT_TYPE = Payment::PAYMENT_TYPE_MEMBER
   MOST_RECENT_UPLOAD_METHOD = :created_at
@@ -122,22 +122,22 @@ class User < ApplicationRecord
 
   aasm column: 'membership_status' do
     state :not_a_member, initial: true
-    state :current
+    state :current_member
     state :in_grace_period
     state :former_member
 
     # You can pass the (keyword) argument date: <Date> to provide a date that the membership should start on
     event :start_membership do
-      transitions from: [:not_a_member], to: :current, after:  Proc.new {|*args| start_membership_on(*args) }
+      transitions from: [:not_a_member], to: :current_member, after:  Proc.new {|*args| start_membership_on(*args) }
     end
 
     # You can pass the (keyword) argument date: <Date> to provide a date that the membership should start on
     event :renew do
-      transitions from: [:current, :in_grace_period], to: :current, after: Proc.new {|*args| renew_membership_on(*args) }
+      transitions from: [:current_member, :in_grace_period], to: :current_member, after: Proc.new {|*args| renew_membership_on(*args) }
     end
 
     event :start_grace_period do
-      transitions from: :current, to: :in_grace_period, after: :enter_grace_period
+      transitions from: :current_member, to: :in_grace_period, after: :enter_grace_period
     end
 
     event :end_grace_period do
@@ -245,6 +245,8 @@ class User < ApplicationRecord
     membership_payment_expire_date = membership_expire_date
     !membership_payment_expire_date.nil? && (membership_payment_expire_date > this_date)
   end
+  alias_method :payments_current_as_of?, :membership_current_as_of?
+
 
   # The membership term has expired, but are they still within a 'grace period'?
   def membership_expired_in_grace_period?(this_date = Date.current)

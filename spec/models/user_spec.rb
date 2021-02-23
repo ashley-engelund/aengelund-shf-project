@@ -107,7 +107,7 @@ RSpec.describe User, type: :model do
     end
 
     describe 'member_with_membership_app' do
-      it 'creates the application, a membership, ethical guidelines checklist, and sets membership_status to current' do
+      it 'creates the application, a membership, ethical guidelines checklist, and sets membership_status to current_member' do
         orig_num_memberships = Membership.count
         orig_num_shf_apps = ShfApplication.count
 
@@ -115,7 +115,7 @@ RSpec.describe User, type: :model do
 
         expect(Membership.count).to eq(orig_num_memberships + 1)
         expect(ShfApplication.count).to eq(orig_num_shf_apps + 1)
-        expect(new_member.current?).to be_truthy
+        expect(new_member.current_member?).to be_truthy
       end
 
       describe 'member_with_expiration_date' do
@@ -125,10 +125,10 @@ RSpec.describe User, type: :model do
           expect(MembershipsManager.new.most_recent_membership(new_member).last_day).to eq(expiry)
         end
 
-        it 'sets membership status to current if the member has a Membership that covers Date.current' do
+        it 'sets membership status to current_member if the member has a Membership that covers Date.current' do
           expiry = Date.current  - 1
           new_member = create(:member_with_expiration_date, expiration_date: expiry)
-          expect(new_member.current?).to be_falsey
+          expect(new_member.current_member?).to be_falsey
         end
       end
     end
@@ -694,11 +694,11 @@ RSpec.describe User, type: :model do
 
     describe 'is a member' do
 
-      it 'true if membership is not current' do
+      it 'true if membership is not current_member' do
         expect(member_expired.member_fee_payment_due?).to be_truthy
       end
 
-      it 'false if membership is current' do
+      it 'false if membership is current_member' do
         expect(member_paid_up.member_fee_payment_due?).to be_falsey
       end
     end
@@ -832,6 +832,7 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
 
   describe '#has_approved_app_for_company?' do
 
@@ -1310,6 +1311,7 @@ RSpec.describe User, type: :model do
     end
 
     context 'not an admin' do
+      before(:each) { allow(u).to receive(:admin?).and_return(false) }
 
       context 'membership_current? is true' do
         before(:each) { }
