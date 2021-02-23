@@ -6,6 +6,8 @@ require 'shared_context/named_dates'
 
 # ================================================================================
 
+# TODO stub, mock, and use doubles as much as possible.  Ex: AdminOnly::FileDeliveryMethod, Address, etc.
+
 RSpec.describe User, type: :model do
 
   # These are required to get the content type and validate it
@@ -228,7 +230,7 @@ RSpec.describe User, type: :model do
       expect(user_with_member_photo.member_photo.exists?).to be_falsey
     end
 
-    context 'membership application' do
+    describe 'membership application' do
       it 'user with application' do
         expect { user_with_app }.to change(ShfApplication, :count).by(1)
         expect { user_with_app.destroy }.to change(ShfApplication, :count).by(-1)
@@ -240,10 +242,9 @@ RSpec.describe User, type: :model do
       end
     end
 
-    context 'payments are NOT deleted if a user is deleted' do
+    describe 'payments are NOT deleted if a user is deleted' do
 
-      context 'membership payments' do
-
+      describe 'membership payments' do
         before(:each) do
           # create the payments
           member_payment1
@@ -260,7 +261,7 @@ RSpec.describe User, type: :model do
         end
       end
 
-      context 'h-branding (h-markt licensing) payments' do
+      describe 'h-branding (h-markt licensing) payments' do
 
         it 'user (id) is set to nil' do
           company_id = complete_co.id
@@ -1402,7 +1403,7 @@ RSpec.describe User, type: :model do
       it 'true if today = dec 1, start = jan 1, expire = dec 31' do
         Timecop.freeze(dec_1) do
           expect(paid_member.membership_expire_date).to eq dec_31
-          expect(paid_member.membership_current?).to be_truthy
+          expect(paid_member.payments_current?).to be_truthy
         end # Timecop
       end
 
@@ -1423,28 +1424,28 @@ RSpec.describe User, type: :model do
       it 'true if today = nov 30, start = dec 3 last year, expire = dec 2' do
         Timecop.freeze(nov_30) do
           expect(paid_expires_today_member.membership_expire_date).to eq dec_2
-          expect(paid_expires_today_member.membership_current?).to be_truthy
+          expect(paid_expires_today_member.payments_current?).to be_truthy
         end # Timecop
       end
 
       it 'true if today = dec 1, start = dec 3 last year, expire = dec 2' do
         Timecop.freeze(dec_1) do
           expect(paid_expires_today_member.membership_expire_date).to eq dec_2
-          expect(paid_expires_today_member.membership_current?).to be_truthy
+          expect(paid_expires_today_member.payments_current?).to be_truthy
         end # Timecop
       end
 
       it 'false if today = dec 2, start = dec 3 last year, expire = dec 2' do
         Timecop.freeze(dec_2) do
           expect(paid_expires_today_member.membership_expire_date).to eq dec_2
-          expect(paid_expires_today_member.membership_current?).to be_falsey
+          expect(paid_expires_today_member.payments_current?).to be_falsey
         end # Timecop
       end
 
       it 'false today = dec 3, start = dec 3 last year, expire = dec 2' do
         Timecop.freeze(dec_3) do
           expect(paid_expires_today_member.membership_expire_date).to eq dec_2
-          expect(paid_expires_today_member.membership_current?).to be_falsey
+          expect(paid_expires_today_member.payments_current?).to be_falsey
         end # Timecop
       end
 
@@ -1654,9 +1655,9 @@ RSpec.describe User, type: :model do
             end
           end
 
-          it 'is == membership_current?' do
+          it 'is == payments_current?' do
             Timecop.freeze(dec_1) do
-              expect(paid_member.membership_app_and_payments_current?).to eq(paid_member.membership_current?)
+              expect(paid_member.membership_app_and_payments_current?).to eq(paid_member.payments_current?)
             end
           end
 
@@ -1683,9 +1684,9 @@ RSpec.describe User, type: :model do
               expect(paid_expires_today_member.membership_app_and_payments_current?).to be_truthy
             end # Timecop
           end
-          it 'is == membership_current?' do
+          it 'is == payments_current?' do
             Timecop.freeze(nov_30) do
-              expect(paid_expires_today_member.membership_app_and_payments_current?).to eq(paid_expires_today_member.membership_current?)
+              expect(paid_expires_today_member.membership_app_and_payments_current?).to eq(paid_expires_today_member.payments_current?)
             end
           end
         end # context 'today is nov 30'
@@ -1697,9 +1698,9 @@ RSpec.describe User, type: :model do
               expect(paid_expires_today_member.membership_app_and_payments_current?).to be_truthy
             end # Timecop
           end
-          it 'is == membership_current?' do
+          it 'is == payments_current?' do
             Timecop.freeze(dec_1) do
-              expect(paid_expires_today_member.membership_app_and_payments_current?).to eq(paid_expires_today_member.membership_current?)
+              expect(paid_expires_today_member.membership_app_and_payments_current?).to eq(paid_expires_today_member.payments_current?)
             end
           end
         end # context 'today is dec 1'
@@ -1711,9 +1712,9 @@ RSpec.describe User, type: :model do
               expect(paid_expires_today_member.membership_app_and_payments_current?).to be_falsey
             end # Timecop
           end
-          it 'is == membership_current?' do
+          it 'is == payments_current?' do
             Timecop.freeze(dec_2) do
-              expect(paid_expires_today_member.membership_app_and_payments_current?).to eq(paid_expires_today_member.membership_current?)
+              expect(paid_expires_today_member.membership_app_and_payments_current?).to eq(paid_expires_today_member.payments_current?)
             end
           end
         end # context 'today is dec 2'
@@ -1725,9 +1726,9 @@ RSpec.describe User, type: :model do
               expect(paid_expires_today_member.membership_app_and_payments_current?).to be_falsey
             end # Timecop
           end
-          it 'is == membership_current?' do
+          it 'is == payments_current?' do
             Timecop.freeze(dec_3) do
-              expect(paid_expires_today_member.membership_app_and_payments_current?).to eq(paid_expires_today_member.membership_current?)
+              expect(paid_expires_today_member.membership_app_and_payments_current?).to eq(paid_expires_today_member.payments_current?)
             end
           end
         end # context 'today is dec 2'
@@ -1951,6 +1952,12 @@ RSpec.describe User, type: :model do
 
   end
 
+
+  describe 'ransacker :padded_membership_number' do
+    pending
+  end
+
+
   describe '#get_short_proof_of_membership_url' do
     context 'there is already a shortened url in the table' do
       it 'returns shortened url' do
@@ -2134,6 +2141,19 @@ RSpec.describe User, type: :model do
   end
 
   describe 'issue_membership_number' do
+    pending
+  end
+
+  describe 'get_next_membership_number' do
+    # This is a private method so should make sure any calling methods are tested and so test this.
+    # else send this method to a user to test it.
+    pending
+  end
+
+
+  describe 'destroy_updloaded_files' do
+    # This is a private method so should make sure any calling methods are tested and so test this.
+    # else send this method to a user to test it.
     pending
   end
 end
