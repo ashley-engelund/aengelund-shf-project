@@ -32,9 +32,10 @@ RSpec.describe MembershipStatusCheck, type: :model do
 
     it 'calls the status_updater for each user to revoke the membership if needed' do
       mock_status_updater = instance_double("MembershipStatusUpdater")
+
+      allow(MembershipStatusUpdater).to receive(:instance).and_return(mock_status_updater)
       allow(mock_status_updater).to receive(:payment_made)
       allow(mock_status_updater).to receive(:shf_application_updated)
-      allow(MembershipStatusUpdater).to receive(:instance).and_return(mock_status_updater)
 
       # instantiate these (from the shared-context/users file)
       user
@@ -48,9 +49,6 @@ RSpec.describe MembershipStatusCheck, type: :model do
     end
 
     it 'Log each revoked membership, but not for non-revoked' do
-      status_updater = instance_double("MembershipStatusUpdater")
-      allow(status_updater).to receive(:revoke_user_membership)
-
       simple_guideline = create(:user_checklist, :completed, master_checklist: build(:membership_guidelines_master_checklist))
       allow(AdminOnly::UserChecklistFactory).to receive(:create_member_guidelines_checklist_for).and_return(simple_guideline)
 
@@ -59,11 +57,11 @@ RSpec.describe MembershipStatusCheck, type: :model do
         member_paid_up
         member_expired
 
-      expect(mock_log).to receive(:info).with("User #{member_expired.id} (#{member_expired.email}) membership revoked.")
-      expect(mock_log).not_to receive(:info).with(/User #{user.id}/)
-      expect(mock_log).not_to receive(:info).with(/User #{member_paid_up.id}/)
+        expect(mock_log).to receive(:info).with("User #{member_expired.id} (#{member_expired.email}) membership revoked.")
+        expect(mock_log).not_to receive(:info).with(/User #{user.id}/)
+        expect(mock_log).not_to receive(:info).with(/User #{member_paid_up.id}/)
 
-      described_class.condition_response(condition, mock_log)
+        described_class.condition_response(condition, mock_log)
       end
 
     end
