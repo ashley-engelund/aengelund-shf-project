@@ -278,6 +278,14 @@ RSpec.describe User, type: :model do
         end
       end
     end
+
+
+    it 'memberships are archived before they are deleted' do
+      member = create(:member_with_membership_app)
+      expect(MembershipsManager).to receive(:create_archived_memberships_for)
+                                              .with(member)
+      member.destroy
+    end
   end
 
   describe 'Scopes' do

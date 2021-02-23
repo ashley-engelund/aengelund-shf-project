@@ -37,7 +37,7 @@ class User < ApplicationRecord
 
   has_many :companies, through: :shf_application
 
-  has_many :memberships
+  has_many :memberships, dependent: :destroy
 
   has_many :payments, dependent: :nullify
   # ^^ need to retain h-branding payment(s) for any associated company that
@@ -521,6 +521,7 @@ class User < ApplicationRecord
   def adjust_related_info_for_destroy
     remove_photo_from_filesystem
     record_deleted_payorinfo_in_payment_notes(self.class, email)
+    MembershipsManager.create_archived_memberships_for(self)
     destroy_uploaded_files
   end
 
