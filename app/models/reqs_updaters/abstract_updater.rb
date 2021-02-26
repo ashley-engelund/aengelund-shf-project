@@ -107,7 +107,7 @@ class AbstractUpdater
       log.record(:info, "checking check_requirements_and_act for #{args.inspect}")
     end
 
-    if updater_class.update_requirements_checker.satisfied? args
+      if updater_class.update_requirements_checker.satisfied? args
       update_action args
     else
       revoke_update_action(args) if updater_class.revoke_requirements_checker.satisfied? args
