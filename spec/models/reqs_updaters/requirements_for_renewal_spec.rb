@@ -20,54 +20,64 @@ RSpec.describe RequirementsForRenewal, type: :model do
 
       before(:each) { allow(subject).to receive(:max_days_can_still_renew).and_return(10) }
 
-      context 'user can renew on the given date' do
-        before(:each) do
-          allow(user).to receive(:current_member?).and_return(true)
-          allow(user).to receive(:valid_renewal_date?).and_return(true)
-        end
+      context 'user can renew' do
+        before(:each) {  allow(user).to receive(:may_renew?).and_return(true) }
 
-        context 'user has an approved SHF application' do
-          before(:each) { allow(user).to receive(:has_approved_shf_application?).and_return(true) }
+        context 'user can renew on the given date' do
+          before(:each) do
+            allow(user).to receive(:current_member?).and_return(true)
+            allow(user).to receive(:valid_date_for_renewal?).and_return(true)
+          end
 
-          context 'user has agreed to the membership guidelines' do
-            before(:each) { allow(subject).to receive(:membership_guidelines_checklist_done?).and_return(true) }
+          context 'user has an approved SHF application' do
+            before(:each) { allow(user).to receive(:has_approved_shf_application?).and_return(true) }
 
-            it 'true if documents have been uploaded during the current membership term' do
-              allow(subject).to receive(:doc_uploaded_during_this_membership_term?).and_return(true)
+            context 'user has agreed to the membership guidelines' do
+              before(:each) { allow(subject).to receive(:membership_guidelines_checklist_done?).and_return(true) }
 
-              expect(subject.requirements_excluding_payments_met?(user)).to be_truthy
+              it 'true if documents have been uploaded during the current membership term' do
+                allow(subject).to receive(:doc_uploaded_during_this_membership_term?).and_return(true)
+
+                expect(subject.requirements_excluding_payments_met?(user)).to be_truthy
+              end
+
+              it 'false if not documents have been uploaded during the current membership term' do
+                allow(subject).to receive(:doc_uploaded_during_this_membership_term?).and_return(false)
+
+                expect(subject.requirements_excluding_payments_met?(user)).to be_falsey
+              end
             end
 
-            it 'false if not documents have been uploaded during the current membership term' do
-              allow(subject).to receive(:doc_uploaded_during_this_membership_term?).and_return(false)
+            it 'false if the user has not agreed to the membership guidelines' do
+              allow(subject).to receive(:membership_guidelines_checklist_done?).and_return(false)
 
+              expect(subject).not_to receive(:doc_uploaded_during_this_membership_term?)
               expect(subject.requirements_excluding_payments_met?(user)).to be_falsey
             end
           end
 
-          it 'false if the user has not agreed to the membership guidelines' do
-            allow(subject).to receive(:membership_guidelines_checklist_done?).and_return(false)
+          it 'false if user does not have an approved SHF application' do
+            allow(user).to receive(:has_approved_shf_application?).and_return(false)
 
+            expect(subject).not_to receive(:membership_guidelines_checklist_done?)
             expect(subject).not_to receive(:doc_uploaded_during_this_membership_term?)
             expect(subject.requirements_excluding_payments_met?(user)).to be_falsey
           end
         end
 
-        it 'false if user does not have an approved SHF application' do
-          allow(user).to receive(:has_approved_shf_application?).and_return(false)
+        it 'false if user cannot renew on the given date' do
+          allow(user).to receive(:valid_date_for_renewal?).and_return(false)
 
+          expect(user).not_to receive(:has_approved_shf_application?)
           expect(subject).not_to receive(:membership_guidelines_checklist_done?)
           expect(subject).not_to receive(:doc_uploaded_during_this_membership_term?)
           expect(subject.requirements_excluding_payments_met?(user)).to be_falsey
         end
       end
 
-      it 'false if user cannot renew on the given date' do
-        allow(user).to receive(:valid_renewal_date?).and_return(false)
+      it 'false if user cannot renew' do
+        allow(user).to receive(:may_renew?).and_return(false)
 
-        expect(user).not_to receive(:has_approved_shf_application?)
-        expect(subject).not_to receive(:membership_guidelines_checklist_done?)
-        expect(subject).not_to receive(:doc_uploaded_during_this_membership_term?)
         expect(subject.requirements_excluding_payments_met?(user)).to be_falsey
       end
     end
