@@ -8,6 +8,7 @@
 #
 # 2021-02-19: First step towards refactoring: have existing methods call MembershipsManager methods
 #   (a kind of manual delegation).
+#   TODO: should any of the methods be delegated to the MembershipsManager?
 #   Next steps will be to call MembershipManager methods directly where needed.
 #
 class User < ApplicationRecord
@@ -128,7 +129,7 @@ class User < ApplicationRecord
 
     # You can pass the (keyword) argument date: <Date> to provide a date that the membership should start on
     event :start_membership do
-      transitions from: [:not_a_member], to: :current_member, after:  Proc.new {|*args| start_membership_on(*args) }
+      transitions from: [:not_a_member, :current_member, :former_member], to: :current_member, after:  Proc.new {|*args| start_membership_on(*args) }
     end
 
     # You can pass the (keyword) argument date: <Date> to provide a date that the membership should start on
@@ -140,7 +141,7 @@ class User < ApplicationRecord
       transitions from: :current_member, to: :in_grace_period, after: :enter_grace_period
     end
 
-    event :end_grace_period do
+    event :make_former_member do
       transitions from: :in_grace_period, to: :former_member, after: :become_former_member
     end
   end
@@ -188,15 +189,26 @@ class User < ApplicationRecord
     most_recent_payment(THIS_PAYMENT_TYPE)
   end
 
+  # Make this a current member.
+  # Do nothing if the user is already a current member.
+  # If not a current member, start a membership
+  def make_current_member
+    start_membership_on(date: Date.current) unless current_member?
+  end
+
 
   def start_membership_on(date: Date.current)
     # TODO membership number?
+    # TODO: what if they are a current_member and the last day > the date?
+    #   end the current membership on (date - 1 day) and start the new one on the date?
     new_membership = new_membership_starting(date)
     # TODO send email for starting membership?
   end
 
 
   def renew_membership_on(date: Date.current)
+    # TODO: what if they are a current_member and the last day > the date?
+    #   end the current membership on (date - 1 day) and start the new one on the date?
     new_membership = new_membership_starting(date)
     # TODO send email for renewed membership?
   end
@@ -280,9 +292,15 @@ class User < ApplicationRecord
   alias_method :payments_current_as_of?, :membership_current_as_of?
 
 
+
   # The membership term has expired, but are they still within a 'grace period'?
   def membership_expired_in_grace_period?(this_date = Date.current)
     memberships_manager.membership_in_grace_period?(self, this_date)
+  end
+
+  # the date is after the renewal grace period;
+  def membership_past_grace_period_end?(this_date = Date.current)
+    memberships_manager.date_after_grace_period_end?(self, this_date)
   end
 
   # FIXME: MembershipManager membership_expired_in_grace_period? means this is no longer used

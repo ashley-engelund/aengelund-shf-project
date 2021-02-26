@@ -11,6 +11,7 @@
 #
 #--------------------------
 
+# TODO should this be renamed to MembershipsTermManager?  This is mostly about dates for the term
 class MembershipsManager
 
   MOST_RECENT_MEMBERSHIP_METHOD = :last_day
@@ -89,12 +90,22 @@ class MembershipsManager
   end
 
 
+  def date_after_grace_period_end?(user,
+                                   this_date = Date.current,
+                                   membership: most_recent_membership(user))
+    return false if membership.nil?
+
+    this_date > (membership.last_day + grace_days)
+  end
+
+
   def date_in_grace_period?(this_date = Date.current,
                             last_day: Date.current,
                             grace_days: grace_period)
       this_date > last_day &&
       this_date <= (last_day + grace_days)
   end
+
 
 
   # @return [Integer]

@@ -191,6 +191,10 @@ RSpec.describe MembershipsManager, type: :model do
   end
 
 
+  describe 'date_after_grace_period_end?' do
+    pending
+  end
+
   describe 'date_in_grace_period?' do
     let(:grace_period) { 2.days }
     before(:each) do

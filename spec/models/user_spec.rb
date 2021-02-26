@@ -1734,6 +1734,13 @@ RSpec.describe User, type: :model do
   # end
 
 
+  describe 'membership_past_grace_period_end?' do
+    it 'calls membership_manager method' do
+      pending
+    end
+  end
+
+
   describe 'membership_expired_in_grace_period?' do
     let(:member) { build(:user) }
     let(:grace_3_days) { ActiveSupport::Duration.days(3) }
