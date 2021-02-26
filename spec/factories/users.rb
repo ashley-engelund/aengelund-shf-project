@@ -84,7 +84,8 @@ FactoryBot.define do
     end
 
 
-    # create a payment for the member with the given expiration date
+    # Create a Membership for the user with the given expiration date
+    #   and creates a payment for the member with the given expiration date
     # ex:  create(:member_with_expiration_date, expiration_date: Date.new(2018, 6, 24))
     factory :member_with_expiration_date do
       member { true }
