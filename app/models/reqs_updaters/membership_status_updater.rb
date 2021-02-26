@@ -79,12 +79,12 @@ class MembershipStatusUpdater < AbstractUpdater
   #
 
   def shf_application_updated(shf_app)
-    check_user_and_log(shf_app.user, shf_app, LOGMSG_USER_UPDATED, LOGMSG_USER_UPDATED_CHECKREASON)
+    check_user_and_log(shf_app.user, shf_app, logmsg_user_updated, logmsg_user_updated_start)
   end
 
 
   def payment_made(payment)
-    check_user_and_log(payment.user, payment, LOGMSG_PAYMENT_MADE, LOGMSG_PAYMENT_MADE_CHECKREASON)
+    check_user_and_log(payment.user, payment, logmsg_payment_made, logmsg_payment_made_finished_checking)
   end
 
 
@@ -92,16 +92,82 @@ class MembershipStatusUpdater < AbstractUpdater
 
 
   def user_updated(user)
-    check_user_and_log(user, user, LOGMSG_USER_UPDATED, LOGMSG_USER_UPDATED)
+    check_user_and_log(user, user, logmsg_user_updated, logmsg_user_updated)
   end
 
 
   # end of Notifications received from observed classes
 
   def revoke_user_membership(user)
-    check_user_and_log(user, user, LOGMSG_USER_UPDATED, LOGMSG_MEMBERSHIP_REVOKED)
+    check_user_and_log(user, user, logmsg_user_updated, logmsg_membership_revoked)
   end
 
+
+  #  This is the main method for checking and changing the membership status.
+  #     TODO: for a given date
+  #
+  def update_membership_status(user)
+    today = Date.current
+
+    # permitted next statuses (from the AASM info)
+    permitted_next_statuses = user.aasm.states(permitted: true).map(&:name)
+
+    if user.not_a_member? || user.former_member?
+      user.start_membership!(date: today) if RequirementsForMembership.satisfied?(user: user)
+
+    elsif user.current_member?
+      if RequirementsForRenewal.satisfied?(user: user)
+        user.renew!(date: today)
+      elsif user.membership_expired_in_grace_period?(today)
+        user.start_grace_period!
+
+      elsif user.membership_past_grace_period_end?(today)
+        # This shouldn't happen. But just in case the membership status has not been updated for
+        # a while and so hasn't transitioned to in_grace_period, we'll do it manually now and then
+        # go on and transition to a former member
+        user.start_grace_period!
+        user.make_former_member!
+      end
+
+    elsif user.in_grace_period?
+      if user.membership_past_grace_period_end?(today)
+        user.make_former_member!
+      else
+        user.renew!(date: today) if RequirementsForRenewal.satisfied?(user: user)
+      end
+    end
+  end
+
+
+  def logmsg_user_updated
+    LOGMSG_USER_UPDATED
+  end
+
+  def logmsg_user_updated_start
+    LOGMSG_USER_UPDATED_CHECKREASON
+  end
+
+  def logmsg_payment_made
+    LOGMSG_PAYMENT_MADE
+  end
+
+  def logmsg_payment_made_finished_checking
+    LOGMSG_PAYMENT_MADE_CHECKREASON
+  end
+
+  def logmsg_membership_granted
+    LOGMSG_MEMBERSHIP_GRANTED
+  end
+
+  def logmsg_membership_renewed
+    LOGMSG_MEMBERSHIP_RENEWED
+  end
+
+  def logmsg_membership_revoked
+    LOGMSG_MEMBERSHIP_REVOKED
+  end
+
+  # -----------------------------------------------------------------------------------------------
 
   private
 
@@ -110,32 +176,36 @@ class MembershipStatusUpdater < AbstractUpdater
   def check_user_and_log(user, notification_sender, action_message, reason_check_happened)
 
     ActivityLogger.open(log_filename, self.class.to_s, action_message, false) do |log|
-
-      # Granting and renewing happens in real time - so this (membership revocation)
-      # is the only action that must be checked.
+      # FIXME - this used to only grant or revoke.  But now we also have in_grace_period...
+      #   use the state machine
       check_requirements_and_act({ user: user })
-
       log.record(:info, "#{reason_check_happened}: #{notification_sender.inspect}")
     end
   end
 
 
-  # if already a member, then they RENEW, else membership is granted
+  # This is called if our updater_class requirements have been satisfied.
+  # Ex:
+  #   if updater_class.update_requirements_checker.satisfied
+  # which means that the Membership requirements have been satisfied.
+  #
   def update_action(args)
     user = args[:user]
     send_email = args.fetch(:send_email, SEND_EMAIL_DEFAULT)
 
-    user.member ? renew_membership(user, send_email) : grant_membership(user, send_email)
+    # Don't do anything if the membership is already current
+    renew_membership(user, send_email) if user.in_grace_period?
+    grant_membership(user, send_email) if user.not_a_member? || user.former_member?
   end
 
 
   def revoke_update_action(args = {})
     user = args[:user]
-    ActivityLogger.open(log_filename, self.class.to_s, LOGMSG_MEMBERSHIP_REVOKED, false) do |log|
+    ActivityLogger.open(log_filename, self.class.to_s, logmsg_membership_revoked, false) do |log|
 
-      user.update(member: false) # TODO send any email?
+      user.update(member: false) # TODO send any email letting user know they are no longer a member?
 
-      log.record(:info, "#{LOGMSG_MEMBERSHIP_REVOKED}: #{user.inspect}")
+      log.record(:info, "#{logmsg_membership_revoked}: #{user.inspect}")
       # future: this makes it easy to record an audit trail here
     end
   end
@@ -143,7 +213,7 @@ class MembershipStatusUpdater < AbstractUpdater
 
   def grant_membership(user, send_email)
 
-    ActivityLogger.open(log_filename, self.class.to_s, LOGMSG_MEMBERSHIP_GRANTED, false) do |log|
+    ActivityLogger.open(log_filename, self.class.to_s, logmsg_membership_granted, false) do |log|
 
       previous_membership_status = user.member
       previous_membership_number = user.membership_number
@@ -165,26 +235,26 @@ class MembershipStatusUpdater < AbstractUpdater
 
       end
 
-      log.record(:info, "#{LOGMSG_MEMBERSHIP_GRANTED}: #{user.inspect}")
+      log.record(:info, "#{logmsg_membership_granted}: #{user.inspect}")
     end
 
   end
 
 
-  def renew_membership(user, _send_email)
-
-    ActivityLogger.open(log_filename, self.class.to_s, LOGMSG_MEMBERSHIP_RENEWED, false) do |log|
-
-      # MemberMailer.membership_renewed(user).deliver if send_email
-
-      log.record(:info, "#{LOGMSG_MEMBERSHIP_RENEWED}: #{user.inspect}")
+  def renew_membership(user, send_email)
+    ActivityLogger.open(log_filename, self.class.to_s, logmsg_membership_renewed, false) do |log|
+      # MemberMailer.membership_renewed(user).deliver if send_email  FIXME
+      log.record(:info, "#{logmsg_membership_renewed}: #{user.inspect}")
     end
+  end
 
+
+  def first_membership_and_a_good_company?(user)
+    first_membership?(user.member, user.membership_number) && user.in_at_least_one_co_in_good_standing?
   end
 
 
   def first_membership?(previous_membership_status = true, previous_membership_number = nil)
     previous_membership_number.nil? && !(previous_membership_status)
   end
-
-end # MembershipStatusUpdater
+end
