@@ -52,35 +52,33 @@ RSpec.describe MembershipStatusUpdater, type: :model do
   end
 
 
-  it 'shf_application_updated calls check_user_and_log with a message the shows the start up the updating process' do
+  it 'shf_application_updated calls update_membership_status with a message that the app was updated' do
     shf_app_updated = build(:shf_application, user: build(:user))
 
-    expect(subject).to receive(:check_user_and_log).with(shf_app_updated.user,
-                                                         shf_app_updated,
-                                                         subject.logmsg_user_updated,
-                                                         subject.logmsg_user_updated_start)
+    expect(subject).to receive(:update_membership_status).with(shf_app_updated.user,
+                                                               shf_app_updated,
+                                                               subject.logmsg_app_updated)
     subject.shf_application_updated(shf_app_updated)
   end
 
 
-  it 'payment_made calls check_user_and_log with a message that a payment was made and that the membership status has finished being checked' do
+  it 'payment_made calls update_membership_status with a message that a payment was made' do
     payment_for_not_expired_paid_member = build(:payment,
                                                  user: build(:user),
                                                  start_date: Date.current,
                                                  expire_date: Date.current + 1.day)
 
-    expect(subject).to receive(:check_user_and_log).with(payment_for_not_expired_paid_member.user,
+    expect(subject).to receive(:update_membership_status).with(payment_for_not_expired_paid_member.user,
                                                          payment_for_not_expired_paid_member,
-                                                         subject.logmsg_payment_made,
-                                                         subject.logmsg_payment_made_finished_checking)
+                                                         subject.logmsg_payment_made)
     subject.payment_made(payment_for_not_expired_paid_member)
   end
 
 
-  it 'user_updated calls check_user_and_log with a message that the user was updated' do
-    expect(subject).to receive(:check_user_and_log).with(user, user,
-                                                         subject.logmsg_user_updated,
-                                                         subject.logmsg_user_updated)
+  it 'user_updated calls update_membership_status with a message that the user was updated' do
+    expect(subject).to receive(:update_membership_status).with(user,
+                                                               user,
+                                                               subject.logmsg_user_updated)
     subject.user_updated(user)
   end
 
@@ -160,6 +158,7 @@ RSpec.describe MembershipStatusUpdater, type: :model do
     # ------------------------------------------------------------------
 
 
+    # TODO ensure that info is logged
     context 'is not a member' do
       it_should_behave_like 'potentially can become a member' do
         let(:given_user) do

@@ -3,7 +3,8 @@
 LOGMSG_APP_UPDATED = 'SHF_application updated'
 LOGMSG_APP_UPDATED_CHECKREASON = 'Membership checked because this shf_application was updated: '
 LOGMSG_PAYMENT_MADE = 'Payment made'
-LOGMSG_PAYMENT_MADE_CHECKREASON = 'Finished checking membership status because this payment was  made: '
+LOGMSG_PAYMENT_MADE_CHECKREASON = 'Finished checking membership status because this payment was made: '
+LOGMSG_APP_UPDATED = 'ShfApplication updated'
 LOGMSG_USER_UPDATED = 'User updated'
 LOGMSG_USER_UPDATED_CHECKREASON = 'User updated: '
 
@@ -79,12 +80,12 @@ class MembershipStatusUpdater < AbstractUpdater
   #
 
   def shf_application_updated(shf_app)
-    check_user_and_log(shf_app.user, shf_app, logmsg_user_updated, logmsg_user_updated_start)
+    update_membership_status(shf_app.user, shf_app, logmsg_app_updated)
   end
 
 
   def payment_made(payment)
-    check_user_and_log(payment.user, payment, logmsg_payment_made, logmsg_payment_made_finished_checking)
+    update_membership_status(payment.user, payment, logmsg_payment_made)
   end
 
 
@@ -92,7 +93,7 @@ class MembershipStatusUpdater < AbstractUpdater
 
 
   def user_updated(user)
-    check_user_and_log(user, user, logmsg_user_updated, logmsg_user_updated)
+    update_membership_status(user, user, logmsg_user_updated)
   end
 
 
@@ -106,38 +107,59 @@ class MembershipStatusUpdater < AbstractUpdater
   #  This is the main method for checking and changing the membership status.
   #     TODO: for a given date
   #
-  def update_membership_status(user)
+  def update_membership_status(user, notification_sender = nil, reason_update_happened = nil)
     today = Date.current
 
-    # permitted next statuses (from the AASM info)
-    permitted_next_statuses = user.aasm.states(permitted: true).map(&:name)
+    ActivityLogger.open(log_filename, self.class.to_s, "#{__method__}", false) do |log|
+      log.record(:info, "update_membership_status for #{user.inspect}")
+      log.record(:info, "#{reason_update_happened}: #{notification_sender.inspect}") unless notification_sender.blank?
 
-    if user.not_a_member? || user.former_member?
-      user.start_membership!(date: today) if RequirementsForMembership.satisfied?(user: user)
+      # FIXME - refactor/DRY so we don't have to call  log.record(:info, user.membership_changed_info) every time.
+      #   yield?  send the log to User? (blech)
+      if user.not_a_member? || user.former_member?
+        if RequirementsForMembership.satisfied?(user: user)
+          user.start_membership!(date: today)
+          log.record(:info, user.membership_changed_info)
+        end
 
-    elsif user.current_member?
-      if RequirementsForRenewal.satisfied?(user: user)
-        user.renew!(date: today)
-      elsif user.membership_expired_in_grace_period?(today)
-        user.start_grace_period!
+      elsif user.current_member?
+        if RequirementsForRenewal.satisfied?(user: user)
+          user.renew!(date: today)
+          log.record(:info, user.membership_changed_info)
+        elsif user.membership_expired_in_grace_period?(today)
+          user.start_grace_period!
+          log.record(:info, user.membership_changed_info)
 
-      elsif user.membership_past_grace_period_end?(today)
-        # This shouldn't happen. But just in case the membership status has not been updated for
-        # a while and so hasn't transitioned to in_grace_period, we'll do it manually now and then
-        # go on and transition to a former member
-        user.start_grace_period!
-        user.make_former_member!
+        elsif user.membership_past_grace_period_end?(today)
+          # This shouldn't happen. But just in case the membership status has not been updated for
+          # a while and so hasn't transitioned to in_grace_period, we'll do it manually now and then
+          # go on and transition to a former member
+          user.start_grace_period!
+          log.record(:info, user.membership_changed_info)
+          user.make_former_member!
+          log.record(:info, user.membership_changed_info)
+        end
+
+      elsif user.in_grace_period?
+        if user.membership_past_grace_period_end?(today)
+          user.make_former_member!
+          log.record(:info, user.membership_changed_info)
+        else
+          if RequirementsForRenewal.satisfied?(user: user)
+            user.renew!(date: today)
+            log.record(:info, user.membership_changed_info)
+          end
+        end
       end
 
-    elsif user.in_grace_period?
-      if user.membership_past_grace_period_end?(today)
-        user.make_former_member!
-      else
-        user.renew!(date: today) if RequirementsForRenewal.satisfied?(user: user)
-      end
     end
+
   end
 
+
+  def logmsg_app_updated
+    LOGMSG_APP_UPDATED
+  end
 
   def logmsg_user_updated
     LOGMSG_USER_UPDATED
@@ -231,7 +253,6 @@ class MembershipStatusUpdater < AbstractUpdater
 
           AdminMailer.new_membership_granted_co_hbrand_paid(user).deliver if has_good_cos
         end
-
 
       end
 
