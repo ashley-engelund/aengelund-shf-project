@@ -1689,54 +1689,21 @@ RSpec.describe User, type: :model do
     end
   end
 
-  # describe 'date_within_grace_period?' do
-  #   let(:u) { build(:user) }
-  #
-  #   it 'calls memberships_manager.date_in_grace_period?' do
-  #     this_date = Date.new(2020, 1, 20)
-  #     membership_last_day = Date.new(2020, 1, 1)
-  #     grace_period = ActiveSupport::Duration.days(15)
-  #     expect(u.memberships_manager).to receive(:date_in_grace_period?)
-  #                                        .with(this_date,
-  #                                              last_day: membership_last_day,
-  #                                              grace_days: grace_period)
-  #     expect(u.date_within_grace_period?(this_date,
-  #                                        membership_last_day,
-  #                                        grace_period)).to be_falsey
-  #   end
-  #
-  #   it 'true if this date is less than (starting date + grace period)' do
-  #     this_date = Date.new(2020, 1, 10)
-  #     starting_date = Date.new(2020, 1, 1)
-  #     grace_period = ActiveSupport::Duration.days(15)
-  #     expect(u.date_within_grace_period?(this_date,
-  #                                        starting_date,
-  #                                        grace_period)).to be_truthy
-  #   end
-  #
-  #   it 'true if this date is the last day of the grace period (== starting date + grace period)' do
-  #     this_date = Date.new(2020, 1, 15)
-  #     starting_date = Date.new(2020, 1, 1)
-  #     grace_period = ActiveSupport::Duration.days(15)
-  #     expect(u.date_within_grace_period?(this_date,
-  #                                        starting_date,
-  #                                        grace_period)).to be_truthy
-  #   end
-  #
-  #   it 'false  if this date is after the grace period (> starting date + grace period)' do
-  #     this_date = Date.new(2020, 1, 20)
-  #     starting_date = Date.new(2020, 1, 1)
-  #     grace_period = ActiveSupport::Duration.days(15)
-  #     expect(u.date_within_grace_period?(this_date,
-  #                                        starting_date,
-  #                                        grace_period)).to be_falsey
-  #   end
-  # end
-
 
   describe 'membership_past_grace_period_end?' do
+    let(:u) { build(:user) }
+
     it 'calls membership_manager method' do
-      pending
+      given_date = Date.current + 1.day
+      expect(u.memberships_manager).to receive(:date_after_grace_period_end?)
+                                           .with(u, given_date)
+      u.membership_past_grace_period_end?(given_date)
+    end
+
+    it 'default date is Date.current' do
+      expect(u.memberships_manager).to receive(:date_after_grace_period_end?)
+                                         .with(u, Date.current)
+      u.membership_past_grace_period_end?
     end
   end
 

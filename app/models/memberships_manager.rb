@@ -90,15 +90,6 @@ class MembershipsManager
   end
 
 
-  def date_after_grace_period_end?(user,
-                                   this_date = Date.current,
-                                   membership: most_recent_membership(user))
-    return false if membership.nil?
-
-    this_date > (membership.last_day + grace_days)
-  end
-
-
   def date_in_grace_period?(this_date = Date.current,
                             last_day: Date.current,
                             grace_days: grace_period)
@@ -106,6 +97,14 @@ class MembershipsManager
       this_date <= (last_day + grace_days)
   end
 
+
+  def date_after_grace_period_end?(user,
+                                   this_date = Date.current,
+                                   membership: most_recent_membership(user))
+    return false if membership.nil?
+
+    this_date > (membership.last_day + grace_period)
+  end
 
 
   # @return [Integer]

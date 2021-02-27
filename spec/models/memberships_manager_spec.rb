@@ -192,7 +192,41 @@ RSpec.describe MembershipsManager, type: :model do
 
 
   describe 'date_after_grace_period_end?' do
-    pending
+    before(:each) do
+      allow(subject).to receive(:grace_period).and_return(3)
+      allow(mock_membership).to receive(:last_day).and_return(Date.current - 2)
+    end
+
+    it 'false if membership is nil' do
+      expect(subject.date_after_grace_period_end?(user, Date.current, membership: nil)).to be_falsey
+    end
+
+    it 'true if the given date is after (>) (the membership last day + the grace period days)' do
+      expect(subject.date_after_grace_period_end?(user,
+                                                  Date.current + 4,
+                                                  membership: mock_membership)).to be_truthy
+    end
+
+    it 'false if the given date is on or before (the membership last day + the grace period days)' do
+      expect(subject.date_after_grace_period_end?(user,
+                                                  Date.current,
+                                                  membership: mock_membership)).to be_falsey
+      expect(subject.date_after_grace_period_end?(user,
+                                                  Date.current + 1,
+                                                  membership: mock_membership)).to be_falsey
+    end
+
+    it 'default date is Date.current' do
+      expect(subject.date_after_grace_period_end?(user,
+                                                  membership: mock_membership)).to be_falsey
+    end
+
+    it 'default membership is the most recent membership for the user' do
+      allow(subject).to receive(:most_recent_membership)
+                          .and_return(mock_membership)
+      expect(subject.date_after_grace_period_end?(user,
+                                                  Date.current + 4)).to be_truthy
+    end
   end
 
   describe 'date_in_grace_period?' do
