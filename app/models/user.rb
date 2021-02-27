@@ -127,6 +127,8 @@ class User < ApplicationRecord
     state :in_grace_period
     state :former_member
 
+    after_all_transitions :set_membership_changed_info
+
     # You can pass the (keyword) argument date: <Date> to provide a date that the membership should start on
     event :start_membership do
       transitions from: [:not_a_member, :current_member, :former_member], to: :current_member, after:  Proc.new {|*args| start_membership_on(*args) }
@@ -144,6 +146,15 @@ class User < ApplicationRecord
     event :make_former_member do
       transitions from: :in_grace_period, to: :former_member, after: :become_former_member
     end
+  end
+
+  # This can be used to write info to logs
+  def set_membership_changed_info
+    @membership_changed_info = "membership status changed from #{aasm.from_state} to #{aasm.to_state} (event: #{aasm.current_event})"
+  end
+
+  def membership_changed_info
+    @membership_changed_info ||= ''
   end
 
   # ----------------------------------------------------------------------------------
