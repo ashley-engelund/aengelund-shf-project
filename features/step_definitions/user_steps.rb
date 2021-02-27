@@ -158,21 +158,46 @@ end
 # ----------------------------------------------------------------------------------------
 # Membership status
 
+And("I am not a( current) member") do
+  @user.membership_status = :not_a_member
+end
+
+And("I am a( current) member") do
+  @user.membership_status = :current_member
+end
+
+And("I am in the( renewal) grace period") do
+  @user.membership_status = :in_grace_period
+end
+
+And("I am a former member") do
+  @user.membership_status = :former_member
+end
+
+
 # This matches:
-#  I am a member
-#  I am a current member
-#  I am not a member
-#  I am not a current member
-And("I am{negate} a( current) member") do | negation |
-  expect(@user.not_a_member?).to (negation ? be_falsey : be_truthy)
+#  I should be a member
+#  I should be a current member
+#  I should not be a member
+#  I should not be a current member
+Then("I should{negate} be a( current) member") do | negation |
+  @user.reload
+  expect(@user.current_member?).to(negation ? be_falsey : be_truthy)
 end
 
-And("I am{negate} in the(renewal) grace period") do | negation |
-  expect(@user.in_grace_period?).to (negation ? be_falsey : be_truthy)
+And("I should{negate} be in the( renewal) grace period") do | negation |
+  @user.reload
+  expect(@user.in_grace_period?).to(negation ? be_falsey : be_truthy)
 end
 
-And("I am{negate} a former member") do| negation |
-  expect(@user.former_member?).to (negation ? be_falsey : be_truthy)
+And("I should{negate} be a former member") do | negation |
+  @user.reload
+  expect(@user.former_member?).to(negation ? be_falsey : be_truthy)
+end
+
+And("I should not be a( current) member") do
+  @user.reload
+  expect(@user.not_a_member?).to be_truthy
 end
 
 # ----------------------------------------------------------------------------------------
