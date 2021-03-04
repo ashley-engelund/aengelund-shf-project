@@ -65,6 +65,8 @@ class Company < ApplicationRecord
   # This includes Companies that have no addresses:
   scope :no_address_or_lacks_region, -> { where.not(id: Address.company_address.has_region.pluck(:addressable_id)) }
 
+
+  # FIXME find all calls, replace with appropriate Membership... class method
   def self.next_branding_payment_dates(company_id)
     next_payment_dates(company_id, THIS_PAYMENT_TYPE)
   end
@@ -253,7 +255,7 @@ class Company < ApplicationRecord
     most_recent_payment(THIS_PAYMENT_TYPE)
   end
 
-
+  # FIXME find all calls, replace with appropriate Membership... class method (current.last_day)
   def branding_expire_date
     payment_expire_date(THIS_PAYMENT_TYPE)
   end
@@ -263,7 +265,7 @@ class Company < ApplicationRecord
     payment_notes(THIS_PAYMENT_TYPE)
   end
 
-
+  # FIXME find all calls, replace with appropriate Membership... class method
   # @return [Boolean] - true only if there is a branding_expire_date and it is in the future (from today)
   def branding_license?
     # TODO can use term_expired?(THIS_PAYMENT_TYPE)
@@ -276,6 +278,7 @@ class Company < ApplicationRecord
   # TODO: this should go in a class responsible for knowing how to calculate when H-Branding fees are due (perhaps a subclass of PaymentUtility named something like CompanyPaymentsDueCalculator )
   #
   # @return nil if there are no current members else the earliest membership_start_date of all current members
+  # FIXME find all calls, replace with appropriate Membership... class
   def earliest_current_member_fee_paid
     current_members.empty? ? nil : current_members.map(&:membership_start_date).sort.first
   end

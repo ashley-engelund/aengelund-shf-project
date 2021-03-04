@@ -11,6 +11,8 @@
 #   TODO: should any of the methods be delegated to the MembershipsManager?
 #   Next steps will be to call MembershipManager methods directly where needed.
 #
+# TODO: refactor proof of membership image stuff to separate class
+#
 class User < ApplicationRecord
   include PaymentUtility
   include ImagesUtility
@@ -97,11 +99,13 @@ class User < ApplicationRecord
 
   # TODO this should not be the responsibility of the User class. Need a MembershipManager class for this.
   # The next membership payment date
+  # FIXME find all calls, replace with appropriate Membership... class
   def self.next_membership_payment_date(user_id)
     next_membership_payment_dates(user_id).first
   end
 
   # TODO this should not be the responsibility of the User class. Need a MembershipManager class for this.
+  # FIXME find all calls, replace with appropriate Membership... class
   def self.next_membership_payment_dates(user_id)
     next_payment_dates(user_id, THIS_PAYMENT_TYPE)
   end
