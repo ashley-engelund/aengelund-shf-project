@@ -979,12 +979,12 @@ RSpec.describe CompaniesController, type: :controller do
     end
 
     it 'page title says Company not found' do
-      expect(response_body).to include(I18n.t('activerecord.errors.messages.not_found.header',
+      expect(response_body).to include(I18n.t('activerecord.errors.messages.record_not_found.header',
                                               entity_type: I18n.t('activerecord.models.company.one')))
     end
 
     it 'page body says So sorry. The company with that id is not found' do
-      expect(response_body).to include(I18n.t('activerecord.errors.messages.not_found.message',
+      expect(response_body).to include(I18n.t('activerecord.errors.messages.record_not_found.message',
                                               entity_type: I18n.t('activerecord.models.company.one'),
                                               id: bad_id))
     end

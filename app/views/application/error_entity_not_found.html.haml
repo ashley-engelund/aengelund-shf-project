@@ -12,12 +12,12 @@
 %div.error-not-found
 
   %header.entry-header
-    %h1.error-header=t('activerecord.errors.messages.not_found.header', entity_type: entity_name)
+    %h1.error-header=t('activerecord.errors.messages.record_not_found.header', entity_type: entity_name)
 
   .entry-content.container
     .row
       .col.error-details
-        =t('activerecord.errors.messages.not_found.message', entity_type: entity_name, id: bad_id)
+        =t('activerecord.errors.messages.record_not_found.message', entity_type: entity_name, id: bad_id)
 
     - if display_button
       %hr
