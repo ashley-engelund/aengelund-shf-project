@@ -323,8 +323,8 @@ module ApplicationHelper
   end
 
   # public method to render the main title of a page
-  def content_title(title, user: nil, id: nil, classes: [])
-    tag.h1 title.html_safe,
+  def content_title(title = '', user: nil, id: nil, classes: [])
+    tag.h1 title&.html_safe,
            class: classes + with_admin_css_class_if_needed(user, [content_title_css_class]),
            id: id
   end
