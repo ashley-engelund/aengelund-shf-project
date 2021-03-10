@@ -91,6 +91,12 @@ module CompaniesHelper
        data: {language: "#{@locale}" }
   end
 
+
+  def company_display_name(company)
+    company.name.blank? ? t('name_missing') : company.name
+  end
+
+
   def company_number_entry_field(company_numbers)
     text_field_tag :company_number, company_numbers,
                      id: 'shf_application_company_number',
