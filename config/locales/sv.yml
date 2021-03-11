@@ -135,7 +135,7 @@ sv:
 
   checklist_common:
     done: &done Done
-    complete: &complete Complete
+    complete: *complete
     date_completed: &date_completed Datum Slutfört
 
 
@@ -845,6 +845,10 @@ sv:
       dinkurs_fetching: Hämtar händelser ... vänligen vänta
       dinkurs_key: *dinkurs_company_key
       pay_branding_fee: &pay_branding_fee Betala H-märkespremie
+      info_is_complete: Info komplett
+      info_is_not_complete: Info är inte komplett
+      info_is_not_complete_explanation: This company will not appear on the website until all required information is complete.
+      complete: *complete
 
     index:
       title:  Hitta H-märkt företag
@@ -853,6 +857,7 @@ sv:
       name: *name
       company_number: *org_nr
       region_land: *region_short
+      complete: *complete
       h_companies_listed_below: Nedan listas anslutna företag.
       how_to_search: Sök efter företag genom att använda sökfunktionen.
       confirm_are_you_sure: *are_you_sure_confirm
