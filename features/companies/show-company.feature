@@ -88,7 +88,7 @@ Feature: Show company page - display different info depending on role
 
 
     # -----------------------------------
-  Scenario: Show company details to a visitor, but don't show the org nr.
+  Scenario: Show company details to a visitor, but don't show the org nr. or complete? status
     Given I am Logged out
     And I am the page for company number "5560360793"
     Then I should not see "5560360793"
@@ -102,6 +102,7 @@ Feature: Show company page - display different info depending on role
     And I should see "310 40"
     And I should see "Harplinge"
     And I should see "http://www.example.com"
+    And I should not see t("companies.show.info_is_complete")
     When I am the page for company number "2120000142"
     Then I should not see "2120000142"
     And I should see "Company2"
@@ -115,8 +116,9 @@ Feature: Show company page - display different info depending on role
     And I should see "310 40"
     And I should see "Harplinge"
     And I should see "http://www.example.com"
+    And I should not see t("companies.show.info_is_complete")
 
-  Scenario: Show company details to member of the company.
+  Scenario: Show company details to member of the company, including complete? status
     Given I am logged in as "member-1@addr-all-visible-1.com"
     And I am the page for company number "5560360793"
     Then I should not see "5560360793"
@@ -129,8 +131,10 @@ Feature: Show company page - display different info depending on role
     And I should see "310 40"
     And I should see "Harplinge"
     And I should see "http://www.example.com"
+    And I should see t("companies.show.info_is_complete")
 
-  Scenario: Show company details to admin and do show the org nr.
+
+  Scenario: Show company details to admin and do show the org nr. and complete? status
     Given I am logged in as "admin@shf.se"
     And I am the page for company number "5560360793"
     Then I should see "5560360793"
@@ -143,6 +147,8 @@ Feature: Show company page - display different info depending on role
     And I should see "310 40"
     And I should see "Harplinge"
     And I should see "http://www.example.com"
+    And I should see t("companies.show.info_is_complete")
+
     When I am the page for company number "2120000142"
     Then I should see "2120000142"
     And I should see "Company2"
@@ -156,6 +162,8 @@ Feature: Show company page - display different info depending on role
     And I should see "310 40"
     And I should see "Harplinge"
     And I should see "http://www.example.com"
+    And I should see t("companies.show.info_is_complete")
+
 
   Scenario: Show company address to admin regardless of visibility setting
     Given I am logged in as "admin@shf.se"
@@ -165,6 +173,7 @@ Feature: Show company page - display different info depending on role
     And I should see "310 40"
     And I should see "Harplinge"
     And I should see "Alingsås"
+
 
   @time_adjust
   Scenario: Show company address to member regardless of visibility setting

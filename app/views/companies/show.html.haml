@@ -6,12 +6,20 @@
       class: "#{item_view_class(@company, controller.action_name)}" }
 
   %header.entry-header
-    = content_title(@company.name, user: current_user)
+    - title_classes = @company.complete? ? [] : ['not-complete']
+    = content_title(company_display_name(@company), user: current_user, classes: title_classes)
+
   .entry-content.container
     - if current_user.admin?
       .row.db-id
         .col.db-id
           = field_or_none 'db id', @company.id, tag_options: {class: 'db-id'}
+
+    - if policy(@company).view_complete_status?
+      .row.complete-status
+        .col{class: (@company.complete? ? 'complete' : 'not-complete')}
+          = fa_checkbox(@company.complete?, t('.info_is_complete'))
+          %p.info-is-not-complete-explanation=t('.info_is_not_complete_explanation') unless @company.complete?
 
     .row
       .col
