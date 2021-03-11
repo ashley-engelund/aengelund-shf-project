@@ -348,4 +348,16 @@ module ApplicationHelper
   def edit_profile_link(user, url: admin_only_user_profile_edit_path(user), text: user_profile_icon, title: '', show_if: true)
     show_if ? link_to(text, url, class: ['shf-icon', 'edit-user-profile-icon'], title: title) : ''
   end
+
+
+  # @return [String] HTML safe string for a FontAwesome checkbox with the text = displayed_text
+  #   Use a square checkbox by default. if use_circle: true, use a circular one
+  def fa_checkbox(is_checked = false, displayed_text = '',
+                              use_circle: false, html_options: {})
+    append_sq_str = use_circle ? '' : '_sq'
+    icon_method = is_checked ? 'complete_check' : 'not_complete_check'
+
+    checkbox_icon_method = "#{icon_method}#{append_sq_str}_icon".to_sym
+    self.send(checkbox_icon_method, text: displayed_text, html_options: html_options)
+  end
 end
