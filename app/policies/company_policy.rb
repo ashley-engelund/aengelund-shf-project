@@ -31,4 +31,7 @@ class CompanyPolicy < ApplicationPolicy
     user.admin? || is_in_company?(record.company)
   end
 
+  def view_complete_status?
+    update?
+  end
 end

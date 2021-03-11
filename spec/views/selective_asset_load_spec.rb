@@ -80,7 +80,8 @@ RSpec.describe 'selective loading of external assets on specific pages' do
         allow(view).to receive(:policy).and_return(double('cmpy policy',
                                                           update?: false,
                                                           index?: false,
-                                                          destroy?: false))
+                                                          destroy?: false,
+                                                          view_complete_status?: false))
 
         stub_template 'business_categories/_as_list' => ''
         stub_template 'companies/_branding_payment_status' => ''
