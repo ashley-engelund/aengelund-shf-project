@@ -277,20 +277,20 @@ RSpec.describe Company, type: :model, focus: true do
     end
 
 
-    describe '.complete' do
+    describe '.information_complete' do
 
       it 'calls .has_name' do
         expect(described_class).to receive(:has_name).and_call_original
-        described_class.complete
+        described_class.information_complete
       end
 
       it 'calls .addresses_have_region' do
         expect(described_class).to receive(:addresses_have_region)
-        described_class.complete
+        described_class.information_complete
       end
 
       it 'is all Companies .has_name AND all Companies .addresses_have_region' do
-        expect(described_class.complete).to match_array(Company.has_name & Company.addresses_have_region)
+        expect(described_class.information_complete).to match_array(Company.has_name & Company.addresses_have_region)
       end
     end
 
@@ -390,19 +390,19 @@ RSpec.describe Company, type: :model, focus: true do
 
     describe '.searchable' do
 
-      it 'calls .complete' do
-        expect(described_class).to receive(:complete).and_call_original
+      it 'calls .information_complete' do
+        expect(described_class).to receive(:information_complete).and_call_original
         described_class.searchable
       end
 
       it 'calls .with_members' do
-        allow(described_class).to receive(:complete).and_call_original
+        allow(described_class).to receive(:information_complete).and_call_original
         expect(described_class).to receive(:with_members).and_call_original
         described_class.searchable
       end
 
       it 'calls .branding_licensed' do
-        allow(described_class).to receive(:complete).and_call_original
+        allow(described_class).to receive(:information_complete).and_call_original
         allow(described_class).to receive(:with_members).and_call_original
         expect(described_class).to receive(:branding_licensed).and_call_original
         described_class.searchable
@@ -1282,8 +1282,27 @@ RSpec.describe Company, type: :model, focus: true do
 
     end
 
-  end # describe '#earliest_current_member_fee_paid'
+  end # describe 'earliest_current_member_fee_paid'
 
+
+  describe 'information_complete?' do
+    it 'calls RequirementsForCoInfoComplete.requirements_met?' do
+      co = build(:company)
+      expect(RequirementsForCoInfoComplete).to receive(:requirements_met?)
+                                                 .with({company: co})
+      co.information_complete?
+    end
+  end
+
+
+  describe 'missing_information' do
+    it 'gets the list of missing information text from RequirementsForCoInfoComplete.missing_errors' do
+      co = build(:company)
+      expect(RequirementsForCoInfoComplete).to receive(:missing_info)
+                                                 .with({company: co})
+      co.missing_information
+    end
+  end
 
   describe '#missing_region?' do
 

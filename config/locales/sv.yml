@@ -845,9 +845,10 @@ sv:
       dinkurs_fetching: Hämtar händelser ... vänligen vänta
       dinkurs_key: *dinkurs_company_key
       pay_branding_fee: &pay_branding_fee Betala H-märkespremie
-      info_is_complete: Info komplett
-      info_is_not_complete: Info är inte komplett
+      info_is_complete: Företagsinformation är fullständig (Company information is complete)
+      info_is_not_complete: Företagsinformation är inte fullständig (Company information is not complete)
       info_is_not_complete_explanation: This company will not appear on the website until all required information is complete.
+      this_info_missing: "This information is missing:"
       complete: *complete
 
     index:

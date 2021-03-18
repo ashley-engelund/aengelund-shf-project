@@ -838,9 +838,10 @@ en:
       dinkurs_fetching: Fetching events ... please wait
       dinkurs_key: *dinkurs_company_key
       pay_branding_fee: &pay_branding_fee Pay H-Branding Fee
-      info_is_complete: Info complete
-      info_is_not_complete: Info is not complete
+      info_is_complete: Company information is complete
+      info_is_not_complete: Company information is not complete
       info_is_not_complete_explanation: This company will not appear on the website until all required information is complete.
+      this_info_missing: "This information is missing:"
       complete: *complete
 
     index:

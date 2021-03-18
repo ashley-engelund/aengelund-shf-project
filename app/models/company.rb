@@ -1,6 +1,6 @@
 require_relative File.join('..', 'services', 'address_exporter')
 
-
+# TODO data consistency check:  every company should have at least 1 application
 class Company < ApplicationRecord
   include PaymentUtility
 
@@ -102,10 +102,10 @@ class Company < ApplicationRecord
   # A company has an address
   #  AND
   #   that address has a region
-  def self.complete
+  def self.information_complete
     has_name.addresses_have_region
   end
-  singleton_class.alias_method :complete_information, :complete
+  singleton_class.alias_method :complete_information, :information_complete
 
 
   def self.not_complete
@@ -133,7 +133,7 @@ class Company < ApplicationRecord
 
   # Criteria limiting visibility of companies to non-admin users
   def self.searchable
-    complete.with_members.branding_licensed
+    information_complete.with_members.branding_licensed
   end
 
   singleton_class.alias_method :current_with_current_members, :searchable
@@ -152,22 +152,30 @@ class Company < ApplicationRecord
   end
 
 
+  # ===============================================================================================
+
+
   def searchable?
-    branding_license? && !current_members.empty?
+    branding_license? && !current_members.empty? # FIXME: current.members.any?
   end
   alias_method :current_with_current_members, :searchable?
 
 
-  def complete?
+  def information_complete?
     RequirementsForCoInfoComplete.requirements_met? company: self
   end
-  alias_method :complete_information?, :complete?
+  # alias_method :information_complete?, :complete?
 
   def missing_region?
     addresses.map(&:region).include?(nil)
   end
 
+  def missing_information
+    RequirementsForCoInfoComplete.missing_info company: self
+  end
 
+
+  # FIXME user Membership current?
   def approved_applications_from_members
     # Returns ActiveRecord Relation
     shf_applications.accepted.joins(:user)
@@ -297,13 +305,6 @@ class Company < ApplicationRecord
     end
 
     true
-
-  end
-
-
-  # @return all members in the company whose membership are current (paid, not expired)
-  def current_members
-    users.select(&:membership_current?)
   end
 
 
