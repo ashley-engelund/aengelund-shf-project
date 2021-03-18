@@ -69,24 +69,12 @@ class Company < ApplicationRecord
     next_payment_dates(company_id, THIS_PAYMENT_TYPE)
   end
 
+
   after_update :clear_h_brand_jpg_cache,
                if: Proc.new { saved_change_to_name? }
 
-  def cache_key(type)
-   "company_#{id}_cache_#{type}"
-  end
+  # -----------------------------------------------------------------------------------------------
 
-  def h_brand_jpg
-   Rails.cache.read(cache_key('h_brand'))
-  end
-
-  def h_brand_jpg=(image)
-   Rails.cache.write(cache_key('h_brand'), image)
-  end
-
-  def clear_h_brand_jpg_cache
-   Rails.cache.delete(cache_key('h_brand'))
-  end
 
   def self.clear_all_h_brand_jpg_caches
     all.each do |company|
@@ -180,6 +168,20 @@ class Company < ApplicationRecord
     # Returns ActiveRecord Relation
     shf_applications.accepted.joins(:user)
       .order('users.last_name').where('users.member = ?', true)
+  end
+
+
+  # @return all members in the company whose memberships are current (paid, not expired)
+  def current_members
+    users.select(&:membership_current?)
+  end
+
+
+  # @return [Array[User]] - all users in the company with accepted applications
+  def accepted_applicants
+    return [] if shf_applications.empty?
+
+    shf_applications.select(&:accepted?).map(&:user)
   end
 
 
@@ -339,7 +341,24 @@ class Company < ApplicationRecord
   end
 
 
-  # ========================================================================
+  def cache_key(type)
+    "company_#{id}_cache_#{type}"
+  end
+
+  def h_brand_jpg
+    Rails.cache.read(cache_key('h_brand'))
+  end
+
+  def h_brand_jpg=(image)
+    Rails.cache.write(cache_key('h_brand'), image)
+  end
+
+  def clear_h_brand_jpg_cache
+    Rails.cache.delete(cache_key('h_brand'))
+  end
+
+
+  # ===============================================================================================
 
 
   private

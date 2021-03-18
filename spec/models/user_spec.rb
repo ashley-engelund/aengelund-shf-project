@@ -1013,7 +1013,15 @@ RSpec.describe User, type: :model do
   end
 
   describe 'apps_for_company' do
-    pending
+    it "calls apps_for_company_number with the given company's company number" do
+      app1 = build(:shf_application, state: :new)
+      given_co = app1.companies.first
+      user_with_app = app1.user
+
+      expect(user_with_app).to receive(:apps_for_company_number)
+                                 .with(given_co.company_number)
+      user_with_app.apps_for_company(given_co)
+    end
   end
 
  describe 'apps_for_company_number' do

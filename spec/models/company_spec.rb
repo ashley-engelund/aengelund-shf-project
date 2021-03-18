@@ -791,7 +791,44 @@ RSpec.describe Company, type: :model, focus: true do
 
   end
 
-  describe '#main_address' do
+
+  describe 'accepted_applicants' do
+
+    it 'empty if no applications' do
+      # This shouldn't really happen.
+      expect(build(:company).accepted_applicants).to be_empty
+    end
+
+    context 'there are applications' do
+
+      it 'empty if none are accepted' do
+        all_states_except_accepted = ShfApplication.all_states - [:accepted]
+        new_app1 = build(:shf_application, state: :new)
+        co = new_app1.companies.first
+
+        (all_states_except_accepted - [:new]).each do | state |
+          build(:shf_application, state: state, company_number: co.company_number)
+        end
+
+        expect(co.accepted_applicants).to be_empty
+      end
+
+
+      it 'all users from all accepted applications' do
+        app1 = create(:shf_application, :accepted)
+        co = app1.companies.first
+        user1 = app1.user
+        app2 = create(:shf_application, :accepted, company_number: co.company_number)
+        user2 = app2.user
+        rejected_app = create(:shf_application, :rejected, company_number: co.company_number)
+
+        expect(co.accepted_applicants).to match_array([user1, user2])
+      end
+    end
+  end
+
+
+  describe 'main_address' do
 
     it 'creates a blank address if none exists' do
       company = create(:company, num_addresses: 0)
