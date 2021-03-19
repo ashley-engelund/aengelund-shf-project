@@ -420,9 +420,8 @@ sv:
           has_one: Kan inte ta bort post då beroende %{record} finns
           has_many: Kan inte ta bort poster då beroende %{record} finns
         record_not_found:
-          header: "Could not find the %{entity_type}"
-          message: "So sorry. We could not find the %{entity_type} with id %{id}."
-
+          header: "%{entity_type} kunde inte hittas"
+          message: "Beklagar, vi kunde inte hitta %{entity_type} med id %{id}."
 
 
   shared:
