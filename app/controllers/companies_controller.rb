@@ -263,7 +263,8 @@ class CompaniesController < ApplicationController
     render 'error_entity_not_found', locals: { entity_type_name: t('activerecord.models.company.one'),
                                                id: id,
                                                button_text: t('companies.list_all_companies'),
-                                               button_path: companies_path}
+                                               button_path: companies_path},
+           status: 404
   end
 
 
