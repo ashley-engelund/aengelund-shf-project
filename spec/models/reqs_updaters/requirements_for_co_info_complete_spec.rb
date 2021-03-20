@@ -57,7 +57,7 @@ RSpec.describe RequirementsForCoInfoComplete, type: :model do
     describe 'validates the arguments' do
 
       it 'raise ArgumentError if arguments are not correct' do
-        expect { subject.missing_errors({this: 'that'})}.to raise_error(ArgumentError)
+        expect { subject.missing_info({this: 'that'})}.to raise_error(ArgumentError)
       end
     end
 
@@ -66,7 +66,7 @@ RSpec.describe RequirementsForCoInfoComplete, type: :model do
         co_no_name = build(:company)
         co_no_name.name = ''
 
-        expect(subject.missing_errors(company: co_no_name)).to match_array([I18n.t('activerecord.attributes.company.name')])
+        expect(subject.missing_info(company: co_no_name)).to match_array([I18n.t('activerecord.attributes.company.name')])
       end
     end
 
@@ -75,13 +75,13 @@ RSpec.describe RequirementsForCoInfoComplete, type: :model do
         co_no_region = build(:company)
         co_no_region.addresses.first.region = nil
 
-        expect(subject.missing_errors(company: co_no_region)).to match_array([I18n.t('activerecord.attributes.address.region')])
+        expect(subject.missing_info(company: co_no_region)).to match_array([I18n.t('activerecord.attributes.address.region')])
       end
     end
 
     context 'no information is missing' do
       it 'returns an empty list' do
-        expect(subject.missing_errors(company: build(:company))).to be_empty
+        expect(subject.missing_info(company: build(:company))).to be_empty
       end
     end
   end
