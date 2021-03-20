@@ -820,7 +820,7 @@ RSpec.describe Company, type: :model, focus: true do
         user1 = app1.user
         app2 = create(:shf_application, :accepted, company_number: co.company_number)
         user2 = app2.user
-        rejected_app = create(:shf_application, :rejected, company_number: co.company_number)
+        create(:shf_application, :rejected, company_number: co.company_number)
 
         expect(co.accepted_applicants).to match_array([user1, user2])
       end
