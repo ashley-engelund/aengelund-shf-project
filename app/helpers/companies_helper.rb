@@ -1,5 +1,6 @@
 module CompaniesHelper
 
+  # FIXME this should be the responsibility of the CompanyPolicy
   def payment_visible_for_user?(user, company)
     user.admin? || user.in_company_numbered?(company.company_number)
   end
