@@ -242,15 +242,19 @@ class Company < ApplicationRecord
   end
 
 
+  # FIXME only show if address visibility allows it
   def addresses_region_names
     addresses.joins(:region).select('regions.name').distinct.pluck('regions.name')
   end
 
 
+  # FIXME only show if address visibility allows it
   def kommuns_names
     addresses.joins(:kommun).select('kommuns.name').distinct.pluck('kommuns.name')
   end
 
+
+  # FIXME only show if address visibility allows it
   def cities_names
     addresses.select(:city).distinct.pluck(:city)
   end
