@@ -1,16 +1,11 @@
 Feature: Show the 'is information complete? status to Admins and Members of a company
 
-  As a visitor,
-  So that I can see if a company can provide the services I need,
-  Show me the details about a company
-  And show the address details consistent with the visibility setting
+  As a member of a company or the admin
+  So that the company is displayed to the public
+  So that I can get business
+  Show me if information required to display the company is still needed
 
-  Because some Org Nr.s are actually for individuals and we don't have a reliable
-  way to tell if they are or not, and because we do not want to
-  (and legally cannot) show the org nr. for an individual,
-  only show the Org Nr to admins.
-
-  PivotalTracker: https://www.pivotaltracker.com/story/show/135474603
+  PivotalTracker: https://www.pivotaltracker.com/story/show/177274707
 
 
   Background:
