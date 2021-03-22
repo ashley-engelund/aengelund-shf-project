@@ -63,7 +63,7 @@ class Company < ApplicationRecord
   scope :addresses_have_region, -> { joins(:addresses).where(id: Address.has_region.pluck(:addressable_id)).distinct }
 
   # This includes Companies that have no addresses:
-  scope :no_address_or_lacks_region, -> { joins(:addresses).where.not(id: Address.company_address.has_region.pluck(:addressable_id)) }
+  scope :no_address_or_lacks_region, -> { where.not(id: Address.company_address.has_region.pluck(:addressable_id)) }
 
   def self.next_branding_payment_dates(company_id)
     next_payment_dates(company_id, THIS_PAYMENT_TYPE)
