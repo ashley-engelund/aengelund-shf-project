@@ -18,8 +18,8 @@
           - applications.each do |application|
             %tbody
               %tr.member
-                %td= application.user.full_name
+                %td= link_to(application.user.full_name, application.user)
                 %td= business_categories_str(application)
                 - if current_user.admin?
                   %td= application.user.member
-                  %td= application.state
+                  %td= link_to(application.state, application)
