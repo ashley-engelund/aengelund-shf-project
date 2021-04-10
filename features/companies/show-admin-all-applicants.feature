@@ -12,12 +12,12 @@ Feature: Admin sees all applicants connected to a company
     Given the Membership Ethical Guidelines Master Checklist exists
 
     Given the following users exist:
-      | email                              | admin | membership_status | member | agreed_to_membership_guidelines | first_name   | last_name |
-      | member@example.com                 |       | current_member    | true   | yes                             | Current      | Member    |
-      | applicant-new@example.com          |       | not_a_member      | false  | yes                             | New          | Applicant |
-      | applicant-under-review@example.com |       | not_a_member      | false  | yes                             | Under Review | Applicant |
-      | applicant-rejected@example.com     |       | not_a_member      | false  | yes                             | Rejected     | Applicant |
-      | admin@shf.se                       | true  |                   | false  | yes                             | Admin        | Admin     |
+      | email                              | admin | member | agreed_to_membership_guidelines | first_name   | last_name |
+      | member@example.com                 |       | true   | yes                             | Current      | Member    |
+      | applicant-new@example.com          |       | false  | yes                             | New          | Applicant |
+      | applicant-under-review@example.com |       | false  | yes                             | Under Review | Applicant |
+      | applicant-rejected@example.com     |       | false  | yes                             | Rejected     | Applicant |
+      | admin@shf.se                       | true  | false  | yes                             | Admin        | Admin     |
 
     And the following business categories exist
       | name    |
@@ -35,7 +35,7 @@ Feature: Admin sees all applicants connected to a company
       | applicant-rejected@example.com     | 5560360793     | Groomer    | rejected     |
 
 
-    And the following payments exist:
+    And the following payments exist
       | user_email         | start_date | expire_date | payment_type | status | hips_id | company_number |
       | member@example.com | 2021-01-01 | 2021-12-31  | member_fee   | betald | none    |                |
       | member@example.com | 2021-01-01 | 2021-12-31  | branding_fee | betald | none    | 5560360793     |
@@ -45,35 +45,56 @@ Feature: Admin sees all applicants connected to a company
 
   # -----------------------------------------------------------------------------------------------
 
-  Scenario: Admin sees member and 3 applicants on Company page
+  Scenario: Admin sees member and applicants section with 3 applicants on Company page
     Given I am logged in as "admin@shf.se"
     When I am on the page for company number "5560360793"
     Then I should see "No More Snarky Barky" in the h1 title
+    And I should see t("companies.company_members.title")
     And I should see "Current Member"
+    And I should see t("companies.company_applicants.title")
     And I should see "New Applicant"
     And I should see "Under Review Applicant"
     And I should see "Rejected Applicant"
 
 
-  Scenario Outline: Non-admins do not see non-member applicants listed
-    Given I am logged in as "<logged_in_email>"
+  Scenario: Admin sees links to each person and application
+    Given I am logged in as "admin@shf.se"
     When I am on the page for company number "5560360793"
     Then I should see "No More Snarky Barky" in the h1 title
     And I should see "Current Member"
+    And I should see "Current Member" link
+    And I should see t("companies.company_applicants.title")
+    And I should see "New Applicant" link
+    And I should see "Under Review Applicant" link
+    And I should see "Rejected Applicant" link
+
+
+  Scenario Outline: Non-admins do not see non-member applicants listed
+    Given I am <logged_in_status>
+    When I am on the page for company number "5560360793"
+    Then I should see "No More Snarky Barky" in the h1 title
+    And I should see "Current Member"
+    And I should not see t("companies.company_applicants.title")
     And I should not see "New Applicant"
     And I should not see "Under Review Applicant"
     And I should not see "Rejected Applicant"
 
     Scenarios:
-      | logged_in_email    |
-      | member@example.com |
-      | applicant-new@example.com |
+      | logged_in_status                         |
+      | logged in as "member@example.com"        |
+      | logged in as "applicant-new@example.com" |
+      | logged out                               |
 
 
-  Scenario: Visitors do not see non-member applicants listed
-    Given I am logged out
+  Scenario: Non-admins do not see links to each person and application
+    Given I am <logged_in_status>
     When I am on the page for company number "5560360793"
     Then I should see "No More Snarky Barky" in the h1 title
     And I should see "Current Member"
-    And I should not see "New Applicant"
-    And I should not see "Under Review Applicant"
+    And I should not see "Current Member" link
+
+    Scenarios:
+      | logged_in_status                         |
+      | logged in as "member@example.com"        |
+      | logged in as "applicant-new@example.com" |
+      | logged out                               |

@@ -1,0 +1,24 @@
+-# only the admin should see this
+
+- if current_user.admin?
+  - applications = company.shf_applications - company.approved_applications_from_members # FIXME
+
+  - if applications.any?
+    .row.admin-only
+      .col-12.company-applicants
+        .table-responsive-lg
+          %table.table.table-sm.table-hover.company-applicants
+            %thead
+              %tr
+                %th.text-nowrap= t('.title')
+                %th= t('.business_categories')
+                %th= t('.is_member')
+                %th= t('.app status')
+
+            - applications.each do |application|
+              %tbody
+                %tr.applicant
+                  %td= link_to(application.user.full_name, application.user)
+                  %td= business_categories_str(application)
+                  %td= application.user.member
+                  %td= link_to(t("shf_applications.#{application.state}"), application)
