@@ -1,4 +1,7 @@
-- applications = company.approved_applications_from_members # FIXME
+- if current_user.admin?
+  - applications = company.shf_applications
+- else
+  - applications = company.approved_applications_from_members # FIXME
 
 - if applications.any?
   .row
@@ -7,11 +10,16 @@
         %table.table.table-sm.table-hover.company-members
           %thead
             %tr
-              %th.text-nowrap= t('companies.show.members')
-              %th= t('activerecord.models.business_category.other')
-
+              %th.text-nowrap= t('.co_members')
+              %th= t('.business_categories')
+              - if current_user.admin?
+                %th= t('.is_member')
+                %th= t('.app status')
           - applications.each do |application|
             %tbody
               %tr.member
                 %td= application.user.full_name
                 %td= business_categories_str(application)
+                - if current_user.admin?
+                  %td= application.user.member
+                  %td= application.state

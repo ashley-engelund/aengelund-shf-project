@@ -847,6 +847,12 @@ en:
       this_info_missing: "This information is missing:"
       complete: *complete
 
+    company_members:
+      co_members: Company Members
+      business_categories: *business_categories
+      is_member: *member
+      app_status: *state
+
     index:
       title: Find H-labeled companies
       admin_title: Edit member companies
