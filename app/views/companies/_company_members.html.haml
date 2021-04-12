@@ -16,7 +16,7 @@
             - app_admin_only_css = application.accepted? ? '' : 'admin-only'
 
             %tbody
-              %tr.member{ class: "#{app_admin_only_css}"}
+              %tr.member{ class: "#{app_admin_only_css}" }
                 - if current_user.admin?
                   %td= link_to(application.user.full_name, application.user)
                 - else
