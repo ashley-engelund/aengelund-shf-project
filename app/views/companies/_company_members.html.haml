@@ -23,5 +23,5 @@
                   %td= application.user.full_name
                 %td= business_categories_str(application)
                 - if current_user.admin?
-                  %td.admin-only= application.user.member
-                  %td.admin-only= link_to(t("shf_applications.#{application.state}"), application)
+                  %td.admin-only= yes_no_span(application.user.member)
+                  %td.admin-only= link_to(t("activerecord.attributes.shf_application.state/#{application.state}"), application)

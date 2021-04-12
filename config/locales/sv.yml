@@ -746,7 +746,6 @@ sv:
       being_destroyed: *status_being_destroyed
 
     new_status: *status_new
-    new: *status_new
     accept_btn: Godkänn
     accepted: *status_accepted
     reject_btn: Avböj
