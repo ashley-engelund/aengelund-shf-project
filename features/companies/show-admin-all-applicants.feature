@@ -57,7 +57,7 @@ Feature: Admin sees all applicants connected to a company
     And I should see "Rejected Applicant"
 
 
-  Scenario: Admin sees links to each person and application
+  Scenario: Admin sees links to each person and application and the date each app was last updated
     Given I am logged in as "admin@shf.se"
     When I am on the page for company number "5560360793"
     Then I should see "No More Snarky Barky" in the h1 title
@@ -67,6 +67,7 @@ Feature: Admin sees all applicants connected to a company
     And I should see "New Applicant" link
     And I should see "Under Review Applicant" link
     And I should see "Rejected Applicant" link
+    And I should see 4 visible "2021-03-02"
 
 
   Scenario Outline: Non-admins do not see non-member applicants listed
