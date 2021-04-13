@@ -153,6 +153,7 @@ RSpec.describe MembershipStatusUpdater, type: :model do
     let(:notifier) { 'object that sent the notification to kick this off' }
     let(:reason) { ' ' }
 
+
     shared_examples 'it checks to see if user can renew' do |membership_status|
       let(:given_user) { build(:user, membership_status: membership_status) }
 
@@ -164,10 +165,23 @@ RSpec.describe MembershipStatusUpdater, type: :model do
       context 'can renew (requirements are met)' do
         before(:each) { allow(RequirementsForRenewal).to receive(:requirements_met?).and_return(true) }
 
-        it 'tells the user to renew today' do
-          expect(given_user).to receive(:renew!).with(date: Date.current,
-                                                      send_email: true)
-          subject.check_grant_membership_or_renew(given_user, notifier, reason)
+        context 'membership last day is in the future' do
+          before(:each) { allow(given_user).to receive(:membership_expire_date).and_return(Date.current + 2.days) }
+          it 'renews the membership after the membership last day' do
+            expect(given_user).to receive(:renew!).with(date: Date.current + 3.days,
+                                                        send_email: true)
+            subject.check_grant_membership_or_renew(given_user, notifier, reason)
+          end
+        end
+
+        context 'membership last day is today or in the past' do
+          before(:each) { allow(given_user).to receive(:membership_expire_date).and_return(Date.current - 2.days) }
+
+          it 'tells the user to renew today' do
+            expect(given_user).to receive(:renew!).with(date: Date.current,
+                                                        send_email: true)
+            subject.check_grant_membership_or_renew(given_user, notifier, reason)
+          end
         end
 
         it 'logs that the user membership status was changed' do
@@ -306,7 +320,7 @@ RSpec.describe MembershipStatusUpdater, type: :model do
       it_behaves_like 'it checks to see if user can renew', 'current_member'
     end
 
-    describe 'does nothing if not a: former member, not a  member, current member, or in the grace period' do
+    describe 'does nothing if not a current member, not a former member, not in the grace period, or not a member' do
       # the nonsense status 'blorf' is here to ensure we run this test with at least 1 status
       other_membership_statuses = User.membership_statuses - [:not_a_member, :former_member, :current_member, :in_grace_period] + [:blorf]
       other_membership_statuses.each do |other_status|
