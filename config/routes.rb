@@ -228,8 +228,6 @@ Rails.application.routes.draw do
          as: :company_address_delete
   # ----------------------------------------------------------
 
-  # FIXME: is this path/route used anymore?
-  get 'information', to: 'shf_applications#information'
 
   root to: 'companies#index'
 
