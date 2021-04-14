@@ -91,10 +91,6 @@ class User < ApplicationRecord
 
   scope :agreed_to_membership_guidelines, -> { where(id: UserChecklist.top_level_for_current_membership_guidelines.completed.pluck(:user_id)) }
 
-
-  # TODO do not like this name. Needs to communicate that the public can view these users, that these users have the status that they are able to be shown to the public
-  scope :viewable_to_the_public, -> { where(membership_status: ['current_member', 'in_grace_period']) }
-
   # ===============================================================================================
 
   # TODO this should not be the responsibility of the User class. Need a MembershipManager class for this.
