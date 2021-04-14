@@ -115,10 +115,10 @@ class MemberMailerPreview < ActionMailer::Preview
 
     # Create a member to renew if we didn't find any
     unless member_to_renew
-      member_to_renew = User.current.sort_by(&:membership_expire_date).first
+      member_to_renew = User.current_member.sort_by(&:membership_expire_date).first
 
       # if we still haven't found one, create one:
-      unless membership_to_renew
+      unless member_to_renew
         timestamp = Time.now.to_i
         member_to_renew = FactoryBot.create(:member, first_name: "Just-#{timestamp}", last_name: 'Renewed',
                                             email: "just-renewed-#{timestamp}@example.com",
@@ -126,6 +126,12 @@ class MemberMailerPreview < ActionMailer::Preview
                                             membership_status: :in_grace_period)
       end
     end
+
+    # Do renewal. If the membership last day > today, then set the renewal date to
+    #   the last day + 1 day.  This is totally artificial and just for this preview
+    #   so that the data remains valid. (We don't want to constant renew with date = Date.current.
+    #   That will create multiple memberships with the same start date.)
+    member_to_renew.renew!(date: (member_to_renew.membership_expire_date + 1.day))
 
     unless member_to_renew.companies.detect { |co| !co.information_complete? }
       incomplete_company = FactoryBot.create(:company, name: 'Incomplete (no region)')
