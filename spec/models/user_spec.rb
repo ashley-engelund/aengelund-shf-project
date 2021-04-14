@@ -313,133 +313,24 @@ RSpec.describe User, type: :model do
     end
   end
 
+
   describe 'Scopes' do
 
-    describe 'admins' do
-
-      it 'returns 2 users that are admins and 0 that are not' do
-        admin1 = create(:user, admin: true, first_name: 'admin1')
-        admin2 = create(:user, admin: true, first_name: 'admin2')
-        user1 = create(:user, first_name: 'user1')
-
-        all_admins = described_class.admins
-
-        expect(all_admins.count).to eq 2
-        expect(all_admins).to include admin1
-        expect(all_admins).to include admin2
-        expect(all_admins).not_to include user1
-      end
-    end
-
-    describe '.viewable_to_the_public' do
-
-      # create users with other membership_statuses
-      other_statuses = User.membership_statuses - [:current_member, :in_grace_period]
-      other_statuses.each do |other_status|
-        let!("#{other_status}_1".to_sym) { create(:user, membership_status: other_status.to_s) }
-      end
-
-
-      context 'no current_members' do
-
-        it 'only in_grace_period users are returned if in_grace_period users exist' do
-          grace_1 = create(:user, membership_status: 'in_grace_period')
-          grace_2 = create(:user, membership_status: 'in_grace_period')
-
-          expect(described_class.viewable_to_the_public.to_a).to match_array([grace_1, grace_2])
-        end
-
-
-        context 'no in_grace_period users' do
-          it 'no users returned' do
-            expect(described_class.viewable_to_the_public.to_a).to be_empty
-          end
-        end
-      end
-
-      context 'current_members exist' do
-        context 'in_grace_period users exist' do
-          it 'current_members AND in_grace_period users are returned' do
-            current_1 = create(:user, membership_status: 'current_member')
-            current_2 = create(:user, membership_status: 'current_member')
-            grace_1 = create(:user, membership_status: 'in_grace_period')
-            grace_2 = create(:user, membership_status: 'in_grace_period')
-
-            expect(described_class.viewable_to_the_public.to_a).to match_array([current_1, current_2,
-                                                                                grace_1, grace_2])
-          end
-        end
-
-        context 'no in_grace_period users' do
-          it 'only current_members returned' do
-            current_1 = create(:user, membership_status: 'current_member')
-            current_2 = create(:user, membership_status: 'current_member')
-            expect(described_class.viewable_to_the_public.to_a).to match_array([current_1, current_2])
-          end
-        end
-      end
-    end
-
-
-    describe '.members' do
-
-      it 'returns those with member = true' do
-        user_member1 = create(:member_with_membership_app, first_name: 'Member 1')
-        user_member2 = create(:member_with_membership_app, first_name: 'Member 2')
-
-        user_has_app_not_member = create(:user_with_membership_app, first_name: 'App')
-        visitor = create(:user, first_name: 'Visitor')
-        admin = create(:user, admin: true, first_name: 'Admin')
-
-        members = described_class.members
-
-        expect(members.count).to eq 2
-        expect(members).to include user_member1
-        expect(members).to include user_member2
-        expect(members).not_to include admin
-        expect(members).not_to include visitor
-        expect(members).not_to include user_has_app_not_member
-      end
-    end
-
     context 'with known user info' do
-      let(:user_no_app) { create(:user) }
-      let(:user_app_not_accepted) { create(:user_with_membership_app) }
+      let!(:user_no_app) { create(:user) }
+      let!(:user_app_not_accepted) { create(:user_with_membership_app) }
 
-      let(:user_app_guidelines_not_agreed) { create(:user_with_ethical_guidelines_checklist) }
+      let!(:user_app_guidelines_not_agreed) { create(:user_with_ethical_guidelines_checklist) }
 
-      let(:user_app_guidelines_agreed) do
+      let!(:user_app_guidelines_agreed) do
         u = create(:user_with_ethical_guidelines_checklist)
         UserChecklistManager.membership_guidelines_list_for(u).set_complete_including_children
         u
       end
 
-      let(:member_exp_jan1_today) do
-        create(:member_with_expiration_date, expiration_date: jan_1)
-        # new_member.most_recent_membership_payment.update(created_at: new_member.membership_start_date)
-        # new_member
-      end
-
-      let(:member_current_exp_jan2) do
-        create(:member_with_expiration_date, expiration_date: jan_2)
-        # new_member.most_recent_membership_payment.update(created_at: new_member.membership_start_date)
-        # new_member
-      end
-
-      let(:member_current_exp_jan3) do
-        create(:member_with_expiration_date, expiration_date: jan_3)
-        # new_member.most_recent_membership_payment.update(created_at: new_member.membership_start_date)
-        # new_member
-      end
-
-      before(:each) do
-        user_no_app
-        user_app_not_accepted
-        user_app_guidelines_agreed
-        member_exp_jan1_today
-        member_current_exp_jan2
-        member_current_exp_jan3
-      end
+      let!(:member_exp_jan1_today) { create(:member, expiration_date: jan_1) }
+      let!(:member_current_exp_jan2) { create(:member, expiration_date: jan_2) }
+      let!(:member_current_exp_jan3) { create(:member, expiration_date: jan_3) }
 
       it 'application_accepted' do
         in_scope = described_class.application_accepted
