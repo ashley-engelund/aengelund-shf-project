@@ -1890,6 +1890,7 @@ en:
 
     member_mailer:
       member_account_link: "%{account_link} (You may need to login first before the link works. Your login is %{login_email}.)"
+      login_to_fix: To fix the above, you must log in.
 
       app_no_uploaded_files:
         subject: Please upload qualification files to your Sveriges Hundföretagare application
@@ -1966,6 +1967,7 @@ en:
           thanks: Thanks for joining us for another year.
           company-incomplete: Incomplete info for company
           company-license-expired: H-Markt license has expired
+
 
 
   devise:

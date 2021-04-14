@@ -1895,6 +1895,7 @@ sv:
 
     member_mailer:
       member_account_link: "%{account_link} (Du kan behöva logga in först innan länken fungerar. Your login is %{login_email}.)"
+      login_to_fix: För att åtgärda ovanstående behöver du logga in.
 
       app_no_uploaded_files:
         subject: Din ansökan till Sveriges Hundföretagare saknar underlag
