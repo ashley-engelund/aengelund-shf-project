@@ -1112,7 +1112,7 @@ en:
 
     uploaded_files_requirement:
       have_been_uploaded: Files have been uploaded during your membership term
-      need_to_upload: You need to upload files to show that you have continued your professional education and still meet SHF membership requirements.
+      need_to_upload: You need to upload at least 1 file to show that you have continued your professional education and still meet SHF membership requirements.
       upload_file: *upload_new_file
       upload_another: Upload another file
 
