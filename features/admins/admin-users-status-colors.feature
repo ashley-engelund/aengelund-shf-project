@@ -89,9 +89,9 @@ Feature: Membership status is color-coded for admin's list of all users
 
   # -----------------------------------------------------------------------------------------------
 
-  Scenario: Legend is shown at the top and bottom so if the list is long I can see it either place
+  Scenario: Legend is shown at the top
     Given I am on the "all users" page
-    Then I should see css class "legend" 2 times
+    Then I should see css class "legend" 1 times
 
 
   @selenium
