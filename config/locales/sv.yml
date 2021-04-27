@@ -1919,6 +1919,14 @@ sv:
         message_text:
           expire_alert_html: "Observera att din nuvarande medlemsperiod löper ut den "
           extend_membership: "Du kan förlänga ditt medlemskap i ytterligare 12 månader genom att betala medlemsavgiften."
+          renewal_reqs: &renewal_requirements "Du kan förnya ditt medlemskap genom att skriva under medlemsåtagandet, ladda upp dokumentation på fortbildning samt betala medlemsavgiften."
+
+      membership_will_expire_renewal_reqs_reminder:
+        subject: Ditt medlemskap löper ut snart
+        greeting: *email_greeting
+        message_text:
+          expire_alert_html: "Observera att din nuvarande medlemsperiod löper ut den "
+          renewal_reqs: &renewal_requirements "Du kan förnya ditt medlemskap genom att skriva under medlemsåtagandet, ladda upp dokumentation på fortbildning samt betala medlemsavgiften."
 
       h_branding_fee_will_expire:
         subject: Det är snart dags att betala din H-märkningspremie
@@ -1954,6 +1962,7 @@ sv:
         message_text:
           expire_alert_html: "Ditt medlemsskap gick ut <span class='date-warning'> %{expire_date}.</span>"
           renew_membership: Du kan förnya ditt medlemskap och fortsätta dra nytta av medlemsfördelarna genom att logga in och betala.
+          renewal_reqs: *renewal_requirements
           pay_on_acct_page: &pay_on_acct_page "Du betalar via "
 
       first_membership_fee_owed:

@@ -1914,6 +1914,14 @@ en:
         message_text:
           expire_alert_html: "Please note that your current membership period will expire on "
           extend_membership: "You can extend your membership for another 12 months by paying the membership fee."
+          renewal_reqs: &renewal_requirements "You can renew your membership by signing the membership commitment, uploading documentation on continuing education and paying the membership fee."
+
+      membership_will_expire_renewal_reqs_reminder:
+        subject: Your membership will expire soon
+        greeting: *email_greeting
+        message_text:
+          expire_alert_html: "Please note that your current membership period will expire on "
+          renewal_reqs: &renewal_requirements "You can renew your membership by signing the membership commitment, uploading documentation on continuing education and paying the membership fee."
 
       h_branding_fee_will_expire:
         subject: The H-Branding fee for your company will be due soon
@@ -1938,7 +1946,7 @@ en:
           expire_alert_html: "Your SHF membership term ended on <span class='date-warning'> %{expire_date}.</span>"
           renew_membership: You can renew your membership and keep taking advantage of SHF member benefits by logging in and paying your membership fee.
           pay_on_acct_page: &pay_on_acct_page "Go to your account page to pay:"
-
+          renewal_reqs: *renewal_requirements
 
       co_info_incomplete:
         subject: Please complete the company information
