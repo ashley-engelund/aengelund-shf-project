@@ -335,6 +335,11 @@ module ApplicationHelper
            id: id
   end
 
+  def nav_menu_login_title(user)
+    t('hello', name: user.first_name)
+  end
+
+
   def user_name_for_display(user)
     return '' unless user
 

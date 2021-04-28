@@ -542,6 +542,15 @@ RSpec.describe ApplicationHelper, type: :helper do
     end
   end
 
+
+  describe 'nav_menu_login_title' do
+    it 'is t(hello) and the user first name' do
+      new_u = build(:user, first_name: 'This is the first name')
+      expect(helper.nav_menu_login_title(new_u)).to match(/, This is the first name/)
+    end
+  end
+
+
   describe '#user_name_for_display' do
     include ERB::Util # Required by the helper to work in RSpec context
     it 'returns an empty string if the user is nil' do
