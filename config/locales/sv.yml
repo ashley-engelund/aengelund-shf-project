@@ -1791,6 +1791,7 @@ sv:
     login_here: "Klicka här för att gå till inloggningssidan."
     your_login_email_is: "Din e-post för att logga in är: "
     log_in: &log_in Logga in
+    renewal_reqs: &renewal_requirements "Du kan förnya ditt medlemskap genom att skriva under medlemsåtagandet, ladda upp dokumentation på fortbildning samt betala medlemsavgiften."
     how_to_pay_membership: "Så här betalar du medlemsavgiften:"
     pay_membership_step: "När du är inloggad hittar du betalknappen på ditt konto."
     here_is_acct_page: "Här är en länk till ditt konto: "
@@ -1807,6 +1808,11 @@ sv:
       see_click_co_name: Du kommer att se alla företag du tillhör, listade efter namn. Klicka på det företagsnamn du vill redigera.
       view_then_edit: Du kommer då att se information om företaget. Längst ner ser du en knapp för att redigera företaget. Klicka på den.
       cos_you_can_edit: "Detta är de företag du kan redigera:"
+
+    how_to_upload_files: "How to Upload Files:"
+    upload_files_step1: "Log in. Go the page that shows all of your uploaded files by (1) going to your login menu. Your login menu is at the far right and says '%{login_menu_title}'."
+    upload_files_step2: Click on the menu item labelled '%{uploaded_files_menu_item}'. That takes you to the page with all of your uploaded files. You can upload files there.
+    upload_files_step3: (Your uploaded files are also list on your account page.)
 
 
     application_mailer:
@@ -1919,14 +1925,14 @@ sv:
         message_text:
           expire_alert_html: "Observera att din nuvarande medlemsperiod löper ut den "
           extend_membership: "Du kan förlänga ditt medlemskap i ytterligare 12 månader genom att betala medlemsavgiften."
-          renewal_reqs: &renewal_requirements "Du kan förnya ditt medlemskap genom att skriva under medlemsåtagandet, ladda upp dokumentation på fortbildning samt betala medlemsavgiften."
+          renewal_reqs: *renewal_requirements
 
       membership_will_expire_renewal_reqs_reminder:
         subject: Ditt medlemskap löper ut snart
         greeting: *email_greeting
         message_text:
           expire_alert_html: "Observera att din nuvarande medlemsperiod löper ut den "
-          renewal_reqs: &renewal_requirements "Du kan förnya ditt medlemskap genom att skriva under medlemsåtagandet, ladda upp dokumentation på fortbildning samt betala medlemsavgiften."
+          renewal_reqs: *renewal_requirements
 
       h_branding_fee_will_expire:
         subject: Det är snart dags att betala din H-märkningspremie
