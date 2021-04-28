@@ -152,7 +152,7 @@ sv:
 
       company:
         one: &company_one Företag
-        other: Företag
+        other: &companies Företag
 
       shf_document:
         one: Dokument
@@ -1504,6 +1504,9 @@ sv:
     dashboard:
       title: ADMIN DASHBOARD
 
+      members: &members Företagsmedlemmar
+      companies: *companies
+
       payments:
         export_all_payments: &dash_export_all_payments Export all payments
         export_payments_year: &dash_export_payments_year Export payments covering year
@@ -1517,6 +1520,8 @@ sv:
           app_approved_no_payment: "Applications approved but no membership payment yet"
           companies_no_branding_payment: "companies Branding license fee not yet paid"
           companies_incomplete: "companies with information not yet complete"
+          current_members: *members
+          current_companies: *companies
 
         activity:
           tab-title: Aktivitet
@@ -1534,7 +1539,7 @@ sv:
           title: *users
 
         members:
-          tab-title: &members Företagsmedlemmar
+          tab-title: *members
           title: *members
           total_members: *members
 
@@ -1812,7 +1817,7 @@ sv:
     how_to_upload_files: "How to Upload Files:"
     upload_files_step1: "Log in. Go the page that shows all of your uploaded files by (1) going to your login menu. Your login menu is at the far right and says '%{login_menu_title}'."
     upload_files_step2: Click on the menu item labelled '%{uploaded_files_menu_item}'. That takes you to the page with all of your uploaded files. You can upload files there.
-    upload_files_step3: (Your uploaded files are also list on your account page.)
+    upload_files_step3: (Your uploaded files are also listed on your account page.)
 
 
     application_mailer:
