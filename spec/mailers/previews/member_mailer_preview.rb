@@ -21,6 +21,12 @@ class MemberMailerPreview < ActionMailer::Preview
   end
 
 
+  def membership_will_expire_renewal_reqs_reminder
+    member = User.current_member.first
+    MemberMailer.membership_will_expire_renewal_reqs_reminder(member)
+  end
+
+
   def h_branding_fee_will_expire
     licensed_co = Company.branding_licensed.first
     co_member = licensed_co.users.last
@@ -29,19 +35,19 @@ class MemberMailerPreview < ActionMailer::Preview
   end
 
 
-  # Previewing can cause this to be called twice:  once to create the header,
-  # and again for the mail body.
+  # Previewing can cause this to be called twice: once to create the header,
+  # and again for the mail body. (Switching locale/language calls this again.)
   # So if the user already exists, use it, else create a new one
   def h_branding_fee_past_due
+    approved_app = ShfApplication.where(state: :accepted).first
+    approved_user = approved_app.user
+    past_due_co = approved_app.companies.first
+    past_due_co.update(name: '')
+    past_due_co.current_membership.update(expire_date: Date.current - 2)
+    check_co_name(past_due_co)
 
-    new_email = unique_email
+    MemberMailer.h_branding_fee_past_due(past_due_co, approved_user)
 
-    unless (new_approved_user = User.find_by(email: new_email))
-      new_approved_user = FactoryBot.create(:member_with_membership_app, email: new_email)
-    end
-    new_co = new_approved_user.shf_application.companies.first
-    check_co_name(new_co)
-    MemberMailer.h_branding_fee_past_due(new_co, new_approved_user)
   end
 
 
@@ -61,7 +67,6 @@ class MemberMailerPreview < ActionMailer::Preview
 
 
   def company_info_incomplete
-
     approved_app = ShfApplication.where(state: :accepted).first
     approved_user = approved_app.user
     incomplete_co = approved_app.companies.first
@@ -74,10 +79,8 @@ class MemberMailerPreview < ActionMailer::Preview
 
 
   def app_no_uploaded_files
-
     # create a new user with a brand new application (that has no uploaded files)
     new_email = "sussh-#{DateTime.now.strftime('%Q')}@example.com"
-
     new_approved_user = User.create(first_name: 'Suss',
                                     last_name: 'Hundapor',
                                     password: 'whatever',
@@ -85,7 +88,6 @@ class MemberMailerPreview < ActionMailer::Preview
                                     member_photo: nil,
     )
     ShfApplication.new(user: new_approved_user)
-
     MemberMailer.app_no_uploaded_files new_approved_user
 
   ensure
@@ -94,18 +96,23 @@ class MemberMailerPreview < ActionMailer::Preview
 
 
   def first_membership_fee_owed
-    # Create a new user with an approved application but no payments
+    new_email = "sussh-#{DateTime.now.strftime('%Q')}@example.com"
+    new_approved_user = User.create(first_name: 'Suss',
+                                    last_name: 'Hundapor',
+                                    password: 'whatever',
+                                    email: new_email,
+                                    member_photo: nil,
+    )
+    ShfApplication.new(user: new_approved_user)
 
-    new_email = unique_email
-
-    unless (new_approved_user = User.find_by(email: new_email))
-      new_approved_user = FactoryBot.create(:user_with_membership_app, email: new_email, password: 'whatever')
-    end
     shf_app = new_approved_user.shf_application
     shf_app.update(when_approved: Time.zone.now)
     shf_app.update(state: 'accepted')
 
     MemberMailer.first_membership_fee_owed(new_approved_user)
+
+  ensure
+    User.delete(new_approved_user.id) unless new_approved_user.nil?
   end
 
 
