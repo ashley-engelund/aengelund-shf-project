@@ -92,10 +92,8 @@ RSpec.describe MemberMailer, type: :mailer do
                                                   expire_date: test_member.membership_expire_date))
     end
 
-
-    it 'tells how to extend membership' do
-      expect(email_sent).to have_body_text(I18n.t('message_text.extend_membership',
-                                                  scope: MEMBERSHIP_EXP_SCOPE))
+    it_behaves_like 'it shows what is required to renew the membership' do
+      let(:email_created) { email_sent }
     end
 
     it_behaves_like 'it shows how to login and the page to pay the membership fee' do
@@ -165,10 +163,10 @@ RSpec.describe MemberMailer, type: :mailer do
                                                   expire_date: test_member.membership_expire_date))
     end
 
-    it 'tells how to renew membership' do
-      expect(email_sent).to have_body_text(I18n.t('message_text.renew_membership',
-                                                  scope: MEMBERSHIP_LAPSED_SCOPE))
+    it_behaves_like 'it shows what is required to renew the membership' do
+      let(:email_created) { email_sent }
     end
+
 
     it_behaves_like 'it shows how to login and the page to pay the membership fee' do
       let(:email_created) { email_sent }
