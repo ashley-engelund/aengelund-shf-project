@@ -7,25 +7,30 @@ module ShfConditionError
   class BackupCommandNotSuccessfulError < BackupError
   end
 
+
   class BackupConfigError < BackupError
   end
+
 
   class BackupConfigFileSetBadFormatError < BackupConfigError
   end
 
+
   class BackupConfigFileSetMissingNameError < BackupConfigError
   end
+
 
   class BackupConfigFileSetMissingBaseNameError < BackupConfigError
   end
 
+
   class BackupConfigFileSetMissingSourceFiles < BackupConfigError
   end
+
 
   class BackupConfigFileSetEmptySourceFiles < BackupConfigError
   end
 end
-
 
 # Backup files and DB data in production
 
@@ -40,7 +45,6 @@ end
 #        should be private or if we should make this class non-static.
 class Backup < ConditionResponder
 
-
   DEFAULT_BACKUP_FILES_DIR = '/home/deploy/SHF_BACKUPS/'
   DEFAULT_DB_BACKUPS_TO_KEEP = 15
 
@@ -51,7 +55,6 @@ class Backup < ConditionResponder
   FILENAME_SUFFIX_TIMESTAMP_FMT = '%F-%H%M-%S%L-Z'
 
   # -------------
-
 
   def self.condition_response(condition, log, use_slack_notification: true)
 
@@ -80,14 +83,12 @@ class Backup < ConditionResponder
       backup_maker[:backup_maker].backup(target: backup_file)
     end
 
-
     log.record('info', 'Moving backup files to AWS S3')
     s3, bucket, bucket_folder = get_s3_objects(today_timestamp)
 
     iterate_and_log_notify_errors(backup_files, 'in backup_files loop, uploading_file_to_s3', log) do |backup_file|
       upload_file_to_s3(s3, bucket, bucket_folder, backup_file)
     end
-
 
     log.record('info', 'Pruning older backups on local storage')
 
@@ -129,9 +130,9 @@ class Backup < ConditionResponder
   def self.get_s3_objects(today_ts = today_timestamp)
 
     s3 = Aws::S3::Resource.new(
-        region: ENV['SHF_AWS_S3_BACKUP_REGION'],
-        credentials: Aws::Credentials.new(ENV['SHF_AWS_S3_BACKUP_KEY_ID'],
-                                          ENV['SHF_AWS_S3_BACKUP_SECRET_ACCESS_KEY']))
+      region: ENV['SHF_AWS_S3_BACKUP_REGION'],
+      credentials: Aws::Credentials.new(ENV['SHF_AWS_S3_BACKUP_KEY_ID'],
+                                        ENV['SHF_AWS_S3_BACKUP_SECRET_ACCESS_KEY']))
 
     bucket = ENV['SHF_AWS_S3_BACKUP_BUCKET']
 
@@ -141,10 +142,27 @@ class Backup < ConditionResponder
   end
 
 
+  # @see https://aws.amazon.com/blogs/developer/uploading-files-to-amazon-s3/
   def self.upload_file_to_s3(s3, bucket, bucket_folder, file)
     obj = s3.bucket(bucket).object(bucket_folder + File.basename(file))
+    obj.upload_file(file, { tagging: aws_date_tags })
+  end
 
-    obj.upload_file(file)
+
+  # @return [String] - tags about the current date, formatted as 1 long string of key=value pairs with '&' between each
+  #    date-year=yyyy     (yyyy = year)
+  #    date-month-num=mm  (mm = 2 digit month number, 0 padded)
+  #    date-month-day=dd  (dd = 2 digit day of the month, 0 padded)
+  #    date-weekday=wwww...w (weekday name [English])
+  #   where mm = the 2 digit month number, dd = the 2 digit day of the month, wwww...w is the name of the weekday
+  #   These tags can be used for keeping certain weekly copies (e.g. all on Monday, etc.), and
+  #   certain copies on a particular day of the month (e.g. keep all backups on the 1st of the month)
+  def aws_date_tags
+    today = Date.current
+    ["date-year=#{today.year}",
+     "date-month-num=#{today.strftime("%m")}",
+     "date-month-day=#{today.day}",
+     "date-weekday=#{today.strftime("%A").downcase}"].join('&')
   end
 
 
@@ -175,7 +193,7 @@ class Backup < ConditionResponder
     # :keep_num key defines how many daily backups to retain on _local_ storage (e.g. on the production machine)
     # AWS (S3) backup files are retained based on settings in AWS.
     backup_makers = [
-        { backup_maker: ShfBackupMakers::DBBackupMaker.new, keep_num: num_db_backups_to_keep }
+      { backup_maker: ShfBackupMakers::DBBackupMaker.new, keep_num: num_db_backups_to_keep }
     ]
 
     fileset_backup_makers = create_fileset_backup_makers(config)
