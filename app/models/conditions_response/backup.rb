@@ -84,7 +84,7 @@ class Backup < ConditionResponder
     end
 
     log.record('info', 'Moving backup files to AWS S3')
-    s3, bucket, bucket_folder = get_s3_objects(today_timestamp)
+    s3, bucket, bucket_folder = get_s3_objects
 
     iterate_and_log_notify_errors(backup_files, 'in backup_files loop, uploading_file_to_s3', log) do |backup_file|
       upload_file_to_s3(s3, bucket, bucket_folder, backup_file)
@@ -127,16 +127,14 @@ class Backup < ConditionResponder
   end
 
 
-  def self.get_s3_objects(today_ts = today_timestamp)
+  def self.get_s3_objects(today = Date.current)
 
     s3 = Aws::S3::Resource.new(
       region: ENV['SHF_AWS_S3_BACKUP_REGION'],
       credentials: Aws::Credentials.new(ENV['SHF_AWS_S3_BACKUP_KEY_ID'],
                                         ENV['SHF_AWS_S3_BACKUP_SECRET_ACCESS_KEY']))
-
     bucket = ENV['SHF_AWS_S3_BACKUP_BUCKET']
-
-    bucket_folder = "production_backup/#{today_ts}/" # S3 will show objects in folders
+    bucket_folder = "production_backup/#{today.year}/#{today.strftime("%m")}/#{today.strftime("%d")}/"
 
     [s3, bucket, bucket_folder]
   end
@@ -157,7 +155,7 @@ class Backup < ConditionResponder
   #   where mm = the 2 digit month number, dd = the 2 digit day of the month, wwww...w is the name of the weekday
   #   These tags can be used for keeping certain weekly copies (e.g. all on Monday, etc.), and
   #   certain copies on a particular day of the month (e.g. keep all backups on the 1st of the month)
-  def aws_date_tags
+  def self.aws_date_tags
     today = Date.current
     ["date-year=#{today.year}",
      "date-month-num=#{today.strftime("%m")}",
