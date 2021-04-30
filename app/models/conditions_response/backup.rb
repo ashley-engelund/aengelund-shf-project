@@ -4,32 +4,25 @@ require_relative 'shf_condition_error_backup_error'
 # Errors
 module ShfConditionError
 
-  class BackupCommandNotSuccessfulError < BackupError
-  end
+  class BackupCommandNotSuccessfulError < BackupError; end
 
 
-  class BackupConfigError < BackupError
-  end
+  class BackupConfigError < BackupError; end
 
 
-  class BackupConfigFileSetBadFormatError < BackupConfigError
-  end
+  class BackupConfigFileSetBadFormatError < BackupConfigError; end
 
 
-  class BackupConfigFileSetMissingNameError < BackupConfigError
-  end
+  class BackupConfigFileSetMissingNameError < BackupConfigError; end
 
 
-  class BackupConfigFileSetMissingBaseNameError < BackupConfigError
-  end
+  class BackupConfigFileSetMissingBaseNameError < BackupConfigError; end
 
 
-  class BackupConfigFileSetMissingSourceFiles < BackupConfigError
-  end
+  class BackupConfigFileSetMissingSourceFiles < BackupConfigError; end
 
 
-  class BackupConfigFileSetEmptySourceFiles < BackupConfigError
-  end
+  class BackupConfigFileSetEmptySourceFiles < BackupConfigError; end
 end
 
 # Backup files and DB data in production
@@ -40,15 +33,16 @@ end
 #        methods are public and can be called independently, causing them to
 #        behave erratically depending on the last call of
 #        `::condition_response` or lack thereof.
-#        As a stopgag measure I added an extra optional parameter to every
+#        As a stopgap measure I added an extra optional parameter to every
 #        method signature, but we should really consider if those methods
 #        should be private or if we should make this class non-static.
+#
+# TODO: Do not back up user uploaded files with the SHF system/data.  Back those up separately if needed.
+#
 class Backup < ConditionResponder
 
   DEFAULT_BACKUP_FILES_DIR = '/home/deploy/SHF_BACKUPS/'
   DEFAULT_DB_BACKUPS_TO_KEEP = 15
-
-  TIMESTAMP_FMT = '%F'
 
   # YYYY-MM-DD-HHMM-SS<millisec)>-Z
   # provide minutes, seconds, etc. so that multiple backups per day can be kept
@@ -65,9 +59,14 @@ class Backup < ConditionResponder
     config = get_config(condition)
     backup_makers = create_backup_makers(config)
 
+
     # Backup each backup_maker to local storage
     backup_files = []
     backup_dir = backup_dir(config)
+
+    aws_s3 = s3_backup_resource
+    aws_s3_backup_bucket = s3_backup_bucket
+    aws_backup_bucket_full_prefix = s3_backup_bucket_full_prefix
 
     iterate_and_log_notify_errors(backup_makers, 'while in the backup_makers.each loop', log) do |backup_maker|
 
@@ -84,10 +83,9 @@ class Backup < ConditionResponder
     end
 
     log.record('info', 'Moving backup files to AWS S3')
-    s3, bucket, bucket_folder = get_s3_objects
 
     iterate_and_log_notify_errors(backup_files, 'in backup_files loop, uploading_file_to_s3', log) do |backup_file|
-      upload_file_to_s3(s3, bucket, bucket_folder, backup_file)
+      upload_file_to_s3(aws_s3, aws_s3_backup_bucket, aws_backup_bucket_full_prefix, backup_file)
     end
 
     log.record('info', 'Pruning older backups on local storage')
@@ -117,26 +115,27 @@ class Backup < ConditionResponder
   end
 
 
-  def self.today_timestamp
-    Time.now.strftime TIMESTAMP_FMT
-  end
-
-
   def self.backup_timestamp
     Time.now.strftime FILENAME_SUFFIX_TIMESTAMP_FMT
   end
 
 
-  def self.get_s3_objects(today = Date.current)
-
-    s3 = Aws::S3::Resource.new(
+  # return the Aws::S3::Resource where we put the backups
+  def self.s3_backup_resource
+    Aws::S3::Resource.new(
       region: ENV['SHF_AWS_S3_BACKUP_REGION'],
       credentials: Aws::Credentials.new(ENV['SHF_AWS_S3_BACKUP_KEY_ID'],
                                         ENV['SHF_AWS_S3_BACKUP_SECRET_ACCESS_KEY']))
-    bucket = ENV['SHF_AWS_S3_BACKUP_BUCKET']
-    bucket_folder = "production_backup/#{today.year}/#{today.strftime("%m")}/#{today.strftime("%d")}/"
+  end
 
-    [s3, bucket, bucket_folder]
+
+  def self.s3_backup_bucket
+    ENV['SHF_AWS_S3_BACKUP_BUCKET']
+  end
+
+
+  def self.s3_backup_bucket_full_prefix(today = Date.current)
+    "#{ENV['SHF_AWS_S3_BACKUP_TOP_PREFIX']}/#{today.year}/#{today.strftime("%m")}/#{today.strftime("%d")}/"
   end
 
 
@@ -155,8 +154,7 @@ class Backup < ConditionResponder
   #   where mm = the 2 digit month number, dd = the 2 digit day of the month, wwww...w is the name of the weekday
   #   These tags can be used for keeping certain weekly copies (e.g. all on Monday, etc.), and
   #   certain copies on a particular day of the month (e.g. keep all backups on the 1st of the month)
-  def self.aws_date_tags
-    today = Date.current
+  def self.aws_date_tags(today = Date.current)
     ["date-year=#{today.year}",
      "date-month-num=#{today.strftime("%m")}",
      "date-month-day=#{today.day}",
