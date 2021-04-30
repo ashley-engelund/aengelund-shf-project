@@ -7,6 +7,12 @@ RSpec.describe Backup, type: :model do
 
   let(:mock_log) { instance_double("ActivityLogger") }
 
+  let(:mock_bucket_object) { double('Aws::S3::Object', upload_file: true) }
+  let(:mock_bucket) { double('Aws::S3::Bucket', object: mock_bucket_object) }
+  let(:mock_s3) { double('Aws::S3::Resource', bucket: mock_bucket) }
+  let(:bucket_name) { 'bucket_name' }
+  let(:bucket_full_prefix) { 'bucket/top/prefix' }
+
   before(:each) do
     # stub actually sending Slack notifications
     allow(SHFNotifySlack).to receive(:notification)
@@ -15,9 +21,7 @@ RSpec.describe Backup, type: :model do
 
 
   describe 'Acceptance tests' do
-
     include_context 'expect tar file has entries'
-
 
     # Make the same directories as a Rails app under a temp dir and create
     # at 1 file in each dir: blorf.txt
@@ -120,6 +124,10 @@ RSpec.describe Backup, type: :model do
       allow(mock_log).to receive(:info)
       allow(mock_log).to receive(:record)
       allow(mock_log).to receive(:close)
+
+      allow(described_class).to receive(:s3_backup_resource).and_return(mock_s3)
+      allow(described_class).to receive(:s3_backup_bucket).and_return(bucket_name)
+      allow(described_class).to receive(:s3_backup_bucket_full_prefix).and_return(bucket_full_prefix)
     end
 
 
@@ -195,14 +203,14 @@ RSpec.describe Backup, type: :model do
 
     it 'does the backup - everything works (HAPPY PATH)' do
       expect(described_class).to receive(:upload_file_to_s3)
-                                     .with(anything, anything,
-                                           anything, expected_db_backup_fname)
+                                     .with(mock_s3, bucket_name,
+                                           bucket_full_prefix, expected_db_backup_fname)
       expect(described_class).to receive(:upload_file_to_s3)
-                                     .with(anything, anything,
-                                           anything, expected_fset_misc_files_backup_fname)
+                                   .with(mock_s3, bucket_name,
+                                         bucket_full_prefix, expected_fset_misc_files_backup_fname)
       expect(described_class).to receive(:upload_file_to_s3)
-                                     .with(anything, anything,
-                                           anything, expected_fset_code_backup_fname)
+                                   .with(mock_s3, bucket_name,
+                                         bucket_full_prefix, expected_fset_code_backup_fname)
 
       expect(described_class).to receive(:delete_excess_backup_files)
                                      .with("#{expected_db_backup_base_fn}.*", 5)
@@ -232,14 +240,14 @@ RSpec.describe Backup, type: :model do
     it 'works with no Slack Notification' do
 
       expect(described_class).to receive(:upload_file_to_s3)
-                                     .with(anything, anything,
-                                           anything, expected_db_backup_fname)
+                                   .with(mock_s3, bucket_name,
+                                         bucket_full_prefix, expected_db_backup_fname)
       expect(described_class).to receive(:upload_file_to_s3)
-                                     .with(anything, anything,
-                                           anything, expected_fset_misc_files_backup_fname)
+                                   .with(mock_s3, bucket_name,
+                                         bucket_full_prefix, expected_fset_misc_files_backup_fname)
       expect(described_class).to receive(:upload_file_to_s3)
-                                     .with(anything, anything,
-                                           anything, expected_fset_code_backup_fname)
+                                   .with(mock_s3, bucket_name,
+                                         bucket_full_prefix, expected_fset_code_backup_fname)
 
       expect(described_class).to receive(:delete_excess_backup_files)
                                      .with("#{expected_db_backup_base_fn}.*", 5)
@@ -391,11 +399,11 @@ RSpec.describe Backup, type: :model do
 
       it 'writing to AWS fails for the FileSet code backup file' do
         expect(described_class).to receive(:upload_file_to_s3)
-                                       .with(anything, anything,
-                                             anything, expected_db_backup_fname)
+                                     .with(mock_s3, bucket_name,
+                                           bucket_full_prefix, expected_db_backup_fname)
         expect(described_class).to receive(:upload_file_to_s3)
-                                       .with(anything, anything,
-                                             anything, expected_fset_misc_files_backup_fname)
+                                     .with(mock_s3, bucket_name,
+                                           bucket_full_prefix, expected_fset_misc_files_backup_fname)
         allow(described_class).to receive(:delete_excess_backup_files)
 
         # Raise an error:
@@ -403,8 +411,8 @@ RSpec.describe Backup, type: :model do
         expected_error_text = /#{@error_raised} in backup_files loop, uploading_file_to_s3. Current item:/
 
         allow(described_class).to receive(:upload_file_to_s3)
-                                      .with(anything, anything,
-                                            anything, expected_fset_code_backup_fname)
+                                    .with(mock_s3, bucket_name,
+                                          bucket_full_prefix, expected_fset_code_backup_fname)
                                       .and_raise(@error_raised)
 
         # Slack notification should be sent
@@ -574,9 +582,7 @@ RSpec.describe Backup, type: :model do
         end
 
       end
-
     end
-
   end
 
   # =======================================================================
@@ -589,6 +595,17 @@ RSpec.describe Backup, type: :model do
 
     def create_faux_backup_file(backups_dir, file_prefix)
       File.open(File.join(backups_dir, "#{file_prefix}-faux-backup.bak"), 'w').path
+    end
+
+
+    describe 'required ENV variables (must not be nil)' do
+      it 'AWS S3 BACKUP credentials, region, bucket name, and top level previx' do
+        expect(ENV.fetch('SHF_AWS_S3_BACKUP_KEY_ID', nil)).not_to be_nil
+        expect(ENV.fetch('SHF_AWS_S3_BACKUP_SECRET_ACCESS_KEY', nil)).not_to be_nil
+        expect(ENV.fetch('SHF_AWS_S3_BACKUP_REGION', nil)).not_to be_nil
+        expect(ENV.fetch('SHF_AWS_S3_BACKUP_BUCKET', nil)).not_to be_nil
+        expect(ENV.fetch('SHF_AWS_S3_BACKUP_TOP_PREFIX', nil)).not_to be_nil
+      end
     end
 
 
@@ -616,49 +633,72 @@ RSpec.describe Backup, type: :model do
 
     end
 
+    describe '.s3_backup_resource' do
+      before(:each) { allow(described_class).to receive(:s3_backup_resource).and_call_original }
 
-    describe '.get_s3_objects' do
-
-      it 'requires ENV variables for the AWS credentials and region' do
-        expect(ENV.fetch('SHF_AWS_S3_BACKUP_BUCKET', nil)).not_to be_nil
-        expect(ENV.fetch('SHF_AWS_S3_BACKUP_REGION', nil)).not_to be_nil
-        expect(ENV.fetch('SHF_AWS_S3_BACKUP_KEY_ID', nil)).not_to be_nil
-        expect(ENV.fetch('SHF_AWS_S3_BACKUP_SECRET_ACCESS_KEY', nil)).not_to be_nil
+      it 'returns the Aws::S3 resource based on the correct region and credentials' do
+        expect(described_class.s3_backup_resource).to be_a(Aws::S3::Resource)
       end
-
-      it 'uses the given date to construct the bucket prefixes' do
-        result = Backup.get_s3_objects(Date.new(2021,5,25))
-        expect(result[2]).to eq "production_backup/2021/05/25/"
-      end
-
-      it 'default is to use Date.current to construct the bucket prefixes' do
-        travel_to(Date.new(2021, 6,6)) do
-          result = Backup.get_s3_objects
-          expect(result[2]).to eq 'production_backup/2021/06/06/'
-        end
-      end
-
-      it 'returns array of [AWS S3 credentials, bucket, bucket_folder' do
-        result = Backup.get_s3_objects(Date.new(2021,5,25))
-        expect(result[0]).to be_an_instance_of(Aws::S3::Resource)
-        expect(result[1]).to eq expected_bucket
-        expect(result[2]).to eq "production_backup/2021/05/25/"
-      end
-
     end
 
 
-    it '.upload_file_to_s3 calls .upload_file for the bucket, folder, and file to upload' do
-      temp_backups_dir = Dir.mktmpdir('faux-backups-dir')
-      faux_backup_fn = create_faux_backup_file(temp_backups_dir, 'faux_backup.bak')
+    describe '.s3_backup_bucket' do
+      before(:each) { allow(described_class).to receive(:s3_backup_bucket).and_call_original }
 
-      expect_any_instance_of(Aws::S3::Object).to receive(:upload_file).with(faux_backup_fn, anything).and_return(true)
+      it 'gets the bucket name from ENV' do
+        expect(described_class.s3_backup_bucket).to eq(ENV['SHF_AWS_S3_BACKUP_BUCKET'])
+      end
+    end
 
-      aws_s3_resource, bucket, bucket_folder = Backup.get_s3_objects
+    describe '.s3_backup_bucket_full_prefix' do
+      before(:each) { allow(described_class).to receive(:s3_backup_bucket_full_prefix).and_call_original }
 
-      Backup.upload_file_to_s3(aws_s3_resource, bucket, bucket_folder, faux_backup_fn)
+      it 'is constructed from the top level previx (from ENV) and year/month/day of the given date' do
+        expect(described_class.s3_backup_bucket_full_prefix(Date.new(2022, 02, 28))).to match(/(.)*\/2022\/02\/28/)
+      end
 
-      FileUtils.remove_entry(temp_backups_dir, true)
+      it 'default date is Date.current' do
+        travel_to(Date.new(2021, 5, 1)) do
+          expect(described_class.s3_backup_bucket_full_prefix).to match(/(.)*\/2021\/05\/01/)
+        end
+      end
+    end
+
+
+    describe '.upload_file_to_s3' do
+      let!(:temp_backups_dir) { Dir.mktmpdir('faux-backups-dir') }
+      let!(:faux_backup_fn) { create_faux_backup_file(temp_backups_dir, 'faux_backup.bak') }
+
+
+      it '.upload_file_to_s3 calls .upload_file for the bucket, full object name, and file to upload' do
+        expect(mock_bucket_object).to receive(:upload_file).with(faux_backup_fn, anything)
+        Backup.upload_file_to_s3(mock_s3, bucket_name, bucket_full_prefix, faux_backup_fn)
+
+        FileUtils.remove_entry(temp_backups_dir, true)
+      end
+
+      it 'adds date tags to the object' do
+        expect(mock_bucket_object).to receive(:upload_file)
+                                       .with(faux_backup_fn,
+                                             {tagging: 'this is the tagging string'})
+
+        expect(described_class).to receive(:aws_date_tags).and_return('this is the tagging string')
+        Backup.upload_file_to_s3(mock_s3, bucket_name, bucket_full_prefix, faux_backup_fn)
+      end
+    end
+
+
+    describe '.aws_date_tags' do
+
+      it 'returns a string with tags based on the given date: year, month number, date, weekday (lowercase)' do
+        expect(described_class.aws_date_tags(Date.new(2022,2,28))).to eq("date-year=2022&date-month-num=02&date-month-day=28&date-weekday=monday")
+      end
+
+      it 'default date is Date.current' do
+        travel_to(Date.new(2023,1,31)) do
+          expect(described_class.aws_date_tags).to eq("date-year=2023&date-month-num=01&date-month-day=31&date-weekday=tuesday")
+        end
+      end
     end
 
 
@@ -724,7 +764,10 @@ RSpec.describe Backup, type: :model do
         allow(described_class).to receive(:create_backup_makers)
                                       .and_return(@created_backup_makers)
 
-        allow(described_class).to receive(:get_s3_objects)
+        allow(described_class).to receive(:s3_backup_resource).and_return(mock_s3)
+        allow(described_class).to receive(:s3_backup_bucket).and_return(bucket_name)
+        allow(described_class).to receive(:s3_backup_bucket_full_prefix).and_return(bucket_full_prefix)
+
         allow(described_class).to receive(:upload_file_to_s3)
         allow(described_class).to receive(:get_backup_files_pattern).and_call_original
         allow(described_class).to receive(:delete_excess_backup_files)
@@ -817,7 +860,6 @@ RSpec.describe Backup, type: :model do
           expect(@files_backup_maker).to receive(:backup)
 
           described_class.condition_response(backup_condition, mock_log)
-
         end
       end
 
@@ -829,13 +871,15 @@ RSpec.describe Backup, type: :model do
         described_class.condition_response(backup_condition, mock_log)
       end
 
-      it 'calls S3 credentials once' do
-        expect(described_class).to receive(:get_s3_objects).exactly(1).times
+      it 'calls s3_backup_resource, s3_backup_bucket, and s3_backup_bucket_full_prefix eachonce' do
+        expect(described_class).to receive(:s3_backup_resource).exactly(1).times
+        expect(described_class).to receive(:s3_backup_bucket).exactly(1).times
+        expect(described_class).to receive(:s3_backup_bucket_full_prefix).exactly(1).times
 
         described_class.condition_response(condition, mock_log)
       end
 
-      it 'calls upload to S3 once for each Backup maker ' do
+      it 'calls upload to S3 once for each Backup maker to put the file into the AWS object' do
         # if no files are in the config, there are only 2 backup makers
         expect(described_class).to receive(:upload_file_to_s3).exactly(expected_num_makers).times
 
