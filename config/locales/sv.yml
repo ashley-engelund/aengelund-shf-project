@@ -1813,10 +1813,10 @@ sv:
       view_then_edit: Du kommer då att se information om företaget. Längst ner ser du en knapp för att redigera företaget. Klicka på den.
       cos_you_can_edit: "Detta är de företag du kan redigera:"
 
-    how_to_upload_files: "How to Upload Files:"
-    upload_files_step1: "Log in. Go the page that shows all of your uploaded files by (1) going to your login menu. Your login menu is at the far right and says '%{login_menu_title}'."
-    upload_files_step2: Click on the menu item labelled '%{uploaded_files_menu_item}'. That takes you to the page with all of your uploaded files. You can upload files there.
-    upload_files_step3: (Your uploaded files are also listed on your account page.)
+    how_to_upload_files: "Hur du laddar upp filer:"
+    upload_files_step1: "Logga in. Gå till sidan som visar alla dina uppladdade filer genom att klicka på '%{login_menu_title}."
+    upload_files_step2: Klicka på menyalternativet "% {uploaded_files_menu_item}". Det tar dig till sidan med alla dina uppladdade filer. Du kan även ladda upp nya filer där.
+    upload_files_step3: (Dina uppladdade filer listas också på din kontosida-.)
 
 
     application_mailer:
