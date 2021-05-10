@@ -848,7 +848,6 @@ en:
       hbrand_fee: H-Brand license fee
       hbrand_term: H-Brand license term
       edit_branding_status: Edit Branding Status
-      branding_license: H-Branding License
       payment_tooltip: Paying the H-Branding fee will extend the branding license for one year.
       branding_fee_expire_date_tooltip: &branding_fee_expire_date_tooltip Branding license expires after this date
       term_expire_date_tooltip : *branding_fee_expire_date_tooltip

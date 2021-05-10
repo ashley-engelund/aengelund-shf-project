@@ -45,7 +45,7 @@
         - if payment_visible_for_user?(current_user, @company)
           %hr
             .branding-license
-              %h3.section-title= t('.branding_license')
+              %h3.section-title= t('.hbrand_fee')
               .section
                 = render partial: 'branding_term_status', locals: { company: @company }
           %hr
