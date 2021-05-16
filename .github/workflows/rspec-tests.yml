@@ -4,7 +4,7 @@ name: rspec
 on:
   push:
     branches:
-      - sprint120-manual-update-membership
+      - sprint119-backups-aws-tagging-prefixes
 
 jobs:
 #  linters:
