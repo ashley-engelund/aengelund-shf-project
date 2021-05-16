@@ -11,7 +11,6 @@ on:
       - sprint119-backups-aws-tagging-prefixes
 
 jobs:
-
 #  linters:
 #    name: Linters
 #    runs-on: ubuntu-latest
