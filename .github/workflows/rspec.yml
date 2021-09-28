@@ -9,13 +9,16 @@ jobs:
   tests:
     name: Tests
     runs-on: ubuntu-latest
+
     env:
       RAILS_ENV: test
       GEMFILE_RUBY_VERSION: 2.7.2
       PGHOST: localhost
       PGUSER: postgres
 
+
     services:
+
       postgres:
         image: postgres:9
         env:
@@ -67,9 +70,7 @@ jobs:
       - name: Setup test database
         env:
           RAILS_ENV: test
-          POSTGRES_HOST: localhost
-          POSTGRES_USER: shf_project
-          POSTGRES_PASSWORD: ""
+
 
         run: |
           bundle exec bin/rails db:create db:migrate
