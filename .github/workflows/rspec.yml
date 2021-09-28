@@ -15,14 +15,16 @@ jobs:
       GEMFILE_RUBY_VERSION: 2.7.2
       PGHOST: localhost
 #      PGUSER: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: shf-project_test
 
     services:
 
       postgres:
         image: postgres:9
+
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: shf-project_test
 
         ports:
           # Maps tcp port 5432 on service container to the host
