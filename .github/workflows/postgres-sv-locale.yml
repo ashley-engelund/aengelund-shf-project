@@ -5,13 +5,24 @@ on: [push]
 jobs:
   postgresql:
     runs-on: ubuntu-latest
+
+    env:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: shf_project_test
+
     steps:
       - uses: actions/checkout@v2
+
       - name: PostgreSQL container build & run
         run: |
+          # build an image based on the Dockerfile found in .github/workflows
+          # and named it 'postgresql_i'
           docker build -t postgresql_i .github/workflows
           docker run -d --name postgresql_t -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e LC_ALL=sv_SE.UTF-8 postgresql_i
+
       - name: wait for db
         run: until docker exec postgresql_t pg_isready -U postgres; do sleep 1; done
+
       - name: show locale
         run: docker exec postgresql_t psql -U postgres -c "SHOW LC_COLLATE;"
