@@ -1,7 +1,7 @@
 name: rspec
 on:
   workflow_dispatch:
-  push:
+#  push:
 #  pull_request:
 #    types: [assigned, opened, edited, synchronize, reopened]
 
@@ -27,6 +27,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
           POSTGRES_DB: shf_project_test
+          LANG: sv_SE.UTF-8
 
         ports:
           # Maps tcp port 5432 on service container to the host
