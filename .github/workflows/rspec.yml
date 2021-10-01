@@ -1,7 +1,7 @@
 # Workflow to run RSpec tests
 #
 # TODO: use variables to get user ids, passwords, database names, etc.
-#
+# TODO: install imagemagick so that wkhtmltoimage can run
 
 name: rspec
 on:
@@ -11,8 +11,8 @@ on:
 jobs:
   tests:
     name: RSpec tests
-    runs-on: ubuntu-latest
-    #ubuntu-18.04
+    runs-on: ubuntu-18.04
+
 
     env:
       RAILS_ENV: test
@@ -54,7 +54,6 @@ jobs:
         with:
           bundler-cache: true
 
-      - name: install
       - name: Connect to and set up the test database
         env:
           RAILS_ENV: test
