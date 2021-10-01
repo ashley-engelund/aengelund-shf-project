@@ -1,4 +1,5 @@
 # Workflow to run RSpec tests
+#  This uses a postgres db with the sv_SE locale.
 #
 # TODO: use variables to get user ids, passwords, database names, etc.
 # TODO: install imagemagick so that wkhtmltoimage can run
