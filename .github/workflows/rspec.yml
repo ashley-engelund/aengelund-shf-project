@@ -5,7 +5,38 @@ on:
 #  pull_request:
 #    types: [assigned, opened, edited, synchronize, reopened]
 
+
+
 jobs:
+
+#  create_sv_postgres:
+#    name: Create postgres with sv_SE locale and collation
+#    runs-on: ubuntu-latest
+#
+#    env:
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: password
+#      POSTGRES_DB: shf_project_test
+#
+##    container: sv_postgres
+##      image: ashleyengelund/postgres-sv-se:postgres11-sv_se
+#
+#    steps:
+#      - uses: actions/checkout@v2
+#
+#      - name: PostgreSQL container build & run
+#        run: |
+#          # build an image based on the Dockerfile found in .github/workflows
+#          # and named it 'postgresql_i'
+#          docker build -t postgresql_i .github/workflows
+#          docker run -d --name postgresql_t -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e LC_ALL=sv_SE.UTF-8 postgresql_i
+#
+#      - name: wait for db
+#        run: until docker exec postgresql_t pg_isready -U postgres; do sleep 1; done
+#
+#      - name: show locale
+#        run: docker exec postgresql_t psql -U postgres -c "SHOW LC_COLLATE;"
+
   tests:
     name: Tests
     runs-on: ubuntu-latest
@@ -19,9 +50,8 @@ jobs:
 
 
     services:
-
       postgres:
-        image: postgres:9
+        image: ashleyengelund/postgres-sv-se:postgres11-sv_se
 
         env:
           POSTGRES_USER: postgres
@@ -47,27 +77,6 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-
-#      - name: Setup Node
-#        uses: actions/setup-node@v1
-#        with:
-#          node-version: 10.13.0
-#
-#      - name: Find yarn cache location
-#        id: yarn-cache
-#        run: echo "::set-output name=dir::$(yarn cache dir)"
-#
-#      - name: JS package cache
-#        uses: actions/cache@v1
-#        with:
-#          path: ${{ steps.yarn-cache.outputs.dir }}
-#          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-#          restore-keys: |
-#            ${{ runner.os }}-yarn-
-#
-#      - name: Install packages
-#        run: |
-#          yarn install --pure-lockfile
 
       - name: Setup test database
         env:
