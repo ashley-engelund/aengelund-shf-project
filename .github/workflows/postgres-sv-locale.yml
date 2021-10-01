@@ -1,0 +1,35 @@
+# This workflow shows how to build a docker image using a filenamed 'Dockerfile'
+#  in the current directory,
+# and specifically how to build a postgres docker image that uses the sv_SE locale
+#
+# This builds the image and runs it, then runs a psql command to show the locale
+#
+# This is totally based on ....
+#
+name: postgresql
+on: [push]
+
+jobs:
+  postgresql:
+    runs-on: ubuntu-latest
+
+    env:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: shf_project_test
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: build Docker container with PostgreSQL using sv_SE locale
+        run: |
+          # build an image based on the Dockerfile found in .github/workflows
+          # and tag it 'postgresql_svSE' and name it 'postgresql_locale_sv'
+          docker build -t postgresql_svSE .github/workflows
+          docker run -d --name postgresql_locale_sv -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e LC_ALL=sv_SE.UTF-8 postgresql_svSE
+
+      - name: wait for db
+        run: until docker exec postgresql_locale_sv pg_isready -U postgres; do sleep 1; done
+
+      - name: show locale
+        run: docker exec postgresql_locale_sv psql -U postgres -c "SHOW LC_COLLATE;"
+
