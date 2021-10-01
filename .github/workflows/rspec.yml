@@ -1,7 +1,7 @@
 name: rspec
 on:
   workflow_dispatch:
-#  push:
+  push:
 #  pull_request:
 #    types: [assigned, opened, edited, synchronize, reopened]
 
