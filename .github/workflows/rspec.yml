@@ -50,9 +50,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Write access so wkhtmltopdf_binary_gem can unzip the binaries it needs
-      - run: |
-          sudo chmod -R 777 /usr/lib/ruby/versions/2.7/lib/ruby/gems/2.7.0/gems/wkhtmltopdf-binary-0.12.5.1/bin/
+#      - name: Write access so wkhtmltopdf_binary_gem can unzip the binaries it needs
+#      - run: |
+#          sudo chmod -R 777 /usr/lib/ruby/versions/2.7/lib/ruby/gems/2.7.0/gems/wkhtmltopdf-binary-0.12.5.1/bin/
 
 
       - name: Setup Ruby and install gems
@@ -60,8 +60,8 @@ jobs:
         with:
           bundler-cache: true
 
-#      - name: Install wkthtmltopdf
-#        run: |
+      - name: Install wkthtmltopdf
+        run: |
           sudo apt-get install wkhtmltopdf
 #          sudo apt-get install -y xfonts-base xfonts-75dpi
 #          wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb
