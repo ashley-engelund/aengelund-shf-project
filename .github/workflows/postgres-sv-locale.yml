@@ -4,7 +4,7 @@
 #
 # This builds the image and runs it, then runs a psql command to show the locale
 #
-# This is totally based on ....
+# This is totally based on ...
 #
 name: postgresql
 on: [push]
