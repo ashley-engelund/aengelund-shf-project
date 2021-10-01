@@ -1,0 +1,77 @@
+# Workflow to run RSpec tests
+#  This uses a postgres db with the sv_SE locale.
+#
+# TODO: use variables to get user ids, passwords, database names, etc.
+# TODO: install imagemagick so that wkhtmltoimage can run
+
+name: rspec
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  tests:
+    name: RSpec tests
+    runs-on: ubuntu-18.04
+
+
+    env:
+      RAILS_ENV: test
+      GEMFILE_RUBY_VERSION: 2.7.2
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: password
+
+
+    services:
+      postgres:
+        # This image (from hub.docker.com) already has the sv_SE locale and collation set up.
+        # It is based on postgres:11
+        image: ashleyengelund/postgres-sv-se:postgres11-sv_se
+
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: shf_project_test
+
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
+
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Ruby and install gems
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Install wkthtmltopdf
+        run: |
+          sudo apt-get install xvfb libfontconfig wkhtmltopdf
+#          sudo apt-get install -y xfonts-base xfonts-75dpi
+#          wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb
+#          sudo dpkg -i wkhtmltox_0.12.6-1.bionic_amd64.deb
+
+
+      - name: Connect to and set up the test database
+        env:
+          RAILS_ENV: test
+
+        run: |
+          bundle exec bin/rails db:create db:migrate
+          bundle exec bin/rails db:schema:dump
+          bundle exec bin/rails db:test:prepare
+
+
+      - name: Run tests
+        run: bin/rspec
