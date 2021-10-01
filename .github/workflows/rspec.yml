@@ -17,7 +17,7 @@ jobs:
 
     env:
       RAILS_ENV: test
-      GEMFILE_RUBY_VERSION: 2.7.2
+      GEMFILE_RUBY_VERSION: 2.6.6
       PGHOST: localhost
       PGUSER: postgres
       PGPASSWORD: password
@@ -50,14 +50,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Write access so wkhtmltopdf_binary_gem can unzip the binaries it needs
+      - run: |
+          sudo chmod -R 777 /usr/lib/ruby/versions/2.7/lib/ruby/gems/2.7.0/gems/wkhtmltopdf-binary-0.12.5.1/bin/
+
+
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
 
-      - name: Install wkthtmltopdf
-        run: |
-          sudo apt-get install xvfb libfontconfig wkhtmltopdf
+#      - name: Install wkthtmltopdf
+#        run: |
+          sudo apt-get install wkhtmltopdf
 #          sudo apt-get install -y xfonts-base xfonts-75dpi
 #          wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb
 #          sudo dpkg -i wkhtmltox_0.12.6-1.bionic_amd64.deb
@@ -73,5 +78,6 @@ jobs:
           bundle exec bin/rails db:test:prepare
 
 
-      - name: Run tests
-        run: bin/rspec
+      - name: Run only the tests that use wkhtmltopdf
+        run: bundle exec bin/rspec spec/controllers/users_controller_spec.rb
+
