@@ -27,14 +27,14 @@ env:
 
 jobs:
 
-  lint-checks:
-    name: Lint checks
-    runs-on: ${{ env.OS_VERSION }}
-
-
-  feature-tests:
-    name: Cucumber feature tests (only a select few)
-    runs-on: ${{ env.OS_VERSION }}
+#  lint-checks:
+#    name: Lint checks
+#    runs-on: ${{ env.OS_VERSION }}
+#
+#
+#  feature-tests:
+#    name: Cucumber feature tests (only a select few)
+#    runs-on: ${{ env.OS_VERSION }}
 
 
   rspec-tests:
