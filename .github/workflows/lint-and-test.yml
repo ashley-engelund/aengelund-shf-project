@@ -78,7 +78,7 @@ jobs:
           bundle exec bin/rails db:test:prepare
 
       - name: Run cucumber features
-        run: bundle exec cucumber features/user_account
+        run: bundle exec cucumber features/checklists
 
 
   rspec-tests:
