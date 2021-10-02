@@ -39,7 +39,7 @@ jobs:
 
   rspec-tests:
     name: RSpec tests (only a select few)
-    runs-on: ${OS_VERSION}
+    runs-on: ubuntu-18.04
 
     services:
       postgres:
