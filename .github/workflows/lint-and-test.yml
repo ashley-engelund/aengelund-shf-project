@@ -19,9 +19,9 @@ env:
   PGPASSWORD: password
   OS_VERSION: ubuntu-18.04
   POSTGRES_SV_IMAGE: ashleyengelund/postgres-sv-se:postgres11-sv_se
-  POSTGRES_SERVICE_USER: postgres
-  POSTGRES_SERVICE_PASSWORD: password
-  POSTGRES_SERVICE_DB: shf_project_test
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: password
+  POSTGRES_DB: shf_project_test
   POSTGRES_SERVICE_PORT: 5432
 
 
@@ -45,16 +45,16 @@ jobs:
       postgres:
         # This image (from hub.docker.com) already has the sv_SE locale and collation set up.
         # It is based on postgres:11
-        image: ${{ env.POSTGRES_SV_IMAGE }}
+        image: ashleyengelund/postgres-sv-se:postgres11-sv_se
 
-        env:
-          POSTGRES_USER: ${ POSTGRES_SERVICE_USER }
-          POSTGRES_PASSWORD: ${ POSTGRES_SERVICE_PASSWORD }
-          POSTGRES_DB: ${ POSTGRES_SERVICE_DB }
+#        env:
+#          POSTGRES_USER: ${ POSTGRES_SERVICE_USER }
+#          POSTGRES_PASSWORD: ${ POSTGRES_SERVICE_PASSWORD }
+#          POSTGRES_DB: ${ POSTGRES_SERVICE_DB }
 
         ports:
           # Maps tcp port on service container to the host
-          - ${POSTGRES_SERVICE_PORT}:${POSTGRES_SERVICE_PORT}
+          - 5432:5432
 
         # Set health checks to wait until postgres has started
         options: >-
