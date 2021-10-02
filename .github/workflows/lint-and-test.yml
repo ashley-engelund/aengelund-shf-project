@@ -45,7 +45,7 @@ jobs:
       postgres:
         # This image (from hub.docker.com) already has the sv_SE locale and collation set up.
         # It is based on postgres:11
-        image: ${ POSTGRES_SV_IMAGE }
+        image: ${{ POSTGRES_SV_IMAGE }}
 
         env:
           POSTGRES_USER: ${ POSTGRES_SERVICE_USER }
