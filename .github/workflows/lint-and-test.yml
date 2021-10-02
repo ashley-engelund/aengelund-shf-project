@@ -1,0 +1,131 @@
+# Workflow to run lint checks and tests.
+#
+#  RSpec tests using a postgres db with the sv_SE locale
+#  Note that the rspec tests will not succeed because we have yet to install imagemagick requirements, etc.
+#   That's OK.  We just want to be able to create and connect to the postgres sv_SE db
+#
+name: lint-and-test
+on:
+  workflow_dispatch:
+  push:
+
+env:
+  RAILS_ENV: test
+  RUBY_VERSION: 2.6.6
+  GEMFILE_RUBY_VERSION: 2.7.2
+
+  PGHOST: localhost
+  PGUSER: postgres
+  PGPASSWORD: password
+
+
+jobs:
+
+  eslint:
+    name: eslint
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: a-b-r-o-w-n/eslint-action@v2
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          files: "app/**/*"
+#          ignore: "src/some-file-to-ignore.js"
+          extensions: ".js,.ts"
+#          working-directory: "./my-package"
+          quiet: "false"
+
+
+
+  # Working!
+#  feature-tests:
+#    name: Cucumber feature tests (only a select few)
+#    runs-on: ubuntu-18.04
+#
+#    services:
+#      postgres:
+#        # This image (from hub.docker.com) already has the sv_SE locale and collation set up.
+#        # It is based on postgres:11
+#        image: ashleyengelund/postgres-sv-se:postgres11-sv_se
+#
+#        env:
+#          POSTGRES_USER: postgres
+#          POSTGRES_PASSWORD: password
+#          POSTGRES_DB: shf_project_test
+#
+#        ports:
+#          # Maps tcp port on service container to the host
+#          - 5432:5432
+#
+#        # Set health checks to wait until postgres has started
+#        options: >-
+#          --health-cmd pg_isready
+#          --health-interval 10s
+#          --health-timeout 5s
+#          --health-retries 5
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#
+#      - name: Setup Ruby and install gems
+#        uses: ruby/setup-ruby@v1
+#        with:
+#          bundler-cache: true
+#
+#      - name: Connect to and set up the test database
+#        run: |
+#          bundle exec bin/rails db:create db:migrate
+#          bundle exec bin/rails db:schema:dump
+#          bundle exec bin/rails db:test:prepare
+#
+#      - name: Run cucumber features
+#        run: bundle exec cucumber features/checklists
+
+
+  # Working!
+#  rspec-tests:
+#    name: RSpec tests (only a select few)
+#    runs-on: ubuntu-18.04
+#
+#    services:
+#      postgres:
+#        # This image (from hub.docker.com) already has the sv_SE locale and collation set up.
+#        # It is based on postgres:11
+#        image: ashleyengelund/postgres-sv-se:postgres11-sv_se
+#
+#        env:
+#          POSTGRES_USER: postgres
+#          POSTGRES_PASSWORD: password
+#          POSTGRES_DB: shf_project_test
+#
+#        ports:
+#          # Maps tcp port on service container to the host
+#          - 5432:5432
+#
+#        # Set health checks to wait until postgres has started
+#        options: >-
+#          --health-cmd pg_isready
+#          --health-interval 10s
+#          --health-timeout 5s
+#          --health-retries 5
+#
+#
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#
+#      - name: Setup Ruby and install gems
+#        uses: ruby/setup-ruby@v1
+#        with:
+#          bundler-cache: true
+#
+#      - name: Connect to and set up the test database
+#        run: |
+#          bundle exec bin/rails db:create db:migrate
+#          bundle exec bin/rails db:schema:dump
+#          bundle exec bin/rails db:test:prepare
+#
+#
+#      - name: Run tests
+#        run: bundle exec bin/rspec spec/models/kommun_spec.rb
