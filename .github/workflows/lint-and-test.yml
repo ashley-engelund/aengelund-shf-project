@@ -45,16 +45,16 @@ jobs:
       postgres:
         # This image (from hub.docker.com) already has the sv_SE locale and collation set up.
         # It is based on postgres:11
-        image: ${{ env.POSTGRES_SV_IMAGE }}
+        image: $POSTGRES_SV_IMAGE
 
         env:
-          POSTGRES_USER: ${{ env.POSTGRES_SERVICE_USER }}
-          POSTGRES_PASSWORD: ${{ env.POSTGRES_SERVICE_PASSWORD }}
-          POSTGRES_DB: ${{ env.POSTGRES_SERVICE_DB }}
+          POSTGRES_USER: $POSTGRES_SERVICE_USER
+          POSTGRES_PASSWORD: $POSTGRES_SERVICE_PASSWORD
+          POSTGRES_DB: $POSTGRES_SERVICE_DB
 
         ports:
           # Maps tcp port on service container to the host
-          - ${{ env.POSTGRES_SERVICE_PORT }}:${{ env.POSTGRES_SERVICE_PORT }}
+          - $POSTGRES_SERVICE_PORT:$POSTGRES_SERVICE_PORT
 
         # Set health checks to wait until postgres has started
         options: >-
