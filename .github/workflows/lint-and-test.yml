@@ -21,6 +21,16 @@ env:
 
 jobs:
 
+  eslint:
+    name: eslint
+    runs-on: ubuntu18.04
+    steps:
+      - uses: tinovyatkin/action-eslint@v1
+        with:
+          repo-token: ${{secrets.GITHUB_TOKEN}}
+          check-name: eslint # this is the check name from above 👆 where to post annotations
+
+
 #  lint-checks:
 #    name: Lint checks
 #    runs-on: ubuntu-18.04
@@ -68,7 +78,7 @@ jobs:
           bundle exec bin/rails db:test:prepare
 
       - name: Run cucumber features
-        run: bundle exec cucumber features/approve-member.feature
+        run: bundle exec cucumber features/user_account
 
 
   rspec-tests:
