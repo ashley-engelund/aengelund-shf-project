@@ -1,8 +1,5 @@
 # Workflow to run RSpec tests
 #  This uses a postgres db with the sv_SE locale.
-#
-# TODO: use variables to get user ids, passwords, database names, etc.
-# TODO: install imagemagick so that wkhtmltoimage can run
 
 name: rspec
 on:
@@ -57,7 +54,7 @@ jobs:
         with:
           bundler-cache: true
 
-      - name: Install libpng12.so
+      - name: Install libpng12.so (required by IMGkit / wkhtmltoimage )
         run: |
           sudo wget http://se.archive.ubuntu.com/ubuntu/pool/main/libp/libpng/libpng12-0_1.2.54-1ubuntu1_amd64.deb
           sudo dpkg -i libpng12-0_1.2.54-1ubuntu1_amd64.deb
@@ -70,6 +67,6 @@ jobs:
           bundle exec bin/rails db:test:prepare
 
 
-      - name: Run only the tests that use wkhtmltopdf
+      - name: Run tests that use wkhtmltoimage
         run: bundle exec bin/rspec spec/controllers/users_controller_spec.rb
 
