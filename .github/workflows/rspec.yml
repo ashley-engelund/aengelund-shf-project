@@ -9,19 +9,20 @@ on:
   workflow_dispatch:
   push:
 
+env:
+  RAILS_ENV: test
+  RUBY_VERSION: 2.6.6
+  GEMFILE_RUBY_VERSION: 2.7.2
+
+  PGHOST: localhost
+  PGUSER: postgres
+  PGPASSWORD: password
+
+
 jobs:
   tests:
     name: RSpec tests
     runs-on: ubuntu-18.04
-
-
-    env:
-      RAILS_ENV: test
-      GEMFILE_RUBY_VERSION: 2.6.6
-      PGHOST: localhost
-      PGUSER: postgres
-      PGPASSWORD: password
-
 
     services:
       postgres:
@@ -50,28 +51,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-#      - name: Write access so wkhtmltopdf_binary_gem can unzip the binaries it needs
-#      - run: |
-#          sudo chmod -R 777 /usr/lib/ruby/versions/2.7/lib/ruby/gems/2.7.0/gems/wkhtmltopdf-binary-0.12.5.1/bin/
-
-
       - name: Setup Ruby and install gems
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
 
-      - name: Install wkthtmltopdf
-        run: |
-          sudo apt-get install wkhtmltopdf
-#          sudo apt-get install -y xfonts-base xfonts-75dpi
-#          wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb
-#          sudo dpkg -i wkhtmltox_0.12.6-1.bionic_amd64.deb
+#      - name: Run wkthtmltoimage (gem) to install needed executable
+#        run: bundle exec wkhtmltoimage
 
 
       - name: Connect to and set up the test database
-        env:
-          RAILS_ENV: test
-
         run: |
           bundle exec bin/rails db:create db:migrate
           bundle exec bin/rails db:schema:dump
