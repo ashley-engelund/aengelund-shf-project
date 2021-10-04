@@ -1,5 +1,7 @@
 {
   "extends": "stylelint-config-standard",
+  "ignoreFiles": "app/assets/stylesheets/shf-mailer.scss",
+
   "rules": {
     "indentation": 2
   }
