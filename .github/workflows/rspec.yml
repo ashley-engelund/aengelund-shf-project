@@ -57,8 +57,10 @@ jobs:
         run: |
           yarn install
 
-      - name: Lint javascript with eslint
-        run: yarn lint
+      - uses: bradennapier/eslint-plus-action@v3.4.2
+        with:
+          issueSummaryType: full
+          reportIgnoredFiles: true
 
 
 #      - name: css lint
