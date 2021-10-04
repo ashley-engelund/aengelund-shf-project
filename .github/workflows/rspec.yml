@@ -41,7 +41,6 @@ jobs:
             node-version: '14.17.6'
             cache: 'yarn' # or npm
 
-
       - name: Install JS dependencies with yarn
         run: |
           yarn install
