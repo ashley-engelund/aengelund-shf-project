@@ -81,10 +81,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Setup Ruby and install gems
+      - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
 
-      - name: Run rubocop (parallel)
-        run:  bundle exec rubocop --parallel
+      - name: install rubocop gem
+      - run: gem install rubocop --no-doc
+
+      - name: Run rubocop (parallel) and output as .json
+      - run: rubocop --parallel --format progress --format json --out rubocop.json
+      id: rubocop
+
+      - name: create annotations from rubocop output
+      - uses: duderman/rubocop-annotate-action@v0.1.0
+        with:
+          path: rubocop.json
+        if: ${{ failure() }}
