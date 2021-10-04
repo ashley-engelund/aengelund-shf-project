@@ -95,8 +95,8 @@ jobs:
           gem install rubocop-performance --no-doc --version '=1.6.1'
 
 
-      - name: Run rubocop (parallel) and output as .json
-        run: rubocop --parallel --format progress --format json --out rubocop.json
+      - name: Run rubocop and output as .json
+        run: rubocop  --format json --out rubocop.json
         id: rubocop
 
       - name: create annotations from rubocop output
