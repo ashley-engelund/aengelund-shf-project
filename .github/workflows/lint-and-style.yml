@@ -86,5 +86,5 @@ jobs:
         with:
           bundler-cache: true
 
-      - run: |
-        bundle exec rubocop --parallel
+      - name: Run rubocop (parallel)
+      - run:  bundle exec rubocop --parallel
