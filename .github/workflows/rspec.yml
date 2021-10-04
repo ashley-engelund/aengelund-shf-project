@@ -57,11 +57,14 @@ jobs:
         run: |
           yarn install
 
-      - uses: bradennapier/eslint-plus-action@v3.4.2
+      - uses: mrdivyansh/eslint-action@v1.0.7
+        # GITHUB_TOKEN in forked repositories is read-only
+        # https://help.github.com/en/actions/reference/events-that-trigger-workflows#pull-request-event-pull_request
         with:
-          issueSummaryType: full
-          reportIgnoredFiles: true
-          includeGlob: "./app/**/"
+          repo-token: ${{secrets.GITHUB_TOKEN}}
+          eslint-rc: .eslintrc
+          execute-on-files:
+            - ./app/assets
 
 
 #      - name: css lint
