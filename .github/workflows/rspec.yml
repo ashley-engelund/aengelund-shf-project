@@ -63,7 +63,6 @@ jobs:
           eslint-rc: .eslintrc
           execute-on-files: ./app/assets
 
-
 #      - name: css lint
 #        run: |
 #
