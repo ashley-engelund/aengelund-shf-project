@@ -91,7 +91,7 @@ jobs:
 
       - name: Run rubocop (parallel) and output as .json
       - run: rubocop --parallel --format progress --format json --out rubocop.json
-      id: rubocop
+        id: rubocop
 
       - name: create annotations from rubocop output
       - uses: duderman/rubocop-annotate-action@v0.1.0
