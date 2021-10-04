@@ -61,6 +61,7 @@ jobs:
         with:
           issueSummaryType: full
           reportIgnoredFiles: true
+          includeGlob: "./app/**/"
 
 
 #      - name: css lint
