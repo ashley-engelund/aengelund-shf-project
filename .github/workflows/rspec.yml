@@ -52,6 +52,12 @@ jobs:
           eslint-rc: .eslintrc
           execute-on-files: ./app/assets
 
+
+      - name: Stylelint for .scss
+        uses: actions-hub/stylelint@master
+        env:
+          PATTERN: "*.scss"
+
 #      - name: css lint
 #        run: |
 #
