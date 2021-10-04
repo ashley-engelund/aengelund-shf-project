@@ -1,0 +1,17 @@
+{
+  "name": "shf-project",
+  "version": "1.0.0",
+  "description": "Javascript/Node dependencies for the SHF project",
+  "main": "index.js",
+  "repository": "https://github.com/ashley-engelund/aengelund-shf-project.git",
+  "author": "Ashley Engelund (weedySeaDragon @ github) <ashley.engelund@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "lint": "yarn run eslint ./app/**/*.js"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-webpack-plugin": "^3.0.1",
+    "webpack": "^5.56.1"
+  }
+}
