@@ -63,8 +63,7 @@ jobs:
         with:
           repo-token: ${{secrets.GITHUB_TOKEN}}
           eslint-rc: .eslintrc
-          execute-on-files:
-            - ./app/assets
+          execute-on-files: ./app/assets
 
 
 #      - name: css lint
