@@ -80,6 +80,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}  # This is used by the rubocop
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -94,13 +96,15 @@ jobs:
           gem install rubocop-rspec --no-doc --version '=1.35.0'
           gem install rubocop-performance --no-doc --version '=1.6.1'
 
+      - name: set up Problem matchers with rubocop output (will annotate code)
+        uses: r7kamura/rubocop-problem-matchers-action@v1
 
       - name: Run rubocop (parallel) and output as .json
         run: rubocop --parallel --format progress --format json --out rubocop.json
         id: rubocop
 
-      - name: create annotations from rubocop output
-        uses: duderman/rubocop-annotate-action@v0.1.0
-        with:
-          path: rubocop.json
-        if: ${{ failure() }}
+#      - name: create annotations from rubocop output
+#        uses: duderman/rubocop-annotate-action@v0.1.0
+#        with:
+#          path: rubocop.json
+#        if: ${{ failure() }}
