@@ -22,8 +22,8 @@ env:
 
 jobs:
 
-  scss-style: SCSS Style check
-    name: scss-style-check
+  scss-style:
+    name: SCSS Style check
     runs-on: ubuntu-18.04
 
     steps:
