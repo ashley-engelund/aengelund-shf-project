@@ -91,7 +91,7 @@ jobs:
         run: |
           gem install rubocop  --no-doc --version '=0.75.0'
           gem install rubocop-rails --no-doc --version '=2.5.2'
-          gem install rubocop-rspec, --no-doc --version '=1.35.0'
+          gem install rubocop-rspec --no-doc --version '=1.35.0'
           gem install rubocop-performance --no-doc --version '=1.6.1'
 
 
