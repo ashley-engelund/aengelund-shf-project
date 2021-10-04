@@ -44,7 +44,7 @@ jobs:
       - name: Stylelint for .scss
         uses: actions-hub/stylelint@master
         env:
-          PATTERN: "*.scss"
+          PATTERN: "**/*.scss"
 
 
   eslint:
@@ -73,13 +73,18 @@ jobs:
           execute-on-files: ./app/assets
 
 
-#      - name: Rubocop
-#        run: |
-#          bin/rubocop --parallel
-#          bin/prettier
-
-
-#      - name: Run security checks
-#        run: |
-#          bin/bundler-audit --update
-#          bin/brakeman -q -w2
+#  rubocop:
+#    name: Rubocop
+#    runs-on: ubuntu-18.04
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#
+#      - name: Setup Ruby and install gems
+#        uses: ruby/setup-ruby@v1
+#        with:
+#          bundler-cache: true
+#
+#      - run: |
+#        bin/rubocop --parallel
