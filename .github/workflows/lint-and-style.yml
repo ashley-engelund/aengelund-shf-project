@@ -22,55 +22,55 @@ env:
 
 jobs:
 
-  scss-style:
-    name: SCSS Style check
-    runs-on: ubuntu-18.04
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Install Node version
-        uses: actions/setup-node@v2.4.0
-        with:
-          node-version: '14.17.6'
-          cache: 'yarn' # or npm
-
-      - name: Install JS dependencies with yarn
-        run: |
-          yarn install
-
-
-      - name: Stylelint for .scss
-        uses: actions-hub/stylelint@master
-        env:
-          PATTERN: "**/*.scss"
-
-
-  eslint:
-    name: eslint
-    runs-on: ubuntu-18.04
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Install Node version
-        uses: actions/setup-node@v2.4.0
-        with:
-            node-version: '14.17.6'
-            cache: 'yarn' # or npm
-
-      - name: Install JS dependencies with yarn
-        run: |
-          yarn install
-
-
-      - uses: mrdivyansh/eslint-action@v1.0.7
-        with:
-          repo-token: ${{secrets.GITHUB_TOKEN}}
-          eslint-rc: .eslintrc
-          execute-on-files: ./app/assets
+#  scss-style:
+#    name: SCSS Style check
+#    runs-on: ubuntu-18.04
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#
+#      - name: Install Node version
+#        uses: actions/setup-node@v2.4.0
+#        with:
+#          node-version: '14.17.6'
+#          cache: 'yarn' # or npm
+#
+#      - name: Install JS dependencies with yarn
+#        run: |
+#          yarn install
+#
+#
+#      - name: Stylelint for .scss
+#        uses: actions-hub/stylelint@master
+#        env:
+#          PATTERN: "**/*.scss"
+#
+#
+#  eslint:
+#    name: eslint
+#    runs-on: ubuntu-18.04
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#
+#      - name: Install Node version
+#        uses: actions/setup-node@v2.4.0
+#        with:
+#            node-version: '14.17.6'
+#            cache: 'yarn' # or npm
+#
+#      - name: Install JS dependencies with yarn
+#        run: |
+#          yarn install
+#
+#
+#      - uses: mrdivyansh/eslint-action@v1.0.7
+#        with:
+#          repo-token: ${{secrets.GITHUB_TOKEN}}
+#          eslint-rc: .eslintrc
+#          execute-on-files: ./app/assets
 
 
   rubocop:
@@ -87,14 +87,14 @@ jobs:
           bundler-cache: true
 
       - name: install rubocop gem
-      - run: gem install rubocop --no-doc
+        run: gem install rubocop --no-doc
 
       - name: Run rubocop (parallel) and output as .json
-      - run: rubocop --parallel --format progress --format json --out rubocop.json
+        run: rubocop --parallel --format progress --format json --out rubocop.json
         id: rubocop
 
       - name: create annotations from rubocop output
-      - uses: duderman/rubocop-annotate-action@v0.1.0
+        uses: duderman/rubocop-annotate-action@v0.1.0
         with:
           path: rubocop.json
         if: ${{ failure() }}
