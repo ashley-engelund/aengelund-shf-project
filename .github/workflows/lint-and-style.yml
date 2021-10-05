@@ -86,21 +86,13 @@ jobs:
         with:
           bundler-cache: true
 
-      # Should not install these separately else they'll get out of sync with Gemfile. This is just temporary for learning
-      - name: install rubocop gems
-        run: |
-          gem install rubocop  --no-doc --version '=0.75.0'
-          gem install rubocop-rails --no-doc --version '=2.5.2'
-          gem install rubocop-rspec --no-doc --version '=1.35.0'
-          gem install rubocop-performance --no-doc --version '=1.6.1'
-
 
       - name: Run rubocop and output as .json
-        run: rubocop  --format json --out rubocop.json
+        run: bundle exec rubocop --format json --out rubocop.json
         id: rubocop
 
       - name: create annotations from rubocop output
-        uses: duderman/rubocop-annotate-action@v0.1.0
+        uses: weedySeaDragon/rubocop-annotate-action@v0.2.1
         with:
           path: rubocop.json
         if: ${{ failure() }}
