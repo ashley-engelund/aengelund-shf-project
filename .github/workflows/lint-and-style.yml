@@ -1,0 +1,98 @@
+# Workflow to run RSpec tests
+#  This uses a postgres db with the sv_SE locale.
+#
+#  @url Good overview of Github Actions: https://boringrails.com/articles/building-a-rails-ci-pipeline-with-github-actions/
+#
+#
+
+name: Linters and Stylechecks
+on:
+  workflow_dispatch:
+  push:
+
+env:
+  RAILS_ENV: test
+  RUBY_VERSION: 2.6.6
+  GEMFILE_RUBY_VERSION: 2.7.2
+
+  PGHOST: localhost
+  PGUSER: postgres
+  PGPASSWORD: password
+
+
+jobs:
+
+#  scss-style:
+#    name: SCSS Style check
+#    runs-on: ubuntu-18.04
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#
+#      - name: Install Node version
+#        uses: actions/setup-node@v2.4.0
+#        with:
+#          node-version: '14.17.6'
+#          cache: 'yarn' # or npm
+#
+#      - name: Install JS dependencies with yarn
+#        run: |
+#          yarn install
+#
+#
+#      - name: Stylelint for .scss
+#        uses: actions-hub/stylelint@master
+#        env:
+#          PATTERN: "**/*.scss"
+#
+#
+#  eslint:
+#    name: eslint
+#    runs-on: ubuntu-18.04
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#
+#      - name: Install Node version
+#        uses: actions/setup-node@v2.4.0
+#        with:
+#            node-version: '14.17.6'
+#            cache: 'yarn' # or npm
+#
+#      - name: Install JS dependencies with yarn
+#        run: |
+#          yarn install
+#
+#
+#      - uses: mrdivyansh/eslint-action@v1.0.7
+#        with:
+#          repo-token: ${{secrets.GITHUB_TOKEN}}
+#          eslint-rc: .eslintrc
+#          execute-on-files: ./app/assets
+
+
+  rubocop:
+    name: Rubocop
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+
+      - name: Run rubocop and output as .json
+        run: bundle exec rubocop --format json --out rubocop.json
+        id: rubocop
+
+      - name: create annotations from rubocop output
+        uses: weedySeaDragon/rubocop-annotate-action@v0.2.1
+        with:
+          path: rubocop.json
+        if: ${{ failure() }}

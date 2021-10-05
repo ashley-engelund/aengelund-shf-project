@@ -1,9 +1,9 @@
 parserOptions:
   ecmaVersion: 6
 
-ecmaFeatures:
-  modules: true
-  jsx: true
+#ecmaFeatures:
+#  modules: true
+#  jsx: true
 
 env:
   amd: true

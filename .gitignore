@@ -29,6 +29,11 @@ public/javascripts/translations.js
 # Ignore beta config
 config/initializers/beta_test.rb
 
+# Ignore node modules
+node_modules/
+
+# Ignore yarn error log
+yarn-error.log
 
 .idea/
 /design-thoughts

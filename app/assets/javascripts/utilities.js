@@ -1,5 +1,6 @@
 var Utility = {
 
+
   toggle: function () {
     // Toggles (hide or show) via an anchor element $(this) bound to
     // 'click' event.  The 'href' attribute of the element is the
