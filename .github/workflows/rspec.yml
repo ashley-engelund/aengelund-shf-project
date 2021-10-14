@@ -53,6 +53,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
+          bundler: "Gemfile.lock"  # use the version of bundler specified in Gemfile.lock
 
       - name: Install libpng12.so (required by IMGkit / wkhtmltoimage )
         run: |
