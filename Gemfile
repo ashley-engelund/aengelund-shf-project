@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.6.6'
+ruby '2.7.4'
 
 gem 'dotenv-rails'
 gem 'rails', '~> 5.2.6'
@@ -76,7 +76,7 @@ gem 'chartkick'
 gem 'groupdate'
 
 gem 'mini_racer','~> 0.2.1', platforms: :ruby
-gem 'libv8', '< 8.0'
+gem 'libv8' #, '< 8.0'
 
 gem 'hashie'  # powerful methods for searching nested Hashes (ex: params) and more
 
