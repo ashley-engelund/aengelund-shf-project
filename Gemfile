@@ -2,11 +2,11 @@ source 'https://rubygems.org'
 ruby '2.6.6'
 
 gem 'dotenv-rails'
-gem 'rails', '~> 5.2'
+gem 'rails', '~> 5.2.6'
 gem 'bootsnap', require: false
 
 gem 'pg', '~> 1.2'
-gem 'puma', '~> 5.0'
+gem 'puma', '~> 5.3'
 gem 'sass-rails'
 
 gem 'uglifier', '>= 1.3.0'
@@ -30,14 +30,15 @@ gem 'bootstrap-toggle-rails'
 
 gem 'devise'
 gem 'pundit'
-gem "paperclip"
+# gem "paperclip"
+gem "kt-paperclip", "~> 7.0.0"
 
 gem 'routing-filter'   # for handling locale filters around routes
 
 gem 'ransack'
 gem 'city-state'
 gem 'rubyzip', '>= 1.2.1'  # security vulnerability with earlier versions CVE-2017-5946
-gem 'i18n-js', '>= 3.0.0.rc11'
+gem 'i18n-js' #, '>= 3.0.0.rc11'
 
 gem 'will_paginate'
 gem 'bootstrap-will_paginate'
@@ -74,8 +75,8 @@ gem 'wkhtmltoimage-binary'
 gem 'chartkick'
 gem 'groupdate'
 
-gem 'mini_racer','~> 0.2.1', platforms: :ruby
-gem 'libv8', '< 8.0'
+gem 'mini_racer', platforms: :ruby
+gem 'libv8' #, '< 8.0'
 
 gem 'hashie'  # powerful methods for searching nested Hashes (ex: params) and more
 
@@ -96,6 +97,10 @@ gem 'whenever', require: false
 
 # Query ActiveRecord by time (ex:  Payment.by_year(2019), Payment.between_times(Time.zone.now - 3.hours, Time.zone.now)) # all posts in last 3 hours
 gem 'by_star'
+
+
+# This is used by capybara, webmock, and more.  It is listed here only so we can specify the version that addresses a security vulnerability. (see entry in Github advisory db: https://github.com/advisories/GHSA-jxhc-q857-3j6g)
+gem 'addressable', '>= 2.8.0'
 
 
 group :development, :test do
